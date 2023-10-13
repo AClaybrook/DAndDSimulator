@@ -1,10 +1,13 @@
 # %%
-# import plotly.express as px
+import plotly.express as px
 import random
 import pandas as pd
 import plotly.figure_factory as ff
 import numpy as np
-# from IPython.display import display
+from IPython.display import display
+import dash
+from dash import dash_table, Dash, dcc, html, Input, Output
+import pandas as pd
 
 # Expected values
 def expected_value(die_size):
@@ -117,13 +120,24 @@ def attack(attack_context, damage_context):
         total_damage, hit_damage, crit_damage = damage_roll(crit=crit, **damage_context)
     return attack_roll_val, roll_val, hit, crit, total_damage, hit_damage, crit_damage
 
+def simulate_rounds(num_attacks, attack_context, damage_context, num_rounds=10000):
+    results = np.zeros((num_rounds*num_attacks, 8), dtype=int)
+    row = 0
+    for round_ in range(num_rounds):
+        # Damage per round
+        for _ in range(num_attacks):
+            attack_roll_val, roll_val, hit, crit, damage, hit_damage, crit_damage = attack(attack_context, damage_context)
+            results[row] = np.array([round_+1, attack_roll_val, roll_val, hit, crit, damage, hit_damage, crit_damage])
+            row += 1
+    df = pd.DataFrame(results, columns=['round', 'attack_roll', 'attack_die_roll', 'hit', 'crit', 'damage', 'hit_damage', 'crit_damage'])
+    return df
+
 # Utility functions
 def die_from_str(die_str):
     """Returns the number of dice and die size from a string of the form '2d6'"""
     die_str = die_str.lower()
     num_die, die_size = die_str.split('d')
     return int(num_die), int(die_size)
-
 
 # %%
 # Example 1
@@ -136,64 +150,155 @@ rng.seed(1)
 proficiency_bonus =  4 # Level 9-12
 ability_modifier = 5 # 20-21
 num_attacks = 3
+weapon_die = '2d6'
 GWM = False
-
-## Attack
+GWF = False
 
 # Attack roll modifiers
 attack_context = {
     **default_attack_context,
     'attack_modifier': ability_modifier + proficiency_bonus,
+    'enemy_armor_class': 18,
     'adv': False,
     'crit_on': 20,
     }
 
 # Damage roll modifiers
-num_die, die_size = die_from_str('2d6') # Weapon damage
+num_die, damage_die = die_from_str(weapon_die) # Weapon damage
 damage_context = {
     **default_damage_context,
     'num_die': num_die,
-    'damage_die': die_size,
+    'damage_die': damage_die,
     'damage_modifier': ability_modifier,
 }
 
-# Calcs
+# Character feats, attacks and damage modifiers, etc.
 if GWM:
     attack_context['attack_modifier'] -= 5
     damage_context['damage_modifier'] += 10
+if GWF:
+    damage_context['damage_reroll_on'] = 2
 
 # Num Rounds
-num_rounds = 10000
+df = simulate_rounds(num_attacks, attack_context, damage_context, num_rounds=10000)
 
-results = np.zeros((num_rounds*num_attacks, 8), dtype=int)
-row = 0
-for round_ in range(num_rounds):
-    # Damage per round
-    dpr = 0
-    for _ in range(num_attacks):
-        attack_roll_val, roll_val, hit, crit, damage, hit_damage, crit_damage = attack(attack_context, damage_context)
-        dpr += damage
-        results[row] = np.array([round_+1, attack_roll_val, roll_val, hit, crit, damage, hit_damage, crit_damage])
-        row += 1
-        dpr += damage
 
-df = pd.DataFrame(results, columns=['round', 'attack_roll', 'attack_die_roll', 'hit', 'crit', 'damage', 'hit_damage', 'crit_damage'])
 display(df.describe())
 df_by_round = df.groupby('round').sum()
 display(df_by_round.describe())
+# %%
+# Example 2
+
+# Defaults
+rng = random.Random()
+rng.seed(1)
+
+# Character stats
+proficiency_bonus =  4 # Level 9-12
+ability_modifier = 5 # 20-21
+num_attacks = 3
+weapon_die = '2d6'
+GWM = True
+GWF = False
+
+# Attack roll modifiers
+attack_context = {
+    **default_attack_context,
+    'attack_modifier': ability_modifier + proficiency_bonus,
+    'enemy_armor_class': 18,
+    'adv': True,
+    'crit_on': 20,
+    }
+
+# Damage roll modifiers
+num_die, damage_die = die_from_str(weapon_die) # Weapon damage
+damage_context = {
+    **default_damage_context,
+    'num_die': num_die,
+    'damage_die': damage_die,
+    'damage_modifier': ability_modifier,
+}
+
+# Character feats, attacks and damage modifiers, etc.
+if GWM:
+    attack_context['attack_modifier'] -= 5
+    damage_context['damage_modifier'] += 10
+if GWF:
+    damage_context['damage_reroll_on'] = 2
+
+# Num Rounds
+df2 = simulate_rounds(num_attacks, attack_context, damage_context, num_rounds=10000)
+
+
+display(df2.describe())
+df_by_round2 = df2.groupby('round').sum()
+display(df_by_round2.describe())
 #%%
+# Plotting
 
+# Apparently this is deprecated except for the kdensity plot
+# hist_data = [df_by_round["damage"], df_by_round2["damage"]]
+# group_labels = ['Default', 'GWM+Advantage'] # name of the dataset
 
-# df.hist(column="damage", bins=25)
-# df.plot.kde()
-# df.describe()
-# # %%
-
-# hist_data = [damages]
-# group_labels = ['distplot'] # name of the dataset
-
-# fig = ff.create_distplot(hist_data, group_labels)
+# fig = ff.create_distplot(hist_data, group_labels,
+#                          show_rug=False)
 # fig.show()
-# # %%
+
+# Alternative
+# import plotly.graph_objects as go
+
+names = ['Default', 'GWM+Advantage']
+data = pd.concat([
+    pd.DataFrame({'Damage': df_by_round["damage"], 'Type': names[0]}),
+    pd.DataFrame({'Damage': df_by_round2["damage"], 'Type': names[1]})
+])
+
+fig = px.histogram(
+    data, 
+    x="Damage", 
+    color="Type", 
+    marginal="violin",  # Add top plot
+    histnorm='percent',
+    barmode='overlay',
+    opacity=0.75,
+)
+fig.show()
+
+
+# %%
+
+
+app = dash.Dash(__name__)
+
+df_table = df_by_round.describe().reset_index()
+df_table2 = df_by_round2.describe().reset_index()
+
+app.layout = html.Div([
+    html.H1("D&D Damage Per Round"),
+    dcc.Graph(
+        id='dist-plot',
+        figure=fig
+    ),
+    html.H2("Summary Statistics Per Round"),
+    html.H4(names[0]),
+    html.Div([
+        dash_table.DataTable(
+            id='table1',
+            columns=[{"name": i, "id": i} for i in df_table.columns],
+            data=df_table.to_dict('records')
+        )
+    ]),
+    html.H4(names[1]),
+    html.Div([
+        dash_table.DataTable(
+            id='table2',
+            columns=[{"name": i, "id": i} for i in df_table2.columns],
+            data=df_table2.to_dict('records')
+        )
+    ])
+])
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
 
 # %%

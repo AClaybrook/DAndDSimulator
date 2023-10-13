@@ -10,6 +10,7 @@ plotly = "*"
 snakeviz = "*"
 dash = "*"
 scipy = "*"
+nbformat = "*"
 
 [dev-packages]
 ipykernel = "*"
