@@ -1,4 +1,5 @@
 # %%
+# Imports
 import plotly.express as px
 import random
 import pandas as pd
@@ -8,8 +9,10 @@ from IPython.display import display
 import dash
 from dash import dash_table, Dash, dcc, html, Input, Output
 import pandas as pd
+from dataclasses import dataclass, replace, asdict
 
-# Expected values
+#%%
+# Analytic Values
 def expected_value(die_size):
     """ Returns the expected value of a die roll, which is a uniform distribution"""
     return (1 + die_size)/2
@@ -42,22 +45,6 @@ def hit_chance(die, mod=0, ac=15, adv=False, dis=False, crit_on=20):
 # # Defaults
 # rng = random.Random()
 # rng.seed(1)
-
-default_attack_context = {
-    'attack_modifier': 0,
-    'enemy_armor_class': 15,
-    'adv': False,
-    'dis': False,
-    'crit_on': 20,
-    'attack_reroll_on': None
-}
-
-default_damage_context = {
-    'num_die': 1,
-    'damage_die': 6,
-    'damage_modifier': 0,
-    'damage_reroll_on': None
-}
 
 def roll(die_size=20, reroll_on=None):
     rerolled = False
@@ -139,6 +126,108 @@ def die_from_str(die_str):
     num_die, die_size = die_str.split('d')
     return int(num_die), int(die_size)
 
+# Classes
+
+# TOOD: Change this to a Creature class, and have Character and Enemy inherit from it
+@dataclass
+class Character:
+    name: str = 'Character'
+    num_attacks: int = 1
+    # Attack and Damage Roll Modifiers
+    ability_modifier: int = 0
+    GWM: bool = False
+    weapon_modifier: int = 0
+    # Attack Roll Modifiers
+    proficiency_bonus: int = 0
+    adv: bool = False
+    dis: bool = False
+    additional_attack_modifier: int = 0
+    attack_reroll_on: int = None
+    crit_on: int = 20
+    # Damage Roll Modifiers
+    weapon_die: str = '1d6'
+    additional_damage_modifier: int = 0
+    GWF: bool = False
+    # _damage_reroll_on: int = None # Internal variable managed by @property and setter
+
+    @property
+    def weapon_num_die(self):
+        return die_from_str(self.weapon_die)[0]
+    
+    @property
+    def weapon_damage_die(self):
+        return die_from_str(self.weapon_die)[1]
+    
+    @property
+    def attack_modifier(self):
+        GWM_modifier = -5 if self.GWM else 0
+        return self.ability_modifier + self.proficiency_bonus + self.weapon_modifier + GWM_modifier + self.additional_attack_modifier
+
+    @property
+    def damage_modifier(self):
+        GWM_modifier = 10 if self.GWM else 0
+        return self.ability_modifier + self.weapon_modifier + GWM_modifier + self.additional_damage_modifier
+    
+    @property
+    def damage_reroll_on(self):
+        return 2 if self.GWF else None
+    
+    # @property
+    # def damage_reroll_on(self):
+    #     if self._damage_reroll_on is not None:
+    #         return self._damage_reroll_on
+    #     return 2 if self.GWF else None
+    
+    # @damage_reroll_on.setter
+    # def damage_reroll_on(self, value):
+    #     self._damage_reroll_on = value
+
+@dataclass
+class Enemy:
+    name: str = 'Mind Flayer'
+    armor_class: int = 15
+    hit_points: int = 71
+    damage_reduction: int = 0
+
+@dataclass
+class AttackContext:
+    attack_modifier: int = 0
+    adv: bool = False
+    dis: bool = False
+    crit_on: int = 20
+    attack_reroll_on: int = None
+    enemy_armor_class: int = 15
+
+    @staticmethod
+    def from_character_and_enemy(character, enemy, **kwargs):
+        return AttackContext(
+            attack_modifier=character.attack_modifier,
+            adv=character.adv,
+            dis=character.dis,
+            crit_on=character.crit_on,
+            attack_reroll_on=character.attack_reroll_on,
+            enemy_armor_class=enemy.armor_class,
+            **kwargs
+        )
+    
+@dataclass
+class DamageContext:
+    num_die: int = 1
+    damage_die: int = 6
+    damage_modifier: int = 0
+    damage_reroll_on: int = None
+
+    @staticmethod
+    def from_character_and_enemy(character, enemy, **kwargs):
+        # TODO: Add enemy damage reduction
+        return DamageContext(
+            num_die=character.weapon_num_die,
+            damage_die=character.weapon_damage_die,
+            damage_modifier=character.damage_modifier,
+            damage_reroll_on=character.damage_reroll_on,
+            **kwargs
+        )
+
 # %%
 # Example 1
 
@@ -147,92 +236,39 @@ rng = random.Random()
 rng.seed(1)
 
 # Character stats
-proficiency_bonus =  4 # Level 9-12
-ability_modifier = 5 # 20-21
-num_attacks = 3
-weapon_die = '2d6'
-GWM = False
-GWF = False
+character1 = Character(
+    name='Fighter',
+    proficiency_bonus=4, # Level 9-12
+    ability_modifier=5, # 20-21
+    num_attacks=3,
+    weapon_die='2d6',
+    )
 
-# Attack roll modifiers
-attack_context = {
-    **default_attack_context,
-    'attack_modifier': ability_modifier + proficiency_bonus,
-    'enemy_armor_class': 18,
-    'adv': False,
-    'crit_on': 20,
-    }
+character2 = replace(character1, name='Fighter Advantage', adv=True)
+character3 = replace(character1, name='Fighter Disadvantage', dis=True)
 
-# Damage roll modifiers
-num_die, damage_die = die_from_str(weapon_die) # Weapon damage
-damage_context = {
-    **default_damage_context,
-    'num_die': num_die,
-    'damage_die': damage_die,
-    'damage_modifier': ability_modifier,
-}
+enemy1 = Enemy(armor_class=18)
 
-# Character feats, attacks and damage modifiers, etc.
-if GWM:
-    attack_context['attack_modifier'] -= 5
-    damage_context['damage_modifier'] += 10
-if GWF:
-    damage_context['damage_reroll_on'] = 2
+characters = [character1, character2, character3]
+dfs = []
+df_by_rounds = []
+for c in characters:
+    # Attack roll modifiers
+    attack_context = AttackContext.from_character_and_enemy(c, enemy1)
 
-# Num Rounds
-df = simulate_rounds(num_attacks, attack_context, damage_context, num_rounds=10000)
+    # Damage roll modifiers
+    damage_context = DamageContext.from_character_and_enemy(c, enemy1)
+
+    # Num Rounds
+    df = simulate_rounds(c.num_attacks, asdict(attack_context), asdict(damage_context), num_rounds=500000)
 
 
-display(df.describe())
-df_by_round = df.groupby('round').sum()
-display(df_by_round.describe())
-# %%
-# Example 2
+    display(df.describe())
+    df_by_round = df.groupby('round').sum()
+    display(df_by_round.describe())
+    dfs.append(df)
+    df_by_rounds.append(df_by_round)
 
-# Defaults
-rng = random.Random()
-rng.seed(1)
-
-# Character stats
-proficiency_bonus =  4 # Level 9-12
-ability_modifier = 5 # 20-21
-num_attacks = 3
-weapon_die = '2d6'
-GWM = True
-GWF = False
-
-# Attack roll modifiers
-attack_context = {
-    **default_attack_context,
-    'attack_modifier': ability_modifier + proficiency_bonus,
-    'enemy_armor_class': 18,
-    'adv': True,
-    'crit_on': 20,
-    }
-
-# Damage roll modifiers
-num_die, damage_die = die_from_str(weapon_die) # Weapon damage
-damage_context = {
-    **default_damage_context,
-    'num_die': num_die,
-    'damage_die': damage_die,
-    'damage_modifier': ability_modifier,
-}
-
-# Character feats, attacks and damage modifiers, etc.
-if GWM:
-    attack_context['attack_modifier'] -= 5
-    damage_context['damage_modifier'] += 10
-if GWF:
-    damage_context['damage_reroll_on'] = 2
-
-# Num Rounds
-df2 = simulate_rounds(num_attacks, attack_context, damage_context, num_rounds=10000)
-
-
-display(df2.describe())
-df_by_round2 = df2.groupby('round').sum()
-display(df_by_round2.describe())
 #%%
 # Plotting
 
@@ -247,11 +283,7 @@ display(df_by_round2.describe())
 # Alternative
 # import plotly.graph_objects as go
 
-names = ['Default', 'GWM+Advantage']
-data = pd.concat([
-    pd.DataFrame({'Damage': df_by_round["damage"], 'Type': names[0]}),
-    pd.DataFrame({'Damage': df_by_round2["damage"], 'Type': names[1]})
-])
+data = pd.concat([pd.DataFrame({'Damage': df_by_round["damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)])
 
 fig = px.histogram(
     data, 
@@ -262,7 +294,7 @@ fig = px.histogram(
     barmode='overlay',
     opacity=0.75,
 )
-fig.show()
+# fig.show()
 
 
 # %%
@@ -270,8 +302,19 @@ fig.show()
 
 app = dash.Dash(__name__)
 
-df_table = df_by_round.describe().reset_index()
-df_table2 = df_by_round2.describe().reset_index()
+def add_tables():
+    table_list = [html.H2("Summary Statistics Per Round")]
+    for ii, (c, df_by_round) in enumerate(zip(characters, df_by_rounds)):
+        df_table = df_by_round.describe().reset_index()
+        table_list.append(html.H4(c.name)) 
+        table_list.append(html.Div([
+                dash_table.DataTable(
+                    id=f'table{ii}',
+                    columns=[{"name": i, "id": i} for i in df_table.columns],
+                    data=df_table.to_dict('records')
+                )
+            ]))
+    return table_list
 
 app.layout = html.Div([
     html.H1("D&D Damage Per Round"),
@@ -279,26 +322,21 @@ app.layout = html.Div([
         id='dist-plot',
         figure=fig
     ),
-    html.H2("Summary Statistics Per Round"),
-    html.H4(names[0]),
-    html.Div([
-        dash_table.DataTable(
-            id='table1',
-            columns=[{"name": i, "id": i} for i in df_table.columns],
-            data=df_table.to_dict('records')
-        )
-    ]),
-    html.H4(names[1]),
-    html.Div([
-        dash_table.DataTable(
-            id='table2',
-            columns=[{"name": i, "id": i} for i in df_table2.columns],
-            data=df_table2.to_dict('records')
-        )
-    ])
+    *add_tables()
 ])
 
-if __name__ == '__main__':
-    app.run_server(debug=True)
+app.run_server(debug=False)
+
+# %%
+# Simple crit chance calculator
+# https://bg3.wiki/wiki/Guide:Book%27s_Guide_to_Crits
+crit_data = []
+for crit_on in range(20,12, -1):
+    crit_chance = (20-crit_on+1)/20
+    crit_miss = 1-crit_chance
+    crit_miss_w_adv = crit_miss * crit_miss
+    crit_w_adv = 1-crit_miss_w_adv
+    crit_data.append([crit_on, crit_chance, crit_w_adv])
+pd.DataFrame(crit_data, columns=['crit_on', 'crit_chance', 'crit_w_adv'])
 
 # %%
