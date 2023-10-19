@@ -277,7 +277,8 @@ for c in characters:
 import plotly.graph_objects as go
 
 template = 'plotly_dark'
-def generate_histogram(data, x, color, marginal='violin', histnorm='percent', barmode='overlay', opacity=0.75,template=template, **kwargs):
+colors = px.colors.qualitative.Plotly
+def generate_histogram(data, x, color, marginal='violin', histnorm='percent', barmode='overlay', opacity=0.75, **kwargs):
     """Apparently this is deprecated except for the kdensity plot"""
     fig = px.histogram(
         data, 
@@ -287,13 +288,12 @@ def generate_histogram(data, x, color, marginal='violin', histnorm='percent', ba
         histnorm=histnorm,
         barmode=barmode,
         opacity=opacity,
-        template=template,
         **kwargs
     )
     return fig
 
-def generate_distplot(groups, labels, template=template):
-    fig = ff.create_distplot(groups, labels, show_rug=False, template=template)
+def generate_distplot(groups, labels, **kwargs):
+    fig = ff.create_distplot(groups, labels, show_rug=False, **kwargs)
     return fig
 
 # Using distplot
@@ -329,15 +329,12 @@ def get_distributions(dfs,column="damage"):
 
 
 
-data = pd.concat([pd.DataFrame({'damage': df_by_round["damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)])
-
-fig = generate_histogram(data, x="damage", color="Type", marginal='violin')
 
 # CDF
 
 # fig = px.ecdf(data, x="damage", color="Type", marginal="histogram",orientation='h', template=template)
 
-fig.show()
+# fig.show()
 
 
 
@@ -346,31 +343,114 @@ fig.show()
 
 # %%
 
+style_sheet = dbc.themes.CYBORG
+if style_sheet in [dbc.themes.CYBORG, dbc.themes.DARKLY]:
+    template = 'plotly_dark'
+else:
+    template = 'plotly'
 
-app = dash.Dash(__name__)
+data = pd.concat([pd.DataFrame({'damage': df_by_round["damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)])
+fig = generate_histogram(data, x="damage", color="Type", marginal='violin', template=template)
 
-def add_tables():
-    table_list = [html.H2("Summary Statistics Per Round")]
-    for ii, (c, df_by_round) in enumerate(zip(characters, df_by_rounds)):
-        df_table = df_by_round.describe().reset_index()
-        table_list.append(html.H4(c.name)) 
-        table_list.append(html.Div([
-                dash_table.DataTable(
-                    id=f'table{ii}',
-                    columns=[{"name": i, "id": i} for i in df_table.columns],
-                    data=df_table.to_dict('records')
-                )
-            ]))
+app = dash.Dash(__name__, external_stylesheets=[style_sheet])
+
+def add_tables(by_round=True,table_index=0):
+    if by_round:
+        table_list = [html.H2("Summary Statistics Per Round")]
+        data = df_by_rounds
+    else:
+        table_list = [html.H2("Summary Statistics Per Attack")]
+        data = dfs
+            
+    for ii, (c, datac) in enumerate(zip(characters, data)):
+        if not by_round:
+            datac = datac.drop("round", axis=1)
+        df_table = datac.describe().drop("count",axis=0).reset_index()
+
+        table_list.append(html.H4(c.name, style={'color': colors[ii]})) 
+        # table_list.append(html.Div([
+        #         dash_table.DataTable(
+        #             id=f'table{ii+table_index}',
+        #             columns=[{"name": i, "id": i} for i in df_table.columns],
+        #             data=df_table.to_dict('records'),
+        #             style_header={
+        #                 'backgroundColor': 'rgb(30, 30, 30)',
+        #                 'color': 'white'
+        #             },
+        #             style_data={
+        #                 'backgroundColor': 'rgb(50, 50, 50)',
+        #                 'color': 'white'
+        #             },
+        #         )
+        #     ]))
+        table_list.append(dbc.Table.from_dataframe(df_table, striped=True, bordered=True, hover=True, responsive=True))
+        table_list.append(html.Br())
     return table_list
 
-app.layout = html.Div([
-    html.H1("D&D Damage Per Round"),
-    dcc.Graph(
-        id='dist-plot',
-        figure=fig
-    ),
-    *add_tables()
-])
+# app.layout = html.Div([
+#     html.H1("D&D Damage Per Round"),
+#     dcc.Graph(
+#         id='dist-plot',
+#         figure=fig
+#     ),
+#     *add_tables(),
+#     *add_tables(by_round=False)
+# ])
+
+def wrap_element(element):
+    return dbc.Row([
+        dbc.Col([
+        element
+        ]) 
+    ])
+
+def wrap_elements(element_list):
+    rows =[]
+    for element in element_list:
+        rows.append(
+            wrap_element(element)
+        )
+    return rows
+
+def character_dropdown():
+    return dbc.DropdownMenu(
+        id='character-dropdown',
+        label="Character",
+        children=[
+            dbc.DropdownMenuItem(c.name) for ii, c in enumerate(characters)
+        ]
+    )
+
+app.layout = dbc.Container([
+    dbc.Row([
+        dbc.Col([
+            html.H1("D&D Damage Per Round"),
+        ],
+        ),
+    ]),
+    dbc.Row([
+        dbc.Col([
+            character_dropdown(),
+        ],
+        ),
+    ]),
+    dbc.Row([
+        dbc.Col([
+            dcc.Graph(
+                id='dist-plot',
+                figure=fig
+            ),
+        ],
+        # width={"size": 12}
+        ),
+    ]),
+    *wrap_elements(add_tables()),
+    *wrap_elements(add_tables(by_round=False, table_index=len(characters))),
+
+],
+    fluid=True)
+
+
 
 app.run_server(debug=False)
 
