@@ -8,8 +8,11 @@ import numpy as np
 from IPython.display import display
 import dash
 from dash import dash_table, Dash, dcc, html, Input, Output
+import dash_bootstrap_components as dbc
+from dash import html
 import pandas as pd
 from dataclasses import dataclass, replace, asdict
+import scipy.stats as stats
 
 #%%
 # Analytic Values
@@ -244,9 +247,8 @@ character1 = Character(
     weapon_die='2d6',
     )
 
-character2 = replace(character1, name='Fighter Advantage', adv=True)
-character3 = replace(character1, name='Fighter Disadvantage', dis=True)
-
+character2 = replace(character1, name='Fighter Disadvantage', dis=True)
+character3 = replace(character1, name='Fighter Advantage', adv=True)
 enemy1 = Enemy(armor_class=18)
 
 characters = [character1, character2, character3]
@@ -260,7 +262,7 @@ for c in characters:
     damage_context = DamageContext.from_character_and_enemy(c, enemy1)
 
     # Num Rounds
-    df = simulate_rounds(c.num_attacks, asdict(attack_context), asdict(damage_context), num_rounds=500000)
+    df = simulate_rounds(c.num_attacks, asdict(attack_context), asdict(damage_context), num_rounds=5000)
 
 
     display(df.describe())
@@ -271,30 +273,75 @@ for c in characters:
 
 #%%
 # Plotting
+# Themes here: https://plotly.com/python/templates/
+import plotly.graph_objects as go
 
-# Apparently this is deprecated except for the kdensity plot
-# hist_data = [df_by_round["damage"], df_by_round2["damage"]]
-# group_labels = ['Default', 'GWM+Advantage'] # name of the dataset
+template = 'plotly_dark'
+def generate_histogram(data, x, color, marginal='violin', histnorm='percent', barmode='overlay', opacity=0.75,template=template, **kwargs):
+    """Apparently this is deprecated except for the kdensity plot"""
+    fig = px.histogram(
+        data, 
+        x=x, 
+        color=color, 
+        marginal=marginal,
+        histnorm=histnorm,
+        barmode=barmode,
+        opacity=opacity,
+        template=template,
+        **kwargs
+    )
+    return fig
 
-# fig = ff.create_distplot(hist_data, group_labels,
-#                          show_rug=False)
+def generate_distplot(groups, labels, template=template):
+    fig = ff.create_distplot(groups, labels, show_rug=False, template=template)
+    return fig
+
+# Using distplot
+# groups = [df_by_round["damage"] for df_by_round in df_by_rounds]
+# labels = [c.name for c in characters]
+# fig = generate_distplot(groups, labels)
+
+# def add_damage_percent(data):
+#     percent_dict = data.groupby("Type")["damage"].value_counts(normalize=True).to_dict()
+#     data["Percent"] = data.apply(lambda x: percent_dict[(x["Type"], x["damage"])], axis=1)*100
+#     return data
+
+def add_damage_percent(data):
+    percent_dict = data.groupby("Type")["damage"].value_counts(normalize=True).to_dict()
+    data["Percent"] = data.apply(lambda x: percent_dict[(x["Type"], x["damage"])], axis=1)*100
+    return data
+
+def get_distributions(dfs,column="damage"):
+    dists = []
+    for df in dfs:
+        val_counts = df[column].value_counts(normalize=True)
+        values = (val_counts.index, val_counts.values)
+        dist = stats.rv_discrete(values=values)
+        dists.append(dist)
+    return dists
+
+# data = add_damage_percent(data)
+# fig = px.bar(data, x="damage", y="Percent", color="Type",template=template, opacity=0.75,barmode='overlay')
 # fig.show()
 
-# Alternative
-# import plotly.graph_objects as go
 
-data = pd.concat([pd.DataFrame({'Damage': df_by_round["damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)])
-
-fig = px.histogram(
-    data, 
-    x="Damage", 
-    color="Type", 
-    marginal="violin",  # Add top plot
-    histnorm='percent',
-    barmode='overlay',
-    opacity=0.75,
-)
 # fig.show()
+
+
+
+data = pd.concat([pd.DataFrame({'damage': df_by_round["damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)])
+
+fig = generate_histogram(data, x="damage", color="Type", marginal='violin')
+
+# CDF
+
+# fig = px.ecdf(data, x="damage", color="Type", marginal="histogram",orientation='h', template=template)
+
+fig.show()
+
+
+
+
 
 
 # %%

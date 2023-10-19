@@ -5,12 +5,16 @@ name = "pypi"
 
 [packages]
 seaborn = "*"
-numpy = "*"
+numpy = "==1.25.0"
 plotly = "*"
 snakeviz = "*"
 dash = "*"
 scipy = "*"
 nbformat = "*"
+memory-profiler = "*"
+numba = "*"
+chart-studio = "*"
+dash-bootstrap-components = "*"
 
 [dev-packages]
 ipykernel = "*"
