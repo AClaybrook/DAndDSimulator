@@ -52,8 +52,10 @@ def hit_chance(die, mod=0, ac=15, adv=False, dis=False, crit_on=20):
 def roll(die_size=20, reroll_on=None):
     rerolled = False
     res = rng.randint(1,die_size)
+    # res = np.random.randint(1,die_size)
     if reroll_on is not None and res <= reroll_on:
         res = rng.randint(1,die_size)
+        # res = np.random.randint(1,die_size)
         rerolled = True
     return res
 
@@ -72,9 +74,9 @@ def roll_adv_dis(adv=False, dis=False,  **kwargs):
         res = roll(**kwargs)
     return res
 
-def attack_roll(attack_modifier=0, enemy_armor_class=15, crit_on=20, attack_reroll_on=None, **kwargs):
+def attack_roll(attack_modifier=0, enemy_armor_class=15, crit_on=20, **kwargs):
     """ Returns total attack roll, whether it hits, whether it crits and the roll value"""
-    roll_val = roll_adv_dis(reroll_on=attack_reroll_on, **kwargs)
+    roll_val = roll_adv_dis(**kwargs)
     attack_roll_val = roll_val + attack_modifier
     # Crit miss
     if roll_val == 1:
@@ -91,13 +93,13 @@ def attack_roll(attack_modifier=0, enemy_armor_class=15, crit_on=20, attack_rero
 
     return attack_roll_val, roll_val, hit, crit
 
-def damage_roll(num_die=1, damage_die=6, damage_modifier=0, damage_reroll_on=None, crit=False, **kwargs):
+def damage_roll(num_die=1, damage_die=6, damage_modifier=0, crit=False, **kwargs):
     
-    hit_damage = sum([roll(die_size=damage_die, reroll_on=damage_reroll_on, **kwargs) for _ in range(num_die)]) + damage_modifier
+    hit_damage = sum([roll(die_size=damage_die, **kwargs) for _ in range(num_die)]) + damage_modifier
     
     crit_damage = 0
     if crit:
-        crit_damage = sum([roll(die_size=damage_die, reroll_on=damage_reroll_on, **kwargs) for _ in range(num_die)])
+        crit_damage = sum([roll(die_size=damage_die,**kwargs) for _ in range(num_die)])
 
     total_damage = hit_damage + crit_damage
 
@@ -111,7 +113,7 @@ def attack(attack_context, damage_context):
     return attack_roll_val, roll_val, hit, crit, total_damage, hit_damage, crit_damage
 
 def simulate_rounds(num_attacks, attack_context, damage_context, num_rounds=10000):
-    results = np.zeros((num_rounds*num_attacks, 8), dtype=int)
+    results = np.empty((num_rounds*num_attacks, 8), dtype=int)
     row = 0
     for round_ in range(num_rounds):
         # Damage per round
@@ -121,6 +123,93 @@ def simulate_rounds(num_attacks, attack_context, damage_context, num_rounds=1000
             row += 1
     df = pd.DataFrame(results, columns=['round', 'attack_roll', 'attack_die_roll', 'hit', 'crit', 'damage', 'hit_damage', 'crit_damage'])
     return df
+
+def simulate_rounds(num_attacks, attack_context, damage_context, num_rounds=10000):
+    # Damage per round
+    results = [(round_+1,*attack(attack_context, damage_context),) for round_ in range(num_rounds) for _ in range(num_attacks)]
+    results = np.array(results)
+    df = pd.DataFrame(results, columns=['round', 'attack_roll', 'attack_die_roll', 'hit', 'crit', 'damage', 'hit_damage', 'crit_damage'])
+    return df
+
+
+#### Vectorized version #####
+
+def roll_vectorized(num_rolls, die_size=20, reroll_on=None):
+    rolls = np.random.randint(1, die_size+1, size=num_rolls)
+    if reroll_on is not None:
+        rerolls_mask = rolls <= reroll_on
+        rolls[rerolls_mask] = np.random.randint(1, die_size+1, size=np.sum(rerolls_mask))
+    return rolls
+
+def roll_adv_dis_vectorized(num_rolls, adv=False, dis=False, **kwargs):
+    rolls = roll_vectorized(2 * num_rolls, **kwargs).reshape(-1, 2)
+    if adv and not dis:
+        return rolls.max(axis=1)
+    elif dis and not adv:
+        return rolls.min(axis=1)
+    else:
+        return rolls[:, 0]
+
+def attack_roll_vectorized(num_rolls, attack_modifier=0, enemy_armor_class=15, crit_on=20, **kwargs):
+    rolls = roll_adv_dis_vectorized(num_rolls,**kwargs)
+    attack_rolls = rolls + attack_modifier
+
+    # Crit hit
+    crit = np.logical_and(rolls >= crit_on, rolls != 1)
+    # Normal hit and not a crit miss
+    hit = np.logical_and(attack_rolls >= enemy_armor_class, rolls != 1)
+    # Crits automatically hit
+    hit[crit] = True
+    
+    return attack_rolls, rolls, hit, crit
+
+def damage_roll_vectorized(hit, crit, num_die=1, damage_die=6, damage_modifier=0, **kwargs):
+    num_rolls = len(hit)
+    hit_damage = np.zeros(num_rolls)
+    hit_damage[hit] = roll_vectorized(np.sum(hit) * num_die, die_size=damage_die, **kwargs).reshape(-1, num_die).sum(axis=1) + damage_modifier
+    crit_damage = np.zeros(num_rolls)
+    crit_damage[crit] = roll_vectorized(np.sum(crit) * num_die, die_size=damage_die, **kwargs).reshape(-1, num_die).sum(axis=1)
+
+    total_damage = hit_damage + crit_damage
+    return total_damage, hit_damage, crit_damage
+
+def attack_vectorized(num_rolls, attack_context, damage_context):
+    attack_rolls, rolls, hit, crit = attack_roll_vectorized(num_rolls, **attack_context)
+    total_damage, hit_damage, crit_damage = damage_roll_vectorized(hit, crit, **damage_context)
+    
+    return attack_rolls, rolls, hit, crit, total_damage, hit_damage, crit_damage
+
+def simulate_rounds_vectorized(num_attacks, attack_context, damage_context, num_rounds=10000):
+    num_rolls = num_rounds * num_attacks
+    attack_rolls, rolls, hit, crit, damage, hit_damage, crit_damage = attack_vectorized(num_rolls, attack_context, damage_context)
+    
+    rounds = np.repeat(np.arange(1, num_rounds + 1), num_attacks)
+    
+    results = np.column_stack([rounds, attack_rolls, rolls, hit, crit, damage, hit_damage, crit_damage])
+    df = pd.DataFrame(results, columns=['round', 'attack_roll', 'attack_die_roll', 'hit', 'crit', 'damage', 'hit_damage', 'crit_damage'])
+    
+    return df
+
+
+### 52 sec for 500k rounds at 3 attacks per round for 3 characters
+# def simulate_rounds(num_attacks, attack_context, damage_context, num_rounds=10000):
+#     results = np.empty((num_rounds*num_attacks, 8), dtype=int)
+#     row = 0
+#     for round_ in range(num_rounds):
+#         # Damage per round
+#         for _ in range(num_attacks):
+#             attack_roll_val, roll_val, hit, crit, damage, hit_damage, crit_damage = attack(attack_context, damage_context)
+#             results[row] = np.array([round_+1, attack_roll_val, roll_val, hit, crit, damage, hit_damage, crit_damage])
+#             row += 1
+#     df = pd.DataFrame(results, columns=['round', 'attack_roll', 'attack_die_roll', 'hit', 'crit', 'damage', 'hit_damage', 'crit_damage'])
+#     return df
+### 45 sec for 500k rounds at 3 attacks per round for 3 characters
+# def simulate_rounds(num_attacks, attack_context, damage_context, num_rounds=10000):
+#     # Damage per round
+#     results = [(round_+1,*attack(attack_context, damage_context),) for round_ in range(num_rounds) for _ in range(num_attacks)]
+#     results = np.array(results)
+#     df = pd.DataFrame(results, columns=['round', 'attack_roll', 'attack_die_roll', 'hit', 'crit', 'damage', 'hit_damage', 'crit_damage'])
+#     return df
 
 # Utility functions
 def die_from_str(die_str):
@@ -198,7 +287,7 @@ class AttackContext:
     adv: bool = False
     dis: bool = False
     crit_on: int = 20
-    attack_reroll_on: int = None
+    reroll_on: int = None
     enemy_armor_class: int = 15
 
     @staticmethod
@@ -208,7 +297,7 @@ class AttackContext:
             adv=character.adv,
             dis=character.dis,
             crit_on=character.crit_on,
-            attack_reroll_on=character.attack_reroll_on,
+            reroll_on=character.attack_reroll_on,
             enemy_armor_class=enemy.armor_class,
             **kwargs
         )
@@ -218,7 +307,7 @@ class DamageContext:
     num_die: int = 1
     damage_die: int = 6
     damage_modifier: int = 0
-    damage_reroll_on: int = None
+    reroll_on: int = None
 
     @staticmethod
     def from_character_and_enemy(character, enemy, **kwargs):
@@ -227,16 +316,17 @@ class DamageContext:
             num_die=character.weapon_num_die,
             damage_die=character.weapon_damage_die,
             damage_modifier=character.damage_modifier,
-            damage_reroll_on=character.damage_reroll_on,
+            reroll_on=character.damage_reroll_on,
             **kwargs
         )
 
-# %%
+# 
 # Example 1
 
 # Defaults
 rng = random.Random()
 rng.seed(1)
+np.random.seed(1)
 
 # Character stats
 character1 = Character(
@@ -262,14 +352,16 @@ for c in characters:
     damage_context = DamageContext.from_character_and_enemy(c, enemy1)
 
     # Num Rounds
-    df = simulate_rounds(c.num_attacks, asdict(attack_context), asdict(damage_context), num_rounds=5000)
-
+    # df = simulate_rounds(c.num_attacks, asdict(attack_context), asdict(damage_context), num_rounds=100000)
+    df = simulate_rounds_vectorized(c.num_attacks, asdict(attack_context), asdict(damage_context), num_rounds=100000)
 
     display(df.describe())
     df_by_round = df.groupby('round').sum()
     display(df_by_round.describe())
     dfs.append(df)
     df_by_rounds.append(df_by_round)
+
+#%%
 
 #%%
 # Plotting
@@ -452,7 +544,7 @@ app.layout = dbc.Container([
 
 
 
-app.run_server(debug=False)
+# app.run_server(debug=False)
 
 # %%
 # Simple crit chance calculator
