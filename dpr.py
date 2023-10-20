@@ -457,7 +457,7 @@ def add_tables(by_round=True,table_index=0):
     for ii, (c, datac) in enumerate(zip(characters, data)):
         if not by_round:
             datac = datac.drop("round", axis=1)
-        df_table = datac.describe().drop("count",axis=0).reset_index()
+        df_table = datac.describe().drop("count",axis=0).reset_index().round(3)
 
         table_list.append(html.H4(c.name, style={'color': colors[ii]})) 
         # table_list.append(html.Div([
@@ -489,18 +489,19 @@ def add_tables(by_round=True,table_index=0):
 #     *add_tables(by_round=False)
 # ])
 
-def wrap_element(element):
+def wrap_element(element, width=12):
     return dbc.Row([
         dbc.Col([
         element
-        ]) 
+        ],
+        width={"size": width}) 
     ])
 
-def wrap_elements(element_list):
+def wrap_elements(element_list, width=12):
     rows =[]
     for element in element_list:
         rows.append(
-            wrap_element(element)
+            wrap_element(element, width=width)
         )
     return rows
 
@@ -536,7 +537,7 @@ app.layout = dbc.Container([
         # width={"size": 12}
         ),
     ]),
-    *wrap_elements(add_tables()),
+    *wrap_elements(add_tables(),width=4),
     *wrap_elements(add_tables(by_round=False, table_index=len(characters))),
 
 ],
@@ -544,7 +545,7 @@ app.layout = dbc.Container([
 
 
 
-# app.run_server(debug=False)
+app.run_server(debug=False)
 
 # %%
 # Simple crit chance calculator
