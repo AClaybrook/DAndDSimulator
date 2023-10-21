@@ -61,8 +61,8 @@ def simulate_rounds(num_attacks, attack_context, damage_context, num_rounds=1000
     num_rolls = num_rounds * num_attacks
     attack_rolls, rolls, hit, crit, damage, hit_damage, crit_damage = attack(num_rolls, attack_context, damage_context)
     rounds = np.repeat(np.arange(1, num_rounds + 1), num_attacks)
-    results = np.column_stack([rounds, attack_rolls, rolls, hit, crit, damage, hit_damage, crit_damage])
-    df = pd.DataFrame(results, columns=['round', 'attack roll', 'attack die', 'hit', 'crit', 'damage', 'hit damage', 'crit damage'])
+    results = np.column_stack([rounds, damage, hit_damage, crit_damage, attack_rolls, rolls, hit, hit != crit, crit])
+    df = pd.DataFrame(results, columns=['Round', 'Damage', 'Damage (From Hit)', 'Damage (From Crit)', 'Attack Roll', 'Attack Roll (Die)', 'Hit', 'Hit (Non-Crit)', 'Hit (Crit)'])
     return df
 
 def simulate_character_rounds(characters, enemy):
@@ -78,7 +78,7 @@ def simulate_character_rounds(characters, enemy):
 
         # Num Rounds
         df = simulate_rounds(c.num_attacks, asdict(attack_context), asdict(damage_context), num_rounds=100000)
-        df_by_round = df.groupby('round').sum()
+        df_by_round = df.groupby('Round').sum()
         dfs.append(df)
         df_by_rounds.append(df_by_round)
     return dfs, df_by_rounds
