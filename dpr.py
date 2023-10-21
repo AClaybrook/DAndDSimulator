@@ -121,14 +121,14 @@ def simulate_rounds(num_attacks, attack_context, damage_context, num_rounds=1000
             attack_roll_val, roll_val, hit, crit, damage, hit_damage, crit_damage = attack(attack_context, damage_context)
             results[row] = np.array([round_+1, attack_roll_val, roll_val, hit, crit, damage, hit_damage, crit_damage])
             row += 1
-    df = pd.DataFrame(results, columns=['round', 'attack_roll', 'attack_die_roll', 'hit', 'crit', 'damage', 'hit_damage', 'crit_damage'])
+    df = pd.DataFrame(results, columns=['round', 'attack roll', 'attack die', 'hit', 'crit', 'damage', 'hit damage', 'crit damage'])
     return df
 
 def simulate_rounds(num_attacks, attack_context, damage_context, num_rounds=10000):
     # Damage per round
     results = [(round_+1,*attack(attack_context, damage_context),) for round_ in range(num_rounds) for _ in range(num_attacks)]
     results = np.array(results)
-    df = pd.DataFrame(results, columns=['round', 'attack_roll', 'attack_die_roll', 'hit', 'crit', 'damage', 'hit_damage', 'crit_damage'])
+    df = pd.DataFrame(results, columns=['round', 'attack roll', 'attack die', 'hit', 'crit', 'damage', 'hit damage', 'crit damage'])
     return df
 
 
@@ -186,7 +186,7 @@ def simulate_rounds_vectorized(num_attacks, attack_context, damage_context, num_
     rounds = np.repeat(np.arange(1, num_rounds + 1), num_attacks)
     
     results = np.column_stack([rounds, attack_rolls, rolls, hit, crit, damage, hit_damage, crit_damage])
-    df = pd.DataFrame(results, columns=['round', 'attack_roll', 'attack_die_roll', 'hit', 'crit', 'damage', 'hit_damage', 'crit_damage'])
+    df = pd.DataFrame(results, columns=['round', 'attack roll', 'attack die', 'hit', 'crit', 'damage', 'hit damage', 'crit damage'])
     
     return df
 
@@ -446,37 +446,25 @@ fig = generate_histogram(data, x="damage", color="Type", marginal='violin', temp
 
 app = dash.Dash(__name__, external_stylesheets=[style_sheet])
 
-def add_tables(by_round=True,table_index=0):
+def add_tables(by_round=True, width=12):
     if by_round:
-        table_list = [html.H2("Summary Statistics Per Round")]
+        table_list = [dbc.Row(dbc.Col(html.H2("Per Round")))]
         data = df_by_rounds
     else:
-        table_list = [html.H2("Summary Statistics Per Attack")]
+        table_list = [dbc.Row(dbc.Col(html.H2("Per Attack")))]
         data = dfs
-            
+    row = []
+    
     for ii, (c, datac) in enumerate(zip(characters, data)):
         if not by_round:
             datac = datac.drop("round", axis=1)
         df_table = datac.describe().drop("count",axis=0).reset_index().round(3)
-
-        table_list.append(html.H4(c.name, style={'color': colors[ii]})) 
-        # table_list.append(html.Div([
-        #         dash_table.DataTable(
-        #             id=f'table{ii+table_index}',
-        #             columns=[{"name": i, "id": i} for i in df_table.columns],
-        #             data=df_table.to_dict('records'),
-        #             style_header={
-        #                 'backgroundColor': 'rgb(30, 30, 30)',
-        #                 'color': 'white'
-        #             },
-        #             style_data={
-        #                 'backgroundColor': 'rgb(50, 50, 50)',
-        #                 'color': 'white'
-        #             },
-        #         )
-        #     ]))
-        table_list.append(dbc.Table.from_dataframe(df_table, striped=True, bordered=True, hover=True, responsive=True))
-        table_list.append(html.Br())
+        col = []  
+        col.append(html.H4(c.name, style={'color': colors[ii]})) 
+        col.append(dbc.Table.from_dataframe(df_table, striped=True, bordered=True, hover=True, responsive=True))
+        col.append(html.Br())
+        row.append(dbc.Col(col, width={"size": width}))
+    table_list.append(dbc.Row(row))
     return table_list
 
 # app.layout = html.Div([
@@ -489,20 +477,11 @@ def add_tables(by_round=True,table_index=0):
 #     *add_tables(by_round=False)
 # ])
 
-def wrap_element(element, width=12):
-    return dbc.Row([
-        dbc.Col([
-        element
-        ],
-        width={"size": width}) 
-    ])
-
-def wrap_elements(element_list, width=12):
-    rows =[]
-    for element in element_list:
-        rows.append(
-            wrap_element(element, width=width)
-        )
+def wrap_elements(element_list, width=12, same_row=False):
+    if same_row:
+        rows = [dbc.Row([dbc.Col([element], width={"size": width}) for element in element_list])]
+    else:
+        rows = [dbc.Row([dbc.Col([element], width={"size": width})]) for element in element_list]
     return rows
 
 def character_dropdown():
@@ -514,31 +493,45 @@ def character_dropdown():
         ]
     )
 
+def simulate_rounds_input():
+    return html.Div([
+            dbc.Label('Number Of Rounds'),
+            dbc.Input(
+                id='simulate-rounds-input',
+                type='number',
+                value=10000,
+                min=1000,
+                max=1000000,
+                step=10000,
+                )
+    ])
+
+
 app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([
-            html.H1("D&D Damage Per Round"),
-        ],
-        ),
+            html.H1("D&D Damage Simulator"),
+        ]),
     ]),
     dbc.Row([
         dbc.Col([
             character_dropdown(),
-        ],
-        ),
+        ],width={"size": 10}),
+        dbc.Col([simulate_rounds_input()], width={"size": 2}),
     ]),
     dbc.Row([
         dbc.Col([
             dcc.Graph(
                 id='dist-plot',
-                figure=fig
+                figure=fig,
+                style={'height': '60vh'}
             ),
         ],
         # width={"size": 12}
         ),
     ]),
-    *wrap_elements(add_tables(),width=4),
-    *wrap_elements(add_tables(by_round=False, table_index=len(characters))),
+    *add_tables(width=12/len(characters)),
+    *add_tables(by_round=False, width=12/len(characters)),
 
 ],
     fluid=True)
