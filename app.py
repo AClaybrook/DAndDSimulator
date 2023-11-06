@@ -9,7 +9,7 @@ import dash_bootstrap_components as dbc
 from dash import html
 import pandas as pd
 from dataclasses import replace, asdict
-from models import Character, Enemy, AttackContext, DamageContext
+from models import Character, Enemy, AttackContext, DamageContext, Attack
 from numerical_simulation import simulate_character_rounds
 from plots import generate_histogram, COLORS
 
@@ -17,14 +17,12 @@ from plots import generate_histogram, COLORS
 # %%
 # Example
 
+# Build attacks
+attacks = [Attack(name="Greatsword", two_handed=True, ability_stat="strength", damage_die_mod_list=['2d6'], type='weapon (melee)')]*3
+
 # Character stats
-character1 = Character(
-    name='Fighter',
-    proficiency_bonus=4, # Level 9-12
-    ability_modifier=5, # 20-21
-    num_attacks=3,
-    weapon_die='2d6',
-    )
+character1 = Character(name='Fighter',level=12, attacks=attacks, strength=20)
+
 character2 = replace(character1, name='Fighter GWF + Crit On 19', dis=False, GWF=True, crit_on=19)
 character3 = replace(character1, name='Fighter Advantage', adv=True)
 character4 = replace(character1, name='Fighter GWM', GWM=True)
@@ -61,65 +59,63 @@ def generate_character_card(character, color):
         dbc.CardBody([
             dbc.Row([
                 dbc.Col(dbc.Label("Num Attacks", style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=character.num_attacks, min=1, max=100, step=1, style=input_style))
+                dbc.Col(dbc.Input(type="number", value=len(character.attacks), min=1, max=100, step=1, style=input_style))
             ]),
             dbc.Row([
-                dbc.Col(dbc.Label("Ability Modifier", style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=character.ability_modifier, min=-10, max=10, step=1, style=input_style))
-            ]),
+                dbc.Col(dbc.Label("Attacking Stat", style=label_style)),
+                dbc.Col(dbc.Select(options=[{"label": "Strength", "value": "strength"},
+                                            {"label":"Dexterity", "value": "dexterity"},
+                                            {"label":"Constitution", "value": "constitution"},
+                                            {"label":"Intelligence", "value": "intelligence"},
+                                            {"label":"Wisdom", "value": "wisdom"},
+                                            {"label":"Charisma", "value": "charisma"}],
+                                            value='strength', style=input_style))
+                                            ]),
             dbc.Row([
-                dbc.Col(dbc.Label("Weapon Modifier", style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=character.weapon_modifier, min=0, max=10, step=1, style=input_style))
+                dbc.Col(dbc.Label("Level", style=label_style)),
+                dbc.Col(dbc.Input(type="number", value=character.level, min=0, max=20, step=1, style=input_style))
             ]),
-            dbc.Row([
-                dbc.Col(dbc.Label("Proficiency Bonus", style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=character.proficiency_bonus, min=0, max=10, step=1, style=input_style))
-            ]),
-            dbc.Row([
-                dbc.Col(dbc.Label("Add. Attack Modifier", style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=character.additional_attack_modifier, min=0, max=50, step=1, style=input_style))
-            ]),
-            dbc.Row([
-                dbc.Col(dbc.Label("Attack Reroll On", style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=character.attack_reroll_on if character.attack_reroll_on is not None else 0, min=0, max=19, step=1, style=input_style))
-            ]),
-            dbc.Row([
-                dbc.Col(dbc.Label("Crit On", style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=character.crit_on, min=2, max=20, step=1, style=input_style))
-            ]),
-            dbc.Row([
-                dbc.Col(dbc.Label("Weapon Die (1d6)", style=label_style)),
-                dbc.Col(dbc.Input(type="text", value=character.weapon_die, style=input_style))
-            ]),
-            dbc.Row([
-                dbc.Col(dbc.Label("Add. Damage Modifier", style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=character.additional_damage_modifier, min=0, max=50, step=1, style=input_style))
-            ]),
-            dbc.Row([
-                dbc.Col(dbc.Label("Advantage", style=label_style)),
-                dbc.Col(dbc.Checkbox(value=character.adv))
-            ]),
-            dbc.Row([
-                dbc.Col(dbc.Label("Disadvantage", style=label_style)),
-                dbc.Col(dbc.Checkbox(value=character.dis))
-            ]),
-            dbc.Row([
-                dbc.Col(dbc.Label("Great Weapon Master", style=label_style)),
-                dbc.Col(dbc.Checkbox(value=character.GWM))
-            ]),
-            dbc.Row([
-                dbc.Col(dbc.Label("Great Weapon Fighting", style=label_style)),
-                dbc.Col(dbc.Checkbox(value=character.GWF))
-            ]),
-            html.H5("Calculated Values"),
-            dbc.Row([
-                dbc.Col(dbc.Label("Attack Modifier", style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=character.attack_modifier, readonly=True, style=input_style))
-            ]),
-            dbc.Row([
-                dbc.Col(dbc.Label("Damage Modifier", style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=character.damage_modifier, readonly=True, style=input_style))
-            ]),
+            # dbc.Row([
+            #     dbc.Col(dbc.Label("Add. Attack Modifier", style=label_style)),
+            #     dbc.Col(dbc.Input(type="number", value=character.additional_attack_modifier, min=0, max=50, step=1, style=input_style))
+            # ]),
+            # dbc.Row([
+            #     dbc.Col(dbc.Label("Attack Reroll On", style=label_style)),
+            #     dbc.Col(dbc.Input(type="number", value=character.attack_reroll_on if character.attack_reroll_on is not None else 0, min=0, max=19, step=1, style=input_style))
+            # ]),
+            # dbc.Row([
+            #     dbc.Col(dbc.Label("Crit On", style=label_style)),
+            #     dbc.Col(dbc.Input(type="number", value=character.crit_on, min=2, max=20, step=1, style=input_style))
+            # ]),
+            # dbc.Row([
+            #     dbc.Col(dbc.Label("Add. Damage Modifier", style=label_style)),
+            #     dbc.Col(dbc.Input(type="number", value=character.additional_damage_modifier, min=0, max=50, step=1, style=input_style))
+            # ]),
+            # dbc.Row([
+            #     dbc.Col(dbc.Label("Advantage", style=label_style)),
+            #     dbc.Col(dbc.Checkbox(value=character.adv))
+            # ]),
+            # dbc.Row([
+            #     dbc.Col(dbc.Label("Disadvantage", style=label_style)),
+            #     dbc.Col(dbc.Checkbox(value=character.dis))
+            # ]),
+            # dbc.Row([
+            #     dbc.Col(dbc.Label("Great Weapon Master", style=label_style)),
+            #     dbc.Col(dbc.Checkbox(value=character.GWM))
+            # ]),
+            # dbc.Row([
+            #     dbc.Col(dbc.Label("Great Weapon Fighting", style=label_style)),
+            #     dbc.Col(dbc.Checkbox(value=character.GWF))
+            # ]),
+            # html.H5("Calculated Values"),
+            # dbc.Row([
+            #     dbc.Col(dbc.Label("Attack Modifier", style=label_style)),
+            #     dbc.Col(dbc.Input(type="number", value=character.attack_modifier, readonly=True, style=input_style))
+            # ]),
+            # dbc.Row([
+            #     dbc.Col(dbc.Label("Damage Modifier", style=label_style)),
+            #     dbc.Col(dbc.Input(type="number", value=character.damage_modifier, readonly=True, style=input_style))
+            # ]),
         ]),
     ],style=card_style)
 

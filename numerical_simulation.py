@@ -3,15 +3,15 @@
 import numpy as np
 import pandas as pd
 from dataclasses import asdict
-from models import AttackContext, DamageContext
+from models import AttackContext, DamageContext, calculate_attack_and_damage_context
 
 np.random.seed(1) # Set random seed for reproducibility
 
-def roll(num_rolls, die_size=20, reroll_on=None):
+def roll(num_rolls, die_size=20, reroll_on=0):
     """ Roll a die num_rolls times and return the results
         Rerolls dice on an optional reroll value"""
     rolls = np.random.randint(1, die_size+1, size=num_rolls)
-    if reroll_on is not None:
+    if reroll_on > 0:
         rerolls_mask = rolls <= reroll_on
         rolls[rerolls_mask] = np.random.randint(1, die_size+1, size=np.sum(rerolls_mask))
     return rolls
@@ -23,62 +23,110 @@ def roll_adv_dis(num_rolls, adv=False, dis=False, **kwargs):
     elif dis and not adv:
         return roll(2 * num_rolls, **kwargs).reshape(-1, 2).min(axis=1)
     else:
-        return roll(num_rolls, **kwargs).reshape(-1, 1).max(axis=1)
+        return roll(num_rolls, **kwargs)
 
-def attack_roll(num_rolls, attack_modifier=0, enemy_armor_class=15, crit_on=20, **kwargs):
+def attack_roll(num_rolls, num_die = None, die_size=None, modifier=0, difficulty_class=15, crit_on=20,always_hit=False,always_crit=False, saving_throw=False,**kwargs):
     """ Roll an attack roll with num_rolls dice, adding attack_modifier to each roll, tracking hits and crits"""
+    # Special cases
+    ## Some attacks always hit, i.e. magic missile
+    if always_hit:
+        return np.ones(num_rolls)*20+modifier, np.ones(num_rolls)*20, np.ones(num_rolls, dtype=bool), np.zeros(num_rolls, dtype=bool)
+    ## Some attacks always crit, i.e. melee attacks against paralyzed targets always crit
+    if always_crit:
+        return np.ones(num_rolls)*20+attack_modifer, np.ones(num_rolls)*20, np.ones(num_rolls, dtype=bool), np.ones(num_rolls, dtype=bool)
+
+    # Normal case
     rolls = roll_adv_dis(num_rolls,**kwargs)
-    attack_rolls = rolls + attack_modifier
-    # Crit on crit_on or higher
-    crit = np.logical_and(rolls >= crit_on, rolls != 1)
+    # Add modifiers
+    attack_rolls = rolls + modifier
+    num_die =  [] if num_die is None else num_die
+    die_size = [] if die_size is None else die_size
+    for nd, ds in zip(num_die, die_size):
+        attack_rolls += roll_adv_dis(num_rolls * nd, die_size=ds, **kwargs).reshape(-1, nd).sum(axis=1)
+    # Saving throw, a hit is if the roll is lower than the difficulty class, crits are ignored
+    if saving_throw:
+        hit = attack_rolls < difficulty_class
+        return attack_rolls, rolls, hit, np.zeros(num_rolls, dtype=bool)
     # Normal hit and not a crit miss
-    hit = np.logical_and(attack_rolls >= enemy_armor_class, rolls != 1)
-    # Crits automatically hit
+    hit = np.logical_and(attack_rolls >= difficulty_class, rolls != 1)
+    # Crit on crit_on or higher and crits automatically hit
+    crit = np.logical_and(rolls >= crit_on, rolls != 1)
     hit[crit] = True
     return attack_rolls, rolls, hit, crit
 
-def damage_roll(hit, crit, num_die=1, damage_die=6, damage_modifier=0, **kwargs):
+def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multiplier=1, miss_num_die=None, miss_damage_die=None, miss_damage_modifier=0, failed_multiplier=1, crit_num_die=None, crit_damage_die=None, crit_damage_modifier=0, **kwargs):
     """ Roll damage for each hit and crit, adding damage_modifier to each roll"""
-    # Roll damage for hits
+    # Defaults
+    num_die =  [] if num_die is None else num_die
+    die_size = [] if die_size is None else die_size
+    miss_num_die = [] if miss_num_die is None else miss_num_die
+    miss_damage_die = [] if miss_damage_die is None else miss_damage_die
+    crit_num_die = [] if crit_num_die is None else crit_num_die
+    crit_damage_die = [] if crit_damage_die is None else crit_damage_die
+
     num_rolls = len(hit)
+    # Roll damage for hits
     hit_damage = np.zeros(num_rolls)
-    hit_damage[hit] = roll(np.sum(hit) * num_die, die_size=damage_die, **kwargs).reshape(-1, num_die).sum(axis=1) + damage_modifier
-    # Roll damage for crits
+    hit_damage[hit] += modifier
+    for nd, ds in zip(num_die, die_size):
+        hit_damage[hit] += roll_adv_dis(np.sum(hit) *  nd, die_size=ds, **kwargs).reshape(-1, nd).sum(axis=1)
+    hit_damage[hit] = np.floor(hit_damage[hit]*damage_multiplier)
+    # Roll damage for misses/failed saving throws
+    miss = ~hit
+    miss_damage = np.zeros(num_rolls)
+    miss_damage[miss] = miss_damage_modifier
+    for nd, ds in zip(miss_num_die, miss_damage_die):
+        miss_damage[miss] += roll_adv_dis(np.sum(miss) *  nd, die_size=ds, **kwargs).reshape(-1, nd).sum(axis=1)
+    miss_damage[miss] = np.floor(miss_damage[miss]*failed_multiplier) # Usually 1/2 for saving throws
+    miss_damage[miss] = np.floor(miss_damage[miss]*damage_multiplier)
+    # Roll damage for crits (roll hit dice twice, traditionally there is no flat modifier for crits)
     crit_damage = np.zeros(num_rolls)
-    crit_damage[crit] = roll(np.sum(crit) * num_die, die_size=damage_die, **kwargs).reshape(-1, num_die).sum(axis=1)
-    # Track total, hit, and crit damage
-    total_damage = hit_damage + crit_damage
-    return total_damage, hit_damage, crit_damage
+    for nd, ds in zip(num_die, die_size):
+        crit_damage[crit] = roll_adv_dis(np.sum(crit) * nd, die_size=ds, **kwargs).reshape(-1, nd).sum(axis=1)
+    # Bonus damage for crits, i.e. half-orc savage attacks, brutal critical, etc.
+    crit_damage[crit] += crit_damage_modifier
+    for nd, ds in zip(crit_num_die, crit_damage_die):
+        crit_damage[crit] = roll_adv_dis(np.sum(crit) * nd, die_size=ds, **kwargs).reshape(-1, nd).sum(axis=1)
+    crit_damage[crit] = np.floor(crit_damage[crit]*damage_multiplier)
+    # Track total, hit, crit, and miss/fail damage
+    total_damage = hit_damage + crit_damage + miss_damage
+    return total_damage, hit_damage, crit_damage, miss_damage
 
 def attack(num_rolls, attack_context, damage_context):
     """ Roll attack and damage rolls for num_rolls dice, using attack_context and damage_context"""
     attack_rolls, rolls, hit, crit = attack_roll(num_rolls, **attack_context)
-    total_damage, hit_damage, crit_damage = damage_roll(hit, crit, **damage_context)
-    return attack_rolls, rolls, hit, crit, total_damage, hit_damage, crit_damage
+    total_damage, hit_damage, crit_damage, miss_damage = damage_roll(hit, crit, **damage_context)
+    return attack_rolls, rolls, hit, crit, total_damage, hit_damage, crit_damage, miss_damage
 
-def simulate_rounds(num_attacks, attack_context, damage_context, num_rounds=10000):
+def simulate_rounds(attack_context, damage_context, num_rounds=10000):
     """ Simulate num_rounds rounds of combat, with num_attacks attacks per round, using attack_context and damage_context"""
-    num_rolls = num_rounds * num_attacks
-    attack_rolls, rolls, hit, crit, damage, hit_damage, crit_damage = attack(num_rolls, attack_context, damage_context)
-    rounds = np.repeat(np.arange(1, num_rounds + 1), num_attacks)
-    results = np.column_stack([rounds, damage, hit_damage, crit_damage, attack_rolls, rolls, hit, hit != crit, crit])
-    df = pd.DataFrame(results, columns=['Round', 'Damage', 'Damage (From Hit)', 'Damage (From Crit)', 'Attack Roll', 'Attack Roll (Die)', 'Hit', 'Hit (Non-Crit)', 'Hit (Crit)'])
+    attack_rolls, rolls, hit, crit, damage, hit_damage, crit_damage, miss_damage = attack(num_rounds, attack_context, damage_context)
+    rounds = np.arange(1, num_rounds + 1)
+    results = np.column_stack([rounds, damage, hit_damage, crit_damage,miss_damage, attack_rolls, rolls, hit, hit != crit, crit])
+    df = pd.DataFrame(results, columns=['Round', 'Damage', 'Damage (From Hit)', 'Damage (From Crit)', 'Damage (Miss/Fail)','Attack Roll', 'Attack Roll (Die)', 'Hit', 'Hit (Non-Crit)', 'Hit (Crit)'])
     return df
 
-def simulate_character_rounds(characters, enemy):
+def simulate_character_rounds(characters, enemy, num_rounds=10000):
     """ Simulate rounds of combat for a list of characters against an enemy"""
     dfs = []
     df_by_rounds = []
-    for c in characters:
-        # Attack roll modifiers
-        attack_context = AttackContext.from_character_and_enemy(c, enemy)
 
-        # Damage roll modifiers
-        damage_context = DamageContext.from_character_and_enemy(c, enemy)
+    for c in characters:
+        # Attack and Damage Contexts
+        attack_contexts, damage_contexts = calculate_attack_and_damage_context(c, enemy)
+
+        # Per Attack
+        dfPerAttacks = []
+        for a, d in zip(attack_contexts, damage_contexts):
+            dfPerAttack = simulate_rounds(asdict(a), asdict(d), num_rounds=num_rounds)
+            dfPerAttacks.append(dfPerAttack)
+        
+        # All Attacks per Round
+        df = pd.concat(dfPerAttacks)
+        dfs.append(df)
 
         # Num Rounds
-        df = simulate_rounds(c.num_attacks, asdict(attack_context), asdict(damage_context), num_rounds=100000)
         df_by_round = df.groupby('Round').sum()
-        dfs.append(df)
         df_by_rounds.append(df_by_round)
+
     return dfs, df_by_rounds
