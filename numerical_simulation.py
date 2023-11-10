@@ -33,7 +33,7 @@ def attack_roll(num_rolls, num_die = None, die_size=None, modifier=0, difficulty
         return np.ones(num_rolls)*20+modifier, np.ones(num_rolls)*20, np.ones(num_rolls, dtype=bool), np.zeros(num_rolls, dtype=bool)
     ## Some attacks always crit, i.e. melee attacks against paralyzed targets always crit
     if always_crit:
-        return np.ones(num_rolls)*20+attack_modifer, np.ones(num_rolls)*20, np.ones(num_rolls, dtype=bool), np.ones(num_rolls, dtype=bool)
+        return np.ones(num_rolls)*20+modifier, np.ones(num_rolls)*20, np.ones(num_rolls, dtype=bool), np.ones(num_rolls, dtype=bool)
 
     # Normal case
     rolls = roll_adv_dis(num_rolls,**kwargs)
