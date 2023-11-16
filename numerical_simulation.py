@@ -110,6 +110,7 @@ def simulate_character_rounds(characters, enemy, num_rounds=10000):
     """ Simulate rounds of combat for a list of characters against an enemy"""
     dfs = []
     df_by_rounds = []
+    print(num_rounds)
 
     for c in characters:
         # Attack and Damage Contexts

@@ -10,25 +10,14 @@ sidebar_header = dbc.Row(
         dbc.Col(
             [
                 html.Button(
-                    # use the Bootstrap navbar-toggler classes to style
                     html.Span(className="navbar-toggler-icon"),
                     className="navbar-toggler",
-                    # the navbar-toggler classes don't set color
-                    # style={
-                    #     "color": "rgba(0,0,0,.5)",
-                    #     "border-color": "rgba(0,0,0,.1)",
-                    # },
+                    # TODO: Update color of navbar toggler to match theme, currently hardcoded in css. Need dynamically readjust the stroke color of the icon somehow
                     id="navbar-toggle",
                 ),
                 html.Button(
-                    # use the Bootstrap navbar-toggler classes to style
                     html.Span(className="navbar-toggler-icon"),
                     className="navbar-toggler",
-                    # the navbar-toggler classes don't set color
-                    # style={
-                    #     "color": "rgba(0,0,0,.5)",
-                    #     "border-color": "rgba(0,0,0,.1)",
-                    # },
                     id="sidebar-toggle",
                 ),
             ],

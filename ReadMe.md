@@ -25,7 +25,7 @@
 * 1 Enemy at a time
 * Races
 * Focused on damage, therefore actions that do not involve damage as not implemented
-* Validation of build feasability Garbage in/ garbage out, for example don't use duelling and GWF, the bonuses will be stacked since there is no check. 
+* Validation of build feasability Garbage in/ garbage out, for example don't use dueling and GWF, the bonuses will be stacked since there is no check. 
 * No weapons
 * Crit on reductions needs to be applied manually, thing such as champion, spell sniper etc
 * no status effects, stunned, restrained etc
@@ -47,6 +47,7 @@
 * Extract "insights", i.e. when to turn on/off GWM/Sharpshooter
 * 5e vs BG3 ruleset
 * Damage Source, to see impact of various combinations
+
 
 ## Low priority ideas ##
 * Ability checks\

@@ -137,9 +137,11 @@ class Character(Creature):
     adv: bool = False
     dis: bool = False
     additional_attack_modifier: int = 0
+    additional_attack_die: str = "0d4"
     attack_reroll_on: int = 0
     crit_on: int = 20
     additional_damage_modifier: int = 0
+    additional_damage_die: str = "0d4"
     damage_reroll_on: int = 0
     damage_on_miss: int = 0
     # Additional Crit Damage
@@ -159,7 +161,7 @@ class Character(Creature):
     # Class Traits
     # Fighting Style
     archery: bool = False
-    duelling: bool = False
+    dueling: bool = False
     GWF: bool = False # reroll 1s and 2s on damage
     TWF: bool = False
     # Barbarian
@@ -287,7 +289,7 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
                 damage_modifier += 10
             if character.savage_attacker:
                 damage_adv=True
-            if character.duelling and not attack.two_handed:
+            if character.dueling and not attack.two_handed:
                 damage_modifier += 2
             if character.GWF and attack.two_handed:
                 damage_reroll_on = max(damage_reroll_on, 2)
