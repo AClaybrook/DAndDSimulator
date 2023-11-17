@@ -99,6 +99,7 @@ def simulate_rounds_input():
     ])
 
 app = Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[style_sheet, dbc.icons.FONT_AWESOME])
+app.config.suppress_callback_exceptions = True
 
 # Plot data
 data = pd.concat([pd.DataFrame({'damage': df_by_round["Damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)])
@@ -137,6 +138,7 @@ content = html.Div(dbc.Container([
         #     dbc.Button(html.I(className="fa-solid fa-plus"),class_name="mb-3", color="primary",style={'display': 'inline-block'})
         # ],width=2),
         dbc.Row(generate_character_cards(characters),id="character_row"),
+        
 
     ],style=row_style, class_name="mb-4"),
     # Simulator
@@ -277,8 +279,11 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 #     del attacks_list[n_clicks]
 #     return attacks_list
 
+#%%
+
 register_callbacks(app)
 app.run_server(debug=True)
+print("Starting app")
 
 
 

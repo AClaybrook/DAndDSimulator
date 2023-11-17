@@ -26,7 +26,7 @@ def generate_character_cards(characters):
     return cards
 
 
-def generate_character_card(character_name, character=None, color="", index=-1):
+def generate_character_card(character_name, character=None, color="", index=1):
     input_style = {'padding-top': '0.0rem', 'padding-bottom': '0.0rem'}
     label_style = {'margin-bottom': '0.2rem'}
     card_style = {'max-height': '60vh','min-height': '60vh','overflow-y': 'auto'}
@@ -356,7 +356,7 @@ def generate_character_card(character_name, character=None, color="", index=-1):
         dbc.Card([
             dbc.CardHeader(dbc.Row([
                 dbc.Col(html.H4(vals["name"],style={'color': color, 'white-space':'nowrap'},id={"type":"character name","index":index}),style={'overflow-x': 'auto'}, width={"size":9},class_name="pe-0"),
-                dbc.Col([dbc.Button(html.I(className="fa-solid fa-copy"), color="primary",class_name="me-1",style={"display":"flex"}),
+                dbc.Col([dbc.Button(html.I(className="fa-solid fa-copy"), color="primary",class_name="me-1",style={"display":"flex"},id={"type": "copy character", "index": index}),
                         dbc.Button(html.I(className="fa-solid fa-x"), color="danger",class_name="me-1",style={"display":"flex"},id={"type": "delete character", "index": index}),
                         ], style={"text-align": "right","padding":"0rem","display":"flex"},width=3)
             ])), 
@@ -422,3 +422,7 @@ def generate_character_card(character_name, character=None, color="", index=-1):
             #     dbc.Col(dbc.Input(type="number", value=character.damage_modifier, readonly=True, style=input_style))
             # ]),
         # ]),
+
+
+# def copy_character_card(card, index, color=""):
+#     card.id = {"type": "character card", "index": index}
