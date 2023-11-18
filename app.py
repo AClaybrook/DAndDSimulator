@@ -5,7 +5,6 @@ import numpy as np
 from IPython.display import display
 from dash import dcc, html, Input, Output, State, MATCH, ALL, Patch, Dash
 import dash_bootstrap_components as dbc
-from dash import html
 import pandas as pd
 from dataclasses import replace, asdict
 from models import Character, Enemy, AttackContext, DamageContext, Attack
@@ -14,6 +13,7 @@ from plots import generate_histogram, COLORS
 from callbacks import register_callbacks
 from components.sidebar import sidebar
 from components.character_card import generate_character_cards
+import json
 
 
 # %%
@@ -138,7 +138,7 @@ content = html.Div(dbc.Container([
         #     dbc.Button(html.I(className="fa-solid fa-plus"),class_name="mb-3", color="primary",style={'display': 'inline-block'})
         # ],width=2),
         dbc.Row(generate_character_cards(characters),id="character_row"),
-        
+        dcc.Store(id='active_ids', data=json.dumps(list(range(len(characters))))), # Used to keep track of character ids, since character can be added, copied and deleted
 
     ],style=row_style, class_name="mb-4"),
     # Simulator

@@ -20,7 +20,7 @@ attack_options = [{"label": "Weapon (Melee)","value": "weapon (melee)"},
 
 def generate_character_cards(characters):
     cards = [
-        generate_character_card(c.name, character=c, color=COLORS[ii], index=ii+1)
+        generate_character_card(c.name, character=c, color=COLORS[ii], index=ii)
         for ii, c in enumerate(characters)
         ]
     return cards
