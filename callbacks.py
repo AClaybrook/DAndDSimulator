@@ -70,6 +70,7 @@ def register_callbacks(app, sidebar=True):
     @app.callback(
             Output({'type': 'character name',"index": MATCH},"children"),
             Input({'type': 'character name input',"index": MATCH},"value"),
+            prevent_initial_call=True
     )
     def update_name(name):
         return name
@@ -86,6 +87,7 @@ def register_callbacks(app, sidebar=True):
         delete_id = ctx.triggered_id["index"]
         active_ids, _ = get_active_ids_and_new_id(active_ids_json)
         index = active_ids.index(delete_id)
+
         # If no button was clicked, don't update
         if clicked[index] is None:
             raise PreventUpdate
@@ -140,10 +142,11 @@ def register_callbacks(app, sidebar=True):
         # Copy the existing character and replace its id and color 
         character = characters[index]    
         card_str = json.dumps(character)
-        card_str = card_str.replace(f'"index": {copy_id}', f'"index": {new_id}') #TODO: this is not working, fix it
+        card_str = card_str.replace(f'"index": {copy_id}', f'"index": {new_id}')
         character = json.loads(card_str)
-        # # TODO: replace color
+        # TODO: Find a cleaner way to replace colors... Perhaps find the 
         color = COLORS[new_id]
+        character['props']['children']['props']['children'][0]['props']['children']['props']['children'][0]['props']['children']['props']['style']['color'] = color
         print(color)
 
         patched_children = Patch()
@@ -151,107 +154,3 @@ def register_callbacks(app, sidebar=True):
         active_ids.append(new_id)
         
         return patched_children, set_active_ids(active_ids), json.dumps(copy_counts)
-    
-    # @app.callback(
-    #         Output({'type': 'character card',"index": MATCH},"children", allow_duplicate=True),
-    #         Input({'type': 'copy character',"index": MATCH},"n_clicks"),
-    #         State({'type': 'character card',"index": MATCH},"children"),
-    #         State({'type': 'character card',"index": MATCH},"id"),
-    #         prevent_initial_call=True
-    # )
-    # def copy_character(clicked, card_children, id):
-    #     if clicked is None:
-    #         raise PreventUpdate
-        
-    #     # Simply add 1 to the index, this should 
-    #     index = id["index"]
-    #     card_str = json.dumps(card_children)
-    #     card_str = card_str.replace(f'"index": {index}', f'"index": {index+1}')
-    #     card_children = json.loads(card_str)
-    
-    #     return card_children
-    
-    
-    # #TODO: Fix this callback, OLD
-    # @app.callback(
-    #     Output("character_row","children", allow_duplicate=True),
-    #     State("character_row","children"),
-    #     State({'type': 'character card',"index": ALL},"children"),
-    #     State({'type': 'character card',"index": ALL},"id"),
-    #     Input({'type': 'copy character',"index": ALL},"n_clicks"),
-    #     prevent_initial_call=True
-    # )
-    # def copy_character(existing_characters, card_children, id, clicked):
-    #     # Find which button was clicked
-    #     # Have to pass in all values since MATCH only works if the output also has a MATCH
-    #     copy_id = ctx.triggered_id['index']
-    #     copy_index = [triggering_index for triggering_index,i in enumerate(id) if copy_id == i['index']]
-    #     if len(copy_index) != 1:
-    #         raise PreventUpdate
-    #     copy_index = copy_index[0]
-    #     id = id[copy_index]
-    #     card_children = card_children[copy_index]
-    #     clicked = clicked[copy_index]
-
-    #     if clicked is None:
-    #         raise PreventUpdate
-        
-    #     deleted_indices, num_children = get_deleted_characters(existing_characters)
-        
-    #     patched_children = Patch()
-    #     # TODO: Simply add 1 to the index, this should deconflict with existing indices...
-    #     index = id["index"]
-    #     new_index = index+1
-    #     card_str = json.dumps(card_children)
-    #     card_str = card_str.replace(f'"index": {index}', f'"index": {new_index}')
-    #     card_children = json.loads(card_str)
-
-    #     # replace color
-    #     color = COLORS[deleted_indices[0][0]] if len(deleted_indices) > 0 else COLORS[num_children]
-    #     print(color)
-
-    #     # Create new card in a column
-    #     new_col = dbc.Col(card_children, width=3, id={"type": "character card", "index": new_index})
-        
-    #     if len(deleted_indices) > 0:
-    #         patched_children[deleted_indices[0][0]] = new_col
-    #     else:
-    #         patched_children.append(new_col)
-    #     return patched_children
-    
-
-
-
-    # @app.callback(
-    #         Output("character_row","children", allow_duplicate=True),
-    #         # State("character_row","children"),
-    #         Input({'type': 'delete character',"index": MATCH},"n_clicks"),
-    #         State({'type': 'character card',"index": MATCH},"id"),
-    #         prevent_initial_call=True
-    # )
-    # def delete_character(clicked, id):
-    #     if clicked is None:
-    #         raise PreventUpdate
-        
-    #     print(clicked)
-    #     print(id)
-        
-    #     patched_children = Patch()
-    #     del patched_children[id]
-
-    #     return patched_children
-
-
-    # @app.callback(
-    #         Output({'type': 'character name',"index": MATCH},"children", allow_duplicate=True),
-    #         Input({'type': 'delete character',"index": MATCH},"n_clicks"),
-    #         State({'type': 'character card',"index": MATCH},"id"),
-    #         prevent_initial_call=True
-    # )
-    # def delete_character(clicked, id):
-    #     if clicked is None:
-    #         raise PreventUpdate
-
-    #     return "testing"
-
-
