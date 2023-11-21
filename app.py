@@ -98,8 +98,8 @@ def simulate_rounds_input():
                 )
     ])
 
-app = Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[style_sheet, dbc.icons.FONT_AWESOME])
-app.config.suppress_callback_exceptions = True
+app = Dash(__name__, external_stylesheets=[style_sheet, dbc.icons.FONT_AWESOME])
+# app.config.suppress_callback_exceptions = True
 
 # Plot data
 data = pd.concat([pd.DataFrame({'damage': df_by_round["Damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)])
@@ -139,6 +139,7 @@ content = html.Div(dbc.Container([
         # ],width=2),
         dbc.Row(generate_character_cards(characters),id="character_row"),
         dcc.Store(id='active_ids', data=json.dumps(list(range(len(characters))))), # Used to keep track of character ids, since character can be added, copied and deleted
+        dcc.Store(id='copy_counts', data=json.dumps({})), # Used to keep track of copied character counts, since this gets triggered without button clicks
 
     ],style=row_style, class_name="mb-4"),
     # Simulator

@@ -64,3 +64,7 @@
 * https://www.reddit.com/r/BG3Builds/comments/157p0cl/the_math_of_critical_hits_in_dd_5e_is_critfishing/?onetap_auto=true
 * https://statmodeling.stat.columbia.edu/2014/07/12/dnd-5e-advantage-disadvantage-probability/
 
+# Implementation Quirks:
+* Copy call back and is getting called when a character is deleted, because the Inputs techically change, but no button was clicked. 
+    * Solution was to track the copy counts in state and not update if the triggering id's value was known and did not increment.
+* Can not use MATCH when output doesn't have a MATCH, thus settled on reading in ALL Inputs
