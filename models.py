@@ -43,6 +43,7 @@ class Attack:
     name: str = 'Attack'
     bonus_attack_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['1d6', 2]
     bonus_damage_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['1d6', 2]
+    
     proficent: bool = True
     type: Literal["weapon (melee)","weapon (ranged)","spell","unarmed","thrown"] = 'weapon (melee)'
     ability_stat: Literal["strength","dexterity","constitution","intelligence","wisdom","charisma"] = 'strength'
@@ -63,6 +64,8 @@ class Attack:
     saving_throw_success_multiplier: float = 0.5
     # Unused
     damage_type = 'slashing'
+    bonus_crit_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['1d6', 2]
+    bonus_miss_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['1d6', 2]
 
 @dataclass
 class Creature:
@@ -258,17 +261,12 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
         damage_multiplier = 1
 
         damage_failed_multiplier = 0
-        crit_num_die = []
-        crit_damage_die = []
-        crit_damage_modifier = 0
-        miss_num_die = []
-        miss_damage_die = []
-        miss_damage_modifier = 0
 
         # Attack Specific        
-        damage_die_mod_list = [attack.damage] + attack.bonus_damage_die_mod_list
         attack_num_die, attack_die_sizes, bonus_attack_mod = multiple_die_and_mod_from_list(attack.bonus_attack_die_mod_list)
-        damage_num_die, damage_die_sizes, bonus_damage_mod = multiple_die_and_mod_from_list(damage_die_mod_list)
+        damage_num_die, damage_die_sizes, bonus_damage_mod = multiple_die_and_mod_from_list([attack.damage] + attack.bonus_damage_die_mod_list)
+        miss_num_die, miss_damage_die, miss_damage_modifier = multiple_die_and_mod_from_list(attack.bonus_miss_die_mod_list)
+        crit_num_die, crit_damage_die, crit_damage_modifier = multiple_die_and_mod_from_list(attack.bonus_crit_die_mod_list)
 
         attack_modifier += bonus_attack_mod
         damage_modifier += bonus_damage_mod

@@ -1,9 +1,10 @@
 from dash import Input, Output, State, Patch, MATCH, ALL, ctx
 from plots import COLORS
-from components.character_card import generate_character_card
+from components.character_card import generate_character_card, set_attack_from_values, extract_attack_ui_values
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 import json
+import numpy as np
 
 MAX_CHARACTERS = min(8,len(COLORS)) # There are 10 colors and 4 characters fit per row, so 8 is a good max
 
@@ -144,7 +145,7 @@ def register_callbacks(app, sidebar=True):
         card_str = json.dumps(character)
         card_str = card_str.replace(f'"index": {copy_id}', f'"index": {new_id}')
         character = json.loads(card_str)
-        # TODO: Find a cleaner way to replace colors... Perhaps find the 
+        # TODO: Find a cleaner way to replace colors... Perhaps find the h4 and id string and then replace the color with rgb values
         color = COLORS[new_id]
         character['props']['children']['props']['children'][0]['props']['children']['props']['children'][0]['props']['children']['props']['style']['color'] = color
         print(color)
@@ -154,3 +155,146 @@ def register_callbacks(app, sidebar=True):
         active_ids.append(new_id)
         
         return patched_children, set_active_ids(active_ids), json.dumps(copy_counts)
+    
+    ## Attacks
+    # @app.callback(
+    #     Output({'type': 'attack',"index": MATCH},"children"),
+    #     Input({'type': 'add-attack',"index": MATCH},"value"),
+    #     Input({'type': 'attack',"index": MATCH, "num": ALL},"active"),
+    #     prevent_initial_call=True
+    # )
+    # def update_attack(attack):
+    #     return attack
+
+
+    # @app.callback(
+    #     Output({'type': 'attack',"index": MATCH},"children"),
+    #     Output({'type': 'attack',"index": MATCH, "num": ALL},"active"),
+    #     State({'type': 'add-attack',"index": MATCH},"value"),
+    #     Input({'type': 'attack',"index": MATCH, "num": ALL},"active"),
+    #     prevent_initial_call=True
+    # )
+    # def update_attack(attack, active_attacks):
+
+    #     return attack
+
+
+    # WORKS
+    # @app.callback(
+    #     Output({'type': 'attack',"index": MATCH, "num": ALL},"active"),
+    #     Input({'type': 'attack',"index": MATCH, "num": ALL},"n_clicks_timestamp"),
+    #     prevent_initial_call=True
+    # )
+    # def select_attack(selected_attacks):
+    #     # Find last clicked attack
+    #     max_ = 0 
+    #     index = None
+    #     for ii, time in enumerate(selected_attacks):
+    #         if time is not None and time > max_:
+    #             max_ = time
+    #             index = ii
+
+    #     # Prevent if all attacks are None
+    #     if index is None:
+    #         raise PreventUpdate
+
+    #     # Update actively selected attacks
+    #     attacks = [index == ii for ii in range(len(selected_attacks))]
+    #     return attacks
+
+    # TODO: Check that this works
+    @app.callback(
+        Output({'type': 'attack',"index": MATCH, "num": ALL},"active"),
+        Output({'type': 'attack_ui',"index": MATCH},"children"),
+        Input({'type': 'attack',"index": MATCH, "num": ALL},"n_clicks_timestamp"),
+        State({'type': 'attack_store',"index": MATCH},"data"),
+        prevent_initial_call=True
+    )
+    def select_attack(selected_attacks, avals):
+        # Find last clicked attack
+        max_ = 0 
+        index = None
+        for ii, time in enumerate(selected_attacks):
+            if time is not None and time > max_:
+                max_ = time
+                index = ii
+
+        # Prevent if all attacks are None
+        if index is None:
+            raise PreventUpdate
+
+        # Update actively selected attacks
+        attacks = [index == ii for ii in range(len(selected_attacks))]
+
+        # Update attack ui to match the values of the selected attack
+        attack_ui = set_attack_from_values(json.loads(avals), index)
+        
+        return attacks, attack_ui 
+
+    @app.callback(
+        Output({'type': 'attack_store',"index": MATCH},"data"),
+        Output({'type': 'attacks',"index": MATCH},"children"),
+        Input({"type": "add-attack", "index": MATCH},"n_clicks_timestamp"),
+        State({"type": "attack_ui", "index": MATCH},"children"),
+        State({'type': 'attack_store',"index": MATCH},"data"),
+        State({'type': 'attacks',"index": MATCH},"children"),
+        prevent_initial_call=True
+    )
+    def add_attack(add_attack_clicked, attack_ui_list, avals, existing_attacks):
+        # Prevent if all attacks are None
+        if add_attack_clicked is None:
+            raise PreventUpdate
+
+        # TODO: Determine if adding logic to make sure only adding within the last second is necessary
+
+        # Get values from UI update attack store
+        new_attack, num_attacks = extract_attack_ui_values(attack_ui_list)
+
+        # Append to existing attack store
+        avals_updated = json.loads(avals)
+        for ii in range(num_attacks):
+            avals_updated.append(new_attack)
+
+        # Update UI attack list
+        attacks_updated = existing_attacks
+        index=ctx.triggered_id["index"]
+        for ii in range(num_attacks):
+            jj = ii + len(existing_attacks) # TODO: Should this be the max?
+            attacks_updated.append(dbc.ListGroupItem(new_attack["name"], active=False, id={"type": "attack", "index": index, "num": jj})) 
+
+        print("Done")                           
+        return json.dumps(avals_updated), attacks_updated
+    
+
+    @app.callback(
+        Output({'type': 'attack_store',"index": MATCH},"data", allow_duplicate=True),
+        Output({'type': 'attacks',"index": MATCH},"children", allow_duplicate=True),
+        Input({"type": "delete-attack", "index": MATCH},"n_clicks_timestamp"),
+        State({'type': 'attack_store',"index": MATCH},"data"),
+        State({'type': 'attacks',"index": MATCH},"children"),
+        State({'type': 'attack',"index": MATCH, "num": ALL},"active"),
+        State({'type': 'attack',"index": MATCH, "num": ALL},"id"),
+        prevent_initial_call=True
+    )
+    def delete_attack(delete_attack_clicked, avals, existing_attacks, active_attacks):
+        # Prevent if all attacks are None
+        if delete_attack_clicked is None:
+            raise PreventUpdate
+
+        # Prevent if all attacks are None
+        index = ctx.triggered_id["index"]
+        if index is None:
+            raise PreventUpdate
+
+        # Update actively selected attacks
+        attack_index = [ii for ii, a in enumerate(active_attacks) if a == True][0]
+
+        # Delete from store and UI
+        avals_updated = json.loads(avals)
+        for ii in range(len(avals_updated)):
+            if ii == attack_index:
+                del avals_updated[ii]
+                del existing_attacks[ii]
+                break
+
+        return json.dumps(avals_updated), existing_attacks
