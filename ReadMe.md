@@ -2,7 +2,14 @@
 
 * Simulates many turns of combat to find distributions of damage, based on various assumptions
 * Analytic methods are great for averages and can probably even be applied here, but numerical simulation is just easier for complicated values
-* Comparison of up to 4 characters at once
+* Comparison of up to 12 characters at once
+
+## Getting Started
+
+* Currently only runs locally. install the requirements using
+    * pipenv shell 
+    * pip install --ignore-pipfile
+    * python app.py
 
 ## Design Intent ##
 
