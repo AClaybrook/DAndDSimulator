@@ -289,7 +289,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
     i = 0
     attacks = dbc.Card([
         dbc.CardBody([
-            html.Div(set_attack_from_values(avals, i), id={"type": "attack_ui", "index": index}),
+            html.Div(set_attack_from_values(avals, index), id={"type": "attack_ui", "index": index}),
             dbc.Row([ 
                 dbc.Col([
                     dbc.Button(html.I(className="fa-solid fa-plus"), color="primary", class_name="me-1", id={"type": "add-attack", "index": index}),

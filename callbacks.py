@@ -11,10 +11,14 @@ MAX_CHARACTERS = min(8,len(COLORS)) # There are 10 colors and 4 characters fit p
 # Manipulating ids
 def get_active_ids_and_new_id(ids_json):
     ids = json.loads(ids_json)
+    new_id = get_new_id(ids)
+    return ids, new_id
+
+def get_new_id(ids):
     ids_set = set(ids)
     deleted_ids = [i for i in range(len(ids)) if i not in ids_set]
     new_id = deleted_ids[0] if len(deleted_ids) > 0 else len(ids)
-    return ids, new_id
+    return new_id
 
 def set_active_ids(ids):
     return json.dumps(ids)
@@ -208,9 +212,11 @@ def register_callbacks(app, sidebar=True):
         Output({'type': 'attack_ui',"index": MATCH},"children"),
         Input({'type': 'attack',"index": MATCH, "num": ALL},"n_clicks_timestamp"),
         State({'type': 'attack_store',"index": MATCH},"data"),
+        State({"type": "add-attack", "index": MATCH},"n_clicks_timestamp"),
+        State({"type": "delete-attack", "index": MATCH},"n_clicks_timestamp"),
         prevent_initial_call=True
     )
-    def select_attack(selected_attacks, avals):
+    def select_attack(selected_attacks, avals, add_attack_clicked, delete_attack_clicked):
         # Find last clicked attack
         max_ = 0 
         index = None
@@ -221,6 +227,21 @@ def register_callbacks(app, sidebar=True):
 
         # Prevent if all attacks are None
         if index is None:
+            raise PreventUpdate
+        
+        # Prevent if add or delete attack was clicked recently
+        max_add = 0
+        if isinstance(add_attack_clicked, list):
+            max_add = max([v if v is not None else 0 for v in add_attack_clicked])
+        elif isinstance(add_attack_clicked, int):
+            max_add = add_attack_clicked
+        max_delete = 0
+        if isinstance(delete_attack_clicked, list):
+            max_delete = max([v if v is not None else 0 for v in delete_attack_clicked])
+        elif isinstance(delete_attack_clicked, int):
+            max_delete = delete_attack_clicked
+        most_recent_button_click = max(max_add, max_delete)
+        if max_ < most_recent_button_click:
             raise PreventUpdate
 
         # Update actively selected attacks
@@ -257,12 +278,13 @@ def register_callbacks(app, sidebar=True):
 
         # Update UI attack list
         attacks_updated = existing_attacks
+        nums = [int(a["props"]["id"]["num"]) for a in existing_attacks]
         index=ctx.triggered_id["index"]
         for ii in range(num_attacks):
-            jj = ii + len(existing_attacks) # TODO: Should this be the max?
+            jj = get_new_id(nums)
+            nums.append(jj)
             attacks_updated.append(dbc.ListGroupItem(new_attack["name"], active=False, id={"type": "attack", "index": index, "num": jj})) 
-
-        print("Done")                           
+                         
         return json.dumps(avals_updated), attacks_updated
     
 
@@ -273,7 +295,6 @@ def register_callbacks(app, sidebar=True):
         State({'type': 'attack_store',"index": MATCH},"data"),
         State({'type': 'attacks',"index": MATCH},"children"),
         State({'type': 'attack',"index": MATCH, "num": ALL},"active"),
-        State({'type': 'attack',"index": MATCH, "num": ALL},"id"),
         prevent_initial_call=True
     )
     def delete_attack(delete_attack_clicked, avals, existing_attacks, active_attacks):
@@ -287,7 +308,10 @@ def register_callbacks(app, sidebar=True):
             raise PreventUpdate
 
         # Update actively selected attacks
-        attack_index = [ii for ii, a in enumerate(active_attacks) if a == True][0]
+        attack_index = [ii for ii, a in enumerate(active_attacks) if a == True]
+        if len(attack_index) != 1:
+            raise PreventUpdate
+        attack_index = attack_index[0]
 
         # Delete from store and UI
         avals_updated = json.loads(avals)
