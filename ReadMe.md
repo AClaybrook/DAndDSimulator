@@ -16,6 +16,7 @@
     * Activate the virtual environment
         * `pipenv shell`
         * Install pipenv if needed `pip install pipenv` 
+        * Install python3.11+ if needed from https://www.python.org/downloads/
     * Install the requirements
         * `pip install --ignore-pipfile`
     * Launch the App on localhost 8050:
