@@ -25,8 +25,8 @@ attacksPython = [Attack(name="Greatsword", two_handed=True, ability_stat="streng
 # Character stats
 character1 = Character(name='Fighter',level=12, attacks=attacksPython, strength=20)
 
-character2 = replace(character1, name='Fighter GWF + Crit On 19', dis=False, GWF=True, crit_on=19)
-character3 = replace(character1, name='Fighter Advantage', adv=True)
+character2 = replace(character1, name='Fighter GWF + Crit On 19', disadvantage=False, GWF=True, crit_on=19)
+character3 = replace(character1, name='Fighter Advantage', advantage=True)
 character4 = replace(character1, name='Fighter GWM', GWM=True)
 enemy1 = Enemy(armor_class=18)
 
@@ -87,23 +87,27 @@ def character_dropdown():
 
 def simulate_rounds_input():
     return html.Div([
-            dbc.Label('Number Of Rounds'),
-            dbc.Input(
-                id='simulate-rounds-input',
-                type='number',
-                value=100000,
-                min=1,
-                max=10000000,
-                step=50000,
-                )
+        dbc.Row(dbc.Label('Number Of Rounds')),
+        dbc.Row([
+            dbc.Col([
+                dbc.InputGroup([
+                    dbc.Input(type="number", value=100_000, min=1, max=10_000_000, step=50_000, style={'display': 'inline-block'},id="simulate-input"),
+                    dbc.Button("Simulate!", color="primary",style={'display': 'inline-block'},id="simulate-button")
+                ]),
+            ],width=2),
+        ],class_name="mb-2"),
     ])
 
 app = Dash(__name__, external_stylesheets=[style_sheet, dbc.icons.FONT_AWESOME])
 # app.config.suppress_callback_exceptions = True
 
 # Plot data
-data = pd.concat([pd.DataFrame({'damage': df_by_round["Damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)])
-fig = generate_histogram(data, x="damage", color="Type", marginal='box', template=template)
+def generate_plot_data(characters, df_by_rounds, template=template):
+    data = pd.concat([pd.DataFrame({'damage': df_by_round["Damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)])
+    fig = generate_histogram(data, x="damage", color="Type", marginal='box', template=template)
+    return data, fig
+
+data, fig = generate_plot_data(characters, df_by_rounds)
 
 
 row_style = style={'border': '1px solid #d3d3d3', 'border-radius': '15px', 'padding': '10px'}
@@ -131,7 +135,7 @@ content = html.Div(dbc.Container([
                 dbc.Input(type="text", placeholder="Character Name", style={'display': 'inline-block'},id="character_name"),
                 dbc.Button(html.I(className="fa-solid fa-plus"), color="primary",style={'display': 'inline-block'},id="add_character_button")
             ])
-        ,width=2,class_name="mb-3"),
+        ,width=2,class_name="mb-2"),
 
         # dbc.Col([
         #     dbc.Input(type="text", placeholder="Character Name", style={'display': 'inline-block'},),
@@ -146,9 +150,7 @@ content = html.Div(dbc.Container([
     # Simulator
     dbc.Row([
         html.H3("Simulator",id='simulator'),
-        dbc.Row([
-            dbc.Col([simulate_rounds_input()], width={"size": 2}),
-        ]),
+        simulate_rounds_input(),
         dbc.Row([
             dcc.Graph(
                 id='dist-plot',
@@ -284,7 +286,8 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 #%%
 
 register_callbacks(app)
-app.run_server(debug=True)
+app.run_server(debug=False)
+# app.run_server(debug=True)
 print("Starting app")
 
 

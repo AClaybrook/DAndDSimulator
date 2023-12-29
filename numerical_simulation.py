@@ -16,11 +16,11 @@ def roll(num_rolls, die_size=20, reroll_on=0):
         rolls[rerolls_mask] = np.random.randint(1, die_size+1, size=np.sum(rerolls_mask))
     return rolls
 
-def roll_adv_dis(num_rolls, adv=False, dis=False, **kwargs):
+def roll_adv_dis(num_rolls, advantage=False, disadvantage=False, **kwargs):
     """ Roll a die num_rolls times, optionally with advantage or disadvantage"""
-    if adv and not dis:
+    if advantage and not disadvantage:
         return roll(2 * num_rolls, **kwargs).reshape(-1, 2).max(axis=1)
-    elif dis and not adv:
+    elif disadvantage and not advantage:
         return roll(2 * num_rolls, **kwargs).reshape(-1, 2).min(axis=1)
     else:
         return roll(num_rolls, **kwargs)

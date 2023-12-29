@@ -49,8 +49,8 @@ class Attack:
     ability_stat: Literal["strength","dexterity","constitution","intelligence","wisdom","charisma"] = 'strength'
     damage: str = '1d6' # # Used by all attacks
     # Attack specific
-    adv: bool = False
-    dis: bool = False
+    advantage: bool = False
+    disadvantage: bool = False
     always_hit: bool = False
     always_crit: bool = False
     crit_on: int = 20
@@ -63,7 +63,7 @@ class Attack:
     saving_throw_stat: Literal["strength","dexterity","constitution","intelligence","wisdom","charisma"] = 'dexterity'
     saving_throw_success_multiplier: float = 0.5
     # Unused
-    damage_type = 'slashing'
+    damage_type: str = 'slashing'
     bonus_crit_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['1d6', 2]
     bonus_miss_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['1d6', 2]
 
@@ -137,8 +137,8 @@ class Creature:
 class Character(Creature):
     name: str = 'Character'
     # Attack Roll Modifiers
-    adv: bool = False
-    dis: bool = False
+    advantage: bool = False
+    disadvantage: bool = False
     additional_attack_modifier: int = 0
     additional_attack_die: str = "0d4"
     attack_reroll_on: int = 0
@@ -211,8 +211,8 @@ class AttackContext:
     num_die: List[int] = field(default_factory=list)
     die_size: List[int] = field(default_factory=list)
     modifier: int = 0
-    adv: bool = False
-    dis: bool = False
+    advantage: bool = False
+    disadvantage: bool = False
     crit_on: int = 20
     reroll_on: int = 0
     difficulty_class: int = 15
@@ -227,8 +227,8 @@ class DamageContext:
     die_size: List[int] = field(default_factory=list)
     modifier: int = 0
     damage_multiplier: float = 1
-    adv: bool = False
-    dis: bool = False
+    advantage: bool = False
+    disadvantage: bool = False
     reroll_on: int = 0
     # Bonus Crit Damage, beyond the standard 2x die rolls
     crit_num_die: List[int] = field(default_factory=list)
@@ -367,8 +367,8 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
             num_die=attack_num_die,
             die_size=attack_die_sizes,
             modifier=attack_modifier,
-            adv=(character.adv or attack.adv),
-            dis=(character.dis or attack.dis),
+            advantage=(character.advantage or attack.advantage),
+            disadvantage=(character.disadvantage or attack.disadvantage),
             crit_on=min(character.crit_on, attack.crit_on),
             reroll_on=character.attack_reroll_on,
             difficulty_class=difficulty_class,
@@ -380,8 +380,8 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
             die_size=damage_die_sizes,
             modifier=damage_modifier,
             damage_multiplier=damage_multiplier,
-            adv=damage_adv,
-            dis=damage_dis,
+            advantage=damage_adv,
+            disadvantage=damage_dis,
             reroll_on=damage_reroll_on,
             failed_multiplier=damage_failed_multiplier,
             crit_num_die=crit_num_die,
