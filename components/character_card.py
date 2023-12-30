@@ -2,6 +2,7 @@ import dash_bootstrap_components as dbc
 from dash import html, dcc
 from plots import COLORS
 import json
+from models import multiple_die_and_mod_from_list
 
 # Stat options
 stat_options=[{"label": "Strength", "value": "strength"},
@@ -41,7 +42,8 @@ A_LABEL_TO_VAL = {
     "Successful Saving Throw Multiplier": "saving_throw_success_multiplier",
     "Bonus Attack Mod": "bonus_attack_die_mod_list",
     "Bonus Damage Mod": "bonus_damage_die_mod_list",
-    "Bonus Crit Damage": "bonus_crit_die_mod_list"
+    "Bonus Crit Damage": "bonus_crit_die_mod_list",
+    "Bonus Miss Damage": "bonus_miss_die_mod_list" # Currently not in the UI
 }
 A_LABELS = {v:k for k,v in A_LABEL_TO_VAL.items()}
 
@@ -64,7 +66,7 @@ def extract_attack_ui_values(attack_ui_list):
     attack_ui_values = {A_LABEL_TO_VAL[k]:v for k,v in attack_ui_values.items()}
 
     # TODO: Handle missing values such as proficiency, damage type, etc.
-    
+
     return attack_ui_values, num_attacks
 
 
@@ -83,8 +85,8 @@ C_LABEL_TO_DICT_MAP = {
     "Crit on": "crit_on",
     "Advantage": "advantage",
     "Disadvantage": "disadvantage",
-    "Bonus Attack Mod": "bonus_attack_mods",
-    "Bonus Damage Mod": "bonus_damage_mods",
+    "Bonus Attack Mod": "bonus_attack_die_mod_list",
+    "Bonus Damage Mod": "bonus_damage_die_mod_list",
     "Great Weapon Master": "GWM",
     "Savage Attacker": "savage_attacker",
     "Sharpshooter": "sharpshooter",
@@ -127,6 +129,12 @@ def extract_character_ui_values(character_from_ui):
     
     # Convert labels to internal dictionary keys
     character_dict = {C_LABEL_TO_DICT_MAP[k]:v for k,v in character_dict.items()}
+    # Convert strs to lists
+    character_dict["bonus_attack_die_mod_list"] = character_dict["bonus_attack_die_mod_list"].split(",")
+    character_dict["bonus_damage_die_mod_list"] = character_dict["bonus_damage_die_mod_list"].split(",")
+    character_dict["bonus_crit_die_mod_list"] = [] # TODO: Add this to the UI and update this
+    character_dict["bonus_miss_die_mod_list"] = [] # TODO: Add this to the UI and update this
+    print("HERE")
     return character_dict
 
 def set_attack_from_values(avals, i, label_style={'margin-bottom': '0.2rem'}, input_style={'padding-top': '0.0rem', 'padding-bottom': '0.0rem'}):
@@ -220,8 +228,8 @@ def generate_character_card(character_name, character=None, color="", index=1):
         "crit_on": character.crit_on if character else 20,
         "advantage": character.advantage if character else False,
         "disadvantage": character.disadvantage if character else False,
-        "bonus_attack_mods": f"{character.additional_attack_die},{character.additional_attack_modifier}" if character else "0d4,0",
-        "bonus_damage_mods": f"{character.additional_attack_die},{character.additional_attack_modifier}" if character else "0d4,0",
+        "bonus_attack_die_mod_list": ",".join(character.bonus_attack_die_mod_list) if character else "0d4,0",
+        "bonus_damage_die_mod_list": ",".join(character.bonus_damage_die_mod_list) if character else "0d4,0",
 
         ## Feats
         "GWM": character.GWM if character else False,
@@ -236,7 +244,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
         "TWF": character.TWF if character else False,
         
         ## Barbarian
-        "raging": character.rage if character else False,
+        "raging": character.raging if character else False,
         "brutal_critical": character.brutal_critical if character else False,
         ## Paladin
         "divine_smite": character.divine_smite if character else False,
@@ -385,12 +393,12 @@ def generate_character_card(character_name, character=None, color="", index=1):
                 dbc.Col(dbc.Checkbox(value=vals["disadvantage"]))
             ]),
             dbc.Row([
-                dbc.Col(dbc.Label(C_LABELS["bonus_attack_mods"], style=label_style)),
-                dbc.Col(dbc.Input(type="string", value=vals["bonus_attack_mods"], style=input_style))
+                dbc.Col(dbc.Label(C_LABELS["bonus_attack_die_mod_list"], style=label_style)),
+                dbc.Col(dbc.Input(type="string", value=vals["bonus_attack_die_mod_list"], style=input_style))
             ]),
             dbc.Row([
-                dbc.Col(dbc.Label(C_LABELS["bonus_damage_mods"], style=label_style)),
-                dbc.Col(dbc.Input(type="string", value=vals["bonus_damage_mods"], style=input_style))
+                dbc.Col(dbc.Label(C_LABELS["bonus_damage_die_mod_list"], style=label_style)),
+                dbc.Col(dbc.Input(type="string", value=vals["bonus_damage_die_mod_list"], style=input_style))
             ]),
             dbc.Row([
                 html.H6("Feats"),

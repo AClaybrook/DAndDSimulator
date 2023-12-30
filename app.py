@@ -9,7 +9,7 @@ import pandas as pd
 from dataclasses import replace, asdict
 from models import Character, Enemy, AttackContext, DamageContext, Attack
 from numerical_simulation import simulate_character_rounds
-from plots import generate_histogram, COLORS
+from plots import generate_plot_data, COLORS
 from callbacks import register_callbacks
 from components.sidebar import sidebar
 from components.character_card import generate_character_cards
@@ -102,12 +102,7 @@ app = Dash(__name__, external_stylesheets=[style_sheet, dbc.icons.FONT_AWESOME])
 # app.config.suppress_callback_exceptions = True
 
 # Plot data
-def generate_plot_data(characters, df_by_rounds, template=template):
-    data = pd.concat([pd.DataFrame({'damage': df_by_round["Damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)])
-    fig = generate_histogram(data, x="damage", color="Type", marginal='box', template=template)
-    return data, fig
-
-data, fig = generate_plot_data(characters, df_by_rounds)
+data, fig = generate_plot_data(characters, df_by_rounds, template=template)
 
 
 row_style = style={'border': '1px solid #d3d3d3', 'border-radius': '15px', 'padding': '10px'}

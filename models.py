@@ -25,6 +25,9 @@ def multiple_die_and_mod_from_list(die_list):
     for elem in die_list:
         if isinstance(elem, int):
             m = elem
+        elif len(elem) == 0:
+            # Empty string
+            m = 0
         else:
             elem = elem.lower().replace(" ","")
             if 'd' in elem:
@@ -84,11 +87,60 @@ class Creature:
     wisdom: int = 10
     charisma: int = 10
     level: int = 1
+    # Attack Roll Modifiers
+    advantage: bool = False
+    disadvantage: bool = False
+    bonus_attack_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['1d6', 2]
+    attack_reroll_on: int = 0
+    crit_on: int = 20
+    # Damage Roll Modifiers
+    bonus_damage_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['1d6', 2]
+    damage_reroll_on: int = 0
+    damage_on_miss: int = 0
+    # Additional Crit Damage
+    bonus_crit_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['0d6', 0]
+    # Additional Miss Damage
+    bonus_miss_die_mod_list: list[str,int] = field(default_factory=list)
+    # Additional Spell DC
+    additional_spell_dc: int = 0
+
     # Unused
     hit_points: int = 12
     initiative: int = 0
     type = 'humanoid'
     description: str  = 'A creature'
+
+    # Internal properties
+    additional_attack_modifier: int = 0
+    additional_attack_num_die: list[int] = field(default_factory=list)
+    additional_attack_die_sizes: list[int] = field(default_factory=list)
+    additional_damage_modifier: int = 0
+    additional_damage_num_die: list[int] = field(default_factory=list)
+    additional_damage_die_sizes: list[int] = field(default_factory=list)
+    additional_crit_damage_modifier: int = 0
+    additional_crit_damage_num_die: list[int] = field(default_factory=list)
+    additional_crit_damage_die_sizes: list[int] = field(default_factory=list)
+    additional_miss_damage_modifier: int = 0
+    additional_miss_damage_num_die: list[int] = field(default_factory=list)
+    additional_miss_damage_die_sizes: list[int] = field(default_factory=list)
+
+    def __post_init__(self):
+        num_die, die_sizes, total_mod = multiple_die_and_mod_from_list(self.bonus_attack_die_mod_list)
+        self.additional_attack_modifier += total_mod
+        self.additional_attack_num_die += num_die
+        self.additional_attack_die_sizes += die_sizes
+        num_die, die_sizes, total_mod = multiple_die_and_mod_from_list(self.bonus_damage_die_mod_list)
+        self.additional_damage_modifier += total_mod
+        self.additional_damage_num_die += num_die
+        self.additional_damage_die_sizes += die_sizes
+        num_die, die_sizes, total_mod = multiple_die_and_mod_from_list(self.bonus_crit_die_mod_list)
+        self.additional_crit_damage_modifier += total_mod
+        self.additional_crit_damage_num_die += num_die
+        self.additional_crit_damage_die_sizes += die_sizes
+        num_die, die_sizes, total_mod = multiple_die_and_mod_from_list(self.bonus_miss_die_mod_list)
+        self.additional_miss_damage_modifier += total_mod
+        self.additional_miss_damage_num_die += num_die
+        self.additional_miss_damage_die_sizes += die_sizes
 
     @property
     def proficiency_bonus(self):
@@ -131,28 +183,24 @@ class Creature:
             return self.wisdom_ability_modifier
         elif stat == 'charisma':
             return self.charisma_ability_modifier
+        
+    def attack_modifier(self,stat):
+        return self.ability_modifier(stat) + self.proficiency_bonus + self.additional_attack_modifier
+
+    def damage_modifier(self,stat):
+        return self.ability_modifier(stat) + self.additional_damage_modifier
+    
+    def spell_casting_modifier(self, stat):
+        return self.ability_modifier(stat=stat)
+
+    def spell_difficulty_class(self, stat):
+        spell_casting_mod = self.spell_casting_modifier(stat)
+        return 8 + self.proficiency_bonus + spell_casting_mod + self.additional_spell_dc
 
 
 @dataclass(kw_only=True)
 class Character(Creature):
     name: str = 'Character'
-    # Attack Roll Modifiers
-    advantage: bool = False
-    disadvantage: bool = False
-    additional_attack_modifier: int = 0
-    additional_attack_die: str = "0d4"
-    attack_reroll_on: int = 0
-    crit_on: int = 20
-    additional_damage_modifier: int = 0
-    additional_damage_die: str = "0d4"
-    damage_reroll_on: int = 0
-    damage_on_miss: int = 0
-    # Additional Crit Damage
-    additional_crit_damage_die: str = '0d6'
-    additional_crit_damage_modifier: int = 0
-    # Additional Spell DC
-    additional_spell_dc: int = 0
-
     # Feats/Abilities
     savage_attacker: bool = False # advantage on damage rerolls
     tavern_brawler: bool = False # strength modifier added to attack and damage rolls
@@ -168,7 +216,7 @@ class Character(Creature):
     GWF: bool = False # reroll 1s and 2s on damage
     TWF: bool = False
     # Barbarian
-    rage: bool = False
+    raging: bool = False
     brutal_critical: bool = False
     #Paladin
     divine_smite: bool = False # 2d8+1d8 per spell level above 1st, max 5d8
@@ -181,20 +229,6 @@ class Character(Creature):
     empowered_evocation: bool = False # add intelligence modifier to evocation spell damage
     # Sorcerer
     elemental_affinity: bool = False # add charisma modifier to spell damage of matching element
-
-    def attack_modifier(self,stat):
-        return self.ability_modifier(stat) + self.proficiency_bonus + self.additional_attack_modifier
-
-    def damage_modifier(self,stat):
-        return self.ability_modifier(stat) + self.additional_damage_modifier
-    
-    
-    def spell_casting_modifier(self, stat):
-        return self.ability_modifier(stat=stat)
-
-    def spell_difficulty_class(self, stat):
-        spell_casting_mod = self.spell_casting_modifier(stat)
-        return 8 + self.proficiency_bonus + spell_casting_mod + self.additional_spell_dc
 
 @dataclass(kw_only=True)
 class Enemy(Creature):
@@ -272,7 +306,7 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
         damage_modifier += bonus_damage_mod
 
         ## Weapon attacks
-        if character.rage:
+        if character.raging:
             rage_modifier = 2 
             if character.level >= 9:
                 rage_modifier = 3
@@ -296,7 +330,7 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
                 if character.TWF and not attack.two_handed:
                     damage_modifier += ability_modifier
             # Barbarian
-            if character.rage:
+            if character.raging:
                 damage_modifier += rage_modifier
             if character.brutal_critical:
                 crit_num_die.append(1)
@@ -337,7 +371,7 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
             if character.tavern_brawler:
                 attack_modifier += character.strength_ability_modifier
                 damage_modifier += character.strength_ability_modifier
-            if character.rage:
+            if character.raging:
                 damage_modifier += rage_modifier
         elif attack.type == 'spell':
             if character.agonizing_blast:

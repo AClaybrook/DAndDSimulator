@@ -1,9 +1,15 @@
 # Plotting
 # Themes here: https://plotly.com/python/templates/
 import plotly.express as px
+import pandas as pd
 
 # Color Palette
 COLORS = px.colors.qualitative.Plotly
+
+def generate_plot_data(characters, df_by_rounds, template='plotly_dark'):
+    data = pd.concat([pd.DataFrame({'damage': df_by_round["Damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)])
+    fig = generate_histogram(data, x="damage", color="Type", marginal='box', template=template)
+    return data, fig
 
 def generate_histogram(data, x, color, marginal='violin', histnorm='percent', barmode='overlay', opacity=0.75, **kwargs):
     """Histogram with marginal plot"""

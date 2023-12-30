@@ -1,5 +1,5 @@
 from dash import Input, Output, State, Patch, MATCH, ALL, ctx
-from plots import COLORS
+from plots import COLORS, generate_plot_data
 from components.character_card import generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
@@ -354,6 +354,6 @@ def register_callbacks(app, sidebar=True):
 
         dfs, df_by_rounds = simulate_character_rounds(characters, enemy, num_rounds=num_rounds)
 
-        fig = {}
+        data, fig = generate_plot_data(characters, df_by_rounds)
         print(f"test {clicked}")
         return fig
