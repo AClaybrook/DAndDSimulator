@@ -3,6 +3,9 @@
 import plotly.express as px
 import pandas as pd
 
+from dash import html
+import dash_bootstrap_components as dbc
+
 # Color Palette
 COLORS = px.colors.qualitative.Plotly
 
@@ -47,3 +50,27 @@ def generate_bar_plot(data):
 
 def generate_cdf_plot(data):
     return px.ecdf(data, x="damage", color="Type", marginal="histogram",orientation='h')
+
+def add_tables(data, characters, by_round=True, width=12):
+    if by_round:
+        table_list = [dbc.Row(dbc.Col(html.H4("Per Round")))]
+    else:
+        table_list = [dbc.Row(dbc.Col(html.H4("Per Attack")))]
+    
+    row = []
+    
+    for ii, (c, datac) in enumerate(zip(characters, data)):
+        if by_round:
+            datac = datac.drop(["Attack Roll", "Attack Roll (Die)", "Hit (Non-Crit)", "Hit (Crit)"], axis=1)
+            datac.rename(columns={"Hit": "Num Hits","Hit (Non-Crit)": "Num Hits (Non-Crit)","Hit (Crit)": "Num Hits (Crit)"}, inplace=True)
+        else:
+            datac = datac.drop("Round", axis=1)
+        datac.rename(columns={"Hit": "Num Hits"}, inplace=True)
+        df_table = datac.describe().drop(["count","std"],axis=0).reset_index().round(2)
+        col = []  
+        col.append(html.H4(c.name, style={'color': COLORS[ii]})) 
+        col.append(dbc.Table.from_dataframe(df_table, striped=True, bordered=True, hover=True, responsive=True))
+        col.append(html.Br())
+        row.append(dbc.Col(col, width={"size": width}))
+    table_list.append(dbc.Row(row))
+    return table_list

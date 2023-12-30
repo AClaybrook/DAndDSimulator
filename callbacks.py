@@ -1,5 +1,5 @@
 from dash import Input, Output, State, Patch, MATCH, ALL, ctx
-from plots import COLORS, generate_plot_data
+from plots import COLORS, generate_plot_data, add_tables
 from components.character_card import generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
@@ -327,6 +327,9 @@ def register_callbacks(app, sidebar=True):
     
     @app.callback(
         Output('dist-plot',"figure"),
+        Output('per-round-tables',"children"),
+        Output('per-attack-tables',"children"),
+        Output('simulate-alerts',"children"),
         Input("simulate-button","n_clicks"),
         State("simulate-input","value"),
         State({'type': 'attack_store',"index": ALL},"data"),
@@ -336,6 +339,17 @@ def register_callbacks(app, sidebar=True):
     def simulate(clicked, num_rounds, attack_stores, characters_list):
         if clicked is None:
             raise PreventUpdate
+        
+        if num_rounds is None:
+            fig = Patch()
+            rounds = Patch()
+            attacks = Patch()
+            alert = dbc.Alert(
+                "Invalid Number of Rounds",
+                dismissable=True,
+                is_open=True,
+                color="danger")
+            return fig, rounds, attacks, alert
 
         # TODO:
         # 1. Get all values from UI
@@ -356,4 +370,6 @@ def register_callbacks(app, sidebar=True):
 
         data, fig = generate_plot_data(characters, df_by_rounds)
         print(f"test {clicked}")
-        return fig
+        rounds = add_tables(df_by_rounds,characters,by_round=True, width=3)
+        attacks = add_tables(dfs,characters,by_round=False, width=3)
+        return fig, rounds, attacks, None

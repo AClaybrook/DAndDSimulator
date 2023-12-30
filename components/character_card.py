@@ -66,6 +66,10 @@ def extract_attack_ui_values(attack_ui_list):
     attack_ui_values = {A_LABEL_TO_VAL[k]:v for k,v in attack_ui_values.items()}
 
     # TODO: Handle missing values such as proficiency, damage type, etc.
+    attack_ui_values["bonus_attack_die_mod_list"] = attack_ui_values["bonus_attack_die_mod_list"].split(",")
+    attack_ui_values["bonus_damage_die_mod_list"] = attack_ui_values["bonus_damage_die_mod_list"].split(",")
+    attack_ui_values["bonus_crit_die_mod_list"] = attack_ui_values["bonus_crit_die_mod_list"].split(",")
+    attack_ui_values["bonus_miss_die_mod_list"] = [] # TODO: Add this to the UI and update this
 
     return attack_ui_values, num_attacks
 
@@ -172,10 +176,6 @@ def set_attack_from_values(avals, i, label_style={'margin-bottom': '0.2rem'}, in
             dbc.Col(dbc.Checkbox(value=avals[i]["two_handed"]))
         ]),
         # Spell specific
-        dbc.Row([
-            dbc.Col(dbc.Label(A_LABELS["damage"], style=label_style)),
-            dbc.Col(dbc.Input(type="string", value=avals[i]["damage"], style=input_style))
-        ]),
         dbc.Row([
             dbc.Col(dbc.Label(A_LABELS["saving_throw"], style=label_style)),
             dbc.Col(dbc.Checkbox(value=avals[i]["saving_throw"]))
