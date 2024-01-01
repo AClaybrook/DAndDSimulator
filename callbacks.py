@@ -250,7 +250,9 @@ def register_callbacks(app, sidebar=True):
         attacks = [index == ii for ii in range(len(selected_attacks))]
 
         # Update attack ui to match the values of the selected attack
-        attack_ui = set_attack_from_values(json.loads(avals), index)
+        card_index = ctx.triggered_id['index']
+
+        attack_ui = set_attack_from_values(json.loads(avals), index, card_index)
         
         return attacks, attack_ui 
 

@@ -138,12 +138,11 @@ def extract_character_ui_values(character_from_ui):
     character_dict["bonus_damage_die_mod_list"] = character_dict["bonus_damage_die_mod_list"].split(",")
     character_dict["bonus_crit_die_mod_list"] = [] # TODO: Add this to the UI and update this
     character_dict["bonus_miss_die_mod_list"] = [] # TODO: Add this to the UI and update this
-    print("HERE")
     return character_dict
 
-def set_attack_from_values(avals, i, label_style={'margin-bottom': '0.2rem'}, input_style={'padding-top': '0.0rem', 'padding-bottom': '0.0rem'}):
+def set_attack_from_values(avals, i, index, label_style={'margin-bottom': '0.2rem'}, input_style={'padding-top': '0.0rem', 'padding-bottom': '0.0rem'}):
     attack_ui = [
-        dbc.Row([dbc.Col(dbc.Label(A_LABELS["name"], style=label_style)),dbc.Col(dbc.Input(type="text", value=avals[i][f"name"], style=input_style, id={"type":"attack_name","index":i}))]),
+        dbc.Row([dbc.Col(dbc.Label(A_LABELS["name"], style=label_style)),dbc.Col(dbc.Input(type="text", value=avals[i][f"name"], style=input_style, id={"type":"attack_name","index":index}))]),
         dbc.Row([
             dbc.Col(dbc.Label(A_LABELS["type"], style=label_style)),
             dbc.Col(dbc.Select(options=attack_options,
@@ -355,11 +354,10 @@ def generate_character_card(character_name, character=None, color="", index=1):
             "bonus_miss_die_mod_list": "0d4,0",
         }
         avals.append(attack)
-    
-    i = 0
+
     attacks = dbc.Card([
         dbc.CardBody([
-            html.Div(set_attack_from_values(avals, index), id={"type": "attack_ui", "index": index}),
+            html.Div(set_attack_from_values(avals, 0, index), id={"type": "attack_ui", "index": index}),
             dbc.Row([ 
                 dbc.Col([
                     dbc.Button(html.I(className="fa-solid fa-plus"), color="primary", class_name="me-1", id={"type": "add-attack", "index": index}),
