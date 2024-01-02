@@ -13,6 +13,7 @@ from plots import generate_plot_data, COLORS, add_tables
 from callbacks import register_callbacks
 from components.sidebar import sidebar
 from components.character_card import generate_character_cards
+from components.enemy_card import generate_enemy_card
 import json
 
 
@@ -143,6 +144,10 @@ content = html.Div(dbc.Container([
         dcc.Store(id='all_attacks', data=json.dumps({})), # Used to keep track of copied character counts, since this gets triggered without button clicks
 
     ],style=row_style, class_name="mb-4"),
+    dbc.Row([
+        html.H3("Enemy Builder", id='enemy-builder'),
+        dbc.Row(generate_enemy_card(enemy1),id="enemy_row"),
+        ],style=row_style, class_name="mb-4"),
     # Simulator
     dbc.Row([
         html.H3("Simulator",id='simulator'),

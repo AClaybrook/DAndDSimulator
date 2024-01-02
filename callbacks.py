@@ -1,6 +1,7 @@
 from dash import Input, Output, State, Patch, MATCH, ALL, ctx
 from plots import COLORS, generate_plot_data, add_tables
 from components.character_card import generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values
+from components.enemy_card import extract_enemy_ui_values
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 import json
@@ -328,6 +329,14 @@ def register_callbacks(app, sidebar=True):
         return json.dumps(avals_updated), existing_attacks
     
     @app.callback(
+            Output("enemy-name","children"),
+            Input("enemy-name-input","value"),
+            prevent_initial_call=True
+    )
+    def update_enemy_name(name):
+        return name
+    
+    @app.callback(
         Output('dist-plot',"figure"),
         Output('per-round-tables',"children"),
         Output('per-attack-tables',"children"),
@@ -336,9 +345,10 @@ def register_callbacks(app, sidebar=True):
         State("simulate-input","value"),
         State({'type': 'attack_store',"index": ALL},"data"),
         State("character_row","children"),
+        State("enemy-card-body","children"),
         prevent_initial_call=True
     )
-    def simulate(clicked, num_rounds, attack_stores, characters_list):
+    def simulate(clicked, num_rounds, attack_stores, characters_list, enemy_card_body):
         if clicked is None:
             raise PreventUpdate
         
@@ -365,8 +375,7 @@ def register_callbacks(app, sidebar=True):
             attacksPython = [Attack(**attack) for attack in json.loads(attack_stores[ii])]
             characters.append(Character(attacks=attacksPython, **extract_character_ui_values(c)))
         
-        # TODO: Currently bonus_attacks_mods is erroring, this needs to go to a list
-        enemy = Enemy(armor_class=18)
+        enemy = Enemy(**extract_enemy_ui_values(enemy_card_body))
 
         dfs, df_by_rounds = simulate_character_rounds(characters, enemy, num_rounds=num_rounds)
 

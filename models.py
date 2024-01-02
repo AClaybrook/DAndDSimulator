@@ -284,6 +284,13 @@ class DamageContext:
 def calculate_attack_and_damage_context(character, enemy, **kwargs):
     attack_contexts = []
     damage_contexts = []
+
+    # Character Specific     
+    c_attack_num_die, c_attack_die_sizes, c_bonus_attack_mod = multiple_die_and_mod_from_list(character.bonus_attack_die_mod_list)
+    c_damage_num_die, c_damage_die_sizes, c_bonus_damage_mod = multiple_die_and_mod_from_list(character.bonus_damage_die_mod_list)
+    c_miss_num_die, c_miss_damage_die, c_miss_damage_modifier = multiple_die_and_mod_from_list(character.bonus_miss_die_mod_list)
+    c_crit_num_die, c_crit_damage_die, c_crit_damage_modifier = multiple_die_and_mod_from_list(character.bonus_crit_die_mod_list)
+
     for attack in character.attacks:
         # From character
         ability_modifier = character.ability_modifier(attack.ability_stat)
@@ -307,6 +314,21 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
         miss_num_die, miss_damage_die, miss_damage_modifier = multiple_die_and_mod_from_list(attack.bonus_miss_die_mod_list)
         crit_num_die, crit_damage_die, crit_damage_modifier = multiple_die_and_mod_from_list(attack.bonus_crit_die_mod_list)
 
+        # Join character and attack specific modifiers
+        bonus_attack_mod += c_bonus_attack_mod
+        attack_num_die += c_attack_num_die
+        attack_die_sizes += c_attack_die_sizes
+        damage_num_die += c_damage_num_die
+        damage_die_sizes += c_damage_die_sizes
+        bonus_damage_mod += c_bonus_damage_mod
+        miss_num_die += c_miss_num_die
+        miss_damage_die += c_miss_damage_die
+        miss_damage_modifier += c_miss_damage_modifier
+        crit_num_die += c_crit_num_die
+        crit_damage_die += c_crit_damage_die
+        crit_damage_modifier += c_crit_damage_modifier
+
+        # Add flat modifiers
         attack_modifier += bonus_attack_mod
         damage_modifier += bonus_damage_mod
 

@@ -2,7 +2,6 @@ import dash_bootstrap_components as dbc
 from dash import html, dcc
 from plots import COLORS
 import json
-from models import multiple_die_and_mod_from_list
 
 # Stat options
 stat_options=[{"label": "Strength", "value": "strength"},
@@ -546,59 +545,3 @@ def generate_character_card(character_name, character=None, color="", index=1):
             ]),
         ],style=card_style),
     width=3, id={"type": "character card", "index": index})
-        # dbc.CardBody([
-        #     dbc.Row([
-        #         dbc.Col(dbc.Label("Num Attacks", style=label_style)),
-        #         dbc.Col(dbc.Input(type="number", value=len(character.attacks), min=1, max=100, step=1, style=input_style))
-        #     ]),
-
-        #     dbc.Row([
-        #         dbc.Col(dbc.Label("Level", style=label_style)),
-        #         dbc.Col(dbc.Input(type="number", value=character.level, min=0, max=20, step=1, style=input_style))
-        #     ]),
-            # dbc.Row([
-            #     dbc.Col(dbc.Label("Add. Attack Modifier", style=label_style)),
-            #     dbc.Col(dbc.Input(type="number", value=character.additional_attack_modifier, min=0, max=50, step=1, style=input_style))
-            # ]),
-            # dbc.Row([
-            #     dbc.Col(dbc.Label("Attack Reroll On", style=label_style)),
-            #     dbc.Col(dbc.Input(type="number", value=character.attack_reroll_on if character.attack_reroll_on is not None else 0, min=0, max=19, step=1, style=input_style))
-            # ]),
-            # dbc.Row([
-            #     dbc.Col(dbc.Label("Crit On", style=label_style)),
-            #     dbc.Col(dbc.Input(type="number", value=character.crit_on, min=2, max=20, step=1, style=input_style))
-            # ]),
-            # dbc.Row([
-            #     dbc.Col(dbc.Label("Add. Damage Modifier", style=label_style)),
-            #     dbc.Col(dbc.Input(type="number", value=character.additional_damage_modifier, min=0, max=50, step=1, style=input_style))
-            # ]),
-            # dbc.Row([
-            #     dbc.Col(dbc.Label("Advantage", style=label_style)),
-            #     dbc.Col(dbc.Checkbox(value=character.advantage))
-            # ]),
-            # dbc.Row([
-            #     dbc.Col(dbc.Label("Disadvantage", style=label_style)),
-            #     dbc.Col(dbc.Checkbox(value=character.disadvantage))
-            # ]),
-            # dbc.Row([
-            #     dbc.Col(dbc.Label("Great Weapon Master", style=label_style)),
-            #     dbc.Col(dbc.Checkbox(value=character.GWM))
-            # ]),
-            # dbc.Row([
-            #     dbc.Col(dbc.Label("Great Weapon Fighting", style=label_style)),
-            #     dbc.Col(dbc.Checkbox(value=character.GWF))
-            # ]),
-            # html.H5("Calculated Values"),
-            # dbc.Row([
-            #     dbc.Col(dbc.Label("Attack Modifier", style=label_style)),
-            #     dbc.Col(dbc.Input(type="number", value=character.attack_modifier, readonly=True, style=input_style))
-            # ]),
-            # dbc.Row([
-            #     dbc.Col(dbc.Label("Damage Modifier", style=label_style)),
-            #     dbc.Col(dbc.Input(type="number", value=character.damage_modifier, readonly=True, style=input_style))
-            # ]),
-        # ]),
-
-
-# def copy_character_card(card, index, color=""):
-#     card.id = {"type": "character card", "index": index}
