@@ -37,6 +37,11 @@ def multiple_die_and_mod_from_list(die_list):
             else:
                 m = int(elem)
         total_mod += m
+    # Remove zeros
+    for ii, elem in enumerate(num_die):
+        if elem == 0 or die_sizes[ii] == 0:
+            num_die.pop(ii)
+            die_sizes.pop(ii)
     return num_die, die_sizes, total_mod
 
 ### Classes ###

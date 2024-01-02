@@ -43,7 +43,7 @@ A_LABEL_TO_VAL = {
     "Bonus Attack Mod": "bonus_attack_die_mod_list",
     "Bonus Damage Mod": "bonus_damage_die_mod_list",
     "Bonus Crit Damage": "bonus_crit_die_mod_list",
-    "Bonus Miss Damage": "bonus_miss_die_mod_list" # Currently not in the UI
+    "Bonus Miss Damage": "bonus_miss_die_mod_list"
 }
 A_LABELS = {v:k for k,v in A_LABEL_TO_VAL.items()}
 
@@ -69,7 +69,7 @@ def extract_attack_ui_values(attack_ui_list):
     attack_ui_values["bonus_attack_die_mod_list"] = attack_ui_values["bonus_attack_die_mod_list"].split(",")
     attack_ui_values["bonus_damage_die_mod_list"] = attack_ui_values["bonus_damage_die_mod_list"].split(",")
     attack_ui_values["bonus_crit_die_mod_list"] = attack_ui_values["bonus_crit_die_mod_list"].split(",")
-    attack_ui_values["bonus_miss_die_mod_list"] = [] # TODO: Add this to the UI and update this
+    attack_ui_values["bonus_miss_die_mod_list"] = attack_ui_values["bonus_miss_die_mod_list"].split(",")
 
     return attack_ui_values, num_attacks
 
@@ -91,6 +91,8 @@ C_LABEL_TO_DICT_MAP = {
     "Disadvantage": "disadvantage",
     "Bonus Attack Mod": "bonus_attack_die_mod_list",
     "Bonus Damage Mod": "bonus_damage_die_mod_list",
+    "Bonus Crit Mod": "bonus_crit_die_mod_list",
+    "Bonus Miss Mod": "bonus_miss_die_mod_list",
     "Great Weapon Master": "GWM",
     "Savage Attacker": "savage_attacker",
     "Sharpshooter": "sharpshooter",
@@ -136,8 +138,8 @@ def extract_character_ui_values(character_from_ui):
     # Convert strs to lists
     character_dict["bonus_attack_die_mod_list"] = character_dict["bonus_attack_die_mod_list"].split(",")
     character_dict["bonus_damage_die_mod_list"] = character_dict["bonus_damage_die_mod_list"].split(",")
-    character_dict["bonus_crit_die_mod_list"] = [] # TODO: Add this to the UI and update this
-    character_dict["bonus_miss_die_mod_list"] = [] # TODO: Add this to the UI and update this
+    character_dict["bonus_crit_die_mod_list"] = character_dict["bonus_crit_die_mod_list"].split(",")
+    character_dict["bonus_miss_die_mod_list"] = character_dict["bonus_miss_die_mod_list"].split(",")
     return character_dict
 
 def set_attack_from_values(avals, i, index, label_style={'margin-bottom': '0.2rem'}, input_style={'padding-top': '0.0rem', 'padding-bottom': '0.0rem'}):
@@ -199,6 +201,10 @@ def set_attack_from_values(avals, i, index, label_style={'margin-bottom': '0.2re
         dbc.Row([
             dbc.Col(dbc.Label(A_LABELS["bonus_crit_die_mod_list"], style=label_style)),
             dbc.Col(dbc.Input(type="string", value=",".join(avals[i]["bonus_crit_die_mod_list"]), style=input_style))
+        ]),
+        dbc.Row([
+            dbc.Col(dbc.Label(A_LABELS["bonus_miss_die_mod_list"], style=label_style)),
+            dbc.Col(dbc.Input(type="string", value=",".join(avals[i]["bonus_miss_die_mod_list"]), style=input_style))
         ])
         ]
     return attack_ui
@@ -227,8 +233,10 @@ def generate_character_card(character_name, character=None, color="", index=1):
         "crit_on": character.crit_on if character else 20,
         "advantage": character.advantage if character else False,
         "disadvantage": character.disadvantage if character else False,
-        "bonus_attack_die_mod_list": ",".join(character.bonus_attack_die_mod_list) if character else "0d4,0",
-        "bonus_damage_die_mod_list": ",".join(character.bonus_damage_die_mod_list) if character else "0d4,0",
+        "bonus_attack_die_mod_list": character.bonus_attack_die_mod_list if character else ["0d4","0"],
+        "bonus_damage_die_mod_list": character.bonus_damage_die_mod_list if character else ["0d4","0"],
+        "bonus_crit_die_mod_list": character.bonus_crit_die_mod_list if character else ["0d4","0"],
+        "bonus_miss_die_mod_list": character.bonus_miss_die_mod_list if character else ["0d4","0"],
 
         ## Feats
         "GWM": character.GWM if character else False,
@@ -332,8 +340,8 @@ def generate_character_card(character_name, character=None, color="", index=1):
     else:
         attack = {
             "name": "Attack Name",
-            "bonus_attack_die_mod_list": "0d4,0",
-            "bonus_damage_die_mod_list": "0d4,0",
+            "bonus_attack_die_mod_list": ["0d4","0"],
+            "bonus_damage_die_mod_list": ["0d4","0"],
             "proficent": True,
             "type": "weapon (melee)",
             "ability_stat": "strength",
@@ -350,8 +358,8 @@ def generate_character_card(character_name, character=None, color="", index=1):
             "saving_throw_stat": "dexterity",
             "saving_throw_success_multiplier": 0.5,
             "damage_type": "slashing",
-            "bonus_crit_die_mod_list": "0d4,0",
-            "bonus_miss_die_mod_list": "0d4,0",
+            "bonus_crit_die_mod_list": ["0d4","0"],
+            "bonus_miss_die_mod_list": ["0d4","0"],
         }
         avals.append(attack)
 
@@ -392,11 +400,19 @@ def generate_character_card(character_name, character=None, color="", index=1):
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["bonus_attack_die_mod_list"], style=label_style)),
-                dbc.Col(dbc.Input(type="string", value=vals["bonus_attack_die_mod_list"], style=input_style))
+                dbc.Col(dbc.Input(type="string", value=",".join(vals["bonus_attack_die_mod_list"]), style=input_style))
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["bonus_damage_die_mod_list"], style=label_style)),
-                dbc.Col(dbc.Input(type="string", value=vals["bonus_damage_die_mod_list"], style=input_style))
+                dbc.Col(dbc.Input(type="string", value=",".join(vals["bonus_damage_die_mod_list"]), style=input_style))
+            ]),
+            dbc.Row([
+                dbc.Col(dbc.Label(C_LABELS["bonus_crit_die_mod_list"], style=label_style)),
+                dbc.Col(dbc.Input(type="string", value=",".join(vals["bonus_crit_die_mod_list"]), style=input_style))
+            ]),
+            dbc.Row([
+                dbc.Col(dbc.Label(C_LABELS["bonus_miss_die_mod_list"], style=label_style)),
+                dbc.Col(dbc.Input(type="string", value=",".join(vals["bonus_miss_die_mod_list"]), style=input_style))
             ]),
             dbc.Row([
                 html.H6("Feats"),
