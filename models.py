@@ -1,5 +1,5 @@
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import Literal, List
 
 ### Utility functions ###
@@ -201,6 +201,9 @@ class Creature:
     def spell_difficulty_class(self, stat):
         spell_casting_mod = self.spell_casting_modifier(stat)
         return 8 + self.proficiency_bonus + spell_casting_mod + self.additional_spell_dc
+    
+    def to_dict(self):
+        return {k: v for k, v in asdict(self).items()}
 
 
 @dataclass(kw_only=True)

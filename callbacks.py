@@ -8,6 +8,8 @@ import json
 import numpy as np
 from models import Attack, Character, Enemy
 from numerical_simulation import simulate_character_rounds
+import base64
+import io
 
 MAX_CHARACTERS = min(8,len(COLORS)) # There are 10 colors and 4 characters fit per row, so 8 is a good max
 
@@ -25,6 +27,13 @@ def get_new_id(ids):
 
 def set_active_ids(ids):
     return json.dumps(ids)
+
+def characters_from_ui(characters_list, attack_stores):
+    characters = []
+    for ii, c in enumerate(characters_list):
+        attacksPython = [Attack(**attack) for attack in json.loads(attack_stores[ii])]
+        characters.append(Character(attacks=attacksPython, **extract_character_ui_values(c)))
+    return characters
 
 # Note: Intellisense is not recognizing the callbacks as being accessed
 def register_callbacks(app, sidebar=True):
@@ -329,6 +338,97 @@ def register_callbacks(app, sidebar=True):
         return json.dumps(avals_updated), existing_attacks
     
     @app.callback(
+            Output('download-characters','data'),
+            Input('export-button','n_clicks'),
+            State("character_row","children"),
+            State({"type": "attack_store", "index": ALL},"data"),           
+    )
+    def export_character(clicked, characters_ui, attack_stores):
+        if clicked is None:
+            raise PreventUpdate
+        
+        c_dicts = []
+        for ii,c in enumerate(characters_ui):
+            attack_dicts= [attack for attack in json.loads(attack_stores[ii])]
+            c_dict = extract_character_ui_values(c)
+            c_dict["attacks"] = attack_dicts
+            c_dicts.append(c_dict)
+
+        return dict(content=json.dumps(c_dicts, indent=4), filename="characters.json")
+    
+    # TODO: Import characters
+    @app.callback(
+            Output('character_row','children', allow_duplicate=True),
+            Output('active_ids','data', allow_duplicate=True),
+            # Output('copy_counts','data', allow_duplicate=True),
+            Output('character-alerts','children'),
+            Input('upload-button','contents'), 
+            State("active_ids","data"),
+            prevent_initial_call=True           
+    )
+    def import_characters(contents, active_ids_json):
+        if contents is None:
+            raise PreventUpdate
+        
+        def parse_contents(contents):
+            content_type, content_string = contents.split(',')
+            decoded = base64.b64decode(content_string)
+            alert = None
+            characters_list = []
+            if 'json' in content_type:
+                try:
+                    characters_list = json.loads(decoded.decode('utf-8'))
+                except Exception as e:
+                    print(e)
+                    alert = dbc.Alert(
+                        f"Import Failed. Cannot parse json file",
+                        dismissable=True,
+                        is_open=True,
+                        color="danger")
+            else:
+                alert = dbc.Alert(
+                    f"Import Failed. Only json files are supported",
+                    dismissable=True,
+                    is_open=True,
+                    color="danger")
+            return alert, characters_list
+        
+        alert, characters_list = parse_contents(contents)
+    
+        # Add characters
+        characters = Patch()
+        _active_ids_patch = Patch() # Needed so patch works for attack stores
+        active_ids, new_id = get_active_ids_and_new_id(active_ids_json)
+
+        if alert is None:
+
+            for ii, c in enumerate(characters_list):
+                # Don't add more than max characters
+                if new_id >= MAX_CHARACTERS:
+                    alert = dbc.Alert(
+                        f"Max Characters Reached. Only imported {ii+1} characters from the file",
+                        dismissable=True,
+                        is_open=True,
+                        color="warning")
+                    break
+                # TODO: For now ignore all characters that fail to parse, but this could be more granular in the future
+                try:
+                    attacks = c.pop("attacks")
+                    attacksPython = [Attack(**attack) for attack in attacks]
+                    characters.append(generate_character_card(c["name"], character=Character(**c, attacks=attacksPython), color=COLORS[new_id], index=new_id))
+                except Exception as e:
+                    alert = dbc.Alert(
+                        f"Import Failed. Cannot parse character {c['name']}",
+                        dismissable=True,
+                        is_open=True,
+                        color="danger")
+                    break
+                active_ids.append(new_id)
+                new_id = get_new_id(active_ids)
+            
+        return characters, set_active_ids(active_ids), alert
+
+    @app.callback(
             Output("enemy-name","children"),
             Input("enemy-name-input","value"),
             prevent_initial_call=True
@@ -363,17 +463,7 @@ def register_callbacks(app, sidebar=True):
                 color="danger")
             return fig, rounds, attacks, alert
 
-        # TODO:
-        # 1. Get all values from UI
-        # 2. Simulate
-        # 3. Update figure
-        # 4. Update Tables
-
-        
-        characters = []
-        for ii, c in enumerate(characters_list):
-            attacksPython = [Attack(**attack) for attack in json.loads(attack_stores[ii])]
-            characters.append(Character(attacks=attacksPython, **extract_character_ui_values(c)))
+        characters = characters_from_ui(characters_list, attack_stores)
         
         enemy = Enemy(**extract_enemy_ui_values(enemy_card_body))
 

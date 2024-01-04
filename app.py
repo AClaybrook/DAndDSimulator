@@ -130,10 +130,15 @@ content = html.Div(dbc.Container([
         dbc.Col(
             dbc.InputGroup([
                 dbc.Input(type="text", placeholder="Character Name", style={'display': 'inline-block'},id="character_name"),
-                dbc.Button(html.I(className="fa-solid fa-plus"), color="primary",style={'display': 'inline-block'},id="add_character_button")
+                dbc.Button(html.I(className="fa-solid fa-plus"), color="primary",style={'display': 'inline-block'},id="add_character_button"),
+                dbc.Button(html.I(className="fa-solid fa-download"),color="secondary", style={'display': 'inline-block'}, id="export-button"),
+                dcc.Download(id="download-characters"),
+                dcc.Upload(dbc.Button(html.I(className="fa-solid fa-upload"),color="info", style={'display': 'inline-block'}, id="import-button"), id='upload-button', multiple=False),
+                # dcc.Upload(html.Button(html.I(className="fa-solid fa-upload"),id="import-button"), id='upload-button', multiple=False),
+                # dcc.Upload(children=html.Div("Click here"), id='upload-button', multiple=False)
             ])
         ,width=2,class_name="mb-2"),
-
+        html.Div(id="character-alerts"),
         # dbc.Col([
         #     dbc.Input(type="text", placeholder="Character Name", style={'display': 'inline-block'},),
         #     dbc.Button(html.I(className="fa-solid fa-plus"),class_name="mb-3", color="primary",style={'display': 'inline-block'})
