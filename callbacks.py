@@ -28,6 +28,21 @@ def get_new_id(ids):
 def set_active_ids(ids):
     return json.dumps(ids)
 
+def max_from_list(l):
+    max_ = 0 
+    index = None
+    if isinstance(l, int):
+        max_ = l
+        index = 0
+    elif l is None:
+        pass
+    elif isinstance(l, list):
+        for ii, time in enumerate(l):
+            if time is not None and time > max_:
+                max_ = time
+                index = ii
+    return max_, index
+
 def characters_from_ui(characters_list, attack_stores):
     characters = []
     for ii, c in enumerate(characters_list):
@@ -95,20 +110,29 @@ def register_callbacks(app, sidebar=True):
     @app.callback(
             Output("character_row","children", allow_duplicate=True),
             Output("active_ids","data", allow_duplicate=True),
-            Input({'type': 'delete character',"index": ALL},"n_clicks"), # Unfortunately MATCH doesn't work since there is no corresponding MATCH in the outputs
+            Output("delete-timestamp","data"),
+            Input({'type': 'delete character',"index": ALL},"n_clicks_timestamp"), # Unfortunately MATCH doesn't work since there is no corresponding MATCH in the outputs
             State("active_ids","data"),
+            State("add_character_button","n_clicks_timestamp"),
+            State({'type': 'copy character',"index": ALL},"n_clicks_timestamp"),
             prevent_initial_call=True
     )
-    def delete_character(clicked, active_ids_json):
+    def delete_character(delete_timestamps, active_ids_json, add_timestamp, copy_timestamps):
         # Get clicked id and index
         delete_id = ctx.triggered_id["index"]
         active_ids, _ = get_active_ids_and_new_id(active_ids_json)
         index = active_ids.index(delete_id)
-
-        # If no button was clicked, don't update
-        if clicked[index] is None:
+        
+        # Prevent if attack was not the most recently clicked
+        max_, index = max_from_list(delete_timestamps)
+        if index is None:
             raise PreventUpdate
-
+        max_add, _ = max_from_list(add_timestamp)
+        max_copy, _ = max_from_list(copy_timestamps)
+        most_recent_button_click = max(max_add, max_copy)
+        if max_ < most_recent_button_click:
+            raise PreventUpdate
+        
         # Don't delete the last character
         if len(active_ids) == 1:
             raise PreventUpdate 
@@ -118,19 +142,19 @@ def register_callbacks(app, sidebar=True):
         del patched_children[index]
         del active_ids[index]
 
-        return patched_children, set_active_ids(active_ids)
+        return patched_children, set_active_ids(active_ids), max_
     
     @app.callback(
         Output("character_row","children", allow_duplicate=True),
         Output("active_ids","data", allow_duplicate=True),
-        Output('copy_counts', 'data', allow_duplicate=True),
         State("character_row","children"),
-        Input({'type': 'copy character',"index": ALL},"n_clicks"),
         State("active_ids","data"),
-        State('copy_counts', 'data'),
+        Input({'type': 'copy character',"index": ALL},"n_clicks_timestamp"),
+        State("add_character_button","n_clicks_timestamp"),
+        State("delete-timestamp","data"),
         prevent_initial_call=True
     )
-    def copy_character(characters, clicked, active_ids_json, copy_counts_json):
+    def copy_character(characters, active_ids_json, copy_timestamps, add_timestamp, delete_timestamps):
         # Find which button was clicked
         copy_id = ctx.triggered_id["index"]
         active_ids, new_id = get_active_ids_and_new_id(active_ids_json)
@@ -138,23 +162,20 @@ def register_callbacks(app, sidebar=True):
         if copy_id is None:
             raise PreventUpdate
         
-        # If button was not clicked don't update
-        if clicked[index] == None:
+        # Prevent if attack was not the most recently clicked
+        max_, index = max_from_list(copy_timestamps)
+        if index is None:
+            raise PreventUpdate
+        max_add, _ = max_from_list(add_timestamp)
+        max_delete, _ = max_from_list(delete_timestamps)
+        most_recent_button_click = max(max_add, max_delete)
+        if max_ < most_recent_button_click:
             raise PreventUpdate
         
-        # Check if click count incremented
-        copy_counts_temp = json.loads(copy_counts_json)
-        copy_counts = {int(k):v for k,v in copy_counts_temp.items()}
-        if copy_id in copy_counts and copy_counts[copy_id] == clicked[index]:
-            raise PreventUpdate
-
         # Don't add more than max characters
         if new_id >= MAX_CHARACTERS:
             raise PreventUpdate
-        
-        # Update copy count with all values
-        for id,count in zip(active_ids, clicked):
-            copy_counts[id] = count
+
         
         # Copy the existing character and replace its id and color 
         character = characters[index]    
@@ -170,55 +191,11 @@ def register_callbacks(app, sidebar=True):
         patched_children.append(character)
         active_ids.append(new_id)
         
-        return patched_children, set_active_ids(active_ids), json.dumps(copy_counts)
+        return patched_children, set_active_ids(active_ids)
     
     ## Attacks
-    # @app.callback(
-    #     Output({'type': 'attack',"index": MATCH},"children"),
-    #     Input({'type': 'add-attack',"index": MATCH},"value"),
-    #     Input({'type': 'attack',"index": MATCH, "num": ALL},"active"),
-    #     prevent_initial_call=True
-    # )
-    # def update_attack(attack):
-    #     return attack
 
-
-    # @app.callback(
-    #     Output({'type': 'attack',"index": MATCH},"children"),
-    #     Output({'type': 'attack',"index": MATCH, "num": ALL},"active"),
-    #     State({'type': 'add-attack',"index": MATCH},"value"),
-    #     Input({'type': 'attack',"index": MATCH, "num": ALL},"active"),
-    #     prevent_initial_call=True
-    # )
-    # def update_attack(attack, active_attacks):
-
-    #     return attack
-
-
-    # WORKS
-    # @app.callback(
-    #     Output({'type': 'attack',"index": MATCH, "num": ALL},"active"),
-    #     Input({'type': 'attack',"index": MATCH, "num": ALL},"n_clicks_timestamp"),
-    #     prevent_initial_call=True
-    # )
-    # def select_attack(selected_attacks):
-    #     # Find last clicked attack
-    #     max_ = 0 
-    #     index = None
-    #     for ii, time in enumerate(selected_attacks):
-    #         if time is not None and time > max_:
-    #             max_ = time
-    #             index = ii
-
-    #     # Prevent if all attacks are None
-    #     if index is None:
-    #         raise PreventUpdate
-
-    #     # Update actively selected attacks
-    #     attacks = [index == ii for ii in range(len(selected_attacks))]
-    #     return attacks
-
-    # TODO: Check that this works
+    # TODO: Check that this works, it appears to work
     @app.callback(
         Output({'type': 'attack',"index": MATCH, "num": ALL},"active"),
         Output({'type': 'attack_ui',"index": MATCH},"children"),
@@ -229,29 +206,12 @@ def register_callbacks(app, sidebar=True):
         prevent_initial_call=True
     )
     def select_attack(selected_attacks, avals, add_attack_clicked, delete_attack_clicked):
-        # Find last clicked attack
-        max_ = 0 
-        index = None
-        for ii, time in enumerate(selected_attacks):
-            if time is not None and time > max_:
-                max_ = time
-                index = ii
-
-        # Prevent if all attacks are None
+        # Prevent if attack was not the most recently clicked
+        max_, index = max_from_list(selected_attacks)
         if index is None:
             raise PreventUpdate
-        
-        # Prevent if add or delete attack was clicked recently
-        max_add = 0
-        if isinstance(add_attack_clicked, list):
-            max_add = max([v if v is not None else 0 for v in add_attack_clicked])
-        elif isinstance(add_attack_clicked, int):
-            max_add = add_attack_clicked
-        max_delete = 0
-        if isinstance(delete_attack_clicked, list):
-            max_delete = max([v if v is not None else 0 for v in delete_attack_clicked])
-        elif isinstance(delete_attack_clicked, int):
-            max_delete = delete_attack_clicked
+        max_add, _ = max_from_list(add_attack_clicked)
+        max_delete, _ = max_from_list(delete_attack_clicked)
         most_recent_button_click = max(max_add, max_delete)
         if max_ < most_recent_button_click:
             raise PreventUpdate
@@ -360,7 +320,6 @@ def register_callbacks(app, sidebar=True):
     @app.callback(
             Output('character_row','children', allow_duplicate=True),
             Output('active_ids','data', allow_duplicate=True),
-            # Output('copy_counts','data', allow_duplicate=True),
             Output('character-alerts','children'),
             Input('upload-button','contents'), 
             State("active_ids","data"),

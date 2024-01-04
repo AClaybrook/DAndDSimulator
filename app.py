@@ -145,7 +145,7 @@ content = html.Div(dbc.Container([
         # ],width=2),
         dbc.Row(generate_character_cards(characters),id="character_row"),
         dcc.Store(id='active_ids', data=json.dumps(list(range(len(characters))))), # Used to keep track of character ids, since character can be added, copied and deleted
-        dcc.Store(id='copy_counts', data=json.dumps({})), # Used to keep track of copied character counts, since this gets triggered without button clicks
+        dcc.Store(id='delete-timestamp', data=None), # Used to keep track of last deleted character, since copying a character triggers a delete
         dcc.Store(id='all_attacks', data=json.dumps({})), # Used to keep track of copied character counts, since this gets triggered without button clicks
 
     ],style=row_style, class_name="mb-4"),
