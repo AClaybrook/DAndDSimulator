@@ -544,4 +544,4 @@ def generate_character_card(character_name, character=None, color="", index=1):
                 ]),
             ]),
         ],style=card_style),
-    width=3, id={"type": "character card", "index": index})
+    width=3, id={"type": "character card", "index": index}, class_name="mb-2")

@@ -365,7 +365,7 @@ def register_callbacks(app, sidebar=True):
                 # Don't add more than max characters
                 if new_id >= MAX_CHARACTERS:
                     alert = dbc.Alert(
-                        f"Max Characters Reached. Only imported {ii+1} characters from the file",
+                        f"Max Characters Reached. Only imported {ii} characters from the file",
                         dismissable=True,
                         is_open=True,
                         color="warning")
@@ -377,7 +377,7 @@ def register_callbacks(app, sidebar=True):
                     characters.append(generate_character_card(c["name"], character=Character(**c, attacks=attacksPython), color=COLORS[new_id], index=new_id))
                 except Exception as e:
                     alert = dbc.Alert(
-                        f"Import Failed. Cannot parse character {c['name']}",
+                        f"Import Failed. Cannot parse character '{c['name']}'. Skipping any remaining characters",
                         dismissable=True,
                         is_open=True,
                         color="danger")

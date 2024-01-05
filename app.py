@@ -93,7 +93,7 @@ def simulate_rounds_input():
         dbc.Row([
             dbc.Col([
                 dbc.InputGroup([
-                    dbc.Input(type="number", value=100_000, min=1, max=10_000_000, step=1, style={'display': 'inline-block'},id="simulate-input"),
+                    dbc.Input(type="number", value=100_000, min=1, max=1_000_000, step=1, style={'display': 'inline-block'},id="simulate-input"),
                     dbc.Button("Simulate!", color="primary",style={'display': 'inline-block'},id="simulate-button")
                 ]),
             ],width=2),
@@ -107,7 +107,7 @@ app = Dash(__name__, external_stylesheets=[style_sheet, dbc.icons.FONT_AWESOME])
 data, fig = generate_plot_data(characters, df_by_rounds, template=template)
 
 
-row_style = style={'border': '1px solid #d3d3d3', 'border-radius': '15px', 'padding': '10px'}
+row_style = style={'border': '1px solid #d3d3d3', 'border-radius': '15px', 'padding': '10px', 'padding-right': '0px'}
 # CONTENT_STYLE = {
 #     "top":0,
 #     "margin-top":'2rem',
@@ -126,14 +126,21 @@ content = html.Div(dbc.Container([
         #         dbc.Button(html.I(className="fa-solid fa-plus"),class_name="mb-3", color="primary",style={'display': 'inline-block'}),
         #             ]),
 
-        html.H3("Character Builder", id='character-builder'),
+        dbc.Row([
+            dbc.Col(html.H3("Character Builder", id='character-builder'), width=10),
+            dbc.Col([
+                dbc.InputGroup([
+                dbc.Button(html.I(className="fa-solid fa-download"),color="secondary", id="export-button"),
+                dcc.Download(id="download-characters"),
+                dcc.Upload(dbc.Button(html.I(className="fa-solid fa-upload"),color="info", id="import-button"), id='upload-button', multiple=False),
+            ], class_name="justify-content-end"),
+            ], class_name=" pr-0", width=2),
+        ],class_name="justify-content-between  pr-0"),
+        
         dbc.Col(
             dbc.InputGroup([
                 dbc.Input(type="text", placeholder="Character Name", style={'display': 'inline-block'},id="character_name"),
                 dbc.Button(html.I(className="fa-solid fa-plus"), color="primary",style={'display': 'inline-block'},id="add_character_button"),
-                dbc.Button(html.I(className="fa-solid fa-download"),color="secondary", style={'display': 'inline-block'}, id="export-button"),
-                dcc.Download(id="download-characters"),
-                dcc.Upload(dbc.Button(html.I(className="fa-solid fa-upload"),color="info", style={'display': 'inline-block'}, id="import-button"), id='upload-button', multiple=False),
                 # dcc.Upload(html.Button(html.I(className="fa-solid fa-upload"),id="import-button"), id='upload-button', multiple=False),
                 # dcc.Upload(children=html.Div("Click here"), id='upload-button', multiple=False)
             ])
