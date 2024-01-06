@@ -1,15 +1,16 @@
 from dash import Input, Output, State, Patch, MATCH, ALL, ctx
-from plots import COLORS, generate_plot_data, add_tables
+from plots import COLORS, generate_plot_data, add_tables, data_to_store, data_from_store, summary_stats
 from components.character_card import generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values
 from components.enemy_card import extract_enemy_ui_values
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
+from dash import dcc
 import json
 import numpy as np
 from models import Attack, Character, Enemy
 from numerical_simulation import simulate_character_rounds
 import base64
-import io
+import pandas as pd
 
 MAX_CHARACTERS = min(8,len(COLORS)) # There are 10 colors and 4 characters fit per row, so 8 is a good max
 
@@ -396,6 +397,7 @@ def register_callbacks(app, sidebar=True):
         return name
     
     @app.callback(
+        Output('results-store',"data"),
         Output('dist-plot',"figure"),
         Output('per-round-tables',"children"),
         Output('per-attack-tables',"children"),
@@ -412,6 +414,7 @@ def register_callbacks(app, sidebar=True):
             raise PreventUpdate
         
         if num_rounds is None:
+            res = Patch()
             fig = Patch()
             rounds = Patch()
             attacks = Patch()
@@ -420,16 +423,57 @@ def register_callbacks(app, sidebar=True):
                 dismissable=True,
                 is_open=True,
                 color="danger")
-            return fig, rounds, attacks, alert
+            return res, fig, rounds, attacks, alert
 
         characters = characters_from_ui(characters_list, attack_stores)
         
         enemy = Enemy(**extract_enemy_ui_values(enemy_card_body))
 
         dfs, df_by_rounds = simulate_character_rounds(characters, enemy, num_rounds=num_rounds)
-
         data, fig = generate_plot_data(characters, df_by_rounds)
         print(f"test {clicked}")
         rounds = add_tables(df_by_rounds,characters,by_round=True, width=3)
         attacks = add_tables(dfs,characters,by_round=False, width=3)
-        return fig, rounds, attacks, None
+        res = data_to_store(characters, df_by_rounds)
+        return res, fig, rounds, attacks, None
+    
+
+    @app.callback(
+        Output('export-results','data'),
+        Input('export-results-button','n_clicks'),
+        State("export-type","value"),         
+        State("results-store","data"),         
+    )
+    def export_results(clicked, export_type, results_store):
+        if clicked is None:
+            raise PreventUpdate
+
+        # TODO: Allow multiple download options, by round, by attack, etc.
+        # TODO: Add characters to export
+
+        dfs = []
+
+        names, df_by_rounds = data_from_store(results_store)
+        if export_type == "Summary Stats":
+            df_summary = summary_stats(df_by_rounds, by_round=True)
+            for name, data in zip(names,df_summary):
+                data.insert(0, 'Name', name)
+                dfs.append(data)
+        elif export_type == "By Round":
+            for name, data in zip(names,df_by_rounds):
+                data.insert(0, 'Name', name)
+                dfs.append(data)
+        elif export_type == "By Attack":
+            # TODO: NOT Implemented
+            dfs = df_by_rounds
+        elif export_type == "All Attacks":
+             # TODO: NOT Implemented
+            dfs = df_by_rounds
+
+        # Export to csv
+        export_kwargs = {"index": False}
+        filename = f"Damage {export_type}.csv"
+        export = dcc.send_data_frame(pd.concat(dfs).to_csv, filename, export_kwargs)
+        return export
+    
+

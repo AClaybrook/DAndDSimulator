@@ -9,7 +9,7 @@ import pandas as pd
 from dataclasses import replace, asdict
 from models import Character, Enemy, AttackContext, DamageContext, Attack
 from numerical_simulation import simulate_character_rounds
-from plots import generate_plot_data, COLORS, add_tables
+from plots import generate_plot_data, COLORS, add_tables, data_to_store
 from callbacks import register_callbacks
 from components.sidebar import sidebar
 from components.character_card import generate_character_cards
@@ -162,13 +162,31 @@ content = html.Div(dbc.Container([
         ],style=row_style, class_name="mb-4"),
     # Simulator
     dbc.Row([
-        html.H3("Simulator",id='simulator'),
+        dbc.Row([
+            dbc.Col(html.H3("Simulator",id='simulator'), width=9),
+            dbc.Col([
+                dbc.InputGroup([
+                    dbc.Select(
+                        options=[
+                            {'label': 'Summary Stats', 'value': 'Summary Stats'},
+                            {'label': 'By Round', 'value': 'By Round'},
+                            # TODO: Uncomment when implemented
+                            # {'label': 'By Attack', 'value': 'By Attack'},
+                            # {'label': 'All Attacks', 'value': 'All Attacks'}
+                            ],
+                        value='Summary Stats', id='export-type'),
+                    dbc.Button(html.I(className="fa-solid fa-download"),color="secondary", id="export-results-button"),
+                    dcc.Download(id="export-results"),
+                ]),
+            ], class_name="pr-0", width=3, style={'text-align': 'right'}),
+        ],class_name="justify-content-between  pr-0"),
         simulate_rounds_input(),
+        dcc.Store(id='results-store', data=data_to_store(characters, df_by_rounds)),
         dbc.Row([
             dcc.Graph(
                 id='dist-plot',
                 figure=fig,
-                style={'height': '85vh'}
+                style={'height': '85vh', 'margin-bottom': '2px'}
             ),
         ]),
         html.Div(id="per-round-tables",children=[

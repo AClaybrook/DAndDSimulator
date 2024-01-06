@@ -7,105 +7,105 @@
   }
   
 
-  /* Hide the blurb on a small screen */
-  #blurb {
-    display: none;
+/* Hide the blurb on a small screen */
+#blurb {
+  display: none;
+}
+
+#sidebar-toggle {
+  display: none;
+}
+
+#collapse *:first-child {
+  margin-top: 1rem;
+}
+
+/* add the three horizontal bars icon for the toggle */
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba(255, 255, 255, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+#page-content {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0rem;
+  padding-right: 0.5rem;
+}
+
+@media (min-width: 24em) {
+  #sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 10rem;
+    text-align: left;
+    transition: margin 0.2s ease-in-out, padding 0.2s ease-in-out;
   }
-  
+
   #sidebar-toggle {
+    display: inline-block;
+    position: relative;
+    top: 0;
+    transition: top 0.2s ease-in-out;
+  }
+
+  /* add negative margin to sidebar to achieve the collapse */
+  #sidebar.collapsed {
+    margin-left: -7rem;
+  }
+
+  /* move the sidebar toggle up to the top left corner */
+  #sidebar.collapsed #sidebar-toggle {
+    top: -1rem;
+  }
+
+  /* also adjust margin of page content */
+  #sidebar.collapsed ~ #page-content {
+    margin-left: 3rem;
+  }
+
+  /* move all contents of navbar other than header (containing toggle) further
+      off-screen */
+  #sidebar.collapsed > *:not(:first-child) {
+    margin-left: -6rem;
+    margin-right: 6rem;
+  }
+
+  /* reveal the blurb on a large screen */
+  #blurb {
+    display: block;
+  }
+
+  /* Hide the toggle on a large screen */
+  #navbar-toggle {
     display: none;
   }
 
-  #collapse *:first-child {
-    margin-top: 1rem;
-  }
-  
-  /* add the three horizontal bars icon for the toggle */
-  .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba(255, 255, 255, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  #collapse {
+    display: block;
   }
 
+  /* set margins of the main content so that it doesn't overlap the sidebar */
   #page-content {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    padding-left: 0rem;
-    padding-right: 0.5rem;
+    margin-left: 10rem;
+    margin-right: 0rem;
+    transition: margin-left 0.2s ease-in-out;
   }
-  
-  @media (min-width: 24em) {
-    #sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      width: 10rem;
-      text-align: left;
-      transition: margin 0.2s ease-in-out, padding 0.2s ease-in-out;
-    }
-  
-    #sidebar-toggle {
-      display: inline-block;
-      position: relative;
-      top: 0;
-      transition: top 0.2s ease-in-out;
-    }
-  
-    /* add negative margin to sidebar to achieve the collapse */
-    #sidebar.collapsed {
-      margin-left: -7rem;
-    }
-  
-    /* move the sidebar toggle up to the top left corner */
-    #sidebar.collapsed #sidebar-toggle {
-      top: -1rem;
-    }
-  
-    /* also adjust margin of page content */
-    #sidebar.collapsed ~ #page-content {
-      margin-left: 3rem;
-    }
-  
-    /* move all contents of navbar other than header (containing toggle) further
-       off-screen */
-    #sidebar.collapsed > *:not(:first-child) {
-      margin-left: -6rem;
-      margin-right: 6rem;
-    }
-  
-    /* reveal the blurb on a large screen */
-    #blurb {
-      display: block;
-    }
-  
-    /* Hide the toggle on a large screen */
-    #navbar-toggle {
-      display: none;
-    }
-  
-    #collapse {
-      display: block;
-    }
-  
-    /* set margins of the main content so that it doesn't overlap the sidebar */
-    #page-content {
-      margin-left: 10rem;
-      margin-right: 0rem;
-      transition: margin-left 0.2s ease-in-out;
-    }
-  }
+}
 
-  /* Make Inputs appear invalid */
-  input:invalid {
-    border-color: #dc3545;
-    padding-right: calc(1.5em + 0.75rem);
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right calc(0.375em + 0.1875rem) center;
-    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-    outline: none;
-  }
+/* Make Inputs appear invalid */
+input:invalid {
+  border-color: #dc3545;
+  padding-right: calc(1.5em + 0.75rem);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.1875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+  outline: none;
+}
 
-  /* Row Children Styling */
-  .row>*{
-    padding-right: 2px;
-  }
+/* Row Children Styling */
+.row>*{
+  padding-right: 2px;
+}
