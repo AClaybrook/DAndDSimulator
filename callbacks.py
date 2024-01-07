@@ -429,11 +429,13 @@ def register_callbacks(app, sidebar=True):
         
         enemy = Enemy(**extract_enemy_ui_values(enemy_card_body))
 
-        dfs, df_by_rounds = simulate_character_rounds(characters, enemy, num_rounds=num_rounds)
+        dfs, df_by_rounds, df_by_attacks = simulate_character_rounds(characters, enemy, num_rounds=num_rounds)
         data, fig = generate_plot_data(characters, df_by_rounds)
         print(f"test {clicked}")
         rounds = add_tables(df_by_rounds,characters,by_round=True, width=3)
-        attacks = add_tables(dfs,characters,by_round=False, width=3)
+        attacks = add_tables(df_by_attacks,characters,by_round=False, width=3)
+        # TODO: Looks like the data store is running out of memory, need to store only summary data and just resimulate if needed
+        # TODO: Could add a random seed to ensure data is the same
         res = data_to_store(characters, df_by_rounds)
         return res, fig, rounds, attacks, None
     
@@ -477,3 +479,4 @@ def register_callbacks(app, sidebar=True):
         return export
     
 
+# TODO: Add multiple graph options. Add a simulate for multiple enemy armor classes

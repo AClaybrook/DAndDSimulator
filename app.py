@@ -7,7 +7,7 @@ from dash import dcc, html, Input, Output, State, MATCH, ALL, Patch, Dash
 import dash_bootstrap_components as dbc
 import pandas as pd
 from dataclasses import replace, asdict
-from models import Character, Enemy, AttackContext, DamageContext, Attack
+from models import Character, Enemy, Attack
 from numerical_simulation import simulate_character_rounds
 from plots import generate_plot_data, COLORS, add_tables, data_to_store
 from callbacks import register_callbacks
@@ -33,7 +33,7 @@ enemy1 = Enemy(armor_class=18)
 
 characters = [character1, character2]
 
-dfs, df_by_rounds = simulate_character_rounds(characters, enemy1,num_rounds=100_000)
+dfs, df_by_rounds, df_by_attacks = simulate_character_rounds(characters, enemy1,num_rounds=100_000)
 
 # %%
 # Dashboard
@@ -93,7 +93,7 @@ def simulate_rounds_input():
         dbc.Row([
             dbc.Col([
                 dbc.InputGroup([
-                    dbc.Input(type="number", value=100_000, min=1, max=1_000_000, step=1, style={'display': 'inline-block'},id="simulate-input"),
+                    dbc.Input(type="number", value=100_000, min=1, max=100_000, step=1, style={'display': 'inline-block'},id="simulate-input"),
                     dbc.Button("Simulate!", color="primary",style={'display': 'inline-block'},id="simulate-button")
                 ]),
             ],width=2),
@@ -193,7 +193,7 @@ content = html.Div(dbc.Container([
             *add_tables(df_by_rounds,characters,by_round=True, width=3)
         ]),
         html.Div(id="per-attack-tables",children=[
-            *add_tables(dfs,characters,by_round=False, width=3),
+            *add_tables(df_by_attacks,characters,by_round=False, width=3),
         ]),
         ],style=row_style),
     ],fluid=True),id="page-content")

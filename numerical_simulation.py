@@ -110,7 +110,7 @@ def simulate_character_rounds(characters, enemy, num_rounds=10000):
     """ Simulate rounds of combat for a list of characters against an enemy"""
     dfs = []
     df_by_rounds = []
-    print(num_rounds)
+    dfs_by_attack = []
 
     for c in characters:
         # Attack and Damage Contexts
@@ -118,16 +118,24 @@ def simulate_character_rounds(characters, enemy, num_rounds=10000):
 
         # Per Attack
         dfPerAttacks = []
-        for a, d in zip(attack_contexts, damage_contexts):
+        attack_names = [a.name for a in c.attacks]
+        for ii, (a, d) in enumerate(zip(attack_contexts, damage_contexts)):
             dfPerAttack = simulate_rounds(asdict(a), asdict(d), num_rounds=num_rounds)
+            dfPerAttack['Attack'] = attack_names[ii]
             dfPerAttacks.append(dfPerAttack)
         
         # All Attacks per Round
         df = pd.concat(dfPerAttacks)
         dfs.append(df)
 
-        # Num Rounds
-        df_by_round = df.groupby('Round').sum()
+        # TODO: Add attack ids dataframe, this could make data analysis more interesting
+
+        # Summary Stats grouped by attack, easier to do this now rather than tracking labels for each attack
+        df_by_attack = df.drop('Round',axis=1).groupby('Attack').apply(lambda g: g.describe().drop(['count','std']))
+        dfs_by_attack.append(df_by_attack)
+
+        # Grouped by Round
+        df_by_round = df.drop('Attack', axis=1).groupby('Round').sum()
         df_by_rounds.append(df_by_round)
 
-    return dfs, df_by_rounds
+    return dfs, df_by_rounds, dfs_by_attack

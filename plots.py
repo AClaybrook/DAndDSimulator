@@ -60,10 +60,14 @@ def summary_stats(data: List, by_round=True):
         if by_round:
             datac = datac.drop(["Attack Roll", "Attack Roll (Die)", "Hit (Non-Crit)", "Hit (Crit)"], axis=1)
             datac.rename(columns={"Hit": "Num Hits","Hit (Non-Crit)": "Num Hits (Non-Crit)","Hit (Crit)": "Num Hits (Crit)"}, inplace=True)
+            df_summaryc = datac.describe().drop(["count","std"],axis=0).round(2)
+            df_summaryc.index.set_names([""], inplace=True)
+            df_summary.append(df_summaryc)
         else:
-            datac = datac.drop("Round", axis=1)
-        datac.rename(columns={"Hit": "Num Hits"}, inplace=True)
-        df_summary.append(datac.describe().drop(["count","std"],axis=0).reset_index().round(2))
+            # Assume this is already summary stats
+            datac.rename(columns={"Hit": "Num Hits"}, inplace=True)
+            datac.index.set_names(["Attack Name",""], inplace=True)
+            df_summary.append(datac.round(2))
     return df_summary
 
 def add_tables(data, characters, by_round=True, width=12):
@@ -78,7 +82,7 @@ def add_tables(data, characters, by_round=True, width=12):
     for ii, (c, df_table) in enumerate(zip(characters, data_summary)):
         col = []  
         col.append(html.H4(c.name, style={'color': COLORS[ii]})) 
-        col.append(dbc.Table.from_dataframe(df_table, striped=True, bordered=True, hover=True, responsive=True))
+        col.append(dbc.Table.from_dataframe(df_table, striped=True, bordered=True, hover=True, responsive=True, index=True))
         col.append(html.Br())
         row.append(dbc.Col(col, width={"size": width}))
     table_list.append(dbc.Row(row))
