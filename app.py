@@ -6,6 +6,7 @@ import json
 import os
 from dash import dcc, html, Dash
 import dash_bootstrap_components as dbc
+import gunicorn # Used by heroku to run the app
 from models import Character, Enemy, Attack
 from numerical_simulation import simulate_character_rounds
 from plots import generate_plot_data, add_tables, data_to_store
@@ -13,6 +14,7 @@ from callbacks import register_callbacks
 from components.sidebar import sidebar
 from components.character_card import generate_character_cards
 from components.enemy_card import generate_enemy_card
+
 
 
 # %%
@@ -40,33 +42,6 @@ if style_sheet in [dbc.themes.CYBORG, dbc.themes.DARKLY]:
     template = 'plotly_dark'
 else:
     template = 'plotly'
-
-
-# def add_tables(by_round=True, width=12):
-#     if by_round:
-#         table_list = [dbc.Row(dbc.Col(html.H4("Per Round")))]
-#         data = df_by_rounds
-#     else:
-#         table_list = [dbc.Row(dbc.Col(html.H4("Per Attack")))]
-#         data = dfs
-    
-#     row = []
-    
-#     for ii, (c, datac) in enumerate(zip(characters, data)):
-#         if by_round:
-#             datac = datac.drop(["Attack Roll", "Attack Roll (Die)", "Hit (Non-Crit)", "Hit (Crit)"], axis=1)
-#             datac.rename(columns={"Hit": "Num Hits","Hit (Non-Crit)": "Num Hits (Non-Crit)","Hit (Crit)": "Num Hits (Crit)"}, inplace=True)
-#         else:
-#             datac = datac.drop("Round", axis=1)
-#         datac.rename(columns={"Hit": "Num Hits"}, inplace=True)
-#         df_table = datac.describe().drop(["count","std"],axis=0).reset_index().round(2)
-#         col = []  
-#         col.append(html.H4(c.name, style={'color': COLORS[ii]})) 
-#         col.append(dbc.Table.from_dataframe(df_table, striped=True, bordered=True, hover=True, responsive=True))
-#         col.append(html.Br())
-#         row.append(dbc.Col(col, width={"size": width}))
-#     table_list.append(dbc.Row(row))
-#     return table_list
 
 def wrap_elements(element_list, width=12, same_row=False):
     if same_row:
@@ -202,9 +177,10 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 #%%
 
 register_callbacks(app)
-# Get the port number from the environment variable, or set to 8050 if not available
-port = int(os.environ.get("PORT", 8050))
-app.run_server(debug=False, host="0.0.0.0", port=port)
+if __name__ == '__main__':
+    # Get the port number from the environment variable, or set to 8050 if not available
+    port = int(os.environ.get("PORT", 8050))
+    app.run_server(debug=False, host="0.0.0.0", port=port)
 
 # app.run_server(debug=True)
 print("Starting app")
