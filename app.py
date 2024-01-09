@@ -98,6 +98,7 @@ def simulate_rounds_input():
     ])
 
 app = Dash(__name__, external_stylesheets=[style_sheet, dbc.icons.FONT_AWESOME])
+server = app.server
 # app.config.suppress_callback_exceptions = True
 
 # Plot data
