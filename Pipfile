@@ -15,6 +15,10 @@ memory-profiler = "*"
 numba = "*"
 chart-studio = "*"
 dash-bootstrap-components = "*"
+gunicorn = "*"
+pandas = "*"
+flask = "*"
+typing-extensions = "*"
 
 [dev-packages]
 ipykernel = "*"
