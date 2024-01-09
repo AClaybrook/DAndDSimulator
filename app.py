@@ -9,7 +9,7 @@ import dash_bootstrap_components as dbc
 import gunicorn # Used by heroku to run the app
 from models import Character, Enemy, Attack
 from numerical_simulation import simulate_character_rounds
-from plots import generate_plot_data, add_tables, data_to_store
+from plots import generate_plot_data, add_tables
 from callbacks import register_callbacks
 from components.sidebar import sidebar
 from components.character_card import generate_character_cards
@@ -66,7 +66,7 @@ def simulate_rounds_input():
         dbc.Row([
             dbc.Col([
                 dbc.InputGroup([
-                    dbc.Input(type="number", value=10_000, min=1, max=10_000, step=1, style={'display': 'inline-block'},id="simulate-input"),
+                    dbc.Input(type="number", value=10_000, min=1, max=50_000, step=1, style={'display': 'inline-block'},id="simulate-input"),
                     dbc.Button("Simulate!", color="primary",style={'display': 'inline-block'},id="simulate-button")
                 ]),
             ],width=2),
@@ -142,20 +142,19 @@ content = html.Div(dbc.Container([
                 dbc.InputGroup([
                     dbc.Select(
                         options=[
-                            {'label': 'Summary Stats', 'value': 'Summary Stats'},
-                            {'label': 'By Round', 'value': 'By Round'},
-                            # TODO: Uncomment when implemented
-                            # {'label': 'By Attack', 'value': 'By Attack'},
-                            # {'label': 'All Attacks', 'value': 'All Attacks'}
+                            {'label': 'Round Summary', 'value': 'Round Summary'},
+                            {'label': 'All Rounds', 'value': 'All Rounds'},
+                            {'label': 'Attack Summary', 'value': 'Attack Summary'},
+                            {'label': 'All Attacks', 'value': 'All Attacks'}
                             ],
-                        value='Summary Stats', id='export-type'),
+                        value='Round Summary', id='export-type'),
                     dbc.Button(html.I(className="fa-solid fa-download"),color="secondary", id="export-results-button"),
                     dcc.Download(id="export-results"),
                 ]),
             ], class_name="pr-0", width=3, style={'text-align': 'right'}),
         ],class_name="justify-content-between  pr-0"),
         simulate_rounds_input(),
-        dcc.Store(id='results-store', data=data_to_store(characters, df_by_rounds)),
+        # dcc.Store(id='results-store', data=data_to_store(characters, df_by_rounds)),
         dbc.Row([
             dcc.Graph(
                 id='dist-plot',
@@ -178,7 +177,7 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
 register_callbacks(app)
 if __name__ == '__main__':
-    # Get the port number from the environment variable, or set to 8050 if not available
+# Get the port number from the environment variable, or set to 8050 if not available
     port = int(os.environ.get("PORT", 8050))
     app.run_server(debug=False, host="0.0.0.0", port=port)
 

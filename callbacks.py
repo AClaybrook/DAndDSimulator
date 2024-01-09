@@ -1,5 +1,5 @@
 from dash import Input, Output, State, Patch, MATCH, ALL, ctx
-from plots import COLORS, generate_plot_data, add_tables, data_to_store, data_from_store, summary_stats
+from plots import COLORS, generate_plot_data, add_tables, data_to_store, summary_stats
 from components.character_card import generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values
 from components.enemy_card import extract_enemy_ui_values
 import dash_bootstrap_components as dbc
@@ -247,7 +247,7 @@ def register_callbacks(app, sidebar=True):
 
         # Append to existing attack store
         avals_updated = json.loads(avals)
-        for ii in range(num_attacks):
+        for _ in range(num_attacks):
             avals_updated.append(new_attack)
 
         # Update UI attack list
@@ -289,7 +289,7 @@ def register_callbacks(app, sidebar=True):
 
         # Delete from store and UI
         avals_updated = json.loads(avals)
-        for ii in range(len(avals_updated)):
+        for ii, _ in enumerate(avals_updated):
             if ii == attack_index:
                 del avals_updated[ii]
                 del existing_attacks[ii]
@@ -306,7 +306,7 @@ def register_callbacks(app, sidebar=True):
     def export_character(clicked, characters_ui, attack_stores):
         if clicked is None:
             raise PreventUpdate
-        
+    
         c_dicts = []
         for ii,c in enumerate(characters_ui):
             attack_dicts= [attack for attack in json.loads(attack_stores[ii])]
@@ -315,7 +315,7 @@ def register_callbacks(app, sidebar=True):
             c_dicts.append(c_dict)
 
         return dict(content=json.dumps(c_dicts, indent=4), filename="characters.json")
-    
+   
     # TODO: Import characters
     @app.callback(
             Output('character_row','children', allow_duplicate=True),
@@ -328,7 +328,7 @@ def register_callbacks(app, sidebar=True):
     def import_characters(contents, active_ids_json):
         if contents is None:
             raise PreventUpdate
-        
+    
         def parse_contents(contents):
             content_type, content_string = contents.split(',')
             decoded = base64.b64decode(content_string)
@@ -351,9 +351,9 @@ def register_callbacks(app, sidebar=True):
                     is_open=True,
                     color="danger")
             return alert, characters_list
-        
+
         alert, characters_list = parse_contents(contents)
-    
+
         # Add characters
         characters = Patch()
         _active_ids_patch = Patch() # Needed so patch works for attack stores
@@ -376,6 +376,7 @@ def register_callbacks(app, sidebar=True):
                     attacksPython = [Attack(**attack) for attack in attacks]
                     characters.append(generate_character_card(c["name"], character=Character(**c, attacks=attacksPython), color=COLORS[new_id], index=new_id))
                 except Exception as e:
+                    print(e)
                     alert = dbc.Alert(
                         f"Import Failed. Cannot parse character '{c['name']}'. Skipping any remaining characters",
                         dismissable=True,
@@ -396,7 +397,7 @@ def register_callbacks(app, sidebar=True):
         return name
     
     @app.callback(
-        Output('results-store',"data"),
+        # Output('results-store',"data"),
         Output('dist-plot',"figure"),
         Output('per-round-tables',"children"),
         Output('per-attack-tables',"children"),
@@ -413,7 +414,7 @@ def register_callbacks(app, sidebar=True):
             raise PreventUpdate
         
         if num_rounds is None:
-            res = Patch()
+
             fig = Patch()
             rounds = Patch()
             attacks = Patch()
@@ -422,60 +423,145 @@ def register_callbacks(app, sidebar=True):
                 dismissable=True,
                 is_open=True,
                 color="danger")
-            return res, fig, rounds, attacks, alert
+            return fig, rounds, attacks, alert
 
-        characters = characters_from_ui(characters_list, attack_stores)
+        try:
+            characters = characters_from_ui(characters_list, attack_stores)
+        except Exception as e:
+            print(e)
+
+            fig = Patch()
+            rounds = Patch()
+            attacks = Patch()
+            alert = dbc.Alert(
+                "Could not parse characters, please check that all fields are filled out correctly",
+                dismissable=True,
+                is_open=True,
+                color="danger")
+            return fig, rounds, attacks, alert
         
-        enemy = Enemy(**extract_enemy_ui_values(enemy_card_body))
+        try:
+            enemy = Enemy(**extract_enemy_ui_values(enemy_card_body))
+        except Exception as e:
+            print(e)
+            fig = Patch()
+            rounds = Patch()
+            attacks = Patch()
+            alert = dbc.Alert(
+                "Could not parse enemy, please check that all fields are filled out correctly",
+                dismissable=True,
+                is_open=True,
+                color="danger")
+            return fig, rounds, attacks, alert
 
-        dfs, df_by_rounds, df_by_attacks = simulate_character_rounds(characters, enemy, num_rounds=num_rounds)
+        try:
+            dfs, df_by_rounds, df_by_attacks = simulate_character_rounds(characters, enemy, num_rounds=num_rounds)
+        except Exception as e:
+            print(e)
+            fig = Patch()
+            rounds = Patch()
+            attacks = Patch()
+            alert = dbc.Alert(
+                "Could not simulate combat, please check that all fields are filled out correctly",
+                dismissable=True,
+                is_open=True,
+                color="danger")
+            return fig, rounds, attacks, alert
         data, fig = generate_plot_data(characters, df_by_rounds)
-        print(f"test {clicked}")
+        print(f"Simulated {clicked} times")
         rounds = add_tables(df_by_rounds,characters,by_round=True, width=3)
         attacks = add_tables(df_by_attacks,characters,by_round=False, width=3)
         # TODO: Looks like the data store is running out of memory, need to store only summary data and just resimulate if needed
         # TODO: Could add a random seed to ensure data is the same
-        res = data_to_store(characters, df_by_rounds)
-        return res, fig, rounds, attacks, None
+        # res = data_to_store(characters, df_by_rounds)
+        return fig, rounds, attacks, None
     
 
+    # Resimulate since storing data is very memory intensive. Could implment client side callbacks, but this is sufficient for now
     @app.callback(
         Output('export-results','data'),
+        Output('simulate-alerts',"children", allow_duplicate=True),
         Input('export-results-button','n_clicks'),
-        State("export-type","value"),         
-        State("results-store","data"),         
+        State("export-type","value"),
+        State("simulate-input","value"),
+        State({'type': 'attack_store',"index": ALL},"data"),
+        State("character_row","children"),
+        State("enemy-card-body","children"),
+        prevent_initial_call=True
     )
-    def export_results(clicked, export_type, results_store):
+    def export_results(clicked, export_type, num_rounds, attack_stores, characters_list, enemy_card_body):
         if clicked is None:
             raise PreventUpdate
 
-        # TODO: Allow multiple download options, by round, by attack, etc.
-        # TODO: Add characters to export
+        if num_rounds is None:
+            export = Patch()
+            alert = dbc.Alert(
+                "Invalid Number of Rounds",
+                dismissable=True,
+                is_open=True,
+                color="danger")
+            return export, alert
+
+        try:
+            characters = characters_from_ui(characters_list, attack_stores)
+        except Exception as e:
+            print(e)
+            export = Patch()
+            alert = dbc.Alert(
+                "Could not parse characters, please check that all fields are filled out correctly",
+                dismissable=True,
+                is_open=True,
+                color="danger")
+            return export, alert
+
+        try:
+            enemy = Enemy(**extract_enemy_ui_values(enemy_card_body))
+        except Exception as e:
+            print(e)
+            export = Patch()
+            alert = dbc.Alert(
+                "Could not parse enemy, please check that all fields are filled out correctly",
+                dismissable=True,
+                is_open=True,
+                color="danger")
+            return export, alert
+
+        try:
+            df_all, df_by_rounds, df_by_attacks = simulate_character_rounds(characters, enemy, num_rounds=num_rounds)
+        except Exception as e:
+            print(e)
+            export = Patch()
+            alert = dbc.Alert(
+                "Could not simulate combat, please check that all fields are filled out correctly",
+                dismissable=True,
+                is_open=True,
+                color="danger")
+            return export, alert
 
         dfs = []
-
-        names, df_by_rounds = data_from_store(results_store)
-        if export_type == "Summary Stats":
+        names = [c.name for c in characters]
+        if export_type == "Round Summary":
             df_summary = summary_stats(df_by_rounds, by_round=True)
             for name, data in zip(names,df_summary):
                 data.insert(0, 'Name', name)
                 dfs.append(data)
-        elif export_type == "By Round":
+        elif export_type == "All Rounds":
             for name, data in zip(names,df_by_rounds):
                 data.insert(0, 'Name', name)
                 dfs.append(data)
-        elif export_type == "By Attack":
-            # TODO: NOT Implemented
-            dfs = df_by_rounds
+        elif export_type == "Attack Summary":
+            for name, data in zip(names,df_by_attacks):
+                data.insert(0, 'Name', name)
+                dfs.append(data)
         elif export_type == "All Attacks":
-             # TODO: NOT Implemented
-            dfs = df_by_rounds
+            for name, data in zip(names,df_all):
+                data.insert(0, 'Name', name)
+                dfs.append(data)
 
         # Export to csv
         export_kwargs = {"index": False}
         filename = f"Damage {export_type}.csv"
         export = dcc.send_data_frame(pd.concat(dfs).to_csv, filename, export_kwargs)
-        return export
-    
+        return export, None
 
 # TODO: Add multiple graph options. Add a simulate for multiple enemy armor classes
