@@ -3,6 +3,7 @@
 # Imports
 from dataclasses import replace
 import json
+import os
 from dash import dcc, html, Dash
 import dash_bootstrap_components as dbc
 from models import Character, Enemy, Attack
@@ -201,7 +202,10 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 #%%
 
 register_callbacks(app)
-app.run_server(debug=False)
+# Get the port number from the environment variable, or set to 8050 if not available
+port = int(os.environ.get("PORT", 8050))
+app.run_server(debug=False, host="0.0.0.0", port=port)
+
 # app.run_server(debug=True)
 print("Starting app")
 
