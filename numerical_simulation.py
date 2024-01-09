@@ -1,9 +1,10 @@
 """ Numerical simulation of D&D combat
     Uses vectorized numpy operations for speed """
+from dataclasses import asdict
 import numpy as np
 import pandas as pd
-from dataclasses import asdict
-from models import AttackContext, DamageContext, calculate_attack_and_damage_context
+
+from models import calculate_attack_and_damage_context
 
 np.random.seed(1) # Set random seed for reproducibility
 

@@ -364,7 +364,7 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
                 damage_modifier += rage_modifier
             if character.brutal_critical:
                 crit_num_die.append(1)
-                _, weapon_die = die_from_str(attack.damage)
+                _, weapon_die, _ = die_from_str(attack.damage)
                 crit_damage_die.append(weapon_die)
             # Paladin
             if character.divine_smite:
@@ -379,7 +379,7 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
             # Half-Orc
             if character.savage_attacks_half_orc:
                 crit_num_die.append(1)
-                _, weapon_die = die_from_str(attack.damage)
+                _, weapon_die, _ = die_from_str(attack.damage)
                 crit_damage_die.append(weapon_die)
         elif attack.type == 'weapon (ranged)':
             damage_modifier += ability_modifier

@@ -1,20 +1,17 @@
 # %%
+""" Main app file for D&D Damage Simulator """
 # Imports
-import pandas as pd
-import numpy as np
-from IPython.display import display
-from dash import dcc, html, Input, Output, State, MATCH, ALL, Patch, Dash
+from dataclasses import replace
+import json
+from dash import dcc, html, Dash
 import dash_bootstrap_components as dbc
-import pandas as pd
-from dataclasses import replace, asdict
 from models import Character, Enemy, Attack
 from numerical_simulation import simulate_character_rounds
-from plots import generate_plot_data, COLORS, add_tables, data_to_store
+from plots import generate_plot_data, add_tables, data_to_store
 from callbacks import register_callbacks
 from components.sidebar import sidebar
 from components.character_card import generate_character_cards
 from components.enemy_card import generate_enemy_card
-import json
 
 
 # %%

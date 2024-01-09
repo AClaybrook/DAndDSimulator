@@ -99,7 +99,7 @@ def data_from_store(store):
     dfs = []
     names = []
     for key, data in store.items():
-        _, name = split = key.split(',')
+        _, name = key.split(',')
         names.append(name)
         dfs.append(pd.DataFrame(data))
     return names, dfs

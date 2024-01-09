@@ -6,7 +6,6 @@ import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 from dash import dcc
 import json
-import numpy as np
 from models import Attack, Character, Enemy
 from numerical_simulation import simulate_character_rounds
 import base64
@@ -341,13 +340,13 @@ def register_callbacks(app, sidebar=True):
                 except Exception as e:
                     print(e)
                     alert = dbc.Alert(
-                        f"Import Failed. Cannot parse json file",
+                        "Import Failed. Cannot parse json file",
                         dismissable=True,
                         is_open=True,
                         color="danger")
             else:
                 alert = dbc.Alert(
-                    f"Import Failed. Only json files are supported",
+                    "Import Failed. Only json files are supported",
                     dismissable=True,
                     is_open=True,
                     color="danger")
