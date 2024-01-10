@@ -7,6 +7,7 @@ import os
 from dash import dcc, html, Dash
 import dash_bootstrap_components as dbc
 import gunicorn # Used by heroku to run the app
+import numpy as np
 from models import Character, Enemy, Attack
 from numerical_simulation import simulate_character_rounds
 from plots import generate_plot_data, add_tables
@@ -14,8 +15,6 @@ from callbacks import register_callbacks
 from components.sidebar import sidebar
 from components.character_card import generate_character_cards
 from components.enemy_card import generate_enemy_card
-
-
 
 # %%
 # Example
@@ -67,7 +66,7 @@ def simulate_rounds_input():
             dbc.Col([
                 dbc.InputGroup([
                     dbc.Input(type="number", value=10_000, min=1, max=50_000, step=1, style={'display': 'inline-block'},id="simulate-input"),
-                    dbc.Button("Simulate!", color="primary",style={'display': 'inline-block'},id="simulate-button")
+                    dbc.Button(dbc.Spinner("Simulate!",color="primary",id='simulate-spinner'), color="primary",style={'display': 'inline-block'},id="simulate-button"),
                 ]),
             ],width=2),
         ],class_name="mb-2"),
@@ -148,7 +147,7 @@ content = html.Div(dbc.Container([
                             {'label': 'All Attacks', 'value': 'All Attacks'}
                             ],
                         value='Round Summary', id='export-type'),
-                    dbc.Button(html.I(className="fa-solid fa-download"),color="secondary", id="export-results-button"),
+                    dbc.Button(dbc.Spinner(html.I(className="fa-solid fa-download"),color="secondary", id="export-spinner", size="sm"),color="secondary", id="export-results-button"),
                     dcc.Download(id="export-results"),
                 ]),
             ], class_name="pr-0", width=3, style={'text-align': 'right'}),
@@ -156,11 +155,11 @@ content = html.Div(dbc.Container([
         simulate_rounds_input(),
         # dcc.Store(id='results-store', data=data_to_store(characters, df_by_rounds)),
         dbc.Row([
-            dcc.Graph(
-                id='dist-plot',
-                figure=fig,
-                style={'height': '85vh', 'margin-bottom': '2px'}
-            ),
+                dcc.Graph(
+                    id='dist-plot',
+                    figure=fig,
+                    style={'height': '85vh', 'margin-bottom': '2px'}
+                ),
         ]),
         html.Div(id="per-round-tables",children=[
             *add_tables(df_by_rounds,characters,by_round=True, width=3)
@@ -183,7 +182,5 @@ if __name__ == '__main__':
 
 # app.run_server(debug=True)
 print("Starting app")
-
-
 
 # %%

@@ -6,7 +6,13 @@ import pandas as pd
 
 from models import calculate_attack_and_damage_context
 
-np.random.seed(1) # Set random seed for reproducibility
+# Set random seed for reproducibility
+SEED = 1
+np.random.seed(SEED)
+
+def set_seed(seed=SEED):
+    """ Set random seed for reproducibility"""
+    np.random.seed(seed)
 
 def roll(num_rolls, die_size=20, reroll_on=0):
     """ Roll a die num_rolls times and return the results

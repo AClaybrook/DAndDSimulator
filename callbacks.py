@@ -4,10 +4,10 @@ from components.character_card import generate_character_card, set_attack_from_v
 from components.enemy_card import extract_enemy_ui_values
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
-from dash import dcc
+from dash import dcc, html
 import json
 from models import Attack, Character, Enemy
-from numerical_simulation import simulate_character_rounds
+from numerical_simulation import simulate_character_rounds, set_seed
 import base64
 import pandas as pd
 
@@ -402,6 +402,7 @@ def register_callbacks(app, sidebar=True):
         Output('per-round-tables',"children"),
         Output('per-attack-tables',"children"),
         Output('simulate-alerts',"children"),
+        Output("simulate-spinner","children"),
         Input("simulate-button","n_clicks"),
         State("simulate-input","value"),
         State({'type': 'attack_store',"index": ALL},"data"),
@@ -412,7 +413,8 @@ def register_callbacks(app, sidebar=True):
     def simulate(clicked, num_rounds, attack_stores, characters_list, enemy_card_body):
         if clicked is None:
             raise PreventUpdate
-        
+        set_seed()
+        spinner = "Simulate!"
         if num_rounds is None:
 
             fig = Patch()
@@ -423,7 +425,7 @@ def register_callbacks(app, sidebar=True):
                 dismissable=True,
                 is_open=True,
                 color="danger")
-            return fig, rounds, attacks, alert
+            return fig, rounds, attacks, alert, spinner
 
         try:
             characters = characters_from_ui(characters_list, attack_stores)
@@ -438,7 +440,7 @@ def register_callbacks(app, sidebar=True):
                 dismissable=True,
                 is_open=True,
                 color="danger")
-            return fig, rounds, attacks, alert
+            return fig, rounds, attacks, alert, spinner
         
         try:
             enemy = Enemy(**extract_enemy_ui_values(enemy_card_body))
@@ -452,7 +454,7 @@ def register_callbacks(app, sidebar=True):
                 dismissable=True,
                 is_open=True,
                 color="danger")
-            return fig, rounds, attacks, alert
+            return fig, rounds, attacks, alert, spinner
 
         try:
             dfs, df_by_rounds, df_by_attacks = simulate_character_rounds(characters, enemy, num_rounds=num_rounds)
@@ -466,7 +468,7 @@ def register_callbacks(app, sidebar=True):
                 dismissable=True,
                 is_open=True,
                 color="danger")
-            return fig, rounds, attacks, alert
+            return fig, rounds, attacks, alert, None
         data, fig = generate_plot_data(characters, df_by_rounds)
         print(f"Simulated {clicked} times")
         rounds = add_tables(df_by_rounds,characters,by_round=True, width=3)
@@ -474,13 +476,14 @@ def register_callbacks(app, sidebar=True):
         # TODO: Looks like the data store is running out of memory, need to store only summary data and just resimulate if needed
         # TODO: Could add a random seed to ensure data is the same
         # res = data_to_store(characters, df_by_rounds)
-        return fig, rounds, attacks, None
+        return fig, rounds, attacks, None, spinner
     
 
     # Resimulate since storing data is very memory intensive. Could implment client side callbacks, but this is sufficient for now
     @app.callback(
         Output('export-results','data'),
         Output('simulate-alerts',"children", allow_duplicate=True),
+        Output('export-spinner',"children"),
         Input('export-results-button','n_clicks'),
         State("export-type","value"),
         State("simulate-input","value"),
@@ -492,7 +495,9 @@ def register_callbacks(app, sidebar=True):
     def export_results(clicked, export_type, num_rounds, attack_stores, characters_list, enemy_card_body):
         if clicked is None:
             raise PreventUpdate
-
+        
+        set_seed()
+        spinner = html.I(className="fa-solid fa-download")
         if num_rounds is None:
             export = Patch()
             alert = dbc.Alert(
@@ -500,7 +505,7 @@ def register_callbacks(app, sidebar=True):
                 dismissable=True,
                 is_open=True,
                 color="danger")
-            return export, alert
+            return export, alert, spinner
 
         try:
             characters = characters_from_ui(characters_list, attack_stores)
@@ -512,7 +517,7 @@ def register_callbacks(app, sidebar=True):
                 dismissable=True,
                 is_open=True,
                 color="danger")
-            return export, alert
+            return export, alert, spinner
 
         try:
             enemy = Enemy(**extract_enemy_ui_values(enemy_card_body))
@@ -524,7 +529,7 @@ def register_callbacks(app, sidebar=True):
                 dismissable=True,
                 is_open=True,
                 color="danger")
-            return export, alert
+            return export, alert, spinner
 
         try:
             df_all, df_by_rounds, df_by_attacks = simulate_character_rounds(characters, enemy, num_rounds=num_rounds)
@@ -536,7 +541,7 @@ def register_callbacks(app, sidebar=True):
                 dismissable=True,
                 is_open=True,
                 color="danger")
-            return export, alert
+            return export, alert, spinner
 
         dfs = []
         names = [c.name for c in characters]
@@ -562,6 +567,6 @@ def register_callbacks(app, sidebar=True):
         export_kwargs = {"index": False}
         filename = f"Damage {export_type}.csv"
         export = dcc.send_data_frame(pd.concat(dfs).to_csv, filename, export_kwargs)
-        return export, None
+        return export, None, spinner
 
 # TODO: Add multiple graph options. Add a simulate for multiple enemy armor classes
