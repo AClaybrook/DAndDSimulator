@@ -1,6 +1,7 @@
 # Plotting
 # Themes here: https://plotly.com/python/templates/
 import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
 
 from dash import html
@@ -13,7 +14,7 @@ COLORS = px.colors.qualitative.Plotly
 def generate_plot_data(characters, df_by_rounds, template='plotly_dark'):
     data = pd.concat([pd.DataFrame({'damage': df_by_round["Damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)])
     fig = generate_histogram(data, x="damage", color="Type", marginal='box', template=template)
-    return data, fig
+    return fig
 
 def generate_histogram(data, x, color, marginal='violin', histnorm='percent', barmode='overlay', opacity=0.75, **kwargs):
     """Histogram with marginal plot"""
@@ -103,3 +104,80 @@ def data_from_store(store):
         names.append(name)
         dfs.append(pd.DataFrame(data))
     return names, dfs
+
+
+
+def line_plots(df_acs, template='plotly_dark'):
+    """Plot damage vs armor class"""
+    for _, g in df_acs.groupby('Character'):
+
+        fig = go.Figure()
+        fig.add_trace(go.Line(
+                name = g['Character'].iloc[0],
+                x=g['Armor Class'],
+                y=g['mean'],
+                error_y=dict(
+                    type='data',
+                    symmetric=False,
+                    array=g['75%'],
+                    arrayminus=g['25%'])
+                ))
+    fig.update_layout(xaxis_title="Armor Class", yaxis_title="Damage", template=template)
+    fig.show()
+    return fig
+
+def generate_line_plots(df_acs,template='plotly_dark'):
+    fig = go.Figure()
+    for ii, (name, g) in enumerate(df_acs.groupby('Character')):
+        x = g["Armor Class"]
+        fig.add_trace(
+            go.Scatter(
+                name=f"{name} (mean)",
+                x=x,
+                y=g['mean'],
+                mode='lines+markers',
+                line=dict(color=COLORS[ii]),
+            ))
+        fig.add_trace(
+            go.Scatter(
+                name=f"{name} (50%)",
+                x=x,
+                y=g['50%'],
+                mode='lines+markers',
+                marker=dict(color=COLORS[ii]),
+                line=dict(dash='dash'),
+                # showlegend=False
+            ))
+        fig.add_trace(
+            go.Scatter(
+                name=f"{name} (75%)",
+                x=x,
+                y=g['75%'],
+                mode='lines',
+                marker=dict(color=COLORS[ii]),
+                line=dict(width=0),
+                showlegend=False
+            ))
+         # Add alpha to fill color
+        rgb_str = px.colors.convert_colors_to_same_type(COLORS[ii])[0][0]
+        rgb_str_split = rgb_str.split(")")[0]
+        rgba_str = f"rgba{rgb_str_split[3:]},0.3)"
+        fig.add_trace(
+            go.Scatter(
+                name=f"{name} (25%-75%)",
+                x=x,
+                y=g['25%'],
+                marker=dict(color=COLORS[ii]),
+                line=dict(width=0),
+                mode='lines',
+                fillcolor=rgba_str,
+                fill='tonexty',
+                # showlegend=False
+            ))
+    fig.update_layout(
+        xaxis_title='Armor Class',
+        yaxis_title='Damage',
+        title='Damage vs Armor Class',
+        template=template
+    )
+    return fig

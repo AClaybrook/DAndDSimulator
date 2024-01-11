@@ -1,5 +1,5 @@
 from dash import Input, Output, State, Patch, MATCH, ALL, ctx
-from plots import COLORS, generate_plot_data, add_tables, data_to_store, summary_stats
+from plots import COLORS, generate_plot_data, add_tables, data_to_store, summary_stats, generate_line_plots
 from components.character_card import generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values
 from components.enemy_card import extract_enemy_ui_values
 import dash_bootstrap_components as dbc
@@ -7,7 +7,7 @@ from dash.exceptions import PreventUpdate
 from dash import dcc, html
 import json
 from models import Attack, Character, Enemy
-from numerical_simulation import simulate_character_rounds, set_seed
+from numerical_simulation import simulate_character_rounds, set_seed, simulate_character_rounds_for_multiple_armor_classes
 import base64
 import pandas as pd
 
@@ -395,7 +395,8 @@ def register_callbacks(app, sidebar=True):
     )
     def update_enemy_name(name):
         return name
-    
+
+    # NOTE: Using a data store caused memory issues in the deployed environment on heroku, often exceeding 1 GB and there is a 0.5 GB limit, resimulating is faster
     @app.callback(
         # Output('results-store',"data"),
         Output('dist-plot',"figure"),
@@ -408,18 +409,21 @@ def register_callbacks(app, sidebar=True):
         State({'type': 'attack_store',"index": ALL},"data"),
         State("character_row","children"),
         State("enemy-card-body","children"),
+        State("simulate-type","value"),
         prevent_initial_call=True
     )
-    def simulate(clicked, num_rounds, attack_stores, characters_list, enemy_card_body):
+    def simulate(clicked, num_rounds, attack_stores, characters_list, enemy_card_body, simulate_type):
         if clicked is None:
             raise PreventUpdate
+    
+        # Default Outputs
         set_seed()
+        fig = Patch()
+        rounds = Patch()
+        attacks = Patch()
+        alert = Patch()
         spinner = "Simulate!"
         if num_rounds is None:
-
-            fig = Patch()
-            rounds = Patch()
-            attacks = Patch()
             alert = dbc.Alert(
                 "Invalid Number of Rounds",
                 dismissable=True,
@@ -431,24 +435,27 @@ def register_callbacks(app, sidebar=True):
             characters = characters_from_ui(characters_list, attack_stores)
         except Exception as e:
             print(e)
-
-            fig = Patch()
-            rounds = Patch()
-            attacks = Patch()
             alert = dbc.Alert(
                 "Could not parse characters, please check that all fields are filled out correctly",
                 dismissable=True,
                 is_open=True,
                 color="danger")
             return fig, rounds, attacks, alert, spinner
-        
+
+        # Character names should be unique, or else data analysis gets misleading
+        unique_names = {c.name for c in characters}
+        if len(unique_names) != len(characters):
+            alert = dbc.Alert(
+                "Characters names must be unique",
+                dismissable=True,
+                is_open=True,
+                color="danger")
+            return fig, rounds, attacks, alert, spinner
+
         try:
             enemy = Enemy(**extract_enemy_ui_values(enemy_card_body))
         except Exception as e:
             print(e)
-            fig = Patch()
-            rounds = Patch()
-            attacks = Patch()
             alert = dbc.Alert(
                 "Could not parse enemy, please check that all fields are filled out correctly",
                 dismissable=True,
@@ -456,28 +463,38 @@ def register_callbacks(app, sidebar=True):
                 color="danger")
             return fig, rounds, attacks, alert, spinner
 
-        try:
-            dfs, df_by_rounds, df_by_attacks = simulate_character_rounds(characters, enemy, num_rounds=num_rounds)
-        except Exception as e:
-            print(e)
-            fig = Patch()
-            rounds = Patch()
-            attacks = Patch()
-            alert = dbc.Alert(
-                "Could not simulate combat, please check that all fields are filled out correctly",
-                dismissable=True,
-                is_open=True,
-                color="danger")
-            return fig, rounds, attacks, alert, None
-        data, fig = generate_plot_data(characters, df_by_rounds)
-        print(f"Simulated {clicked} times")
-        rounds = add_tables(df_by_rounds,characters,by_round=True, width=3)
-        attacks = add_tables(df_by_attacks,characters,by_round=False, width=3)
-        # TODO: Looks like the data store is running out of memory, need to store only summary data and just resimulate if needed
-        # TODO: Could add a random seed to ensure data is the same
-        # res = data_to_store(characters, df_by_rounds)
-        return fig, rounds, attacks, None, spinner
-    
+        if simulate_type == 1: # Damage Per Round Distribution
+            try:
+                _, df_by_rounds, df_by_attacks = simulate_character_rounds(characters, enemy, num_rounds=num_rounds)
+            except Exception as e:
+                print(e)
+                alert = dbc.Alert(
+                    "Could not simulate combat, please check that all fields are filled out correctly",
+                    dismissable=True,
+                    is_open=True,
+                    color="danger")
+                return fig, rounds, attacks, alert, None
+            fig = generate_plot_data(characters, df_by_rounds)
+            print(f"Simulated {clicked} times")
+            rounds = add_tables(df_by_rounds,characters,by_round=True, width=3)
+            attacks = add_tables(df_by_attacks,characters,by_round=False, width=3)
+            alert = None
+        elif simulate_type == 2: # Damage vs Armor Class
+            try:
+                df_acs = simulate_character_rounds_for_multiple_armor_classes(characters, enemy, armor_classes=range(5,26), num_rounds=num_rounds)
+            except Exception as e:
+                print(e)
+                alert = dbc.Alert(
+                    "Could not simulate combat, please check that all fields are filled out correctly",
+                    dismissable=True,
+                    is_open=True,
+                    color="danger")
+                return fig, rounds, attacks, alert, None
+            fig = generate_line_plots(df_acs,template='plotly_dark')
+            alert = None
+            # TODO: Update trounds and attacks
+        return fig, rounds, attacks, alert, spinner
+
 
     # Resimulate since storing data is very memory intensive. Could implment client side callbacks, but this is sufficient for now
     @app.callback(

@@ -9,8 +9,8 @@ import dash_bootstrap_components as dbc
 import gunicorn # Used by heroku to run the app
 import numpy as np
 from models import Character, Enemy, Attack
-from numerical_simulation import simulate_character_rounds
-from plots import generate_plot_data, add_tables
+from numerical_simulation import simulate_character_rounds, simulate_character_rounds_for_multiple_armor_classes
+from plots import generate_plot_data, add_tables, generate_line_plots
 from callbacks import register_callbacks
 from components.sidebar import sidebar
 from components.character_card import generate_character_cards
@@ -69,6 +69,17 @@ def simulate_rounds_input():
                     dbc.Button(dbc.Spinner("Simulate!",color="primary",id='simulate-spinner'), color="primary",style={'display': 'inline-block'},id="simulate-button"),
                 ]),
             ],width=2),
+            dbc.Col([
+                dbc.RadioItems(
+                    options=[
+                        {"label": "Damage Per Round Distribution", "value": 1},
+                        {"label": "Damage Per Round vs Armor Class", "value": 2},
+                    ],
+                    value=1,
+                    id="simulate-type",
+                    inline=True,
+                    ),
+            ]),
         ],class_name="mb-2"),
     ])
 
@@ -77,7 +88,7 @@ server = app.server
 # app.config.suppress_callback_exceptions = True
 
 # Plot data
-data, fig = generate_plot_data(characters, df_by_rounds, template=template)
+fig = generate_plot_data(characters, df_by_rounds, template=template)
 
 
 row_style = style={'border': '1px solid #d3d3d3', 'border-radius': '15px', 'padding': '10px', 'padding-right': '0px'}
