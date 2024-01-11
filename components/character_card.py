@@ -156,7 +156,7 @@ def set_attack_from_values(avals, i, index, label_style={'margin-bottom': '0.2re
         # Repeated Attacks
         dbc.Row([
             dbc.Col(dbc.Label("Num Attacks", style=label_style)),
-            dbc.Col(dbc.Input(type="number", value=1, min=1, max=50, step=1, style=input_style))
+            dbc.Col(dbc.Input(type="number", value=1, min=1, max=20, step=1, style=input_style))
         ]),
         # Weapon specific
         dbc.Row([

@@ -151,7 +151,8 @@ def simulate_character_rounds_for_multiple_armor_classes(characters, enemy, armo
     if not armor_classes:
         armor_classes = range(10, 26)
 
-    num_rounds_per_ac = num_rounds // len(armor_classes)
+    # num_rounds_per_ac = num_rounds // len(armor_classes) + len(armor_classes)
+    num_rounds_per_ac = num_rounds
 
     df_multi_ac = []
 

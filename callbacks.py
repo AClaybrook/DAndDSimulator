@@ -481,7 +481,7 @@ def register_callbacks(app, sidebar=True):
             alert = None
         elif simulate_type == 2: # Damage vs Armor Class
             try:
-                df_acs = simulate_character_rounds_for_multiple_armor_classes(characters, enemy, armor_classes=range(5,26), num_rounds=num_rounds)
+                df_acs = simulate_character_rounds_for_multiple_armor_classes(characters, enemy, armor_classes=range(10,26), num_rounds=num_rounds)
             except Exception as e:
                 print(e)
                 alert = dbc.Alert(

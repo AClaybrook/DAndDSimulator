@@ -65,7 +65,7 @@ def simulate_rounds_input():
         dbc.Row([
             dbc.Col([
                 dbc.InputGroup([
-                    dbc.Input(type="number", value=10_000, min=1, max=50_000, step=1, style={'display': 'inline-block'},id="simulate-input"),
+                    dbc.Input(type="number", value=10_000, min=1, max=200_000, step=1, style={'display': 'inline-block'},id="simulate-input"),
                     dbc.Button(dbc.Spinner("Simulate!",color="primary",id='simulate-spinner'), color="primary",style={'display': 'inline-block'},id="simulate-button"),
                 ]),
             ],width=2),

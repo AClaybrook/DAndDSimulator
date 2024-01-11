@@ -161,7 +161,7 @@ def generate_line_plots(df_acs,template='plotly_dark'):
          # Add alpha to fill color
         rgb_str = px.colors.convert_colors_to_same_type(COLORS[ii])[0][0]
         rgb_str_split = rgb_str.split(")")[0]
-        rgba_str = f"rgba{rgb_str_split[3:]},0.3)"
+        rgba_str = f"rgba{rgb_str_split[3:]},0.4)"
         fig.add_trace(
             go.Scatter(
                 name=f"{name} (25%-75%)",
