@@ -71,24 +71,28 @@ def summary_stats(data: List, by_round=True):
             df_summary.append(datac.round(2))
     return df_summary
 
+
+
+def build_tables_row(characters, data_summary, width=12):
+    row = []
+    for ii, (c, df_table) in enumerate(zip(characters, data_summary)):
+        col = []
+        col.append(html.H4(c.name, style={'color': COLORS[ii]}))
+        col.append(dbc.Table.from_dataframe(df_table, striped=True, bordered=True, hover=True, responsive=True, index=True))
+        col.append(html.Br())
+        row.append(dbc.Col(col, width={"size": width}))
+    return dbc.Row(row)
+
 def add_tables(data, characters, by_round=True, width=12):
     if by_round:
         table_list = [dbc.Row(dbc.Col(html.H4("Per Round")))]
     else:
         table_list = [dbc.Row(dbc.Col(html.H4("Per Attack")))]
-    
-    row = []
-    
-    data_summary = summary_stats(data, by_round=by_round)
-    for ii, (c, df_table) in enumerate(zip(characters, data_summary)):
-        col = []  
-        col.append(html.H4(c.name, style={'color': COLORS[ii]})) 
-        col.append(dbc.Table.from_dataframe(df_table, striped=True, bordered=True, hover=True, responsive=True, index=True))
-        col.append(html.Br())
-        row.append(dbc.Col(col, width={"size": width}))
-    table_list.append(dbc.Row(row))
-    return table_list
 
+    data_summary = summary_stats(data, by_round=by_round)
+
+    table_list.append(build_tables_row(characters, data_summary, width=width))
+    return table_list
 
 def data_to_store(characters, dfs):
     store = {}
@@ -180,4 +184,16 @@ def generate_line_plots(df_acs,template='plotly_dark'):
         title='Damage vs Armor Class',
         template=template
     )
+    return fig
+
+def generate_damage_per_attack_histogram(characters, dfs ,template='plotly_dark'):
+    df_attacks = []
+    for c, df_c in zip(characters,dfs):
+        df_c = df_c[["Damage","Attack"]]
+        df_c['Type'] = c.name + "-" + df_c['Attack']
+        df_c["Character"] = c.name
+        df_c = df_c.drop('Attack',axis=1)
+        df_attacks.append(df_c)
+
+    fig = generate_histogram(pd.concat(df_attacks), x="Damage", color="Type", marginal='box', template=template)
     return fig

@@ -1,5 +1,5 @@
 from dash import Input, Output, State, Patch, MATCH, ALL, ctx
-from plots import COLORS, generate_plot_data, add_tables, data_to_store, summary_stats, generate_line_plots
+from plots import COLORS, generate_plot_data, add_tables, summary_stats, generate_line_plots, generate_damage_per_attack_histogram, build_tables_row
 from components.character_card import generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values
 from components.enemy_card import extract_enemy_ui_values
 import dash_bootstrap_components as dbc
@@ -10,6 +10,7 @@ from models import Attack, Character, Enemy
 from numerical_simulation import simulate_character_rounds, set_seed, simulate_character_rounds_for_multiple_armor_classes
 import base64
 import pandas as pd
+import numpy as np
 
 MAX_CHARACTERS = min(8,len(COLORS)) # There are 10 colors and 4 characters fit per row, so 8 is a good max
 
@@ -49,6 +50,29 @@ def characters_from_ui(characters_list, attack_stores):
         attacksPython = [Attack(**attack) for attack in json.loads(attack_stores[ii])]
         characters.append(Character(attacks=attacksPython, **extract_character_ui_values(c)))
     return characters
+
+def try_and_except_alert(alert_message, func, *args, **kwargs):
+    try:
+        return func(*args, **kwargs), None
+    except Exception as e:
+        print(e)
+        alert = dbc.Alert(
+            alert_message,
+            dismissable=True,
+            is_open=True,
+            color="danger")
+        return None, alert
+    
+def reformat_df_ac(df):
+    """Reformats the armor class dataframe"""
+    df_acs = df.reset_index(drop=True)
+    ac_col = df_acs.pop("Armor Class")
+    df_acs.insert(0, 'Armor Class', ac_col)
+    name_col = df_acs.pop("Character")
+    df_acs.insert(0, 'Name', name_col)
+    df_acs.set_index(['Armor Class'], inplace=True)
+    df_acs["mean"] = df_acs["mean"].astype(float).round(2)
+    return df_acs.round(2)
 
 # Note: Intellisense is not recognizing the callbacks as being accessed
 def register_callbacks(app, sidebar=True):
@@ -400,8 +424,7 @@ def register_callbacks(app, sidebar=True):
     @app.callback(
         # Output('results-store',"data"),
         Output('dist-plot',"figure"),
-        Output('per-round-tables',"children"),
-        Output('per-attack-tables',"children"),
+        Output('damage-tables',"children"),
         Output('simulate-alerts',"children"),
         Output("simulate-spinner","children"),
         Input("simulate-button","n_clicks"),
@@ -410,37 +433,41 @@ def register_callbacks(app, sidebar=True):
         State("character_row","children"),
         State("enemy-card-body","children"),
         State("simulate-type","value"),
+        State("numerical-options","value"),
         prevent_initial_call=True
     )
-    def simulate(clicked, num_rounds, attack_stores, characters_list, enemy_card_body, simulate_type):
+    def simulate(clicked, num_rounds, attack_stores, characters_list, enemy_card_body, simulate_type, numerical_options):
         if clicked is None:
             raise PreventUpdate
-    
+        
+        if 1 in numerical_options: # Randomize Seed
+            set_seed(np.random.randint(0,100))
+        else:
+            set_seed()
+
         # Default Outputs
-        set_seed()
         fig = Patch()
-        rounds = Patch()
-        attacks = Patch()
-        alert = Patch()
+        tables = Patch()
+        alert = None
         spinner = "Simulate!"
+
+        # Check number of rounds is valid
         if num_rounds is None:
             alert = dbc.Alert(
                 "Invalid Number of Rounds",
                 dismissable=True,
                 is_open=True,
                 color="danger")
-            return fig, rounds, attacks, alert, spinner
+            return fig, tables, alert, spinner
 
-        try:
-            characters = characters_from_ui(characters_list, attack_stores)
-        except Exception as e:
-            print(e)
-            alert = dbc.Alert(
-                "Could not parse characters, please check that all fields are filled out correctly",
-                dismissable=True,
-                is_open=True,
-                color="danger")
-            return fig, rounds, attacks, alert, spinner
+        # Parse characters
+        characters, alert = try_and_except_alert(
+            "Could not parse characters, please check that all fields are filled out correctly",
+            characters_from_ui,
+            *[characters_list, attack_stores]
+            )
+        if alert is not None:
+            return fig, tables, alert, spinner
 
         # Character names should be unique, or else data analysis gets misleading
         unique_names = {c.name for c in characters}
@@ -450,50 +477,60 @@ def register_callbacks(app, sidebar=True):
                 dismissable=True,
                 is_open=True,
                 color="danger")
-            return fig, rounds, attacks, alert, spinner
+            return fig, tables, alert, spinner
 
-        try:
-            enemy = Enemy(**extract_enemy_ui_values(enemy_card_body))
-        except Exception as e:
-            print(e)
-            alert = dbc.Alert(
-                "Could not parse enemy, please check that all fields are filled out correctly",
-                dismissable=True,
-                is_open=True,
-                color="danger")
-            return fig, rounds, attacks, alert, spinner
+        # Parse enemy
+        enemy, alert = try_and_except_alert(
+            "Could not parse enemy, please check that all fields are filled out correctly",
+            Enemy,
+            **extract_enemy_ui_values(enemy_card_body),
+            )
+        if alert is not None:
+            return fig, tables, alert, spinner
 
-        if simulate_type == 1: # Damage Per Round Distribution
-            try:
-                _, df_by_rounds, df_by_attacks = simulate_character_rounds(characters, enemy, num_rounds=num_rounds)
-            except Exception as e:
-                print(e)
-                alert = dbc.Alert(
-                    "Could not simulate combat, please check that all fields are filled out correctly",
-                    dismissable=True,
-                    is_open=True,
-                    color="danger")
-                return fig, rounds, attacks, alert, None
-            fig = generate_plot_data(characters, df_by_rounds)
+        # Simulate
+        if simulate_type in ["DPR Distribution","DPA Distribution"]:
+            res, alert = try_and_except_alert(
+                "Could not simulate combat, please check that all fields are filled out correctly",
+                simulate_character_rounds,
+                *[characters,enemy],
+                num_rounds=num_rounds
+                )
+            if alert is not None:
+                return fig, tables, alert, spinner
+
+            dfs, df_by_rounds, df_by_attacks = res
+            del res
+            if simulate_type == "DPR Distribution":
+                fig = generate_plot_data(characters, df_by_rounds)
+                tables = add_tables(df_by_rounds,characters,by_round=True, width=3)
+            elif simulate_type == "DPA Distribution":
+                fig = generate_damage_per_attack_histogram(characters, dfs)
+                tables = add_tables(df_by_attacks,characters,by_round=False, width=3)
             print(f"Simulated {clicked} times")
-            rounds = add_tables(df_by_rounds,characters,by_round=True, width=3)
-            attacks = add_tables(df_by_attacks,characters,by_round=False, width=3)
-            alert = None
-        elif simulate_type == 2: # Damage vs Armor Class
-            try:
-                df_acs = simulate_character_rounds_for_multiple_armor_classes(characters, enemy, armor_classes=range(10,26), num_rounds=num_rounds)
-            except Exception as e:
-                print(e)
-                alert = dbc.Alert(
-                    "Could not simulate combat, please check that all fields are filled out correctly",
-                    dismissable=True,
-                    is_open=True,
-                    color="danger")
-                return fig, rounds, attacks, alert, None
-            fig = generate_line_plots(df_acs,template='plotly_dark')
-            alert = None
-            # TODO: Update trounds and attacks
-        return fig, rounds, attacks, alert, spinner
+        elif simulate_type in ["DPR vs Armor Class","DPA vs Armor Class"]:
+            df_acs, alert = try_and_except_alert(
+                "Could not simulate combat, please check that all fields are filled out correctly",
+                simulate_character_rounds_for_multiple_armor_classes,
+                *[characters,enemy],
+                armor_classes = range(10,26),
+                num_rounds=num_rounds
+                )
+            if alert is not None:
+                return fig, tables, alert, spinner
+            if simulate_type == "DPR vs Armor Class":
+                fig = generate_line_plots(df_acs,template='plotly_dark')
+                df_acs = reformat_df_ac(df_acs)
+                data_summary = [g.drop("Name",axis=1) for _, g in df_acs.groupby('Name')]
+                # TODO: Reorient and clean up tables
+                tables = build_tables_row(characters, data_summary, width=3)
+            elif simulate_type == "DPA vs Armor Class":
+                # fig = generate_line_plots(df_acs,template='plotly_dark')
+                # data_summary = [g for _, g in df_acs.groupby('Character')]
+                # tables = build_tables_row(characters, data_summary, width=3)
+                raise PreventUpdate
+            # TODO: Update rounds and attacks
+        return fig, tables, alert, spinner
 
 
     # Resimulate since storing data is very memory intensive. Could implment client side callbacks, but this is sufficient for now
@@ -507,14 +544,24 @@ def register_callbacks(app, sidebar=True):
         State({'type': 'attack_store',"index": ALL},"data"),
         State("character_row","children"),
         State("enemy-card-body","children"),
+        State("numerical-options","value"),
         prevent_initial_call=True
     )
-    def export_results(clicked, export_type, num_rounds, attack_stores, characters_list, enemy_card_body):
+    def export_results(clicked, export_type, num_rounds, attack_stores, characters_list, enemy_card_body, numerical_options):
         if clicked is None:
             raise PreventUpdate
-        
-        set_seed()
+
+        if 1 in numerical_options: # Randomize Seed
+            set_seed(np.random.randint(0,100))
+        else:
+            set_seed()
+
+        # Default Outputs
+        export = Patch()
+        alert = None
         spinner = html.I(className="fa-solid fa-download")
+
+        # Check number of rounds is valid
         if num_rounds is None:
             export = Patch()
             alert = dbc.Alert(
@@ -524,66 +571,94 @@ def register_callbacks(app, sidebar=True):
                 color="danger")
             return export, alert, spinner
 
-        try:
-            characters = characters_from_ui(characters_list, attack_stores)
-        except Exception as e:
-            print(e)
-            export = Patch()
+        # Parse characters
+        characters, alert = try_and_except_alert(
+            "Could not parse characters, please check that all fields are filled out correctly",
+            characters_from_ui,
+            *[characters_list, attack_stores]
+            )
+        if alert is not None:
+            return export, alert, spinner
+
+        # Character names should be unique, or else data analysis gets misleading
+        unique_names = {c.name for c in characters}
+        if len(unique_names) != len(characters):
             alert = dbc.Alert(
-                "Could not parse characters, please check that all fields are filled out correctly",
+                "Characters names must be unique",
                 dismissable=True,
                 is_open=True,
                 color="danger")
             return export, alert, spinner
 
-        try:
-            enemy = Enemy(**extract_enemy_ui_values(enemy_card_body))
-        except Exception as e:
-            print(e)
-            export = Patch()
-            alert = dbc.Alert(
-                "Could not parse enemy, please check that all fields are filled out correctly",
-                dismissable=True,
-                is_open=True,
-                color="danger")
+        # Parse enemy
+        enemy, alert = try_and_except_alert(
+            "Could not parse enemy, please check that all fields are filled out correctly",
+            Enemy,
+            **extract_enemy_ui_values(enemy_card_body),
+            )
+        if alert is not None:
             return export, alert, spinner
 
-        try:
-            df_all, df_by_rounds, df_by_attacks = simulate_character_rounds(characters, enemy, num_rounds=num_rounds)
-        except Exception as e:
-            print(e)
-            export = Patch()
-            alert = dbc.Alert(
-                "Could not simulate combat, please check that all fields are filled out correctly",
-                dismissable=True,
-                is_open=True,
-                color="danger")
-            return export, alert, spinner
-
+        # Simulate
         dfs = []
         names = [c.name for c in characters]
-        if export_type == "Round Summary":
-            df_summary = summary_stats(df_by_rounds, by_round=True)
-            for name, data in zip(names,df_summary):
-                data.insert(0, 'Name', name)
-                dfs.append(data)
-        elif export_type == "All Rounds":
-            for name, data in zip(names,df_by_rounds):
-                data.insert(0, 'Name', name)
-                dfs.append(data)
-        elif export_type == "Attack Summary":
-            for name, data in zip(names,df_by_attacks):
-                data.insert(0, 'Name', name)
-                dfs.append(data)
-        elif export_type == "All Attacks":
-            for name, data in zip(names,df_all):
-                data.insert(0, 'Name', name)
-                dfs.append(data)
+        export_kwargs = {}
+        if export_type in ["DPR Summary", "DPA Summary", "DPR Distribution","DPA Distribution"]:
+            res, alert = try_and_except_alert(
+                "Could not simulate combat, please check that all fields are filled out correctly",
+                simulate_character_rounds,
+                *[characters,enemy],
+                num_rounds=num_rounds
+                )
+            if alert is not None:
+                return export, alert, spinner
+
+            df_all, df_by_rounds, df_by_attacks = res
+            del res
+
+            if export_type == "DPR Summary":
+                df_summary = summary_stats(df_by_rounds, by_round=True)
+                for name, data in zip(names,df_summary):
+                    data.insert(0, 'Name', name)
+                    dfs.append(data)
+            elif export_type == "DPR Distribution":
+                for name, data in zip(names,df_by_rounds):
+                    data.insert(0, 'Name', name)
+                    dfs.append(data)
+            elif export_type == "DPA Summary":
+                for name, data in zip(names,df_by_attacks):
+                    data.insert(0, 'Name', name)
+                    dfs.append(data)
+            elif export_type == "DPA Distribution":
+                for name, data in zip(names,df_all):
+                    data.insert(0, 'Name', name)
+                    dfs.append(data.sort_values(by=["Name","Round"]))
+            
+        elif export_type in ["DPR vs Armor Class","DPA vs Armor Class"]:
+            export_kwargs = {} #{"index": False}
+            df_acs, alert = try_and_except_alert(
+                "Could not simulate combat, please check that all fields are filled out correctly",
+                simulate_character_rounds_for_multiple_armor_classes,
+                *[characters,enemy],
+                armor_classes = range(10,26),
+                num_rounds=num_rounds
+                )
+            if alert is not None:
+                return export, alert, spinner
+            if export_type == "DPR vs Armor Class":
+                dfs = [reformat_df_ac(df_acs)]
+            elif export_type == "DPA vs Armor Class":
+                #TODO: Implement
+                raise PreventUpdate
+
+            # TODO: Update rounds and attacks
+        else:
+            raise PreventUpdate
 
         # Export to csv
-        export_kwargs = {"index": False}
-        filename = f"Damage {export_type}.csv"
-        export = dcc.send_data_frame(pd.concat(dfs).to_csv, filename, export_kwargs)
+        print(f"Exported {clicked} times")
+        filename = f"{export_type}.csv"
+        export = dcc.send_data_frame(pd.concat(dfs).to_csv, filename, **export_kwargs)
         return export, None, spinner
 
 # TODO: Add multiple graph options. Add a simulate for multiple enemy armor classes

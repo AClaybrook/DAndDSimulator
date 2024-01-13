@@ -61,26 +61,44 @@ def character_dropdown():
 def simulate_rounds_input():
     return html.Div([
         dbc.Row(id="simulate-alerts"),
-        dbc.Row(dbc.Label('Number Of Rounds')),
         dbc.Row([
             dbc.Col([
-                dbc.InputGroup([
-                    dbc.Input(type="number", value=10_000, min=1, max=200_000, step=1, style={'display': 'inline-block'},id="simulate-input"),
-                    dbc.Button(dbc.Spinner("Simulate!",color="primary",id='simulate-spinner'), color="primary",style={'display': 'inline-block'},id="simulate-button"),
-                ]),
+                dbc.Label('Number Of Rounds'),
+                dbc.Input(type="number", value=10_000, min=1, max=100_000, step=1, style={'display': 'inline-block'},id="simulate-input"),
             ],width=2),
             dbc.Col([
+                dbc.Label("Graph Type"),
                 dbc.RadioItems(
                     options=[
-                        {"label": "Damage Per Round Distribution", "value": 1},
-                        {"label": "Damage Per Round vs Armor Class", "value": 2},
+                        {"label": "DPR Distribution", "value": "DPR Distribution",},
+                        {"label": "DPR vs Armor Class", "value": "DPR vs Armor Class"},
+                        {"label": "DPA Distribution", "value": "DPA Distribution",},
+                        {"label": "DPA vs Armor Class", "value": "DPA vs Armor Class"},
                     ],
-                    value=1,
+                    value="DPR Distribution",
                     id="simulate-type",
                     inline=True,
                     ),
-            ]),
-        ],class_name="mb-2"),
+            ],width=3),
+            dbc.Col([
+                dbc.Label("Numerical Options"),
+                dbc.Checklist(
+                    options=[
+                        {"label": "Randomize Seed", "value": 1},
+                    ],
+                    value=[1],
+                    id="numerical-options",
+                    # inline=True,
+                    switch=True,
+                    ),
+            ],width=2),
+        ],justify="start"),
+        dbc.Row(
+            dbc.Col(
+                dbc.Button(dbc.Spinner("Simulate!",color="primary",id='simulate-spinner'), color="primary",id="simulate-button",style={'width': '100%'}),
+                width=2
+            ),
+        class_name="mb-2"),
     ])
 
 app = Dash(__name__, external_stylesheets=[style_sheet, dbc.icons.FONT_AWESOME])
@@ -152,12 +170,14 @@ content = html.Div(dbc.Container([
                 dbc.InputGroup([
                     dbc.Select(
                         options=[
-                            {'label': 'Round Summary', 'value': 'Round Summary'},
-                            {'label': 'All Rounds', 'value': 'All Rounds'},
-                            {'label': 'Attack Summary', 'value': 'Attack Summary'},
-                            {'label': 'All Attacks', 'value': 'All Attacks'}
+                            {"label": "DPR Summary", "value": "DPR Summary"},
+                            {"label": "DPR Distribution", "value": "DPR Distribution",},
+                            {"label": "DPR vs Armor Class", "value": "DPR vs Armor Class"},
+                            {"label": "DPA Summary", "value": "DPA Summary"},
+                            {"label": "DPA Distribution", "value": "DPA Distribution",},
+                            {"label": "DPA vs Armor Class", "value": "DPA vs Armor Class"},
                             ],
-                        value='Round Summary', id='export-type'),
+                        value='DPR Summary', id='export-type'),
                     dbc.Button(dbc.Spinner(html.I(className="fa-solid fa-download"),color="secondary", id="export-spinner", size="sm"),color="secondary", id="export-results-button"),
                     dcc.Download(id="export-results"),
                 ]),
@@ -172,11 +192,8 @@ content = html.Div(dbc.Container([
                     style={'height': '85vh', 'margin-bottom': '2px'}
                 ),
         ]),
-        html.Div(id="per-round-tables",children=[
+        html.Div(id="damage-tables",children=[
             *add_tables(df_by_rounds,characters,by_round=True, width=3)
-        ]),
-        html.Div(id="per-attack-tables",children=[
-            *add_tables(df_by_attacks,characters,by_round=False, width=3),
         ]),
         ],style=row_style),
     ],fluid=True),id="page-content")
