@@ -1,4 +1,4 @@
-from dash import Input, Output, State, Patch, MATCH, ALL, ctx
+from dash import Input, Output, State, Patch, MATCH, ALL, ctx, clientside_callback, ClientsideFunction
 from plots import COLORS, generate_plot_data, add_tables, summary_stats, generate_line_plots, generate_damage_per_attack_histogram, build_tables_row
 from components.character_card import generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values
 from components.enemy_card import extract_enemy_ui_values
@@ -63,40 +63,49 @@ def try_and_except_alert(alert_message, func, *args, **kwargs):
             color="danger")
         return None, alert
     
-def reformat_df_ac(df):
+def reformat_df_ac(df, by_round=True):
     """Reformats the armor class dataframe"""
-    df_acs = df.reset_index(drop=True)
-    ac_col = df_acs.pop("Armor Class")
-    df_acs.insert(0, 'Armor Class', ac_col)
-    name_col = df_acs.pop("Character")
-    df_acs.insert(0, 'Name', name_col)
-    df_acs.set_index(['Armor Class'], inplace=True)
-    df_acs["mean"] = df_acs["mean"].astype(float).round(2)
-    return df_acs.round(2)
+    if by_round:
+        df_acs = df.reset_index(drop=True)
+        ac_col = df_acs.pop("Armor Class")
+        df_acs.insert(0, 'Armor Class', ac_col)
+        name_col = df_acs.pop("Character")
+        df_acs.insert(0, 'Character', name_col)
+        df_acs.set_index(['Armor Class'], inplace=True)
+        df_acs["mean"] = df_acs["mean"].astype(float).round(2)
+        return df_acs
+    else:
+        new_dfs = []
+        for n,g in df.groupby('Character-Attack'):
+            reshaped = pd.concat({n:g.set_index('Armor Class').drop(['Character-Attack','Character'],axis=1).T})
+            new_dfs.append(reshaped)
+        return pd.concat(new_dfs).T
+
+
 
 # Note: Intellisense is not recognizing the callbacks as being accessed
 def register_callbacks(app, sidebar=True):
     if sidebar:
-        @app.callback(
+        clientside_callback(
+            ClientsideFunction(
+                namespace="clientside",
+                function_name="toggle_classname"
+            ),
             Output("sidebar", "className"),
-            [Input("sidebar-toggle", "n_clicks")],
-            [State("sidebar", "className")],
+            Input("sidebar-toggle", "n_clicks"),
+            State("sidebar", "className"),
         )
-        def toggle_classname(n, classname):
-            if n and classname == "":
-                return "collapsed"
-            return ""
-        
-        @app.callback(
+            
+        clientside_callback(
+            ClientsideFunction(
+                namespace="clientside",
+                function_name="toggle_collapse"
+            ),
             Output("collapse", "is_open"),
-            [Input("navbar-toggle", "n_clicks")],
-            [State("collapse", "is_open")],
+            Input("navbar-toggle", "n_clicks"),
+            State("collapse", "is_open"),
         )
-        def toggle_collapse(n, is_open):
-            if n:
-                return not is_open
-            return is_open
-        
+
     @app.callback(
         Output("character_row","children"),
         Output("active_ids","data"),
@@ -122,15 +131,28 @@ def register_callbacks(app, sidebar=True):
         
         return patched_children, set_active_ids(active_ids)
 
-    
-    @app.callback(
-            Output({'type': 'character name',"index": MATCH},"children"),
-            Input({'type': 'character name input',"index": MATCH},"value"),
-            prevent_initial_call=True
+    # Call client side callback in javascript, found in assets/callbacks.js
+    clientside_callback(
+        ClientsideFunction(
+            namespace="clientside",
+            function_name="update_name"
+        ),
+        Output({'type': 'character name',"index": MATCH},"children"),
+        Input({'type': 'character name input',"index": MATCH},"value"),
+        prevent_initial_call=True
     )
-    def update_name(name):
-        return name
-    
+
+    clientside_callback(
+        ClientsideFunction(
+            namespace="clientside",
+            function_name="update_name"
+        ),
+        Output("enemy-name","children"),
+        Input("enemy-name-input","value"),
+        prevent_initial_call=True
+    )
+
+ 
     @app.callback(
             Output("character_row","children", allow_duplicate=True),
             Output("active_ids","data", allow_duplicate=True),
@@ -325,7 +347,8 @@ def register_callbacks(app, sidebar=True):
             Output('download-characters','data'),
             Input('export-button','n_clicks'),
             State("character_row","children"),
-            State({"type": "attack_store", "index": ALL},"data"),           
+            State({"type": "attack_store", "index": ALL},"data"),
+            prevent_initial_call=True           
     )
     def export_character(clicked, characters_ui, attack_stores):
         if clicked is None:
@@ -411,14 +434,6 @@ def register_callbacks(app, sidebar=True):
                 new_id = get_new_id(active_ids)
             
         return characters, set_active_ids(active_ids), alert
-
-    @app.callback(
-            Output("enemy-name","children"),
-            Input("enemy-name-input","value"),
-            prevent_initial_call=True
-    )
-    def update_enemy_name(name):
-        return name
 
     # NOTE: Using a data store caused memory issues in the deployed environment on heroku, often exceeding 1 GB and there is a 0.5 GB limit, resimulating is faster
     @app.callback(
@@ -509,26 +524,37 @@ def register_callbacks(app, sidebar=True):
                 tables = add_tables(df_by_attacks,characters,by_round=False, width=3)
             print(f"Simulated {clicked} times")
         elif simulate_type in ["DPR vs Armor Class","DPA vs Armor Class"]:
+            by_round = simulate_type == "DPR vs Armor Class"
             df_acs, alert = try_and_except_alert(
                 "Could not simulate combat, please check that all fields are filled out correctly",
                 simulate_character_rounds_for_multiple_armor_classes,
                 *[characters,enemy],
                 armor_classes = range(10,26),
-                num_rounds=num_rounds
+                num_rounds=num_rounds,
+                by_round=by_round
                 )
             if alert is not None:
                 return fig, tables, alert, spinner
-            if simulate_type == "DPR vs Armor Class":
-                fig = generate_line_plots(df_acs,template='plotly_dark')
-                df_acs = reformat_df_ac(df_acs)
-                data_summary = [g.drop("Name",axis=1) for _, g in df_acs.groupby('Name')]
-                # TODO: Reorient and clean up tables
-                tables = build_tables_row(characters, data_summary, width=3)
-            elif simulate_type == "DPA vs Armor Class":
-                # fig = generate_line_plots(df_acs,template='plotly_dark')
-                # data_summary = [g for _, g in df_acs.groupby('Character')]
-                # tables = build_tables_row(characters, data_summary, width=3)
-                raise PreventUpdate
+
+            groupby = "Character" if by_round else "Character-Attack"
+            order = [c.name for c in characters]
+            fig = generate_line_plots(df_acs,template='plotly_dark', groupby=groupby, order=order)
+            if by_round:
+                df_acs = reformat_df_ac(df_acs, by_round=by_round)
+                data_summary = [g.drop("Character",axis=1) for _, g in df_acs.groupby(groupby)]
+            else:
+                data_summary = []
+                for c_name in order:
+                    df_c = df_acs.loc[df_acs['Character']==c_name, :]
+                    c_summary = []
+                    for n,g in df_c.groupby('Character-Attack'):
+                        g["mean"] = g["mean"].astype(float).round(2)
+                        attack_name = n[len(c_name)+1:]
+                        reshaped = pd.concat({attack_name:g.set_index('Armor Class').drop(['Character-Attack','Character'],axis=1).T})
+                        c_summary.append(reshaped.T)
+                    data_summary.append(pd.concat(c_summary,axis=1))
+            tables = build_tables_row(characters, data_summary, width=3, by_round=by_round)
+
             # TODO: Update rounds and attacks
         return fig, tables, alert, spinner
 

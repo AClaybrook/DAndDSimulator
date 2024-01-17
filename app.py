@@ -28,11 +28,11 @@ character1 = Character(name='Fighter',level=12, attacks=attacksPython, strength=
 character2 = replace(character1, name='Fighter GWF + Crit On 19', disadvantage=False, GWF=True, crit_on=19)
 character3 = replace(character1, name='Fighter Advantage', advantage=True)
 character4 = replace(character1, name='Fighter GWM', GWM=True)
-enemy1 = Enemy(armor_class=18)
+enemy = Enemy(armor_class=18)
 
 characters = [character1, character2]
 
-dfs, df_by_rounds, df_by_attacks = simulate_character_rounds(characters, enemy1,num_rounds=10_000)
+dfs, df_by_rounds, df_by_attacks = simulate_character_rounds(characters, enemy,num_rounds=10_000)
 
 # %%
 # Dashboard
@@ -160,7 +160,7 @@ content = html.Div(dbc.Container([
     ],style=row_style, class_name="mb-4"),
     dbc.Row([
         html.H3("Enemy Builder", id='enemy-builder'),
-        dbc.Row(generate_enemy_card(enemy1),id="enemy_row"),
+        dbc.Row(generate_enemy_card(enemy),id="enemy_row"),
         ],style=row_style, class_name="mb-4"),
     # Simulator
     dbc.Row([
@@ -206,9 +206,8 @@ register_callbacks(app)
 if __name__ == '__main__':
 # Get the port number from the environment variable, or set to 8050 if not available
     port = int(os.environ.get("PORT", 8050))
+    print('STARTING App')
     app.run_server(debug=False, host="0.0.0.0", port=port)
-
-# app.run_server(debug=True)
-print("Starting app")
+    print("TERMINATING App")
 
 # %%
