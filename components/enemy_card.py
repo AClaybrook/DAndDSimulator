@@ -15,9 +15,9 @@ E_LABELS_TO_VALS = {
 E_LABELS =  {v:k for k,v in E_LABELS_TO_VALS.items()}
 
 def generate_enemy_card(enemy=None, color=COLORS[0]):
-    input_style = {'padding-top': '0.0rem', 'padding-bottom': '0.0rem'}
-    label_style = {'margin-bottom': '0.2rem'}
-    card_style = {'max-height': '30vh','min-height': '30vh','overflow-y': 'auto'}
+    input_style = {'paddingTop': '0.0rem', 'paddingBottom': '0.0rem'}
+    label_style = {'marginBottom': '0.2rem'}
+    card_style = {'maxHeight': '30vh','minHeight': '30vh','overflowY': 'auto'}
 
     vals = {
         "name": enemy.name if enemy else "Mind Flayer",
@@ -32,7 +32,7 @@ def generate_enemy_card(enemy=None, color=COLORS[0]):
     return dbc.Col(
         dbc.Card([
             dbc.CardHeader([
-                html.H4(vals["name"],style={'color': color, 'white-space':'nowrap'},id="enemy-name"),
+                html.H4(vals["name"],style={'color': color, 'whiteSpace':'nowrap'},id="enemy-name"),
             ]), 
             dbc.CardBody([
                 dbc.Row([

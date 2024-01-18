@@ -11,13 +11,24 @@ from typing import List
 # Color Palette
 COLORS = px.colors.qualitative.Plotly
 
-def generate_plot_data(characters, df_by_rounds, template='plotly_dark'):
-    data = pd.concat([pd.DataFrame({'damage': df_by_round["Damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)])
-    fig = generate_histogram(data, x="damage", color="Type", marginal='box', template=template)
+def generate_plot_data(characters, df_by_rounds, template='plotly_dark',**kwargs):
+    data = pd.concat([pd.DataFrame({'Damage': df_by_round["Damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)])
+    # Converting types saves about 10x the memory
+    data["Damage"] = data["Damage"].astype('int32')
+    data["Type"] = data["Type"].astype('category')
+    # For memory debugging
+    # print(f"Plot data (deep): {data.memory_usage(deep=True).sum()/1000000} MB")
+    # print(f"Plot data : {data.memory_usage(deep=False).sum()/1000000} MB")
+    # print(f"df_by_rounds (deep): {sum([d.memory_usage(deep=True).sum() for d in df_by_rounds])/1000000} MB")
+    # print(f"df_by_rounds : {sum([d.memory_usage(deep=False).sum() for d in df_by_rounds])/1000000} MB")
+    fig = generate_histogram(data, x="Damage", color="Type", marginal='box', template=template,**kwargs)
+
     return fig
 
 def generate_histogram(data, x, color, marginal='violin', histnorm='percent', barmode='overlay', opacity=0.75, **kwargs):
     """Histogram with marginal plot"""
+    print(f"Plot data in hist (deep): {data.memory_usage(deep=True).sum()/1000000} MB")
+    print(f"Plot data in hist : {data.memory_usage(deep=False).sum()/1000000} MB")
     fig = px.histogram(
         data, 
         x=x, 
@@ -28,6 +39,7 @@ def generate_histogram(data, x, color, marginal='violin', histnorm='percent', ba
         opacity=opacity,
         **kwargs
     )
+    fig.update_layout(yaxis_title=histnorm.capitalize())
     return fig
 
 def generate_distplot(groups, labels, **kwargs):
@@ -38,16 +50,17 @@ def generate_distplot(groups, labels, **kwargs):
         fig = generate_distplot(groups, labels)
     """
     import plotly.figure_factory as ff
-    fig = ff.create_distplot(groups, labels, show_rug=False, **kwargs)
+    fig = ff.create_distplot(groups, labels, show_rug=True)
+    fig.update_layout(**kwargs)
     return fig
 
-def generate_bar_plot(data):
+def generate_bar_plot(data, x="damage",**kwargs):
     def add_damage_percent(data):
-        percent_dict = data.groupby("Type")["damage"].value_counts(normalize=True).to_dict()
-        data["Percent"] = data.apply(lambda x: percent_dict[(x["Type"], x["damage"])], axis=1)*100
+        percent_dict = data.groupby("Type")[x].value_counts(normalize=True).to_dict()
+        data["Percent"] = data.apply(lambda i: percent_dict[(i["Type"], i[x])], axis=1)*100
         return data
     data1 = add_damage_percent(data.copy())
-    fig = px.bar(data1, x="damage", y="Percent", color="Type", opacity=0.75,barmode='overlay')
+    fig = px.bar(data1, x=x, y="Percent", color="Type", opacity=0.75,barmode='overlay',**kwargs)
     return fig
 
 def generate_cdf_plot(data):
@@ -190,19 +203,29 @@ def generate_line_plots(df_acs, groupby='Character', template='plotly_dark', ord
     fig.update_layout(
         xaxis_title='Armor Class',
         yaxis_title='Damage',
-        title='Damage vs Armor Class',
-        template=template
+        title='Damage Per Round vs Armor Class' if groupby=='Character' else 'Damage Per Attack vs Armor Class',
+        template=template,
+        legend_traceorder="normal",
     )
     return fig
 
-def generate_damage_per_attack_histogram(characters, dfs ,template='plotly_dark'):
-    df_attacks = []
-    for c, df_c in zip(characters,dfs):
-        df_c = df_c[["Damage","Attack"]]
-        df_c.loc[:,'Type'] = c.name + "-" + df_c.loc[:,'Attack']
-        df_c.loc[:,"Character"] = c.name
+def generate_damage_per_attack_histogram(characters, dfs ,template='plotly_dark', **kwargs):
+    attacks = []
+    attack_color_map = {}
+    for ii, (c, df_c_temp) in enumerate(zip(characters,dfs)):
+        df_c = df_c_temp[["Damage","Attack"]].copy()
+        df_c['Type'] = c.name + "-" + df_c['Attack'].astype(str)
         df_c = df_c.drop('Attack',axis=1)
-        df_attacks.append(df_c)
+        attacks.append(df_c)
+        for a in df_c['Type'].unique():
+            attack_color_map[a] = COLORS[ii].lower()
 
-    fig = generate_histogram(pd.concat(df_attacks), x="Damage", color="Type", marginal='box', template=template)
+    df_attacks = pd.concat(attacks)
+    df_attacks["Damage"] = df_attacks["Damage"].astype('int32')
+    df_attacks["Type"] = df_attacks["Type"].astype('category')
+    fig = generate_histogram(df_attacks, x="Damage", color="Type", marginal='box', template=template,**kwargs)
+    # Manually override colors
+    for ii in range(len(fig.data)):
+        fig.data[ii].marker.color = attack_color_map[fig.data[ii].legendgroup]
+
     return fig

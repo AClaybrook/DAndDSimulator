@@ -141,7 +141,7 @@ def extract_character_ui_values(character_from_ui):
     character_dict["bonus_miss_die_mod_list"] = character_dict["bonus_miss_die_mod_list"].split(",")
     return character_dict
 
-def set_attack_from_values(avals, i, index, label_style={'margin-bottom': '0.2rem'}, input_style={'padding-top': '0.0rem', 'padding-bottom': '0.0rem'}):
+def set_attack_from_values(avals, i, index, label_style={'marginBottom': '0.2rem'}, input_style={'paddingTop': '0.0rem', 'paddingBottom': '0.0rem'}):
     attack_ui = [
         dbc.Row([dbc.Col(dbc.Label(A_LABELS["name"], style=label_style)),dbc.Col(dbc.Input(type="text", value=avals[i][f"name"], style=input_style, id={"type":"attack_name","index":index}))]),
         dbc.Row([
@@ -209,9 +209,9 @@ def set_attack_from_values(avals, i, index, label_style={'margin-bottom': '0.2re
     return attack_ui
 
 def generate_character_card(character_name, character=None, color="", index=1):
-    input_style = {'padding-top': '0.0rem', 'padding-bottom': '0.0rem'}
-    label_style = {'margin-bottom': '0.2rem'}
-    card_style = {'max-height': '60vh','min-height': '60vh','overflow-y': 'auto'}
+    input_style = {'paddingTop': '0.0rem', 'paddingBottom': '0.0rem'}
+    label_style = {'marginBottom': '0.2rem'}
+    card_style = {'maxHeight': '60vh','minHeight': '60vh','overflowY': 'auto'}
     tab_style = {}
 
     vals = {
@@ -303,7 +303,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
                 dbc.Col(dbc.Input(type="number", value=vals["charisma"], min=1, max=30, step=1, style=input_style))
             ]),
             dbc.Row([
-                dbc.Textarea(placeholder="Optional Description",  style={'width': '100%','min-height': '10vh'}),
+                dbc.Textarea(placeholder="Optional Description",  style={'width': '100%','minHeight': '10vh'}),
             ]),
         ])
     ],style=tab_style)
@@ -369,7 +369,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
                 dbc.Col([
                     dbc.Button(html.I(className="fa-solid fa-plus"), color="primary", class_name="me-1", id={"type": "add-attack", "index": index}),
                     dbc.Button(html.I(className="fa-solid fa-x"), color="danger", class_name="me-1", id={"type": "delete-attack", "index": index})
-                        ],style={"text-align": "end"}),
+                        ],style={"textAlign": "end"}),
             ], class_name="mb-1 mt-1"),
             dbc.Row(dbc.ListGroup(
                 [dbc.ListGroupItem(a["name"], active=ii==0, id={"type": "attack", "index": index, "num": ii}) for ii,a in enumerate(avals)],
@@ -530,10 +530,10 @@ def generate_character_card(character_name, character=None, color="", index=1):
     return dbc.Col(
         dbc.Card([
             dbc.CardHeader(dbc.Row([
-                dbc.Col(html.H4(vals["name"],style={'color': color, 'white-space':'nowrap'},id={"type":"character name","index":index}),style={'overflow-x': 'auto'}, width={"size":9},class_name="pe-0"),
+                dbc.Col(html.H4(vals["name"],style={'color': color, 'whiteSpace':'nowrap'},id={"type":"character name","index":index}),style={'overflowX': 'auto'}, width={"size":9},class_name="pe-0"),
                 dbc.Col([dbc.Button(html.I(className="fa-solid fa-copy"), color="primary",class_name="me-1",style={"display":"flex"},id={"type": "copy character", "index": index}),
                         dbc.Button(html.I(className="fa-solid fa-x"), color="danger",class_name="me-1",style={"display":"flex"},id={"type": "delete character", "index": index}),
-                        ], style={"text-align": "end","padding":"0rem","display":"flex"},width=3)
+                        ], style={"textAlign": "end","padding":"0rem","display":"flex"},width=3)
             ])), 
             dbc.CardBody([
                 dbc.Tabs([

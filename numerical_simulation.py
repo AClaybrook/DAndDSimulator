@@ -110,10 +110,10 @@ def simulate_rounds(attack_context, damage_context, num_rounds=10000):
     attack_rolls, rolls, hit, crit, damage, hit_damage, crit_damage, miss_damage = attack(num_rounds, attack_context, damage_context)
     rounds = np.arange(1, num_rounds + 1)
     results = np.column_stack([rounds, damage, hit_damage, crit_damage,miss_damage, attack_rolls, rolls, hit, hit != crit, crit])
-    df = pd.DataFrame(results, columns=['Round', 'Damage', 'Damage (From Hit)', 'Damage (From Crit)', 'Damage (Miss/Fail)','Attack Roll', 'Attack Roll (Die)', 'Hit', 'Hit (Non-Crit)', 'Hit (Crit)'])
+    df = pd.DataFrame(results, columns=['Round', 'Damage', 'Damage (From Hit)', 'Damage (From Crit)', 'Damage (Miss/Fail)','Attack Roll', 'Attack Roll (Die)', 'Hit', 'Hit (Non-Crit)', 'Hit (Crit)'], dtype='int32')
     return df
 
-def simulate_character_rounds(characters, enemy, num_rounds=10000):
+def simulate_character_rounds(characters, enemy, num_rounds=10000, save_memory=False):
     """ Simulate rounds of combat for a list of characters against an enemy"""
     dfs = []
     df_by_rounds = []
@@ -129,14 +129,19 @@ def simulate_character_rounds(characters, enemy, num_rounds=10000):
         for ii, (a, d) in enumerate(zip(attack_contexts, damage_contexts)):
             dfPerAttack = simulate_rounds(asdict(a), asdict(d), num_rounds=num_rounds)
             dfPerAttack['Attack'] = attack_names[ii]
+            dfPerAttack['Attack'] = dfPerAttack['Attack'].astype('category')
             dfPerAttacks.append(dfPerAttack)
         
         # All Attacks per Round
         df = pd.concat(dfPerAttacks)
-        dfs.append(df)
+        df['Attack'] = df['Attack'].astype('category')
+        if save_memory:
+            dfs.append(df[["Damage","Attack"]])
+        else:
+            dfs.append(df)
 
         # Summary Stats grouped by attack, easier to do this now rather than tracking labels for each attack
-        df_by_attack = df.drop('Round',axis=1).groupby('Attack').apply(lambda g: g.describe().drop(['count','std']))
+        df_by_attack = df.drop('Round',axis=1).groupby('Attack',observed=False).apply(lambda g: g.describe().drop(['count','std']))
         dfs_by_attack.append(df_by_attack)
 
         # Grouped by Round

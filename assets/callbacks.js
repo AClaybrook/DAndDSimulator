@@ -8,12 +8,18 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
         },
         // Sidebase toggle
         toggle_classname: function(n,classname){
+            if (classname === undefined) {
+                return ""
+            }
             if (n !== undefined && classname == "") {
                 return "collapsed"
             }
             return ""
         },
         toggle_collapse: function(n, is_open){
+            if (is_open === undefined) {
+                return true
+            }
             if (n !== undefined) {
                 return !is_open
             }

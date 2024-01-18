@@ -20,19 +20,19 @@ from components.enemy_card import generate_enemy_card
 # Example
 
 # Build attacks
-attacksPython = [Attack(name="Greatsword", two_handed=True, ability_stat="strength", damage='2d6', type='weapon (melee)')]*3
+attacksPython = [Attack(name=f"Greatsword{ii+1}", two_handed=True, ability_stat="strength", damage='2d6', type='weapon (melee)') for ii in range(3)]
 
 # Character stats
 character1 = Character(name='Fighter',level=12, attacks=attacksPython, strength=20)
 
 character2 = replace(character1, name='Fighter GWF + Crit On 19', disadvantage=False, GWF=True, crit_on=19)
 character3 = replace(character1, name='Fighter Advantage', advantage=True)
-character4 = replace(character1, name='Fighter GWM', GWM=True)
+character4 = replace(character1, name='Fighter GWM + Advantage', GWM=True, advantage=True)
 enemy = Enemy(armor_class=18)
 
-characters = [character1, character2]
+characters = [character1, character2, character3, character4]
 
-dfs, df_by_rounds, df_by_attacks = simulate_character_rounds(characters, enemy,num_rounds=10_000)
+dfs, df_by_rounds, df_by_attacks = simulate_character_rounds(characters, enemy,num_rounds=10_000, save_memory=True)
 
 # %%
 # Dashboard
@@ -106,10 +106,10 @@ server = app.server
 # app.config.suppress_callback_exceptions = True
 
 # Plot data
-fig = generate_plot_data(characters, df_by_rounds, template=template)
+fig = generate_plot_data(characters, df_by_rounds, template=template, title="Damage Per Round Distribution")
 
 
-row_style = style={'border': '1px solid #d3d3d3', 'border-radius': '15px', 'padding': '10px', 'padding-right': '0px'}
+row_style = style={'border': '1px solid #d3d3d3', 'borderRadius': '15px', 'padding': '10px', 'paddingRight': '0px'}
 # CONTENT_STYLE = {
 #     "top":0,
 #     "margin-top":'2rem',
@@ -181,7 +181,7 @@ content = html.Div(dbc.Container([
                     dbc.Button(dbc.Spinner(html.I(className="fa-solid fa-download"),color="secondary", id="export-spinner", size="sm"),color="secondary", id="export-results-button"),
                     dcc.Download(id="export-results"),
                 ]),
-            ], class_name="pr-0", width=3, style={'text-align': 'right'}),
+            ], class_name="pr-0", width=3, style={'textAlign': 'right'}),
         ],class_name="justify-content-between  pr-0"),
         simulate_rounds_input(),
         # dcc.Store(id='results-store', data=data_to_store(characters, df_by_rounds)),
@@ -189,7 +189,7 @@ content = html.Div(dbc.Container([
                 dcc.Graph(
                     id='dist-plot',
                     figure=fig,
-                    style={'height': '85vh', 'margin-bottom': '2px'}
+                    style={'height': '85vh', 'marginBottom': '2px'}
                 ),
         ]),
         html.Div(id="damage-tables",children=[
@@ -203,11 +203,12 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 #%%
 
 register_callbacks(app)
+
 if __name__ == '__main__':
 # Get the port number from the environment variable, or set to 8050 if not available
     port = int(os.environ.get("PORT", 8050))
     print('STARTING App')
-    app.run_server(debug=False, host="0.0.0.0", port=port)
+    app.run_server(debug=True, host="0.0.0.0", port=port)
     print("TERMINATING App")
 
 # %%

@@ -19,6 +19,7 @@ gunicorn = "*"
 pandas = "*"
 flask = "*"
 typing-extensions = "*"
+orjson = "*"
 
 [dev-packages]
 ipykernel = "*"

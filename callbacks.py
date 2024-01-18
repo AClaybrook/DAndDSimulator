@@ -11,8 +11,24 @@ from numerical_simulation import simulate_character_rounds, set_seed, simulate_c
 import base64
 import pandas as pd
 import numpy as np
+from functools import wraps
+from time import time
+import sys
 
 MAX_CHARACTERS = min(8,len(COLORS)) # There are 10 colors and 4 characters fit per row, so 8 is a good max
+
+
+
+def timeit(f):
+    @wraps(f)
+    def wrap(*args, **kw):
+        ts = time()
+        result = f(*args, **kw)
+        te = time()
+        print('func:%r took: %2.4f sec' % \
+          (f.__name__, te-ts))
+        return result
+    return wrap
 
 # Manipulating ids
 def get_active_ids_and_new_id(ids_json):
@@ -114,6 +130,7 @@ def register_callbacks(app, sidebar=True):
         State("active_ids","data"),
         prevent_initial_call=True
     )
+    @timeit
     def add_character(n_clicks, name, active_ids_json):
         # Don't update without a name or without a button click
         if not name or n_clicks is None:
@@ -152,7 +169,6 @@ def register_callbacks(app, sidebar=True):
         prevent_initial_call=True
     )
 
- 
     @app.callback(
             Output("character_row","children", allow_duplicate=True),
             Output("active_ids","data", allow_duplicate=True),
@@ -163,6 +179,7 @@ def register_callbacks(app, sidebar=True):
             State({'type': 'copy character',"index": ALL},"n_clicks_timestamp"),
             prevent_initial_call=True
     )
+    @timeit
     def delete_character(delete_timestamps, active_ids_json, add_timestamp, copy_timestamps):
         # Get clicked id and index
         delete_id = ctx.triggered_id["index"]
@@ -200,6 +217,7 @@ def register_callbacks(app, sidebar=True):
         State("delete-timestamp","data"),
         prevent_initial_call=True
     )
+    @timeit
     def copy_character(characters, active_ids_json, copy_timestamps, add_timestamp, delete_timestamps):
         # Find which button was clicked
         copy_id = ctx.triggered_id["index"]
@@ -251,6 +269,7 @@ def register_callbacks(app, sidebar=True):
         State({"type": "delete-attack", "index": MATCH},"n_clicks_timestamp"),
         prevent_initial_call=True
     )
+    @timeit
     def select_attack(selected_attacks, avals, add_attack_clicked, delete_attack_clicked):
         # Prevent if attack was not the most recently clicked
         max_, index = max_from_list(selected_attacks)
@@ -281,6 +300,7 @@ def register_callbacks(app, sidebar=True):
         State({'type': 'attacks',"index": MATCH},"children"),
         prevent_initial_call=True
     )
+    @timeit
     def add_attack(add_attack_clicked, attack_ui_list, avals, existing_attacks):
         # Prevent if all attacks are None
         if add_attack_clicked is None:
@@ -307,7 +327,6 @@ def register_callbacks(app, sidebar=True):
                          
         return json.dumps(avals_updated), attacks_updated
     
-
     @app.callback(
         Output({'type': 'attack_store',"index": MATCH},"data", allow_duplicate=True),
         Output({'type': 'attacks',"index": MATCH},"children", allow_duplicate=True),
@@ -317,6 +336,7 @@ def register_callbacks(app, sidebar=True):
         State({'type': 'attack',"index": MATCH, "num": ALL},"active"),
         prevent_initial_call=True
     )
+    @timeit
     def delete_attack(delete_attack_clicked, avals, existing_attacks, active_attacks):
         # Prevent if all attacks are None
         if delete_attack_clicked is None:
@@ -350,6 +370,7 @@ def register_callbacks(app, sidebar=True):
             State({"type": "attack_store", "index": ALL},"data"),
             prevent_initial_call=True           
     )
+    @timeit
     def export_character(clicked, characters_ui, attack_stores):
         if clicked is None:
             raise PreventUpdate
@@ -372,6 +393,7 @@ def register_callbacks(app, sidebar=True):
             State("active_ids","data"),
             prevent_initial_call=True           
     )
+    @timeit
     def import_characters(contents, active_ids_json):
         if contents is None:
             raise PreventUpdate
@@ -451,6 +473,7 @@ def register_callbacks(app, sidebar=True):
         State("numerical-options","value"),
         prevent_initial_call=True
     )
+    @timeit
     def simulate(clicked, num_rounds, attack_stores, characters_list, enemy_card_body, simulate_type, numerical_options):
         if clicked is None:
             raise PreventUpdate
@@ -509,7 +532,8 @@ def register_callbacks(app, sidebar=True):
                 "Could not simulate combat, please check that all fields are filled out correctly",
                 simulate_character_rounds,
                 *[characters,enemy],
-                num_rounds=num_rounds
+                num_rounds=num_rounds,
+                save_memory=True
                 )
             if alert is not None:
                 return fig, tables, alert, spinner
@@ -517,12 +541,14 @@ def register_callbacks(app, sidebar=True):
             dfs, df_by_rounds, df_by_attacks = res
             del res
             if simulate_type == "DPR Distribution":
-                fig = generate_plot_data(characters, df_by_rounds)
+                fig = generate_plot_data(characters, df_by_rounds, title="Damage Per Round Distribution")
                 tables = add_tables(df_by_rounds,characters,by_round=True, width=3)
             elif simulate_type == "DPA Distribution":
-                fig = generate_damage_per_attack_histogram(characters, dfs)
+                fig = generate_damage_per_attack_histogram(characters, dfs, title="Damage Per Attack Distribution", opacity=0.5) # Many overlapping histograms cause large performance issues, a lower opacity helps
                 tables = add_tables(df_by_attacks,characters,by_round=False, width=3)
-            print(f"Simulated {clicked} times")
+            print(f"dfs : {sum([d.memory_usage(deep=True).sum() for d in dfs])/1000000} MB")
+            print(f"df_by_rounds : {sum([d.memory_usage(deep=True).sum() for d in df_by_rounds])/1000000} MB")
+            del dfs, df_by_rounds, df_by_attacks
         elif simulate_type in ["DPR vs Armor Class","DPA vs Armor Class"]:
             by_round = simulate_type == "DPR vs Armor Class"
             df_acs, alert = try_and_except_alert(
@@ -553,9 +579,12 @@ def register_callbacks(app, sidebar=True):
                         reshaped = pd.concat({attack_name:g.set_index('Armor Class').drop(['Character-Attack','Character'],axis=1).T})
                         c_summary.append(reshaped.T)
                     data_summary.append(pd.concat(c_summary,axis=1))
+            
             tables = build_tables_row(characters, data_summary, width=3, by_round=by_round)
-
-            # TODO: Update rounds and attacks
+            print(f"df_acs : {df_acs.memory_usage(deep=True).sum()/1000000} MB")
+            print(f"data_summary : {sum([d.memory_usage(deep=True).sum() for d in data_summary])/1000000} MB")
+            del df_acs, data_summary
+        print(f"Simulated {clicked} times")
         return fig, tables, alert, spinner
 
 
@@ -573,6 +602,7 @@ def register_callbacks(app, sidebar=True):
         State("numerical-options","value"),
         prevent_initial_call=True
     )
+    @timeit
     def export_results(clicked, export_type, num_rounds, attack_stores, characters_list, enemy_card_body, numerical_options):
         if clicked is None:
             raise PreventUpdate
@@ -662,22 +692,31 @@ def register_callbacks(app, sidebar=True):
             
         elif export_type in ["DPR vs Armor Class","DPA vs Armor Class"]:
             export_kwargs = {} #{"index": False}
+            by_round = export_type == "DPR vs Armor Class"
             df_acs, alert = try_and_except_alert(
                 "Could not simulate combat, please check that all fields are filled out correctly",
                 simulate_character_rounds_for_multiple_armor_classes,
                 *[characters,enemy],
                 armor_classes = range(10,26),
-                num_rounds=num_rounds
+                num_rounds=num_rounds,
+                by_round=by_round
                 )
             if alert is not None:
                 return export, alert, spinner
             if export_type == "DPR vs Armor Class":
-                dfs = [reformat_df_ac(df_acs)]
+                dfs = [reformat_df_ac(df_acs,by_round=by_round)]
             elif export_type == "DPA vs Armor Class":
-                #TODO: Implement
-                raise PreventUpdate
-
-            # TODO: Update rounds and attacks
+                dfs = []
+                for c_name in names:
+                    df_c = df_acs.loc[df_acs['Character']==c_name, :]
+                    c_summary = []
+                    for n,g in df_c.groupby('Character-Attack'):
+                        g["mean"] = g["mean"].astype(float).round(2)
+                        attack_name = n[len(c_name)+1:]
+                        g["Attack"] = attack_name
+                        g.set_index('Armor Class', inplace=True)
+                        c_summary.append(g.drop('Character-Attack',axis=1))
+                    dfs.append(pd.concat(c_summary))
         else:
             raise PreventUpdate
 
