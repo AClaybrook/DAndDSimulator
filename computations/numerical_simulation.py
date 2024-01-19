@@ -5,30 +5,31 @@ import numpy as np
 import pandas as pd
 
 from computations.models import calculate_attack_and_damage_context
+from utilities.helper_functions import timeit
 
 # Set random seed for reproducibility
 SEED = 1
-np.random.seed(SEED)
+RNG = np.random.default_rng(SEED)
 
 def set_seed(seed=SEED):
     """ Set random seed for reproducibility"""
-    np.random.seed(seed)
+    return np.random.default_rng(seed)
 
-def roll(num_rolls, die_size=20, reroll_on=0):
+def roll(num_rolls, die_size=20, reroll_on=0, rng=RNG):
     """ Roll a die num_rolls times and return the results
         Rerolls dice on an optional reroll value"""
-    rolls = np.random.randint(1, die_size+1, size=num_rolls)
+    rolls = rng.integers(1, high=die_size+1, size=num_rolls)
     if reroll_on > 0:
         rerolls_mask = rolls <= reroll_on
-        rolls[rerolls_mask] = np.random.randint(1, die_size+1, size=np.sum(rerolls_mask))
+        rolls[rerolls_mask] = rng.integers(1, high=die_size+1, size=np.sum(rerolls_mask))
     return rolls
 
 def roll_adv_dis(num_rolls, advantage=False, disadvantage=False, **kwargs):
     """ Roll a die num_rolls times, optionally with advantage or disadvantage"""
     if advantage and not disadvantage:
-        return roll(2 * num_rolls, **kwargs).reshape(-1, 2).max(axis=1)
+        return np.maximum(roll(num_rolls, **kwargs), roll(num_rolls, **kwargs))
     elif disadvantage and not advantage:
-        return roll(2 * num_rolls, **kwargs).reshape(-1, 2).min(axis=1)
+        return np.minimum(roll(num_rolls, **kwargs), roll(num_rolls, **kwargs))
     else:
         return roll(num_rolls, **kwargs)
 
@@ -73,47 +74,59 @@ def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multi
 
     num_rolls = len(hit)
     # Roll damage for hits
-    hit_damage = np.zeros(num_rolls)
-    hit_damage[hit] += modifier
+    hit_damage = np.zeros(num_rolls, dtype='int32')
+    hits = hit_damage[hit]
+    hits += modifier
+    num_hits = len(hits)
     for nd, ds in zip(num_die, die_size):
-        hit_damage[hit] += roll_adv_dis(np.sum(hit) *  nd, die_size=ds, **kwargs).reshape(-1, nd).sum(axis=1)
-    hit_damage[hit] = np.floor(hit_damage[hit]*damage_multiplier)
+        hits += np.array([roll_adv_dis(num_hits, die_size=ds, **kwargs) for _ in range(nd)]).sum(axis=0) # a list comp is faster than reshaping a numpy array
+
+    hit_damage[hit] = np.multiply(hits, damage_multiplier)
+
     # Roll damage for misses/failed saving throws
     miss = ~hit
-    miss_damage = np.zeros(num_rolls)
-    miss_damage[miss] = miss_damage_modifier
+    miss_damage = np.zeros(num_rolls, dtype='int32')
+    misses = miss_damage[miss]
+    misses += miss_damage_modifier
+    num_misses = len(misses)
     for nd, ds in zip(miss_num_die, miss_damage_die):
-        miss_damage[miss] += roll_adv_dis(np.sum(miss) *  nd, die_size=ds, **kwargs).reshape(-1, nd).sum(axis=1)
-    miss_damage[miss] = np.floor(miss_damage[miss]*failed_multiplier) # Usually 1/2 for saving throws
-    miss_damage[miss] = np.floor(miss_damage[miss]*damage_multiplier)
+        misses += np.array([roll_adv_dis(num_misses, die_size=ds, **kwargs) for _ in range(nd)]).sum(axis=0)
+    misses = np.multiply(misses, failed_multiplier)
+    misses = np.multiply(misses, damage_multiplier)
+    miss_damage[miss] = misses
+
     # Roll damage for crits (roll hit dice twice, traditionally there is no flat modifier for crits)
-    crit_damage = np.zeros(num_rolls)
+    crit_damage = np.zeros(num_rolls, dtype='int32')
+    crits = crit_damage[crit]
+    num_crits = len(crits)
     for nd, ds in zip(num_die, die_size):
-        crit_damage[crit] = roll_adv_dis(np.sum(crit) * nd, die_size=ds, **kwargs).reshape(-1, nd).sum(axis=1)
+        crits += np.array([roll_adv_dis(num_crits, die_size=ds, **kwargs) for _ in range(nd)]).sum(axis=0)
     # Bonus damage for crits, i.e. half-orc savage attacks, brutal critical, etc.
-    crit_damage[crit] += crit_damage_modifier
+    crits += crit_damage_modifier
     for nd, ds in zip(crit_num_die, crit_damage_die):
-        crit_damage[crit] = roll_adv_dis(np.sum(crit) * nd, die_size=ds, **kwargs).reshape(-1, nd).sum(axis=1)
-    crit_damage[crit] = np.floor(crit_damage[crit]*damage_multiplier)
+        crits += np.array([roll_adv_dis(num_crits, die_size=ds, **kwargs) for _ in range(nd)]).sum(axis=0)
+    crit_damage[crit] = np.multiply(crits, damage_multiplier)
+
     # Track total, hit, crit, and miss/fail damage
     total_damage = hit_damage + crit_damage + miss_damage
     return total_damage, hit_damage, crit_damage, miss_damage
 
-def attack(num_rolls, attack_context, damage_context):
+def attack(num_rolls, attack_context, damage_context, **kwargs):
     """ Roll attack and damage rolls for num_rolls dice, using attack_context and damage_context"""
-    attack_rolls, rolls, hit, crit = attack_roll(num_rolls, **attack_context)
-    total_damage, hit_damage, crit_damage, miss_damage = damage_roll(hit, crit, **damage_context)
+    attack_rolls, rolls, hit, crit = attack_roll(num_rolls, **attack_context, **kwargs)
+    total_damage, hit_damage, crit_damage, miss_damage = damage_roll(hit, crit, **damage_context, **kwargs)
     return attack_rolls, rolls, hit, crit, total_damage, hit_damage, crit_damage, miss_damage
 
-def simulate_rounds(attack_context, damage_context, num_rounds=10000):
+def simulate_rounds(attack_context, damage_context, num_rounds=10000, **kwargs):
     """ Simulate num_rounds rounds of combat, with num_attacks attacks per round, using attack_context and damage_context"""
-    attack_rolls, rolls, hit, crit, damage, hit_damage, crit_damage, miss_damage = attack(num_rounds, attack_context, damage_context)
+    attack_rolls, rolls, hit, crit, damage, hit_damage, crit_damage, miss_damage = attack(num_rounds, attack_context, damage_context, **kwargs)
     rounds = np.arange(1, num_rounds + 1)
-    results = np.column_stack([rounds, damage, hit_damage, crit_damage,miss_damage, attack_rolls, rolls, hit, hit != crit, crit])
-    df = pd.DataFrame(results, columns=['Round', 'Damage', 'Damage (From Hit)', 'Damage (From Crit)', 'Damage (Miss/Fail)','Attack Roll', 'Attack Roll (Die)', 'Hit', 'Hit (Non-Crit)', 'Hit (Crit)'], dtype='int32')
+    results = np.array((rounds, damage, hit_damage, crit_damage,miss_damage, attack_rolls, rolls, hit, hit != crit, crit),dtype='int32').T
+    df = pd.DataFrame(results, columns=['Round', 'Damage', 'Damage (From Hit)', 'Damage (From Crit)', 'Damage (Miss/Fail)','Attack Roll', 'Attack Roll (Die)', 'Hit', 'Hit (Non-Crit)', 'Hit (Crit)'])
     return df
 
-def simulate_character_rounds(characters, enemy, num_rounds=10000, save_memory=False):
+@timeit
+def simulate_character_rounds(characters, enemy, num_rounds=10000, save_memory=False, **kwargs):
     """ Simulate rounds of combat for a list of characters against an enemy"""
     dfs = []
     df_by_rounds = []
@@ -124,16 +137,16 @@ def simulate_character_rounds(characters, enemy, num_rounds=10000, save_memory=F
         attack_contexts, damage_contexts = calculate_attack_and_damage_context(c, enemy)
 
         # Per Attack
-        dfPerAttacks = []
+        df_per_attacks = []
         attack_names = [a.name for a in c.attacks]
         for ii, (a, d) in enumerate(zip(attack_contexts, damage_contexts)):
-            dfPerAttack = simulate_rounds(asdict(a), asdict(d), num_rounds=num_rounds)
-            dfPerAttack['Attack'] = attack_names[ii]
-            dfPerAttack['Attack'] = dfPerAttack['Attack'].astype('category')
-            dfPerAttacks.append(dfPerAttack)
-        
+            df_per_attack = simulate_rounds(asdict(a), asdict(d), num_rounds=num_rounds, **kwargs)
+            df_per_attack['Attack'] = attack_names[ii]
+            df_per_attack['Attack'] = df_per_attack['Attack'].astype('category')
+            df_per_attacks.append(df_per_attack)
+
         # All Attacks per Round
-        df = pd.concat(dfPerAttacks)
+        df = pd.concat(df_per_attacks)
         df['Attack'] = df['Attack'].astype('category')
         if save_memory:
             dfs.append(df[["Damage","Attack"]])
@@ -150,7 +163,8 @@ def simulate_character_rounds(characters, enemy, num_rounds=10000, save_memory=F
 
     return dfs, df_by_rounds, dfs_by_attack
 
-def simulate_character_rounds_for_multiple_armor_classes(characters, enemy, armor_classes=None, num_rounds=10000, by_round=True):
+@timeit
+def simulate_character_rounds_for_multiple_armor_classes(characters, enemy, armor_classes=None, num_rounds=10000, by_round=True, **kwargs):
     """ Simulate rounds of combat for a list of characters against multiple armor classes"""
 
     if not armor_classes:
@@ -168,7 +182,7 @@ def simulate_character_rounds_for_multiple_armor_classes(characters, enemy, armo
             if by_round:
                 df_grouped = pd.concat(
                     [
-                        simulate_rounds(asdict(a), asdict(d), num_rounds=num_rounds)
+                        simulate_rounds(asdict(a), asdict(d), num_rounds=num_rounds,**kwargs)
                         for a, d in zip(attack_contexts, damage_contexts)
                     ]
                     ).groupby('Round').sum()['Damage']
@@ -178,16 +192,16 @@ def simulate_character_rounds_for_multiple_armor_classes(characters, enemy, armo
                 df_ac['Character'] = c.name
                 df_ac['Armor Class'] = ac
                 df_multi_ac.append(df_ac)
-                
+
             else:
                 attack_names = [a.name for a in c.attacks]
                 attack_list = []
                 for ii, (a, d) in enumerate(zip(attack_contexts, damage_contexts)):
-                    dfPerAttack = simulate_rounds(asdict(a), asdict(d), num_rounds=num_rounds)
-                    dfPerAttack['Character-Attack'] = f"{c.name}-{attack_names[ii]}"
-                    dfPerAttack = dfPerAttack[["Damage","Character-Attack"]]
-                    attack_list.append(dfPerAttack)
-                    
+                    df_per_attack = simulate_rounds(asdict(a), asdict(d), num_rounds=num_rounds,**kwargs)
+                    df_per_attack['Character-Attack'] = f"{c.name}-{attack_names[ii]}"
+                    df_per_attack = df_per_attack[["Damage","Character-Attack"]]
+                    attack_list.append(df_per_attack)
+
                 # Regroup by attacks with the same name
                 for name, g in pd.concat(attack_list).groupby('Character-Attack'):
                     # Summary Stats for each attack for each AC

@@ -9,7 +9,7 @@ from dash import dcc, html, Input, Output, State, Patch, MATCH, ALL, ctx, client
 from computations.models import Attack, Character, Enemy
 from computations.numerical_simulation import simulate_character_rounds, set_seed, simulate_character_rounds_for_multiple_armor_classes
 
-from components.helper_functions import timeit
+from utilities.helper_functions import timeit
 from components.callback_helpers import get_active_ids_and_new_id, get_new_id, set_active_ids, max_from_list, try_and_except_alert, reformat_df_ac
 from components.plots import COLORS, generate_plot_data, add_tables, summary_stats, generate_line_plots, generate_damage_per_attack_histogram, build_tables_row
 from components.character_card import generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values, characters_from_ui
@@ -397,9 +397,9 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
             raise PreventUpdate
 
         if 1 in numerical_options: # Randomize Seed
-            set_seed(np.random.randint(0,100))
+            rng = set_seed(np.random.randint(0,100))
         else:
-            set_seed()
+            rng = set_seed()
 
         # Default Outputs
         fig = Patch()
@@ -451,7 +451,8 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
                 simulate_character_rounds,
                 *[characters,enemy],
                 num_rounds=num_rounds,
-                save_memory=True
+                save_memory=True,
+                rng=rng
                 )
             if alert is not None:
                 return fig, tables, alert, spinner
@@ -475,7 +476,8 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
                 *[characters,enemy],
                 armor_classes = range(10,26),
                 num_rounds=num_rounds,
-                by_round=by_round
+                by_round=by_round,
+                rng=rng
                 )
             if alert is not None:
                 return fig, tables, alert, spinner
@@ -526,9 +528,9 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
             raise PreventUpdate
 
         if 1 in numerical_options: # Randomize Seed
-            set_seed(np.random.randint(0,100))
+            rng=set_seed(np.random.randint(0,100))
         else:
-            set_seed()
+            rng = set_seed()
 
         # Default Outputs
         export = Patch()
@@ -582,7 +584,8 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
                 "Could not simulate combat, please check that all fields are filled out correctly",
                 simulate_character_rounds,
                 *[characters,enemy],
-                num_rounds=num_rounds
+                num_rounds=num_rounds,
+                rng=rng
                 )
             if alert is not None:
                 return export, alert, spinner
@@ -617,7 +620,8 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
                 *[characters,enemy],
                 armor_classes = range(10,26),
                 num_rounds=num_rounds,
-                by_round=by_round
+                by_round=by_round,
+                rng=rng
                 )
             if alert is not None:
                 return export, alert, spinner
