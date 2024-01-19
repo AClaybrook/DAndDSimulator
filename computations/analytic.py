@@ -1,3 +1,4 @@
+""" Analytic Computations """
 import pandas as pd
 
 # Analytic Values
@@ -11,9 +12,10 @@ def avg_damage(num_die, die_size):
     return num_die * ev
 
 def hit_chance(die, mod=0, ac=15, advantage=False, disadvantage=False, crit_on=20):
+    """ Returns the chance to hit a target with a given armor class """
     roll_needed = ac - mod
     # Crit chance, always crit on 20, somtimes this can be lower, such as 19, 18, 17, etc.
-    crit_chance = (die-crit_on+1)/die
+    crit_chance = (die-crit_on+1)/die # pylint: disable=unused-variable
     # Crit miss chance, always miss on 1
     crit_miss_chance = 1/die
     if disadvantage:
@@ -22,9 +24,9 @@ def hit_chance(die, mod=0, ac=15, advantage=False, disadvantage=False, crit_on=2
         min_hit_chance = crit_miss_chance * crit_miss_chance
     return min(min_hit_chance, (die-roll_needed +1)/die)
 
-# Simple crit chance calculator
-# https://bg3.wiki/wiki/Guide:Book%27s_Guide_to_Crits
+# Simple crit chance calculator: https://bg3.wiki/wiki/Guide:Book%27s_Guide_to_Crits
 def crit_chart():
+    """ Simple crit chance DataFrame """
     crit_data = []
     for crit_on in range(20,12, -1):
         crit_chance = (20-crit_on+1)/20

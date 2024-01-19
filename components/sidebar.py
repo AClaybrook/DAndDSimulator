@@ -1,4 +1,4 @@
-# %%
+""" The sidebar component for the dashboard """
 import dash_bootstrap_components as dbc
 from dash import html
 

@@ -1,106 +1,25 @@
-from dash import Input, Output, State, Patch, MATCH, ALL, ctx, clientside_callback, ClientsideFunction
-from plots import COLORS, generate_plot_data, add_tables, summary_stats, generate_line_plots, generate_damage_per_attack_histogram, build_tables_row
-from components.character_card import generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values
-from components.enemy_card import extract_enemy_ui_values
-import dash_bootstrap_components as dbc
-from dash.exceptions import PreventUpdate
-from dash import dcc, html
+""" Callbacks for the app, which are registered in app.py. Clientside callbacks are located in assets/callbacks.js"""
 import json
-from models import Attack, Character, Enemy
-from numerical_simulation import simulate_character_rounds, set_seed, simulate_character_rounds_for_multiple_armor_classes
 import base64
 import pandas as pd
 import numpy as np
-from functools import wraps
-from time import time
-import sys
+import dash_bootstrap_components as dbc
+from dash.exceptions import PreventUpdate
+from dash import dcc, html, Input, Output, State, Patch, MATCH, ALL, ctx, clientside_callback, ClientsideFunction
+from computations.models import Attack, Character, Enemy
+from computations.numerical_simulation import simulate_character_rounds, set_seed, simulate_character_rounds_for_multiple_armor_classes
+
+from components.helper_functions import timeit
+from components.callback_helpers import get_active_ids_and_new_id, get_new_id, set_active_ids, max_from_list, try_and_except_alert, reformat_df_ac
+from components.plots import COLORS, generate_plot_data, add_tables, summary_stats, generate_line_plots, generate_damage_per_attack_histogram, build_tables_row
+from components.character_card import generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values, characters_from_ui
+from components.enemy_card import extract_enemy_ui_values
 
 MAX_CHARACTERS = min(8,len(COLORS)) # There are 10 colors and 4 characters fit per row, so 8 is a good max
 
-
-
-def timeit(f):
-    @wraps(f)
-    def wrap(*args, **kw):
-        ts = time()
-        result = f(*args, **kw)
-        te = time()
-        print('func:%r took: %2.4f sec' % \
-          (f.__name__, te-ts))
-        return result
-    return wrap
-
-# Manipulating ids
-def get_active_ids_and_new_id(ids_json):
-    ids = json.loads(ids_json)
-    new_id = get_new_id(ids)
-    return ids, new_id
-
-def get_new_id(ids):
-    ids_set = set(ids)
-    deleted_ids = [i for i in range(len(ids)) if i not in ids_set]
-    new_id = deleted_ids[0] if len(deleted_ids) > 0 else len(ids)
-    return new_id
-
-def set_active_ids(ids):
-    return json.dumps(ids)
-
-def max_from_list(l):
-    max_ = 0 
-    index = None
-    if isinstance(l, int):
-        max_ = l
-        index = 0
-    elif l is None:
-        pass
-    elif isinstance(l, list):
-        for ii, time in enumerate(l):
-            if time is not None and time > max_:
-                max_ = time
-                index = ii
-    return max_, index
-
-def characters_from_ui(characters_list, attack_stores):
-    characters = []
-    for ii, c in enumerate(characters_list):
-        attacksPython = [Attack(**attack) for attack in json.loads(attack_stores[ii])]
-        characters.append(Character(attacks=attacksPython, **extract_character_ui_values(c)))
-    return characters
-
-def try_and_except_alert(alert_message, func, *args, **kwargs):
-    try:
-        return func(*args, **kwargs), None
-    except Exception as e:
-        print(e)
-        alert = dbc.Alert(
-            alert_message,
-            dismissable=True,
-            is_open=True,
-            color="danger")
-        return None, alert
-    
-def reformat_df_ac(df, by_round=True):
-    """Reformats the armor class dataframe"""
-    if by_round:
-        df_acs = df.reset_index(drop=True)
-        ac_col = df_acs.pop("Armor Class")
-        df_acs.insert(0, 'Armor Class', ac_col)
-        name_col = df_acs.pop("Character")
-        df_acs.insert(0, 'Character', name_col)
-        df_acs.set_index(['Armor Class'], inplace=True)
-        df_acs["mean"] = df_acs["mean"].astype(float).round(2)
-        return df_acs
-    else:
-        new_dfs = []
-        for n,g in df.groupby('Character-Attack'):
-            reshaped = pd.concat({n:g.set_index('Armor Class').drop(['Character-Attack','Character'],axis=1).T})
-            new_dfs.append(reshaped)
-        return pd.concat(new_dfs).T
-
-
-
 # Note: Intellisense is not recognizing the callbacks as being accessed
-def register_callbacks(app, sidebar=True):
+def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
+    """ Registers all callbacks for the app"""
     if sidebar:
         clientside_callback(
             ClientsideFunction(
@@ -111,7 +30,7 @@ def register_callbacks(app, sidebar=True):
             Input("sidebar-toggle", "n_clicks"),
             State("sidebar", "className"),
         )
-            
+
         clientside_callback(
             ClientsideFunction(
                 namespace="clientside",
@@ -140,12 +59,12 @@ def register_callbacks(app, sidebar=True):
         active_ids, new_id = get_active_ids_and_new_id(active_ids_json)
         if new_id >= MAX_CHARACTERS:
             raise PreventUpdate
-        
+
         # Add new character using the first deleted id or the next id
         patched_children = Patch()
         patched_children.append(generate_character_card(name, color=COLORS[new_id], index=new_id))
         active_ids.append(new_id)
-        
+
         return patched_children, set_active_ids(active_ids)
 
     # Call client side callback in javascript, found in assets/callbacks.js
@@ -185,7 +104,7 @@ def register_callbacks(app, sidebar=True):
         delete_id = ctx.triggered_id["index"]
         active_ids, _ = get_active_ids_and_new_id(active_ids_json)
         index = active_ids.index(delete_id)
-        
+
         # Prevent if attack was not the most recently clicked
         max_, index = max_from_list(delete_timestamps)
         if index is None:
@@ -195,18 +114,18 @@ def register_callbacks(app, sidebar=True):
         most_recent_button_click = max(max_add, max_copy)
         if max_ < most_recent_button_click:
             raise PreventUpdate
-        
+
         # Don't delete the last character
         if len(active_ids) == 1:
-            raise PreventUpdate 
-        
+            raise PreventUpdate
+
         # Delete the character and update
         patched_children = Patch()
         del patched_children[index]
         del active_ids[index]
 
         return patched_children, set_active_ids(active_ids), max_
-    
+
     @app.callback(
         Output("character_row","children", allow_duplicate=True),
         Output("active_ids","data", allow_duplicate=True),
@@ -225,7 +144,7 @@ def register_callbacks(app, sidebar=True):
         index = active_ids.index(copy_id)
         if copy_id is None:
             raise PreventUpdate
-        
+
         # Prevent if attack was not the most recently clicked
         max_, index = max_from_list(copy_timestamps)
         if index is None:
@@ -235,14 +154,14 @@ def register_callbacks(app, sidebar=True):
         most_recent_button_click = max(max_add, max_delete)
         if max_ < most_recent_button_click:
             raise PreventUpdate
-        
+
         # Don't add more than max characters
         if new_id >= MAX_CHARACTERS:
             raise PreventUpdate
 
-        
-        # Copy the existing character and replace its id and color 
-        character = characters[index]    
+
+        # Copy the existing character and replace its id and color
+        character = characters[index]
         card_str = json.dumps(character)
         card_str = card_str.replace(f'"index": {copy_id}', f'"index": {new_id}')
         character = json.loads(card_str)
@@ -254,9 +173,9 @@ def register_callbacks(app, sidebar=True):
         patched_children = Patch()
         patched_children.append(character)
         active_ids.append(new_id)
-        
+
         return patched_children, set_active_ids(active_ids)
-    
+
     ## Attacks
 
     # TODO: Check that this works, it appears to work
@@ -288,8 +207,8 @@ def register_callbacks(app, sidebar=True):
         card_index = ctx.triggered_id['index']
 
         attack_ui = set_attack_from_values(json.loads(avals), index, card_index)
-        
-        return attacks, attack_ui 
+
+        return attacks, attack_ui
 
     @app.callback(
         Output({'type': 'attack_store',"index": MATCH},"data"),
@@ -320,13 +239,13 @@ def register_callbacks(app, sidebar=True):
         attacks_updated = existing_attacks
         nums = [int(a["props"]["id"]["num"]) for a in existing_attacks]
         index=ctx.triggered_id["index"]
-        for ii in range(num_attacks):
+        for _ in range(num_attacks):
             jj = get_new_id(nums)
             nums.append(jj)
-            attacks_updated.append(dbc.ListGroupItem(new_attack["name"], active=False, id={"type": "attack", "index": index, "num": jj})) 
-                         
+            attacks_updated.append(dbc.ListGroupItem(new_attack["name"], active=False, id={"type": "attack", "index": index, "num": jj}))
+
         return json.dumps(avals_updated), attacks_updated
-    
+
     @app.callback(
         Output({'type': 'attack_store',"index": MATCH},"data", allow_duplicate=True),
         Output({'type': 'attacks',"index": MATCH},"children", allow_duplicate=True),
@@ -348,7 +267,7 @@ def register_callbacks(app, sidebar=True):
             raise PreventUpdate
 
         # Update actively selected attacks
-        attack_index = [ii for ii, a in enumerate(active_attacks) if a == True]
+        attack_index = [ii for ii, a in enumerate(active_attacks) if a is True]
         if len(attack_index) != 1:
             raise PreventUpdate
         attack_index = attack_index[0]
@@ -362,19 +281,19 @@ def register_callbacks(app, sidebar=True):
                 break
 
         return json.dumps(avals_updated), existing_attacks
-    
+
     @app.callback(
             Output('download-characters','data'),
             Input('export-button','n_clicks'),
             State("character_row","children"),
             State({"type": "attack_store", "index": ALL},"data"),
-            prevent_initial_call=True           
+            prevent_initial_call=True
     )
     @timeit
     def export_character(clicked, characters_ui, attack_stores):
         if clicked is None:
             raise PreventUpdate
-    
+
         c_dicts = []
         for ii,c in enumerate(characters_ui):
             attack_dicts= [attack for attack in json.loads(attack_stores[ii])]
@@ -383,21 +302,20 @@ def register_callbacks(app, sidebar=True):
             c_dicts.append(c_dict)
 
         return dict(content=json.dumps(c_dicts, indent=4), filename="characters.json")
-   
-    # TODO: Import characters
+
     @app.callback(
             Output('character_row','children', allow_duplicate=True),
             Output('active_ids','data', allow_duplicate=True),
             Output('character-alerts','children'),
-            Input('upload-button','contents'), 
+            Input('upload-button','contents'),
             State("active_ids","data"),
-            prevent_initial_call=True           
+            prevent_initial_call=True
     )
     @timeit
     def import_characters(contents, active_ids_json):
         if contents is None:
             raise PreventUpdate
-    
+
         def parse_contents(contents):
             content_type, content_string = contents.split(',')
             decoded = base64.b64decode(content_string)
@@ -442,8 +360,8 @@ def register_callbacks(app, sidebar=True):
                 # TODO: For now ignore all characters that fail to parse, but this could be more granular in the future
                 try:
                     attacks = c.pop("attacks")
-                    attacksPython = [Attack(**attack) for attack in attacks]
-                    characters.append(generate_character_card(c["name"], character=Character(**c, attacks=attacksPython), color=COLORS[new_id], index=new_id))
+                    attacks_python = [Attack(**attack) for attack in attacks]
+                    characters.append(generate_character_card(c["name"], character=Character(**c, attacks=attacks_python), color=COLORS[new_id], index=new_id))
                 except Exception as e:
                     print(e)
                     alert = dbc.Alert(
@@ -454,7 +372,7 @@ def register_callbacks(app, sidebar=True):
                     break
                 active_ids.append(new_id)
                 new_id = get_new_id(active_ids)
-            
+
         return characters, set_active_ids(active_ids), alert
 
     # NOTE: Using a data store caused memory issues in the deployed environment on heroku, often exceeding 1 GB and there is a 0.5 GB limit, resimulating is faster
@@ -477,7 +395,7 @@ def register_callbacks(app, sidebar=True):
     def simulate(clicked, num_rounds, attack_stores, characters_list, enemy_card_body, simulate_type, numerical_options):
         if clicked is None:
             raise PreventUpdate
-        
+
         if 1 in numerical_options: # Randomize Seed
             set_seed(np.random.randint(0,100))
         else:
@@ -579,7 +497,7 @@ def register_callbacks(app, sidebar=True):
                         reshaped = pd.concat({attack_name:g.set_index('Armor Class').drop(['Character-Attack','Character'],axis=1).T})
                         c_summary.append(reshaped.T)
                     data_summary.append(pd.concat(c_summary,axis=1))
-            
+
             tables = build_tables_row(characters, data_summary, width=3, by_round=by_round)
             print(f"df_acs : {df_acs.memory_usage(deep=True).sum()/1000000} MB")
             print(f"data_summary : {sum([d.memory_usage(deep=True).sum() for d in data_summary])/1000000} MB")
@@ -689,7 +607,7 @@ def register_callbacks(app, sidebar=True):
                 for name, data in zip(names,df_all):
                     data.insert(0, 'Name', name)
                     dfs.append(data.sort_values(by=["Name","Round"]))
-            
+
         elif export_type in ["DPR vs Armor Class","DPA vs Armor Class"]:
             export_kwargs = {} #{"index": False}
             by_round = export_type == "DPR vs Armor Class"

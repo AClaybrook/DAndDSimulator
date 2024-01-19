@@ -20,6 +20,7 @@ pandas = "*"
 flask = "*"
 typing-extensions = "*"
 orjson = "*"
+pylint = "*"
 
 [dev-packages]
 ipykernel = "*"

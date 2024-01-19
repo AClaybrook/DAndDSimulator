@@ -1,3 +1,5 @@
 *.prof
 *.pyc
+*.txt
+random/*
 __pycache__

@@ -1,17 +1,19 @@
-# Plotting
+""" Plotting and tables for the app """
 # Themes here: https://plotly.com/python/templates/
+
+from typing import List
+import warnings
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-
 from dash import html
 import dash_bootstrap_components as dbc
-from typing import List
 
 # Color Palette
 COLORS = px.colors.qualitative.Plotly
 
 def generate_plot_data(characters, df_by_rounds, template='plotly_dark',**kwargs):
+    """ Generates the plot data for the DPR Distribution Histogram"""
     data = pd.concat([pd.DataFrame({'Damage': df_by_round["Damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)])
     # Converting types saves about 10x the memory
     data["Damage"] = data["Damage"].astype('int32')
@@ -26,35 +28,40 @@ def generate_plot_data(characters, df_by_rounds, template='plotly_dark',**kwargs
     return fig
 
 def generate_histogram(data, x, color, marginal='violin', histnorm='percent', barmode='overlay', opacity=0.75, **kwargs):
-    """Histogram with marginal plot"""
+    """ Generic histogram helper function with marginal plot"""
     print(f"Plot data in hist (deep): {data.memory_usage(deep=True).sum()/1000000} MB")
     print(f"Plot data in hist : {data.memory_usage(deep=False).sum()/1000000} MB")
-    fig = px.histogram(
-        data, 
-        x=x, 
-        color=color, 
-        marginal=marginal,
-        histnorm=histnorm,
-        barmode=barmode,
-        opacity=opacity,
-        **kwargs
-    )
+    with warnings.catch_warnings():
+        warnings.simplefilter(action='ignore', category=FutureWarning)
+        fig = px.histogram(
+            data,
+            x=x,
+            color=color,
+            marginal=marginal,
+            histnorm=histnorm,
+            barmode=barmode,
+            opacity=opacity,
+            **kwargs
+        )
+
     fig.update_layout(yaxis_title=histnorm.capitalize())
     return fig
 
 def generate_distplot(groups, labels, **kwargs):
     """
+    Alternative to generate_histogram, but has some performance issues for many data points
     Example Usage:
         groups = [df_by_round["damage"] for df_by_round in df_by_rounds]
         labels = [c.name for c in characters]
         fig = generate_distplot(groups, labels)
     """
-    import plotly.figure_factory as ff
+    import plotly.figure_factory as ff # pylint: disable=import-outside-toplevel
     fig = ff.create_distplot(groups, labels, show_rug=True)
     fig.update_layout(**kwargs)
     return fig
 
 def generate_bar_plot(data, x="damage",**kwargs):
+    """ Basically a bar plot version of generate_distplot with out the side plots, but has some performance issues for many data points """
     def add_damage_percent(data):
         percent_dict = data.groupby("Type")[x].value_counts(normalize=True).to_dict()
         data["Percent"] = data.apply(lambda i: percent_dict[(i["Type"], i[x])], axis=1)*100
@@ -64,11 +71,13 @@ def generate_bar_plot(data, x="damage",**kwargs):
     return fig
 
 def generate_cdf_plot(data):
+    """ Generates a Cumulative Distribution Function plot with a histogram"""
     return px.ecdf(data, x="damage", color="Type", marginal="histogram",orientation='h')
 
 
 
 def summary_stats(data: List, by_round=True):
+    """ Extracts summary stats to be used for tables and exports"""
     df_summary = []
     for datac in data:
         if by_round:
@@ -88,6 +97,7 @@ def summary_stats(data: List, by_round=True):
 
 
 def build_tables_row(characters, data_summary, by_round=True, width=12):
+    """ Builds the tables section from simulation data """
     if by_round:
         table_list = [dbc.Row(dbc.Col(html.H4("Per Round")))]
     else:
@@ -104,18 +114,20 @@ def build_tables_row(characters, data_summary, by_round=True, width=12):
     return table_list
 
 def add_tables(data, characters, by_round=True, width=12):
-
+    """ Processes the data and then builds the tables section from simulation data"""
     data_summary = summary_stats(data, by_round=by_round)
 
     return build_tables_row(characters, data_summary, width=width, by_round=by_round)
 
 def data_to_store(characters, dfs):
+    """ Stores character names and associated data in a dictionary, in perparation for use in a dcc.Store """
     store = {}
     for ii, (c, df) in enumerate(zip(characters, dfs)):
         store[f"{ii},{c.name}"] = df.to_dict('records')
     return store
 
 def data_from_store(store):
+    """ Extracts character names and associated data from a dcc.Store component """
     dfs = []
     names = []
     for key, data in store.items():
@@ -124,28 +136,8 @@ def data_from_store(store):
         dfs.append(pd.DataFrame(data))
     return names, dfs
 
-
-
-def line_plots(df_acs, template='plotly_dark'):
-    """Plot damage vs armor class"""
-    for _, g in df_acs.groupby('Character'):
-
-        fig = go.Figure()
-        fig.add_trace(go.Line(
-                name = g['Character'].iloc[0],
-                x=g['Armor Class'],
-                y=g['mean'],
-                error_y=dict(
-                    type='data',
-                    symmetric=False,
-                    array=g['75%'],
-                    arrayminus=g['25%'])
-                ))
-    fig.update_layout(xaxis_title="Armor Class", yaxis_title="Damage", template=template)
-    fig.show()
-    return fig
-
 def generate_line_plots(df_acs, groupby='Character', template='plotly_dark', order=None):
+    """ Generates a line plot of damage vs armor class, used by DPR vs Armor Class and DPA vs Armor Class"""
     fig = go.Figure()
     if not order:
         order = df_acs['Character'].unique()
@@ -209,7 +201,27 @@ def generate_line_plots(df_acs, groupby='Character', template='plotly_dark', ord
     )
     return fig
 
+def line_plots(df_acs, template='plotly_dark'):
+    """ A simple plot of damage vs armor class"""
+    for _, g in df_acs.groupby('Character'):
+
+        fig = go.Figure()
+        fig.add_trace(go.Line(
+                name = g['Character'].iloc[0],
+                x=g['Armor Class'],
+                y=g['mean'],
+                error_y=dict(
+                    type='data',
+                    symmetric=False,
+                    array=g['75%'],
+                    arrayminus=g['25%'])
+                ))
+    fig.update_layout(xaxis_title="Armor Class", yaxis_title="Damage", template=template)
+    fig.show()
+    return fig
+
 def generate_damage_per_attack_histogram(characters, dfs ,template='plotly_dark', **kwargs):
+    """ Generates a histogram of damage per attack, used by DPA Distribution"""
     attacks = []
     attack_color_map = {}
     for ii, (c, df_c_temp) in enumerate(zip(characters,dfs)):
@@ -225,7 +237,7 @@ def generate_damage_per_attack_histogram(characters, dfs ,template='plotly_dark'
     df_attacks["Type"] = df_attacks["Type"].astype('category')
     fig = generate_histogram(df_attacks, x="Damage", color="Type", marginal='box', template=template,**kwargs)
     # Manually override colors
-    for ii in range(len(fig.data)):
-        fig.data[ii].marker.color = attack_color_map[fig.data[ii].legendgroup]
+    for ii, data in enumerate(fig.data):
+        data.marker.color = attack_color_map[data.legendgroup]
 
     return fig

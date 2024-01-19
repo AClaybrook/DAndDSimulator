@@ -1,6 +1,7 @@
+""" Enemy Card Component """
 import dash_bootstrap_components as dbc
 from dash import html
-from plots import COLORS
+from components.plots import COLORS
 
 E_LABELS_TO_VALS = {
     "Name": "name",
@@ -15,6 +16,7 @@ E_LABELS_TO_VALS = {
 E_LABELS =  {v:k for k,v in E_LABELS_TO_VALS.items()}
 
 def generate_enemy_card(enemy=None, color=COLORS[0]):
+    """ Generates the enemy card"""
     input_style = {'paddingTop': '0.0rem', 'paddingBottom': '0.0rem'}
     label_style = {'marginBottom': '0.2rem'}
     card_style = {'maxHeight': '30vh','minHeight': '30vh','overflowY': 'auto'}
@@ -33,7 +35,7 @@ def generate_enemy_card(enemy=None, color=COLORS[0]):
         dbc.Card([
             dbc.CardHeader([
                 html.H4(vals["name"],style={'color': color, 'whiteSpace':'nowrap'},id="enemy-name"),
-            ]), 
+            ]),
             dbc.CardBody([
                 dbc.Row([
                     dbc.Col(dbc.Label(E_LABELS["name"], style=label_style)),
@@ -69,6 +71,7 @@ def generate_enemy_card(enemy=None, color=COLORS[0]):
 
 
 def extract_enemy_ui_values(enemy_card_body):
+    """ Extracts the enemy ui values to a dictionary"""
     enemy_dict = {}
     for row in enemy_card_body:
         label_val_row = row['props']['children']

@@ -1,4 +1,4 @@
-
+""" Dataclasses and associated helper functions for containing character and enemy data """
 from dataclasses import dataclass, field, asdict
 from typing import Literal, List
 
@@ -48,10 +48,11 @@ def multiple_die_and_mod_from_list(die_list):
 
 @dataclass
 class Attack:
+    """ Dataclass for attacks """
     name: str = 'Attack'
     bonus_attack_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['1d6', 2]
     bonus_damage_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['1d6', 2]
-    
+
     proficent: bool = True
     type: Literal["weapon (melee)","weapon (ranged)","spell","unarmed","thrown"] = 'weapon (melee)'
     ability_stat: Literal["strength","dexterity","constitution","intelligence","wisdom","charisma"] = 'strength'
@@ -77,6 +78,7 @@ class Attack:
 
 @dataclass
 class Creature:
+    """ Dataclass for creatures, holds general stats """
     name: str = 'Creature'
     armor_class: int = 10
     damage_reduction: int = 0
@@ -147,6 +149,7 @@ class Creature:
         self.additional_miss_damage_num_die += num_die
         self.additional_miss_damage_die_sizes += die_sizes
 
+    # pylint: disable=missing-function-docstring
     @property
     def proficiency_bonus(self):
         return 2 + (self.level-1)//4
@@ -154,27 +157,27 @@ class Creature:
     @property
     def strength_ability_modifier(self):
         return (self.strength-10)//2
-    
+
     @property
     def dexterity_ability_modifier(self):
         return (self.dexterity-10)//2
-    
+
     @property
-    def constitution_ability_modifier(self):   
+    def constitution_ability_modifier(self):
         return (self.constitution-10)//2
-    
+
     @property
     def intelligence_ability_modifier(self):
         return (self.intelligence-10)//2
-    
+
     @property
     def wisdom_ability_modifier(self):
         return (self.wisdom-10)//2
-    
+
     @property
     def charisma_ability_modifier(self):
         return (self.charisma-10)//2
-    
+
     def ability_modifier(self, stat):
         if stat == 'strength':
             return self.strength_ability_modifier
@@ -188,26 +191,28 @@ class Creature:
             return self.wisdom_ability_modifier
         elif stat == 'charisma':
             return self.charisma_ability_modifier
-        
+
     def attack_modifier(self,stat):
         return self.ability_modifier(stat) + self.proficiency_bonus + self.additional_attack_modifier
 
     def damage_modifier(self,stat):
         return self.ability_modifier(stat) + self.additional_damage_modifier
-    
+
     def spell_casting_modifier(self, stat):
         return self.ability_modifier(stat=stat)
 
     def spell_difficulty_class(self, stat):
         spell_casting_mod = self.spell_casting_modifier(stat)
         return 8 + self.proficiency_bonus + spell_casting_mod + self.additional_spell_dc
-    
+
     def to_dict(self):
         return {k: v for k, v in asdict(self).items()}
 
 
 @dataclass(kw_only=True)
 class Character(Creature):
+    """ Dataclass for characters, has additional properties associated with classes, races, feats, etc. """
+    # pylint: disable=invalid-name
     name: str = 'Character'
     # Feats/Abilities
     savage_attacker: bool = False # advantage on damage rerolls
@@ -240,6 +245,7 @@ class Character(Creature):
 
 @dataclass(kw_only=True)
 class Enemy(Creature):
+    """ Dataclass for enemys/monsters """
     name: str = 'Mind Flayer'
     armor_class: int = 15
     hit_points: int = 71
@@ -250,6 +256,7 @@ class Enemy(Creature):
 
 @dataclass
 class AttackContext:
+    """ Dataclass to hold just the critical information to compute an attack roll """
     num_die: List[int] = field(default_factory=list)
     die_size: List[int] = field(default_factory=list)
     modifier: int = 0
@@ -264,6 +271,7 @@ class AttackContext:
 
 @dataclass
 class DamageContext:
+    """ Dataclass to hold just the critical information to compute damage """
     # Standard Hit Damage
     num_die: List[int] = field(default_factory=list)
     die_size: List[int] = field(default_factory=list)
@@ -283,12 +291,13 @@ class DamageContext:
     failed_multiplier: float = 1
     # Special cases
     # TODO: Kill on hp remaining
-   
+
 def calculate_attack_and_damage_context(character, enemy, **kwargs):
+    """ Extracts the attack and damage contexts for a given character and enemy """
     attack_contexts = []
     damage_contexts = []
 
-    # Character Specific     
+    # Character Specific
     c_attack_num_die, c_attack_die_sizes, c_bonus_attack_mod = multiple_die_and_mod_from_list(character.bonus_attack_die_mod_list)
     c_damage_num_die, c_damage_die_sizes, c_bonus_damage_mod = multiple_die_and_mod_from_list(character.bonus_damage_die_mod_list)
     c_miss_num_die, c_miss_damage_die, c_miss_damage_modifier = multiple_die_and_mod_from_list(character.bonus_miss_die_mod_list)
@@ -297,7 +306,7 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
     for attack in character.attacks:
         # From character
         ability_modifier = character.ability_modifier(attack.ability_stat)
-        # Attack Roll 
+        # Attack Roll
         attack_modifier = ability_modifier
         ## Proficiency, Spellcasting and unarmed attacks always add proficiency bonus
         if attack.proficent or attack.type in ['spell','unarmed']:
@@ -311,7 +320,7 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
 
         damage_failed_multiplier = 0
 
-        # Attack Specific        
+        # Attack Specific
         attack_num_die, attack_die_sizes, bonus_attack_mod = multiple_die_and_mod_from_list(attack.bonus_attack_die_mod_list)
         damage_num_die, damage_die_sizes, bonus_damage_mod = multiple_die_and_mod_from_list([attack.damage] + attack.bonus_damage_die_mod_list)
         miss_num_die, miss_damage_die, miss_damage_modifier = multiple_die_and_mod_from_list(attack.bonus_miss_die_mod_list)
@@ -337,7 +346,7 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
 
         ## Weapon attacks
         if character.raging:
-            rage_modifier = 2 
+            rage_modifier = 2
             if character.level >= 9:
                 rage_modifier = 3
 
@@ -411,7 +420,7 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
             if attack.saving_throw:
                 #TODO: This is not right
                 damage_failed_multiplier = attack.saving_throw_success_multiplier
-        
+
         # Enemy Specific
         # TODO: Make this per attack
         if enemy.resistance:
@@ -426,7 +435,7 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
             attack_roll_modifier = enemy.ability_modifier(attack.saving_throw_stat)
             if enemy.saving_throw_proficent:
                 attack_roll_modifier += enemy.proficiency_bonus
-    
+
         attack_context = AttackContext(
             num_die=attack_num_die,
             die_size=attack_die_sizes,
@@ -460,4 +469,3 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
         attack_contexts.append(attack_context)
         damage_contexts.append(damage_context)
     return attack_contexts, damage_contexts
-

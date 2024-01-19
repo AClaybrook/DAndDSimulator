@@ -4,7 +4,7 @@ from dataclasses import asdict
 import numpy as np
 import pandas as pd
 
-from models import calculate_attack_and_damage_context
+from computations.models import calculate_attack_and_damage_context
 
 # Set random seed for reproducibility
 SEED = 1

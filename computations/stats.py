@@ -1,6 +1,8 @@
-import scipy.stats as stats
+""" Statistical Computations """
+from scipy import stats
 
 def get_distributions(dfs,column="damage"):
+    """ Returns a list of distributions for a given column in a list of dataframes, used by some plots"""
     dists = []
     for df in dfs:
         val_counts = df[column].value_counts(normalize=True)

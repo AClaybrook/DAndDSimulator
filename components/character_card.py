@@ -1,7 +1,9 @@
+""" Character Card Component"""
+import json
 import dash_bootstrap_components as dbc
 from dash import html, dcc
-from plots import COLORS
-import json
+from components.plots import COLORS
+from computations.models import Attack, Character
 
 # Stat options
 stat_options=[{"label": "Strength", "value": "strength"},
@@ -20,6 +22,7 @@ attack_options = [{"label": "Weapon (Melee)","value": "weapon (melee)"},
                     ]
 
 def generate_character_cards(characters):
+    """ Generates the character cards from a list of python characters"""
     cards = [
         generate_character_card(c.name, character=c, color=COLORS[ii], index=ii)
         for ii, c in enumerate(characters)
@@ -72,7 +75,6 @@ def extract_attack_ui_values(attack_ui_list):
 
     return attack_ui_values, num_attacks
 
-
 C_LABEL_TO_DICT_MAP = {
     # Stats
     "Name": "name",
@@ -114,6 +116,7 @@ C_LABEL_TO_DICT_MAP = {
 C_LABELS = {v:k for k,v in C_LABEL_TO_DICT_MAP.items()}
 
 def extract_character_ui_values(character_from_ui):
+    """ Parses the character ui values into a dictionary"""
     character_dict = {}
     card_body = character_from_ui['props']['children']['props']['children'][1]
     tabs = card_body['props']['children'][0]['props']['children']
@@ -131,7 +134,7 @@ def extract_character_ui_values(character_from_ui):
                     label = label_col['props']['children']['props']['children']
                     value = value_col['props']['children']['props']['value']
                     character_dict[label] = value
-    
+
     # Convert labels to internal dictionary keys
     character_dict = {C_LABEL_TO_DICT_MAP[k]:v for k,v in character_dict.items()}
     # Convert strs to lists
@@ -141,9 +144,24 @@ def extract_character_ui_values(character_from_ui):
     character_dict["bonus_miss_die_mod_list"] = character_dict["bonus_miss_die_mod_list"].split(",")
     return character_dict
 
-def set_attack_from_values(avals, i, index, label_style={'marginBottom': '0.2rem'}, input_style={'paddingTop': '0.0rem', 'paddingBottom': '0.0rem'}):
+
+def characters_from_ui(characters_list, attack_stores):
+    """ Parses the character ui values into a list of characters"""
+    characters = []
+    for ii, c in enumerate(characters_list):
+        attacks_python = [Attack(**attack) for attack in json.loads(attack_stores[ii])]
+        characters.append(Character(attacks=attacks_python, **extract_character_ui_values(c)))
+    return characters
+
+def set_attack_from_values(avals, i, index, label_style=None, input_style=None):
+    """ Sets the attack ui from a dictionary of values"""
+    if label_style is None:
+        label_style = {'marginBottom': '0.2rem'}
+    if input_style is None:
+        input_style = {'paddingTop': '0.0rem', 'paddingBottom': '0.0rem'}
+
     attack_ui = [
-        dbc.Row([dbc.Col(dbc.Label(A_LABELS["name"], style=label_style)),dbc.Col(dbc.Input(type="text", value=avals[i][f"name"], style=input_style, id={"type":"attack_name","index":index}))]),
+        dbc.Row([dbc.Col(dbc.Label(A_LABELS["name"], style=label_style)),dbc.Col(dbc.Input(type="text", value=avals[i]["name"], style=input_style, id={"type":"attack_name","index":index}))]),
         dbc.Row([
             dbc.Col(dbc.Label(A_LABELS["type"], style=label_style)),
             dbc.Col(dbc.Select(options=attack_options,
@@ -209,6 +227,7 @@ def set_attack_from_values(avals, i, index, label_style={'marginBottom': '0.2rem
     return attack_ui
 
 def generate_character_card(character_name, character=None, color="", index=1):
+    """ Generates the character card, either from a character or with default values"""
     input_style = {'paddingTop': '0.0rem', 'paddingBottom': '0.0rem'}
     label_style = {'marginBottom': '0.2rem'}
     card_style = {'maxHeight': '60vh','minHeight': '60vh','overflowY': 'auto'}
@@ -248,7 +267,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
         "archery": character.archery if character else False,
         "dueling": character.dueling if character else False,
         "TWF": character.TWF if character else False,
-        
+
         ## Barbarian
         "raging": character.raging if character else False,
         "brutal_critical": character.brutal_critical if character else False,
@@ -311,7 +330,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
     # Attacks tab, NOTE: Keep in sync with Attack class
     avals = []
     if character:
-        for i,a in enumerate(character.attacks):
+        for _,a in enumerate(character.attacks):
             attack = {
             "name": a.name,
             "bonus_attack_die_mod_list": a.bonus_attack_die_mod_list,
@@ -365,7 +384,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
     attacks = dbc.Card([
         dbc.CardBody([
             html.Div(set_attack_from_values(avals, 0, index), id={"type": "attack_ui", "index": index}),
-            dbc.Row([ 
+            dbc.Row([
                 dbc.Col([
                     dbc.Button(html.I(className="fa-solid fa-plus"), color="primary", class_name="me-1", id={"type": "add-attack", "index": index}),
                     dbc.Button(html.I(className="fa-solid fa-x"), color="danger", class_name="me-1", id={"type": "delete-attack", "index": index})
@@ -534,7 +553,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
                 dbc.Col([dbc.Button(html.I(className="fa-solid fa-copy"), color="primary",class_name="me-1",style={"display":"flex"},id={"type": "copy character", "index": index}),
                         dbc.Button(html.I(className="fa-solid fa-x"), color="danger",class_name="me-1",style={"display":"flex"},id={"type": "delete character", "index": index}),
                         ], style={"textAlign": "end","padding":"0rem","display":"flex"},width=3)
-            ])), 
+            ])),
             dbc.CardBody([
                 dbc.Tabs([
                     dbc.Tab(stats, label="Stats", tab_id="stats"),
