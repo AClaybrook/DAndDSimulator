@@ -9,7 +9,7 @@ import dash_bootstrap_components as dbc
 # Gunicorn is used by heroku to run the app
 import gunicorn  # pylint: disable=unused-import
 from computations.models import Character, Enemy, Attack
-from computations.numerical_simulation import simulate_character_rounds
+from computations.numerical_simulation import simulate_rounds_from_characters
 from components.plots import generate_plot_data, add_tables
 from components.callbacks import register_callbacks
 from components.sidebar import sidebar
@@ -20,7 +20,7 @@ from components.enemy_card import generate_enemy_card
 # Example
 
 # Build attacks
-attacksPython = [Attack(name=f"Greatsword{ii+1}", two_handed=True, ability_stat="strength", damage='2d6', type='weapon (melee)') for ii in range(3)]
+attacksPython = [Attack(name="Greatsword", two_handed=True, ability_stat="strength", damage='2d6', type='weapon (melee)') for ii in range(3)]
 
 # Character stats
 character1 = Character(name='Fighter',level=12, attacks=attacksPython, strength=20)
@@ -31,7 +31,7 @@ enemy = Enemy(armor_class=18)
 
 characters = [character1, character2, character3, character4]
 
-dfs, df_by_rounds, df_by_attacks = simulate_character_rounds(characters, enemy,num_rounds=10_000, save_memory=True)
+dfs, df_by_rounds, df_by_attacks = simulate_rounds_from_characters(characters, enemy,num_rounds=10_000, save_memory=True)
 
 # %%
 # Dashboard

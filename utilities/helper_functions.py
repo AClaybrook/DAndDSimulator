@@ -10,6 +10,6 @@ def timeit(f, print_=True):
         result = f(*args, **kw)
         te = time()
         if print_:
-            print(f'func:{f.__name__} took: {te-ts:2.4f} sec')
+            print(f'{f.__name__}: {te-ts:2.4f} sec')
         return result
     return wrap

@@ -117,16 +117,52 @@ def attack(num_rolls, attack_context, damage_context, **kwargs):
     total_damage, hit_damage, crit_damage, miss_damage = damage_roll(hit, crit, **damage_context, **kwargs)
     return attack_rolls, rolls, hit, crit, total_damage, hit_damage, crit_damage, miss_damage
 
+def describe(g):
+    """ Faster implementation of pandas describe """
+    # desc = pd.concat([g.agg(["mean"]), g.quantile([0,0.25,0.5,0.75,1])])
+    desc = pd.concat([g.agg(["mean"]), g.agg(np.percentile,q=[0,25,50,75,100])])
+    desc.index = ['mean','min','25%','50%','75%','max']
+    return desc
+
 def simulate_rounds(attack_context, damage_context, num_rounds=10000, **kwargs):
-    """ Simulate num_rounds rounds of combat, with num_attacks attacks per round, using attack_context and damage_context"""
+    """ Simulate rounds of combat for a given attack_context and damage_context"""
     attack_rolls, rolls, hit, crit, damage, hit_damage, crit_damage, miss_damage = attack(num_rounds, attack_context, damage_context, **kwargs)
     rounds = np.arange(1, num_rounds + 1)
     results = np.array((rounds, damage, hit_damage, crit_damage,miss_damage, attack_rolls, rolls, hit, hit != crit, crit),dtype='int32').T
     df = pd.DataFrame(results, columns=['Round', 'Damage', 'Damage (From Hit)', 'Damage (From Crit)', 'Damage (Miss/Fail)','Attack Roll', 'Attack Roll (Die)', 'Hit', 'Hit (Non-Crit)', 'Hit (Crit)'])
     return df
 
+def simulate_rounds_from_contexts(attack_contexts, damage_contexts, attack_names, by_round=True, cols=None, num_rounds=10000, **kwargs):
+    """ Simulate rounds of combat from a list of attacks and damage contexts """
+    attack_df_dict = {}
+    df_by_round = None
+    for a, d, attack_name in zip(attack_contexts, damage_contexts, attack_names):
+        df_per_attack = simulate_rounds(asdict(a), asdict(d), num_rounds=num_rounds,**kwargs)
+        if cols:
+            df_per_attack = df_per_attack[cols]
+            if isinstance(df_per_attack, pd.Series):
+                df_per_attack = pd.DataFrame(df_per_attack)
+        if attack_name in attack_df_dict:
+            attack_df_dict[attack_name] = pd.concat([attack_df_dict[attack_name], df_per_attack])
+        else:
+            attack_df_dict[attack_name] = df_per_attack
+        if by_round:
+            if df_by_round is None:
+                df_by_round = df_per_attack
+            else:
+                df_by_round = df_by_round.add(df_per_attack, fill_value=0)
+
+    if by_round:
+        df_by_round.index = df_by_round.index+1
+        df_by_round.index.name = 'Round'
+        if 'Round' in df_by_round.columns:
+            df_by_round = df_by_round.drop('Round', axis=1)
+
+    return attack_df_dict, df_by_round
+
+
 @timeit
-def simulate_character_rounds(characters, enemy, num_rounds=10000, save_memory=False, **kwargs):
+def simulate_rounds_from_characters(characters, enemy, num_rounds=10000, save_memory=False, **kwargs):
     """ Simulate rounds of combat for a list of characters against an enemy"""
     dfs = []
     df_by_rounds = []
@@ -137,16 +173,12 @@ def simulate_character_rounds(characters, enemy, num_rounds=10000, save_memory=F
         attack_contexts, damage_contexts = calculate_attack_and_damage_context(c, enemy)
 
         # Per Attack
-        df_per_attacks = []
+        attack_df_dict = {}
         attack_names = [a.name for a in c.attacks]
-        for ii, (a, d) in enumerate(zip(attack_contexts, damage_contexts)):
-            df_per_attack = simulate_rounds(asdict(a), asdict(d), num_rounds=num_rounds, **kwargs)
-            df_per_attack['Attack'] = attack_names[ii]
-            df_per_attack['Attack'] = df_per_attack['Attack'].astype('category')
-            df_per_attacks.append(df_per_attack)
+        attack_df_dict, df_by_round = simulate_rounds_from_contexts(attack_contexts, damage_contexts, attack_names, by_round=True, num_rounds=num_rounds, **kwargs)
 
         # All Attacks per Round
-        df = pd.concat(df_per_attacks)
+        df = pd.concat(attack_df_dict).reset_index().drop('level_1',axis=1).rename({'level_0':'Attack'},axis=1)
         df['Attack'] = df['Attack'].astype('category')
         if save_memory:
             dfs.append(df[["Damage","Attack"]])
@@ -154,17 +186,19 @@ def simulate_character_rounds(characters, enemy, num_rounds=10000, save_memory=F
             dfs.append(df)
 
         # Summary Stats grouped by attack, easier to do this now rather than tracking labels for each attack
-        df_by_attack = df.drop('Round',axis=1).groupby('Attack',observed=False).apply(lambda g: g.describe().drop(['count','std']))
+        # df_by_attack = df.drop('Round',axis=1).groupby('Attack',observed=False).apply(lambda g: g.describe().drop(['count','std']))
+        # Using a dictionaries for grouping is much faster than using pandas groupby, apply, and describe
+        df_by_attack = pd.concat({n:describe(g.drop('Round',axis=1)) for n,g in attack_df_dict.items()})
         dfs_by_attack.append(df_by_attack)
 
         # Grouped by Round
-        df_by_round = df.drop('Attack', axis=1).groupby('Round').sum()
+        # df_by_round1 = df.drop('Attack', axis=1).groupby('Round').sum()
+        # df_by_round = reduce(lambda a, b: a.add(b, fill_value=0), attack_each_round)
         df_by_rounds.append(df_by_round)
-
     return dfs, df_by_rounds, dfs_by_attack
 
 @timeit
-def simulate_character_rounds_for_multiple_armor_classes(characters, enemy, armor_classes=None, num_rounds=10000, by_round=True, **kwargs):
+def simulate_rounds_from_characters_multi_acs(characters, enemy, armor_classes=None, num_rounds=10000, by_round=True, **kwargs):
     """ Simulate rounds of combat for a list of characters against multiple armor classes"""
 
     if not armor_classes:
@@ -177,41 +211,27 @@ def simulate_character_rounds_for_multiple_armor_classes(characters, enemy, armo
         for c in characters:
             # Attack and Damage Contexts
             attack_contexts, damage_contexts = calculate_attack_and_damage_context(c, enemy)
-
+            attack_names = [a.name for a in c.attacks]
             # Simulate all attacks
             if by_round:
-                df_grouped = pd.concat(
-                    [
-                        simulate_rounds(asdict(a), asdict(d), num_rounds=num_rounds,**kwargs)
-                        for a, d in zip(attack_contexts, damage_contexts)
-                    ]
-                    ).groupby('Round').sum()['Damage']
+                _, df_by_round = simulate_rounds_from_contexts(attack_contexts, damage_contexts, attack_names, cols='Damage', by_round=by_round, num_rounds=num_rounds, **kwargs)
 
                 # Summary Stats for each AC
-                df_ac = df_grouped.describe().drop(['count','std'])
+                df_ac = describe(df_by_round).T
                 df_ac['Character'] = c.name
                 df_ac['Armor Class'] = ac
                 df_multi_ac.append(df_ac)
 
             else:
-                attack_names = [a.name for a in c.attacks]
-                attack_list = []
-                for ii, (a, d) in enumerate(zip(attack_contexts, damage_contexts)):
-                    df_per_attack = simulate_rounds(asdict(a), asdict(d), num_rounds=num_rounds,**kwargs)
-                    df_per_attack['Character-Attack'] = f"{c.name}-{attack_names[ii]}"
-                    df_per_attack = df_per_attack[["Damage","Character-Attack"]]
-                    attack_list.append(df_per_attack)
+                attack_df_dict, _ = simulate_rounds_from_contexts(attack_contexts, damage_contexts, attack_names, cols='Damage', by_round=by_round, num_rounds=num_rounds, **kwargs)
 
                 # Regroup by attacks with the same name
-                for name, g in pd.concat(attack_list).groupby('Character-Attack'):
+                for name, g in attack_df_dict.items():
                     # Summary Stats for each attack for each AC
-                    df_ac = g.describe().drop(['count','std']).T
-                    df_ac['Character-Attack'] = name
+                    df_ac = describe(g).T
+                    df_ac['Character-Attack'] = f"{c.name}-{name}"
                     df_ac['Character'] = c.name
                     df_ac['Armor Class'] = ac
                     df_multi_ac.append(df_ac)
 
-    if by_round:
-        return pd.concat(df_multi_ac, axis=1).T
-    else:
-        return pd.concat(df_multi_ac)
+    return pd.concat(df_multi_ac)

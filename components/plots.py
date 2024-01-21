@@ -12,9 +12,17 @@ import dash_bootstrap_components as dbc
 # Color Palette
 COLORS = px.colors.qualitative.Plotly
 
+def calc_opacity(num_categories, o_init=0.75, o_slope=0.2, o_min=0.25, per_category=5):
+    """ Plotly slows down with too many overlapping histograms, so this function reduces the opacity as the number of categories increases"""
+    reduction = (num_categories // per_category)*o_slope
+    opacity = max([o_init - reduction, o_min])
+    # print(f"Reduction: {reduction}")
+    # print(f"Opacity: {opacity}")
+    return opacity
+
 def generate_plot_data(characters, df_by_rounds, template='plotly_dark',**kwargs):
     """ Generates the plot data for the DPR Distribution Histogram"""
-    data = pd.concat([pd.DataFrame({'Damage': df_by_round["Damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)])
+    data = pd.concat([pd.DataFrame({'Damage': df_by_round["Damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)]).reset_index(drop=True)
     # Converting types saves about 10x the memory
     data["Damage"] = data["Damage"].astype('int32')
     data["Type"] = data["Type"].astype('category')
@@ -23,14 +31,13 @@ def generate_plot_data(characters, df_by_rounds, template='plotly_dark',**kwargs
     # print(f"Plot data : {data.memory_usage(deep=False).sum()/1000000} MB")
     # print(f"df_by_rounds (deep): {sum([d.memory_usage(deep=True).sum() for d in df_by_rounds])/1000000} MB")
     # print(f"df_by_rounds : {sum([d.memory_usage(deep=False).sum() for d in df_by_rounds])/1000000} MB")
-    fig = generate_histogram(data, x="Damage", color="Type", marginal='box', template=template,**kwargs)
+    fig = generate_histogram(data, x="Damage", color="Type", marginal='box', opacity=calc_opacity(len(characters)),template=template,**kwargs)
 
     return fig
 
 def generate_histogram(data, x, color, marginal='violin', histnorm='percent', barmode='overlay', opacity=0.75, **kwargs):
     """ Generic histogram helper function with marginal plot"""
-    print(f"Plot data in hist (deep): {data.memory_usage(deep=True).sum()/1000000} MB")
-    print(f"Plot data in hist : {data.memory_usage(deep=False).sum()/1000000} MB")
+    print(f"Plot data in hist: {data.memory_usage(deep=True).sum()/1000000} MB")
     with warnings.catch_warnings():
         warnings.simplefilter(action='ignore', category=FutureWarning)
         fig = px.histogram(
@@ -142,6 +149,7 @@ def generate_line_plots(df_acs, groupby='Character', template='plotly_dark', ord
     if not order:
         order = df_acs['Character'].unique()
     ii = 0
+    alpha = calc_opacity(len(df_acs[groupby].unique()), o_init=0.5, o_slope=0.1)
     for jj, c in enumerate(order):
         df_c = df_acs.loc[df_acs['Character']==c, :]
         for name, g in df_c.groupby(groupby):
@@ -178,7 +186,7 @@ def generate_line_plots(df_acs, groupby='Character', template='plotly_dark', ord
             # Add alpha to fill color
             rgb_str = px.colors.convert_colors_to_same_type(COLORS[ii])[0][0]
             rgb_str_split = rgb_str.split(")")[0]
-            rgba_str = f"rgba{rgb_str_split[3:]},0.4)"
+            rgba_str = f"rgba{rgb_str_split[3:]},{alpha})"
             fig.add_trace(
                 go.Scatter(
                     name=f"{name} (25%-75%)",
@@ -232,10 +240,10 @@ def generate_damage_per_attack_histogram(characters, dfs ,template='plotly_dark'
         for a in df_c['Type'].unique():
             attack_color_map[a] = COLORS[ii].lower()
 
-    df_attacks = pd.concat(attacks)
-    df_attacks["Damage"] = df_attacks["Damage"].astype('int32')
+    df_attacks = pd.concat(attacks).reset_index(drop=True)
+    df_attacks["Damage"] = df_attacks["Damage"].astype('int16') # This plot is very memory sensitive, need to reduce the size as much as possible
     df_attacks["Type"] = df_attacks["Type"].astype('category')
-    fig = generate_histogram(df_attacks, x="Damage", color="Type", marginal='box', template=template,**kwargs)
+    fig = generate_histogram(df_attacks, x="Damage", color="Type", marginal='box',opacity=calc_opacity(len(df_attacks["Type"].unique()),o_slope=0.25), template=template,**kwargs)
     # Manually override colors
     for ii, data in enumerate(fig.data):
         data.marker.color = attack_color_map[data.legendgroup]

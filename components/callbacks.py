@@ -7,7 +7,7 @@ import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 from dash import dcc, html, Input, Output, State, Patch, MATCH, ALL, ctx, clientside_callback, ClientsideFunction
 from computations.models import Attack, Character, Enemy
-from computations.numerical_simulation import simulate_character_rounds, set_seed, simulate_character_rounds_for_multiple_armor_classes
+from computations.numerical_simulation import simulate_rounds_from_characters, set_seed, simulate_rounds_from_characters_multi_acs
 
 from utilities.helper_functions import timeit
 from components.callback_helpers import get_active_ids_and_new_id, get_new_id, set_active_ids, max_from_list, try_and_except_alert, reformat_df_ac
@@ -448,7 +448,7 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
         if simulate_type in ["DPR Distribution","DPA Distribution"]:
             res, alert = try_and_except_alert(
                 "Could not simulate combat, please check that all fields are filled out correctly",
-                simulate_character_rounds,
+                simulate_rounds_from_characters,
                 *[characters,enemy],
                 num_rounds=num_rounds,
                 save_memory=True,
@@ -463,7 +463,7 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
                 fig = generate_plot_data(characters, df_by_rounds, title="Damage Per Round Distribution")
                 tables = add_tables(df_by_rounds,characters,by_round=True, width=3)
             elif simulate_type == "DPA Distribution":
-                fig = generate_damage_per_attack_histogram(characters, dfs, title="Damage Per Attack Distribution", opacity=0.5) # Many overlapping histograms cause large performance issues, a lower opacity helps
+                fig = generate_damage_per_attack_histogram(characters, dfs, title="Damage Per Attack Distribution")
                 tables = add_tables(df_by_attacks,characters,by_round=False, width=3)
             print(f"dfs : {sum([d.memory_usage(deep=True).sum() for d in dfs])/1000000} MB")
             print(f"df_by_rounds : {sum([d.memory_usage(deep=True).sum() for d in df_by_rounds])/1000000} MB")
@@ -472,7 +472,7 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
             by_round = simulate_type == "DPR vs Armor Class"
             df_acs, alert = try_and_except_alert(
                 "Could not simulate combat, please check that all fields are filled out correctly",
-                simulate_character_rounds_for_multiple_armor_classes,
+                simulate_rounds_from_characters_multi_acs,
                 *[characters,enemy],
                 armor_classes = range(10,26),
                 num_rounds=num_rounds,
@@ -487,7 +487,7 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
             fig = generate_line_plots(df_acs,template='plotly_dark', groupby=groupby, order=order)
             if by_round:
                 df_acs = reformat_df_ac(df_acs, by_round=by_round)
-                data_summary = [g.drop("Character",axis=1) for _, g in df_acs.groupby(groupby)]
+                data_summary = [df_acs.loc[df_acs['Character']==c_name, :].drop("Character",axis=1) for c_name in order]
             else:
                 data_summary = []
                 for c_name in order:
@@ -582,7 +582,7 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
         if export_type in ["DPR Summary", "DPA Summary", "DPR Distribution","DPA Distribution"]:
             res, alert = try_and_except_alert(
                 "Could not simulate combat, please check that all fields are filled out correctly",
-                simulate_character_rounds,
+                simulate_rounds_from_characters,
                 *[characters,enemy],
                 num_rounds=num_rounds,
                 rng=rng
@@ -616,7 +616,7 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
             by_round = export_type == "DPR vs Armor Class"
             df_acs, alert = try_and_except_alert(
                 "Could not simulate combat, please check that all fields are filled out correctly",
-                simulate_character_rounds_for_multiple_armor_classes,
+                simulate_rounds_from_characters_multi_acs,
                 *[characters,enemy],
                 armor_classes = range(10,26),
                 num_rounds=num_rounds,
