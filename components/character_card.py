@@ -81,26 +81,31 @@ A_LABELS = {v:k for k,v in A_LABEL_TO_VAL.items()}
 def extract_attack_ui_values(attack_ui_list):
     """Extracts the values from the attack_ui_list and returns a dictionary of the values
      and the number of attacks"""
-    attack_ui_values = {}
-    for a in attack_ui_list:
-        if a['type'] == 'Row':
-            row_vals = a['props']['children']
-            if len(row_vals) == 2: # This is a row with a label and a value
-                label_col = row_vals[0]
-                value_col = row_vals[1]
+
+    def parse_row(row, attack_ui_values=None):
+        row_vals = row['props']['children']
+        if len(row_vals) == 2: # This is a row with a label and a value
+            label_col = row_vals[0]
+            value_col = row_vals[1]
+            if "disabled" not in value_col['props']['children']['props']:
                 label = label_col['props']['children']['props']['children']
                 value = value_col['props']['children']['props']['value']
                 attack_ui_values[label] = value
+
+    attack_ui_values = {}
+    for a in attack_ui_list:
+        if a['type'] == 'Row':
+            parse_row(a, attack_ui_values)
         elif a['type'] == 'Div':
             div_rows = a['props']['children']
             for row in div_rows:
-                row_vals = row['props']['children']
-                if len(row_vals) == 2: # This is a row with a label and a value
-                    label_col = row_vals[0]
-                    value_col = row_vals[1]
-                    label = label_col['props']['children']['props']['children']
-                    value = value_col['props']['children']['props']['value']
-                    attack_ui_values[label] = value
+                parse_row(row, attack_ui_values)
+        elif a['type'] == 'Accordion':
+            accordion_items = a['props']['children']
+            for item in accordion_items:
+                item_rows = item['props']['children']
+                for row in item_rows:
+                    parse_row(row, attack_ui_values)
 
     # Replace labels with internal dictionary keys and extract num attacks
     num_attacks = attack_ui_values.pop("Num Attacks")
@@ -274,42 +279,47 @@ def set_attack_from_values(avals, i, index, label_style=None, input_style=None):
     dependant_ui = [html.Div(update_attack_type(), id={"type": "attack_dependent_ui", "index": index})]
     # Additional
     additional_rows = [
-        dbc.Row([
-            dbc.Col(dbc.Label(A_LABELS["advantage"], style=label_style)),
-            dbc.Col(dbc.Checkbox(value=aval["advantage"]))
-        ]),
-        dbc.Row([
-            dbc.Col(dbc.Label(A_LABELS["disadvantage"], style=label_style)),
-            dbc.Col(dbc.Checkbox(value=aval["disadvantage"]))
-        ]),
-        dbc.Row([
-            dbc.Col(dbc.Label(A_LABELS["always_hit"], style=label_style)),
-            dbc.Col(dbc.Checkbox(value=aval["always_hit"]))
-        ]),
-        dbc.Row([
-            dbc.Col(dbc.Label(A_LABELS["always_crit"], style=label_style)),
-            dbc.Col(dbc.Checkbox(value=aval["always_crit"]))
-        ]),
-        dbc .Row([
-            dbc.Col(dbc.Label(A_LABELS["proficient"], style=label_style)),
-            dbc.Col(dbc.Checkbox(value=aval["proficient"]))
-        ]),
-        dbc.Row([
-            dbc.Col(dbc.Label(A_LABELS["bonus_attack_die_mod_list"], style=label_style)),
-            dbc.Col(dbc.Input(type="string", value=",".join(aval["bonus_attack_die_mod_list"]), style=input_style))
-        ]),
-        dbc.Row([
-            dbc.Col(dbc.Label(A_LABELS["bonus_damage_die_mod_list"], style=label_style)),
-            dbc.Col(dbc.Input(type="string", value=",".join(aval["bonus_damage_die_mod_list"]), style=input_style))
-        ]),
-        dbc.Row([
-            dbc.Col(dbc.Label(A_LABELS["bonus_crit_die_mod_list"], style=label_style)),
-            dbc.Col(dbc.Input(type="string", value=",".join(aval["bonus_crit_die_mod_list"]), style=input_style))
-        ]),
-        dbc.Row([
-            dbc.Col(dbc.Label(A_LABELS["bonus_miss_die_mod_list"], style=label_style)),
-            dbc.Col(dbc.Input(type="string", value=",".join(aval["bonus_miss_die_mod_list"]), style=input_style))
-        ]),
+        dbc.Accordion([
+            dbc.AccordionItem([
+                dbc.Row([
+                    dbc.Col(dbc.Label(A_LABELS["advantage"], style=label_style)),
+                    dbc.Col(dbc.Checkbox(value=aval["advantage"]))
+                ]),
+                dbc.Row([
+                    dbc.Col(dbc.Label(A_LABELS["disadvantage"], style=label_style)),
+                    dbc.Col(dbc.Checkbox(value=aval["disadvantage"]))
+                ]),
+                dbc.Row([
+                    dbc.Col(dbc.Label(A_LABELS["always_hit"], style=label_style)),
+                    dbc.Col(dbc.Checkbox(value=aval["always_hit"]))
+                ]),
+                dbc.Row([
+                    dbc.Col(dbc.Label(A_LABELS["always_crit"], style=label_style)),
+                    dbc.Col(dbc.Checkbox(value=aval["always_crit"]))
+                ]),
+                dbc .Row([
+                    dbc.Col(dbc.Label(A_LABELS["proficient"], style=label_style)),
+                    dbc.Col(dbc.Checkbox(value=aval["proficient"]))
+                ]),
+                dbc.Row([
+                    dbc.Col(dbc.Label(A_LABELS["bonus_attack_die_mod_list"], style=label_style)),
+                    dbc.Col(dbc.Input(type="string", value=",".join(aval["bonus_attack_die_mod_list"]), style=input_style))
+                ]),
+                dbc.Row([
+                    dbc.Col(dbc.Label(A_LABELS["bonus_damage_die_mod_list"], style=label_style)),
+                    dbc.Col(dbc.Input(type="string", value=",".join(aval["bonus_damage_die_mod_list"]), style=input_style))
+                ]),
+                dbc.Row([
+                    dbc.Col(dbc.Label(A_LABELS["bonus_crit_die_mod_list"], style=label_style)),
+                    dbc.Col(dbc.Input(type="string", value=",".join(aval["bonus_crit_die_mod_list"]), style=input_style))
+                ]),
+                dbc.Row([
+                    dbc.Col(dbc.Label(A_LABELS["bonus_miss_die_mod_list"], style=label_style)),
+                    dbc.Col(dbc.Input(type="string", value=",".join(aval["bonus_miss_die_mod_list"]), style=input_style))
+                ]),
+            ],
+            title="Additional Modifiers",  style={"backgroundColor": "var(--bs-card-bg)"})
+        ], start_collapsed=True, style={"marginLeft" : "-12px", "marginRight" : "-12px"})
     ]
 
     return attack_ui + dependant_ui + additional_rows

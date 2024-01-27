@@ -5,7 +5,7 @@
     padding-left: 0.5rem;
     padding-right: 0.5rem;
   }
-  
+
 
 /* Hide the blurb on a small screen */
 #blurb {
@@ -108,4 +108,9 @@ input:invalid {
 /* Row Children Styling */
 .row>*{
   padding-right: 2px;
+}
+
+/* For the additional modifiers on the attacks tab */
+.accordion button {
+  padding: 8px;
 }

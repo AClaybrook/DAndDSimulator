@@ -41,32 +41,6 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
             State("collapse", "is_open"),
         )
 
-    @app.callback(
-        Output("character_row","children"),
-        Output("active_ids","data"),
-        Input("add_character_button","n_clicks"),
-        State("character_name","value"),
-        State("active_ids","data"),
-        prevent_initial_call=True
-    )
-    @timeit
-    def add_character(n_clicks, name, active_ids_json):
-        # Don't update without a name or without a button click
-        if not name or n_clicks is None:
-            raise PreventUpdate
-
-        # Don't add more than max characters
-        active_ids, new_id = get_active_ids_and_new_id(active_ids_json)
-        if new_id >= MAX_CHARACTERS:
-            raise PreventUpdate
-
-        # Add new character using the first deleted id or the next id
-        patched_children = Patch()
-        patched_children.append(generate_character_card(name, color=COLORS[new_id], index=new_id))
-        active_ids.append(new_id)
-
-        return patched_children, set_active_ids(active_ids)
-
     # Call client side callback in javascript, found in assets/callbacks.js
     clientside_callback(
         ClientsideFunction(
@@ -98,7 +72,6 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
         prevent_initial_call=True
     )
 
-
     clientside_callback(
         ClientsideFunction(
             namespace="clientside",
@@ -124,6 +97,35 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
         State('colors',"data"),
         prevent_initial_call=True
     )
+
+    @app.callback(
+        Output("character_row","children"),
+        Output("active_ids","data"),
+        Input("add_character_button","n_clicks"),
+        State("character_name","value"),
+        State("active_ids","data"),
+        prevent_initial_call=True
+    )
+    @timeit
+    def add_character(n_clicks, name, active_ids_json):
+        # Don't update without a name or without a button click
+        if not name or n_clicks is None:
+            raise PreventUpdate
+
+        # Don't add more than max characters
+        active_ids, new_id = get_active_ids_and_new_id(active_ids_json)
+        if new_id >= MAX_CHARACTERS:
+            raise PreventUpdate
+
+        # Add new character using the first deleted id or the next id
+        patched_children = Patch()
+        # color = COLORS[new_id]
+        color = COLORS[len(active_ids)]
+        patched_children.append(generate_character_card(name, color=color, index=new_id))
+        active_ids.append(new_id)
+
+        return patched_children, set_active_ids(active_ids)
+
 
     @app.callback(
             Output("character_row","children", allow_duplicate=True),
@@ -203,9 +205,9 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
         card_str = card_str.replace(f'"index": {copy_id}', f'"index": {new_id}')
         character = json.loads(card_str)
         # TODO: Find a cleaner way to replace colors... Perhaps find the h4 and id string and then replace the color with rgb values
-        color = COLORS[new_id]
+        # color = COLORS[new_id]
+        color = COLORS[len(active_ids)]
         character['props']['children']['props']['children'][0]['props']['children']['props']['children'][0]['props']['children']['props']['style']['color'] = color
-        print(color)
 
         patched_children = Patch()
         patched_children.append(character)
