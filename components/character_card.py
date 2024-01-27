@@ -21,6 +21,30 @@ attack_options = [{"label": "Weapon (Melee)","value": "weapon (melee)"},
                     {"label": "Thrown", "value": "thrown"}
                     ]
 
+default_attack = {
+    "name": "Attack Name",
+    "bonus_attack_die_mod_list": ["0d4","0"],
+    "bonus_damage_die_mod_list": ["0d4","0"],
+    "proficient": True,
+    "type": "weapon (melee)",
+    "ability_stat": "strength",
+    "damage": "1d6",
+    "advantage": False,
+    "disadvantage": False,
+    "always_hit": False,
+    "always_crit": False,
+    "crit_on": 20,
+    "weapon_enhancement": 0,
+    "offhand": False,
+    "two_handed": False,
+    "saving_throw": False,
+    "saving_throw_stat": "dexterity",
+    "saving_throw_success_multiplier": 0.5,
+    "damage_type": "slashing",
+    "bonus_crit_die_mod_list": ["0d4","0"],
+    "bonus_miss_die_mod_list": ["0d4","0"],
+}
+
 def generate_character_cards(characters):
     """ Generates the character cards from a list of python characters"""
     cards = [
@@ -34,7 +58,7 @@ A_LABEL_TO_VAL = {
     "Attack Name": "name",
     "Type": "type",
     "Attacking Stat": "ability_stat",
-    "Weapon Damage": "damage",
+    "Damage": "damage",
     "Weapon Enhancement": "weapon_enhancement",
     "Crit on": "crit_on",
     "Offhand": "offhand",
@@ -45,7 +69,12 @@ A_LABEL_TO_VAL = {
     "Bonus Attack Mod": "bonus_attack_die_mod_list",
     "Bonus Damage Mod": "bonus_damage_die_mod_list",
     "Bonus Crit Damage": "bonus_crit_die_mod_list",
-    "Bonus Miss Damage": "bonus_miss_die_mod_list"
+    "Bonus Miss Damage": "bonus_miss_die_mod_list",
+    "Proficient": "proficient",
+    "Advantage": "advantage",
+    "Disadvantage": "disadvantage",
+    "Always Hit": "always_hit",
+    "Always Crit": "always_crit",
 }
 A_LABELS = {v:k for k,v in A_LABEL_TO_VAL.items()}
 
@@ -62,6 +91,16 @@ def extract_attack_ui_values(attack_ui_list):
                 label = label_col['props']['children']['props']['children']
                 value = value_col['props']['children']['props']['value']
                 attack_ui_values[label] = value
+        elif a['type'] == 'Div':
+            div_rows = a['props']['children']
+            for row in div_rows:
+                row_vals = row['props']['children']
+                if len(row_vals) == 2: # This is a row with a label and a value
+                    label_col = row_vals[0]
+                    value_col = row_vals[1]
+                    label = label_col['props']['children']['props']['children']
+                    value = value_col['props']['children']['props']['value']
+                    attack_ui_values[label] = value
 
     # Replace labels with internal dictionary keys and extract num attacks
     num_attacks = attack_ui_values.pop("Num Attacks")
@@ -85,6 +124,7 @@ C_LABEL_TO_DICT_MAP = {
     "Intelligence": "intelligence",
     "Wisdom": "wisdom",
     "Charisma": "charisma",
+    "Description": "description",
 
     # Bonuses
     "Crit on": "crit_on",
@@ -131,9 +171,14 @@ def extract_character_ui_values(character_from_ui):
                 if len(label_val_row) == 2:
                     label_col = label_val_row[0]
                     value_col = label_val_row[1]
-                    label = label_col['props']['children']['props']['children']
-                    value = value_col['props']['children']['props']['value']
-                    character_dict[label] = value
+                    if "disabled" not in value_col['props']['children']['props']:
+                        label = label_col['props']['children']['props']['children']
+                        value = value_col['props']['children']['props']['value']
+                        character_dict[label] = value
+                # Last row should be the description
+                elif tab_label == 'Stats' and label_val_row[0]['type'] == 'Textarea':
+                    character_dict['Description'] = row['props']['children'][0]['props']['value']
+
 
     # Convert labels to internal dictionary keys
     character_dict = {C_LABEL_TO_DICT_MAP[k]:v for k,v in character_dict.items()}
@@ -160,71 +205,114 @@ def set_attack_from_values(avals, i, index, label_style=None, input_style=None):
     if input_style is None:
         input_style = {'paddingTop': '0.0rem', 'paddingBottom': '0.0rem'}
 
+    # aval = default_attack.copy()
+    # aval.update(avals[i])
+    aval = avals[i]
     attack_ui = [
-        dbc.Row([dbc.Col(dbc.Label(A_LABELS["name"], style=label_style)),dbc.Col(dbc.Input(type="text", value=avals[i]["name"], style=input_style, id={"type":"attack_name","index":index}))]),
-        dbc.Row([
-            dbc.Col(dbc.Label(A_LABELS["type"], style=label_style)),
-            dbc.Col(dbc.Select(options=attack_options,
-                                    value=avals[i]["type"], style=input_style))
-                                    ]),
-        dbc.Row([
-        dbc.Col(dbc.Label(A_LABELS["ability_stat"], style=label_style)),
-        dbc.Col(dbc.Select(options=stat_options,value=avals[i]["ability_stat"], style=input_style))
-        ]),
-        # Repeated Attacks
+        dbc.Row([dbc.Col(dbc.Label(A_LABELS["name"], style=label_style)),dbc.Col(dbc.Input(type="text", value=aval["name"], style=input_style, id={"type":"attack_name","index":index}))]),
         dbc.Row([
             dbc.Col(dbc.Label("Num Attacks", style=label_style)),
             dbc.Col(dbc.Input(type="number", value=1, min=1, max=20, step=1, style=input_style))
         ]),
-        # Weapon specific
+        dbc.Row([
+            dbc.Col(dbc.Label(A_LABELS["type"], style=label_style)),
+            dbc.Col(dbc.Select(options=attack_options,
+                                    value=aval["type"], style=input_style, id={"type":"attack_type","index":index}))
+        ]),
+        dbc.Row([
+            dbc.Col(dbc.Label(A_LABELS["ability_stat"], style=label_style)),
+            dbc.Col(dbc.Select(options=stat_options,value=aval["ability_stat"], style=input_style, id={"type":"ability_stat","index":index}))
+        ]),
+        dbc.Row([
+            dbc.Col(dbc.Label("Ability Modifier", style=label_style)),
+                dbc.Col(dbc.Input(type="text", value=0, style={**input_style,"opacity":0.6, "textAlign":"right"}, readonly=True, disabled=True, id={"type":"character ability_modifier","index":index}))
+        ]), # Initial value is handled by javascript callback on app load
         dbc.Row([
             dbc.Col(dbc.Label(A_LABELS["damage"], style=label_style)),
-            dbc.Col(dbc.Input(type="string", value=avals[i]["damage"], style=input_style))
+            dbc.Col(dbc.Input(type="string", value=aval["damage"], style=input_style))
+        ])
+        ]
+
+    # Weapon specific
+    def update_attack_type():
+        weapon_style = {} if aval["type"] in ["weapon (melee)","weapon (ranged)"] else {"display": "none"}
+        weapon_rows = [
+            dbc.Row([
+                dbc.Col(dbc.Label(A_LABELS["weapon_enhancement"], style=label_style)),
+                dbc.Col(dbc.Input(type="number", value=aval["weapon_enhancement"], min=0, max=10, step=1, style=input_style))
+            ], style=weapon_style),
+            dbc.Row([
+                dbc.Col(dbc.Label(A_LABELS["offhand"], style=label_style)),
+                dbc.Col(dbc.Checkbox(value=aval["offhand"]))
+            ], style=weapon_style),
+            dbc.Row([
+                dbc.Col(dbc.Label(A_LABELS["two_handed"], style=label_style)),
+                dbc.Col(dbc.Checkbox(value=aval["two_handed"]))
+            ],style=weapon_style),
+        ]
+
+        spell_style = {} if aval["type"] == "spell" else {"display": "none"}
+        spell_rows = [
+            # Spell specific
+            dbc.Row([
+                dbc.Col(dbc.Label(A_LABELS["saving_throw"], style=label_style)),
+                dbc.Col(dbc.Checkbox(value=aval["saving_throw"]))
+            ], style=spell_style),
+            dbc.Row([
+                dbc.Col(dbc.Label(A_LABELS["saving_throw_stat"], style=label_style)),
+                dbc.Col(dbc.Select(options=stat_options,value=aval["saving_throw_stat"], style=input_style))
+            ], style=spell_style),
+            dbc.Row([
+                dbc.Col(dbc.Label(A_LABELS["saving_throw_success_multiplier"], style=label_style)),
+                dbc.Col(dbc.Input(type="number", value=aval["saving_throw_success_multiplier"], min=0, max=1, step=0.5, style=input_style))
+            ], style=spell_style),
+            ]
+
+
+        return weapon_rows+spell_rows
+
+    dependant_ui = [html.Div(update_attack_type(), id={"type": "attack_dependent_ui", "index": index})]
+    # Additional
+    additional_rows = [
+        dbc.Row([
+            dbc.Col(dbc.Label(A_LABELS["advantage"], style=label_style)),
+            dbc.Col(dbc.Checkbox(value=aval["advantage"]))
         ]),
         dbc.Row([
-            dbc.Col(dbc.Label(A_LABELS["weapon_enhancement"], style=label_style)),
-            dbc.Col(dbc.Input(type="number", value=avals[i]["weapon_enhancement"], min=0, max=10, step=1, style=input_style))
+            dbc.Col(dbc.Label(A_LABELS["disadvantage"], style=label_style)),
+            dbc.Col(dbc.Checkbox(value=aval["disadvantage"]))
         ]),
         dbc.Row([
-            dbc.Col(dbc.Label(A_LABELS["offhand"], style=label_style)),
-            dbc.Col(dbc.Checkbox(value=avals[i]["offhand"]))
+            dbc.Col(dbc.Label(A_LABELS["always_hit"], style=label_style)),
+            dbc.Col(dbc.Checkbox(value=aval["always_hit"]))
         ]),
         dbc.Row([
-            dbc.Col(dbc.Label(A_LABELS["two_handed"], style=label_style)),
-            dbc.Col(dbc.Checkbox(value=avals[i]["two_handed"]))
+            dbc.Col(dbc.Label(A_LABELS["always_crit"], style=label_style)),
+            dbc.Col(dbc.Checkbox(value=aval["always_crit"]))
         ]),
-        # Spell specific
-        dbc.Row([
-            dbc.Col(dbc.Label(A_LABELS["saving_throw"], style=label_style)),
-            dbc.Col(dbc.Checkbox(value=avals[i]["saving_throw"]))
+        dbc .Row([
+            dbc.Col(dbc.Label(A_LABELS["proficient"], style=label_style)),
+            dbc.Col(dbc.Checkbox(value=aval["proficient"]))
         ]),
-        dbc.Row([
-            dbc.Col(dbc.Label(A_LABELS["saving_throw_stat"], style=label_style)),
-            dbc.Col(dbc.Select(options=stat_options,value=avals[i]["saving_throw_stat"], style=input_style))
-        ]),
-        dbc.Row([
-            dbc.Col(dbc.Label(A_LABELS["saving_throw_success_multiplier"], style=label_style)),
-            dbc.Col(dbc.Input(type="number", value=avals[i]["saving_throw_success_multiplier"], min=0, max=1, step=0.5, style=input_style))
-        ]),
-        # Additional
         dbc.Row([
             dbc.Col(dbc.Label(A_LABELS["bonus_attack_die_mod_list"], style=label_style)),
-            dbc.Col(dbc.Input(type="string", value=",".join(avals[i]["bonus_attack_die_mod_list"]), style=input_style))
+            dbc.Col(dbc.Input(type="string", value=",".join(aval["bonus_attack_die_mod_list"]), style=input_style))
         ]),
         dbc.Row([
             dbc.Col(dbc.Label(A_LABELS["bonus_damage_die_mod_list"], style=label_style)),
-            dbc.Col(dbc.Input(type="string", value=",".join(avals[i]["bonus_damage_die_mod_list"]), style=input_style))
+            dbc.Col(dbc.Input(type="string", value=",".join(aval["bonus_damage_die_mod_list"]), style=input_style))
         ]),
         dbc.Row([
             dbc.Col(dbc.Label(A_LABELS["bonus_crit_die_mod_list"], style=label_style)),
-            dbc.Col(dbc.Input(type="string", value=",".join(avals[i]["bonus_crit_die_mod_list"]), style=input_style))
+            dbc.Col(dbc.Input(type="string", value=",".join(aval["bonus_crit_die_mod_list"]), style=input_style))
         ]),
         dbc.Row([
             dbc.Col(dbc.Label(A_LABELS["bonus_miss_die_mod_list"], style=label_style)),
-            dbc.Col(dbc.Input(type="string", value=",".join(avals[i]["bonus_miss_die_mod_list"]), style=input_style))
-        ])
-        ]
-    return attack_ui
+            dbc.Col(dbc.Input(type="string", value=",".join(aval["bonus_miss_die_mod_list"]), style=input_style))
+        ]),
+    ]
+
+    return attack_ui + dependant_ui + additional_rows
 
 def generate_character_card(character_name, character=None, color="", index=1):
     """ Generates the character card, either from a character or with default values"""
@@ -243,6 +331,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
         "intelligence": character.intelligence if character else 10,
         "wisdom": character.wisdom if character else 10,
         "charisma": character.charisma if character else 10,
+        "description": character.description if character else "",
 
         # Attacks are handled separately
 
@@ -251,10 +340,10 @@ def generate_character_card(character_name, character=None, color="", index=1):
         "crit_on": character.crit_on if character else 20,
         "advantage": character.advantage if character else False,
         "disadvantage": character.disadvantage if character else False,
-        "bonus_attack_die_mod_list": character.bonus_attack_die_mod_list if character else ["0d4","0"],
-        "bonus_damage_die_mod_list": character.bonus_damage_die_mod_list if character else ["0d4","0"],
-        "bonus_crit_die_mod_list": character.bonus_crit_die_mod_list if character else ["0d4","0"],
-        "bonus_miss_die_mod_list": character.bonus_miss_die_mod_list if character else ["0d4","0"],
+        "bonus_attack_die_mod_list": character.bonus_attack_die_mod_list if character and character.bonus_attack_die_mod_list else ["0d4","0"],
+        "bonus_damage_die_mod_list": character.bonus_damage_die_mod_list if character and character.bonus_damage_die_mod_list else ["0d4","0"],
+        "bonus_crit_die_mod_list": character.bonus_crit_die_mod_list if character and character.bonus_crit_die_mod_list else ["0d4","0"],
+        "bonus_miss_die_mod_list": character.bonus_miss_die_mod_list if character and character.bonus_miss_die_mod_list else ["0d4","0"],
 
         ## Feats
         "GWM": character.GWM if character else False,
@@ -295,34 +384,38 @@ def generate_character_card(character_name, character=None, color="", index=1):
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["level"], style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=vals["level"], min=1, max=20, step=1, style=input_style))
+                dbc.Col(dbc.Input(type="number", value=vals["level"], min=1, max=20, step=1, style=input_style, id={"type":"character level input","index":index}))
+            ]),
+            dbc.Row([
+                dbc.Col(dbc.Label("Proficiency Bonus", style=label_style)),
+                dbc.Col(dbc.Input(type="text", value=2+(vals["level"]-1)//4, style={**input_style,"opacity":0.6, "textAlign":"right"}, readonly=True, disabled=True, id={"type":"character proficiency_bonus","index":index}))
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["strength"], style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=vals["strength"], min=1, max=30, step=1, style=input_style))
+                dbc.Col(dbc.Input(type="number", value=vals["strength"], min=1, max=30, step=1, style=input_style, id={"type":"character strength","index":index}))
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["dexterity"], style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=vals["dexterity"], min=1, max=30, step=1, style=input_style))
+                dbc.Col(dbc.Input(type="number", value=vals["dexterity"], min=1, max=30, step=1, style=input_style, id={"type":"character dexterity","index":index}))
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["constitution"], style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=vals["constitution"], min=1, max=30, step=1, style=input_style))
+                dbc.Col(dbc.Input(type="number", value=vals["constitution"], min=1, max=30, step=1, style=input_style, id={"type":"character constitution","index":index}))
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["intelligence"], style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=vals["intelligence"], min=1, max=30, step=1, style=input_style))
+                dbc.Col(dbc.Input(type="number", value=vals["intelligence"], min=1, max=30, step=1, style=input_style, id={"type":"character intelligence","index":index}))
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["wisdom"], style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=vals["wisdom"], min=1, max=30, step=1, style=input_style))
+                dbc.Col(dbc.Input(type="number", value=vals["wisdom"], min=1, max=30, step=1, style=input_style, id={"type":"character wisdom","index":index}))
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["charisma"], style=label_style)),
-                dbc.Col(dbc.Input(type="number", value=vals["charisma"], min=1, max=30, step=1, style=input_style))
+                dbc.Col(dbc.Input(type="number", value=vals["charisma"], min=1, max=30, step=1, style=input_style, id={"type":"character charisma","index":index}))
             ]),
             dbc.Row([
-                dbc.Textarea(placeholder="Optional Description",  style={'width': '100%','minHeight': '10vh'}),
+                dbc.Textarea(placeholder="Optional Description",  value=vals["description"], style={'width': '100%','minHeight': '10vh'}),
             ]),
         ])
     ],style=tab_style)
@@ -333,9 +426,9 @@ def generate_character_card(character_name, character=None, color="", index=1):
         for _,a in enumerate(character.attacks):
             attack = {
             "name": a.name,
-            "bonus_attack_die_mod_list": a.bonus_attack_die_mod_list,
-            "bonus_damage_die_mod_list": a.bonus_damage_die_mod_list,
-            "proficent": a.proficent,
+            "bonus_attack_die_mod_list": a.bonus_attack_die_mod_list if a.bonus_attack_die_mod_list else ["0d4","0"],
+            "bonus_damage_die_mod_list": a.bonus_damage_die_mod_list if a.bonus_damage_die_mod_list else ["0d4","0"],
+            "proficient": a.proficient,
             "type": a.type,
             "ability_stat": a.ability_stat,
             "damage": a.damage,
@@ -351,34 +444,12 @@ def generate_character_card(character_name, character=None, color="", index=1):
             "saving_throw_stat": a.saving_throw_stat,
             "saving_throw_success_multiplier" : a.saving_throw_success_multiplier,
             "damage_type": a.damage_type,
-            "bonus_crit_die_mod_list": a.bonus_crit_die_mod_list,
-            "bonus_miss_die_mod_list": a.bonus_miss_die_mod_list,
+            "bonus_crit_die_mod_list": a.bonus_crit_die_mod_list if a.bonus_crit_die_mod_list else ["0d4","0"],
+            "bonus_miss_die_mod_list": a.bonus_miss_die_mod_list if a.bonus_miss_die_mod_list else ["0d4","0"]
             }
             avals.append(attack)
     else:
-        attack = {
-            "name": "Attack Name",
-            "bonus_attack_die_mod_list": ["0d4","0"],
-            "bonus_damage_die_mod_list": ["0d4","0"],
-            "proficent": True,
-            "type": "weapon (melee)",
-            "ability_stat": "strength",
-            "damage": "1d6",
-            "advantage": False,
-            "disadvantage": False,
-            "always_hit": False,
-            "always_crit": False,
-            "crit_on": 20,
-            "weapon_enhancement": 0,
-            "offhand": False,
-            "two_handed": False,
-            "saving_throw": False,
-            "saving_throw_stat": "dexterity",
-            "saving_throw_success_multiplier": 0.5,
-            "damage_type": "slashing",
-            "bonus_crit_die_mod_list": ["0d4","0"],
-            "bonus_miss_die_mod_list": ["0d4","0"],
-        }
+        attack = default_attack.copy()
         avals.append(attack)
 
     attacks = dbc.Card([
@@ -402,7 +473,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
     bonuses = dbc.Card([
         dbc.CardBody([
             dbc.Row([
-                html.H6("Bonus Unaccounted for Modifiers"),
+                html.H6("Bonus Unaccounted for Modifiers", style={"fontWeight": "bold"}),
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["crit_on"], style=label_style)),
@@ -433,7 +504,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
                 dbc.Col(dbc.Input(type="string", value=",".join(vals["bonus_miss_die_mod_list"]), style=input_style))
             ]),
             dbc.Row([
-                html.H6("Feats"),
+                html.H6("Feats", style={"fontWeight": "bold"}),
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["GWM"], style=label_style)),
@@ -452,7 +523,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
                 dbc.Col(dbc.Checkbox(value=vals["tavern_brawler"]))
             ]),
             dbc.Row([
-                html.H6("Fighting Styles"),
+                html.H6("Fighting Styles", style={"fontWeight": "bold"}),
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["GWF"], style=label_style)),
@@ -471,7 +542,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
                 dbc.Col(dbc.Checkbox(value=vals["TWF"]))
             ]),
             dbc.Row([
-                html.H6("Barbarian"),
+                html.H6("Barbarian", style={"fontWeight": "bold"}),
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["raging"], style=label_style)),
@@ -482,7 +553,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
                 dbc.Col(dbc.Checkbox(value=vals["brutal_critical"]))
             ]),
             dbc.Row([
-                html.H6("Paladin"),
+                html.H6("Paladin", style={"fontWeight": "bold"}),
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["divine_smite"], style=label_style)),
@@ -497,14 +568,14 @@ def generate_character_card(character_name, character=None, color="", index=1):
                 dbc.Col(dbc.Checkbox(value=vals["improved_divine_smite"]))
             ]),
             dbc.Row([
-                html.H6("Wizard"),
+                html.H6("Wizard", style={"fontWeight": "bold"}),
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["empowered_evocation"], style=label_style)),
                 dbc.Col(dbc.Checkbox(value=vals["empowered_evocation"]))
             ]),
             dbc.Row([
-                html.H6("Warlock"),
+                html.H6("Warlock", style={"fontWeight": "bold"}),
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["agonizing_blast"], style=label_style)),
@@ -515,14 +586,14 @@ def generate_character_card(character_name, character=None, color="", index=1):
                 dbc.Col(dbc.Checkbox(value=vals["lifedrinker"]))
             ]),
             dbc.Row([
-                html.H6("Sorcerer"),
+                html.H6("Sorcerer", style={"fontWeight": "bold"}),
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["elemental_affinity"], style=label_style)),
                 dbc.Col(dbc.Checkbox(value=vals["elemental_affinity"]))
             ]),
             dbc.Row([
-                html.H6("Racial Bonuses"),
+                html.H6("Racial Bonuses", style={"fontWeight": "bold"}),
             ]),
             dbc.Row([
                 dbc.Col(dbc.Label(C_LABELS["savage_attacks_half_orc"], style=label_style)),

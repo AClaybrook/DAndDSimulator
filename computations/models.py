@@ -52,8 +52,10 @@ class Attack:
     name: str = 'Attack'
     bonus_attack_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['1d6', 2]
     bonus_damage_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['1d6', 2]
+    bonus_crit_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['1d6', 2]
+    bonus_miss_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['1d6', 2]
 
-    proficent: bool = True
+    proficient: bool = True
     type: Literal["weapon (melee)","weapon (ranged)","spell","unarmed","thrown"] = 'weapon (melee)'
     ability_stat: Literal["strength","dexterity","constitution","intelligence","wisdom","charisma"] = 'strength'
     damage: str = '1d6' # # Used by all attacks
@@ -73,8 +75,7 @@ class Attack:
     saving_throw_success_multiplier: float = 0.5
     # Unused
     damage_type: str = 'slashing'
-    bonus_crit_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['1d6', 2]
-    bonus_miss_die_mod_list: list[str,int] = field(default_factory=list) # Format is ['1d6', 2]
+
 
 @dataclass
 class Creature:
@@ -85,7 +86,7 @@ class Creature:
     resistance: bool = False
     vulnerability: bool = False
     attacks: list[Attack] = field(default_factory=list)
-    saving_throw_proficent: bool = False # TODO: Expand to per stat
+    saving_throw_proficient: bool = False # TODO: Expand to per stat
     # Stats
     strength: int = 10
     dexterity: int = 10
@@ -115,7 +116,7 @@ class Creature:
     hit_points: int = 12
     initiative: int = 0
     type = 'humanoid'
-    description: str  = 'A creature'
+    description: str  = ''
 
     # Internal properties
     additional_attack_modifier: int = 0
@@ -309,7 +310,7 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
         # Attack Roll
         attack_modifier = ability_modifier
         ## Proficiency, Spellcasting and unarmed attacks always add proficiency bonus
-        if attack.proficent or attack.type in ['spell','unarmed']:
+        if attack.proficient or attack.type in ['spell','unarmed']:
             attack_modifier += character.proficiency_bonus
         # Damage
         damage_modifier = 0
@@ -433,7 +434,7 @@ def calculate_attack_and_damage_context(character, enemy, **kwargs):
         if attack.saving_throw and attack.type == 'spell':
             difficulty_class = character.spell_difficulty_class(attack.ability_stat)
             attack_roll_modifier = enemy.ability_modifier(attack.saving_throw_stat)
-            if enemy.saving_throw_proficent:
+            if enemy.saving_throw_proficient:
                 attack_roll_modifier += enemy.proficiency_bonus
 
         attack_context = AttackContext(

@@ -21,6 +21,9 @@ flask = "*"
 typing-extensions = "*"
 orjson = "*"
 pylint = "*"
+pytest = "*"
+pyarrow = "*"
+pytest-cov = "*"
 
 [dev-packages]
 ipykernel = "*"

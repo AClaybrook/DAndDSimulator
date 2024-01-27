@@ -31,7 +31,7 @@ def generate_plot_data(characters, df_by_rounds, template='plotly_dark',**kwargs
     # print(f"Plot data : {data.memory_usage(deep=False).sum()/1000000} MB")
     # print(f"df_by_rounds (deep): {sum([d.memory_usage(deep=True).sum() for d in df_by_rounds])/1000000} MB")
     # print(f"df_by_rounds : {sum([d.memory_usage(deep=False).sum() for d in df_by_rounds])/1000000} MB")
-    fig = generate_histogram(data, x="Damage", color="Type", marginal='box', opacity=calc_opacity(len(characters)),template=template,**kwargs)
+    fig = generate_histogram(data, x="Damage", color="Type", marginal='box', opacity=calc_opacity(len(characters),o_min=0.75),template=template,**kwargs)
 
     return fig
 
@@ -228,14 +228,19 @@ def line_plots(df_acs, template='plotly_dark'):
     fig.show()
     return fig
 
-def generate_damage_per_attack_histogram(characters, dfs ,template='plotly_dark', **kwargs):
+def generate_damage_per_attack_histogram(characters, dfs, max_attacks=300_000, template='plotly_dark', **kwargs):
     """ Generates a histogram of damage per attack, used by DPA Distribution"""
     attacks = []
     attack_color_map = {}
+    num_attacks = len(characters) * len(dfs[0])
+    frac = min(max_attacks/num_attacks,1)
     for ii, (c, df_c_temp) in enumerate(zip(characters,dfs)):
         df_c = df_c_temp[["Damage","Attack"]].copy()
         df_c['Type'] = c.name + "-" + df_c['Attack'].astype(str)
         df_c = df_c.drop('Attack',axis=1)
+        # Downsample to reduce memory usage and improve plotly performance
+        if frac < 1:
+            df_c = df_c.sample(frac=frac, random_state=1)
         attacks.append(df_c)
         for a in df_c['Type'].unique():
             attack_color_map[a] = COLORS[ii].lower()
@@ -243,7 +248,7 @@ def generate_damage_per_attack_histogram(characters, dfs ,template='plotly_dark'
     df_attacks = pd.concat(attacks).reset_index(drop=True)
     df_attacks["Damage"] = df_attacks["Damage"].astype('int16') # This plot is very memory sensitive, need to reduce the size as much as possible
     df_attacks["Type"] = df_attacks["Type"].astype('category')
-    fig = generate_histogram(df_attacks, x="Damage", color="Type", marginal='box',opacity=calc_opacity(len(df_attacks["Type"].unique()),o_slope=0.25), template=template,**kwargs)
+    fig = generate_histogram(df_attacks, x="Damage", color="Type", marginal='box',opacity=calc_opacity(len(df_attacks["Type"].unique()), o_min=0.75), template=template,**kwargs)
     # Manually override colors
     for ii, data in enumerate(fig.data):
         data.marker.color = attack_color_map[data.legendgroup]

@@ -49,6 +49,10 @@ def attack_roll(num_rolls, num_die = None, die_size=None, modifier=0, difficulty
     attack_rolls = rolls + modifier
     num_die =  [] if num_die is None else num_die
     die_size = [] if die_size is None else die_size
+    # Remove kwargs that are not used by additional dice, ie. bless (1d4) does not get advantage
+    kwargs.pop("advantage", None)
+    kwargs.pop("disadvantage", None)
+    kwargs.pop("reroll_on", None)
     for nd, ds in zip(num_die, die_size):
         attack_rolls += roll_adv_dis(num_rolls * nd, die_size=ds, **kwargs).reshape(-1, nd).sum(axis=1)
     # Saving throw, a hit is if the roll is lower than the difficulty class, crits are ignored
@@ -148,7 +152,7 @@ def simulate_rounds_from_contexts(attack_contexts, damage_contexts, attack_names
             attack_df_dict[attack_name] = df_per_attack
         if by_round:
             if df_by_round is None:
-                df_by_round = df_per_attack
+                df_by_round = df_per_attack.copy()
             else:
                 df_by_round = df_by_round.add(df_per_attack, fill_value=0)
 

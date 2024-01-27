@@ -88,6 +88,43 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
         prevent_initial_call=True
     )
 
+    clientside_callback(
+        ClientsideFunction(
+            namespace="clientside",
+            function_name="proficiency_bonus"
+        ),
+        Output({'type': 'character proficiency_bonus',"index": MATCH},"value"),
+        Input({'type': 'character level input',"index": MATCH},"value"),
+        prevent_initial_call=True
+    )
+
+
+    clientside_callback(
+        ClientsideFunction(
+            namespace="clientside",
+            function_name="update_ability_modifier"
+        ),
+        Output({"type": "character ability_modifier", "index": MATCH},"value"),
+        Input({"type":"ability_stat","index": MATCH},"value"),
+        Input({"type":"character strength","index":MATCH},"value"),
+        Input({"type":"character dexterity","index":MATCH},"value"),
+        Input({"type":"character constitution","index":MATCH},"value"),
+        Input({"type":"character intelligence","index":MATCH},"value"),
+        Input({"type":"character wisdom","index":MATCH},"value"),
+        Input({"type":"character charisma","index":MATCH},"value"),
+    )
+
+    clientside_callback(
+        ClientsideFunction(
+            namespace="clientside",
+            function_name="recolor_characters"
+        ),
+        Output({"type":"character name","index":ALL},"style"),
+        Input("active_ids","data"),
+        State('colors',"data"),
+        prevent_initial_call=True
+    )
+
     @app.callback(
             Output("character_row","children", allow_duplicate=True),
             Output("active_ids","data", allow_duplicate=True),
@@ -178,7 +215,39 @@ def register_callbacks(app, sidebar=True): # pylint: disable=too-many-statements
 
     ## Attacks
 
-    # TODO: Check that this works, it appears to work
+    @app.callback(
+        Output({"type": "attack_dependent_ui", "index": MATCH},"children"),
+        Input({"type":"attack_type","index": MATCH},"value"),
+        prevent_initial_call=True
+    )
+    @timeit
+    def update_attack_type_ui(type_):
+        updated_ui = Patch()
+        weapon_style = {} if type_ in ["weapon (melee)","weapon (ranged)"] else {"display": "none"}
+        spell_style = {} if type_ == "spell" else {"display": "none"}
+
+        # TODO: Make this less hard coded, see update_attack_type in character_card.py
+        updated_ui[0]['props']['style'] = weapon_style
+        updated_ui[1]['props']['style'] = weapon_style
+        updated_ui[2]['props']['style'] = weapon_style
+        updated_ui[3]['props']['style'] = spell_style
+        updated_ui[4]['props']['style'] = spell_style
+        updated_ui[5]['props']['style'] = spell_style
+
+        return updated_ui
+
+    # TODO: Try to move this client side, current issue is that js callback works but the ui is not getting rendered
+    # clientside_callback(
+    #     ClientsideFunction(
+    #         namespace="clientside",
+    #         function_name="update_attack_type"
+    #     ),
+    #     Output({"type": "attack_dependent_ui", "index": MATCH},"children"),
+    #     Input({"type":"attack_type","index": MATCH},"value"),
+    #     State({"type": "attack_dependent_ui", "index": MATCH},"children"),
+    #     prevent_initial_call=True
+    # )
+
     @app.callback(
         Output({'type': 'attack',"index": MATCH, "num": ALL},"active"),
         Output({'type': 'attack_ui',"index": MATCH},"children"),

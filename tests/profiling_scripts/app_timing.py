@@ -5,18 +5,9 @@ $(pipenv --py) -m cProfile -o ${file}.prof ${file}
 from dataclasses import replace
 from computations.models import Character, Enemy, Attack
 from computations.numerical_simulation import simulate_rounds_from_characters, simulate_rounds_from_characters_multi_acs # pylint: disable=unused-import
+from components.initial_characters import initialize_characters
 
-# Build attacks
-attacksPython = [Attack(name=f"Greatsword{ii+1}", two_handed=True, ability_stat="strength", damage='2d6', type='weapon (melee)') for ii in range(3)]
-
-# Character stats
-character1 = Character(name='Fighter',level=12, attacks=attacksPython, strength=20)
-character2 = replace(character1, name='Fighter GWF + Crit On 19', disadvantage=False, GWF=True, crit_on=19)
-character3 = replace(character1, name='Fighter Advantage', advantage=True)
-character4 = replace(character1, name='Fighter GWM + Advantage', GWM=True, advantage=True)
-enemy = Enemy(armor_class=18)
-
-characters = [character1, character2, character3, character4]
+characters, enemy = initialize_characters()
 
 
 # Run the following command with this file selected

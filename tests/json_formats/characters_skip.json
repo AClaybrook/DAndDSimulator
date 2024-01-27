@@ -46,7 +46,7 @@
                 "name": "Greatsword",
                 "bonus_attack_die_mod_list": [],
                 "bonus_damage_die_mod_list": [],
-                "proficent": true,
+                "proficient": true,
                 "type": "weapon (melee)",
                 "ability_stat": "strength",
                 "damage": "2d6",
@@ -69,7 +69,7 @@
                 "name": "Greatsword",
                 "bonus_attack_die_mod_list": [],
                 "bonus_damage_die_mod_list": [],
-                "proficent": true,
+                "proficient": true,
                 "type": "weapon (melee)",
                 "ability_stat": "strength",
                 "damage": "2d6",
@@ -92,7 +92,7 @@
                 "name": "Greatsword",
                 "bonus_attack_die_mod_list": [],
                 "bonus_damage_die_mod_list": [],
-                "proficent": true,
+                "proficient": true,
                 "type": "weapon (melee)",
                 "ability_stat": "strength",
                 "damage": "2d6",
@@ -160,7 +160,7 @@
                 "name": "Greatsword",
                 "bonus_attack_die_mod_list": [],
                 "bonus_damage_die_mod_list": [],
-                "proficent": true,
+                "proficient": true,
                 "type": "weapon (melee)",
                 "ability_stat": "strength",
                 "damage": "2d6",
@@ -183,7 +183,7 @@
                 "name": "Greatsword",
                 "bonus_attack_die_mod_list": [],
                 "bonus_damage_die_mod_list": [],
-                "proficent": true,
+                "proficient": true,
                 "type": "weapon (melee)",
                 "ability_stat": "strength",
                 "damage": "2d6",
@@ -206,7 +206,7 @@
                 "name": "Greatsword",
                 "bonus_attack_die_mod_list": [],
                 "bonus_damage_die_mod_list": [],
-                "proficent": true,
+                "proficient": true,
                 "type": "weapon (melee)",
                 "ability_stat": "strength",
                 "damage": "2d6",
@@ -228,8 +228,8 @@
         ]
     },
     {
-        "name": "asdsa",
-        "level": 1,
+        "name": "Should be skipped, due to attacks",
+        "level": 12,
         "strength": 10,
         "dexterity": 10,
         "constitution": 10,
@@ -273,63 +273,6 @@
         "lifedrinker": false,
         "elemental_affinity": false,
         "savage_attacks_half_orc": false,
-        "attacks": [
-            {
-                "name": "Attack Naasdsame",
-                "type": "weapon (melee)",
-                "ability_stat": "strength",
-                "damage": "1d6",
-                "weapon_enhancement": 0,
-                "offhand": false,
-                "two_handed": false,
-                "saving_throw": false,
-                "saving_throw_stat": "dexterity",
-                "saving_throw_success_multiplier": 0.5,
-                "bonus_attack_die_mod_list": [
-                    "0d4",
-                    "0"
-                ],
-                "bonus_damage_die_mod_list": [
-                    "0d4",
-                    "0"
-                ],
-                "bonus_crit_die_mod_list": [
-                    "0d4",
-                    "0"
-                ],
-                "bonus_miss_die_mod_list": [
-                    "0d4",
-                    "0"
-                ]
-            },
-            {
-                "name": "Attacasdsak Name",
-                "type": "weapon (melee)",
-                "ability_stat": "strength",
-                "damage": "1d6",
-                "weapon_enhancement": 0,
-                "offhand": false,
-                "two_handed": false,
-                "saving_throw": false,
-                "saving_throw_stat": "dexterity",
-                "saving_throw_success_multiplier": 0.5,
-                "bonus_attack_die_mod_list": [
-                    "0d4",
-                    "0"
-                ],
-                "bonus_damage_die_mod_list": [
-                    "0d4",
-                    "0"
-                ],
-                "bonus_crit_die_mod_list": [
-                    "0d4",
-                    "0"
-                ],
-                "bonus_miss_die_mod_list": [
-                    "0d4",
-                    "0"
-                ]
-            }
-        ]
+        "attacks": "bad attacks"
     }
 ]

@@ -1,5 +1,7 @@
 *.prof
 *.pyc
 *.txt
+.vscode
 random/*
+*.coverage
 __pycache__
