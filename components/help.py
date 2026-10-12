@@ -18,7 +18,8 @@ RECIPES = [
     ("Is Great Weapon Master or Sharpshooter worth it?",
      "Add a preset with the feat, then run DPR Sweep over Armor Class. The Insights table shows the armor class where you should turn it off."),
     ("Which feat or ASI should I take?",
-     "Copy a character (copy button on its card), change one thing on the copy (i.e. a feat under Bonuses or +2 to a stat), and compare the two."),
+     "Open the copy menu on a card and pick a change (+2 main ability score, one level higher, advantage, GWM/Sharpshooter, Bless), "
+     "or make an exact copy and change it yourself. Compare the expected damage under each name, then Simulate for the full picture."),
     ("How does my build scale?",
      "Add preset characters and run DPR Sweep over Level. Presets level up like the real class and keep any edits you made."),
     ("How fast can we kill this boss?",
@@ -32,7 +33,7 @@ RECIPES = [
 def quick_start():
     """ Collapsible quick start guide with the main workflow and recipes for common questions """
     steps = [
-        ("1. Characters", "Add presets (they level up like the real class) or blank characters, then tweak them. Hover the buttons for what they do."),
+        ("1. Characters", "Add presets (they level up like the real class) or blank characters, then tweak them. Each card shows its expected damage per round as you edit."),
         ("2. Enemy", "Load a monster or a CR baseline, or type in armor class, hit points, saves and resistances."),
         ("3. Simulate", "Pick what you want to know and press Simulate (also at the bottom right of the screen). Results start with a one line summary."),
     ]

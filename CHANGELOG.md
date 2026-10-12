@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.6.0 (2026-10-12)
+
+Quicker comparisons from the character cards, no changes to the simulation itself.
+
+- **Live expected damage:** every card shows its exact expected damage per round against the current enemy under the name. It updates as you edit the card, the enemy or Rounds Per Fight (attacks update when saved). It uses the same exact math as the Attack Breakdown, so it is instant, and Simulate still gives the full distribution.
+- **Copy with a change:** the copy button on a card is now a menu. Besides an exact copy, it makes a copy with one change, named after it (i.e. "Fighter (+2 Str)"):
+  - Toggle advantage
+  - One level higher (presets are rebuilt like the real class, keeping edits)
+  - +2 main ability score (up to 20)
+  - Toggle GWM / Sharpshooter
+  - Add Bless (+1d4 to hit)
+
+  Changes that aren't possible (i.e. Strength is already 20) show a warning instead.
+- Every card and enemy input now has a pattern matching id, so callbacks can react to any field changing.
+
 ## 2.5.0 (2026-10-12)
 
 Usability and workflow, no changes to the simulation itself.

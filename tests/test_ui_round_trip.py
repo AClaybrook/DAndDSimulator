@@ -3,8 +3,8 @@ import json
 from pathlib import Path
 import pytest
 
-from components.character_card import generate_character_card, extract_character_ui_values, characters_from_ui
-from components.enemy_card import generate_enemy_card, extract_enemy_ui_values
+from components.character_card import generate_character_card, extract_character_ui_values, characters_from_ui, character_dict_from_labels
+from components.enemy_card import generate_enemy_card, extract_enemy_ui_values, enemy_dict_from_labels
 from computations.models import Character, Enemy
 from game_data import enemy_from_monster
 from game_data.classes import BUILDS, build_character
@@ -71,3 +71,35 @@ def test_validation_errors_name_the_field():
     good = build_character("fighter_gwm", 5)
     card = serialize(generate_character_card(good.name, character=good, index=0))
     assert validation_errors(extract_character_ui_values(card), [a.to_dict() for a in good.attacks]) == []
+
+def field_values(card, id_type):
+    """ {label: value} from the inputs tagged with a pattern matching id, as the expected damage callbacks see them """
+    values = {}
+    def walk(node):
+        if isinstance(node, dict):
+            node_id = node.get("props", {}).get("id")
+            if isinstance(node_id, dict) and node_id.get("type") == id_type:
+                values[node_id["field"]] = node["props"].get("value")
+            for v in node.values():
+                walk(v)
+        elif isinstance(node, list):
+            for v in node:
+                walk(v)
+    walk(card)
+    return values
+
+@pytest.mark.parametrize("key", ["paladin_smite", "rogue_assassin", "wizard_fireball"])
+def test_tagged_fields_match_card_values(key):
+    """ The expected damage badge reads the tagged inputs, which must give the same character as the simulator """
+    character = build_character(key, 9)
+    card = serialize(generate_character_card(character.name, character=character, index=3))
+    from_fields = {**character_dict_from_labels(field_values(card, "character field")), "level": character.level}
+    expected = extract_character_ui_values(card)
+    assert {k: v for k, v in from_fields.items() if k != "name"} == {k: v for k, v in expected.items() if k not in ("name", "description")} | {"description": ""}
+
+def test_tagged_enemy_fields_match_card_values():
+    enemy = enemy_from_monster("Mind Flayer")
+    body = serialize(generate_enemy_card(enemy))
+    from_fields = enemy_dict_from_labels(field_values(body, "enemy field").items())
+    expected = extract_enemy_ui_values(body)
+    assert {k: v for k, v in from_fields.items() if k != "name"} == {k: v for k, v in expected.items() if k != "name"}

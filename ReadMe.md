@@ -34,14 +34,14 @@ Live here: https://d-and-d-damage-simulator-745953dd5908.herokuapp.com/
 See [CHANGELOG.md](CHANGELOG.md) for what changed in 2.0.
 
 ## Using the Dashboard
-1. **Characters**: add presets (Preset, Level, +), which level up like the real class, or blank characters, then tweak them. Card sections expand when the character uses them, attacks are edited by clicking one, changing it and pressing Save.
+1. **Characters**: add presets (Preset, Level, +), which level up like the real class, or blank characters, then tweak them. Each card shows its exact expected damage per round against the current enemy, updated as you edit. Card sections expand when the character uses them, attacks are edited by clicking one, changing it and pressing Save.
 2. **Enemy**: load a monster or a CR baseline, or type in armor class, hit points, saves and resistances.
 3. **Simulate**: pick what you want to know (each graph type says what it answers) and press Simulate, the floating button works from anywhere. Results start with a one line summary.
 
 Common questions:
 * **Which build does the most damage?** Add a few presets, Simulate with DPR Distribution and read the Leaderboard.
 * **Is Great Weapon Master or Sharpshooter worth it?** DPR Sweep over Armor Class, the Insights table shows the armor class to turn it off.
-* **Which feat or ASI should I take?** Copy a character, change one thing on the copy and compare the two.
+* **Which feat or ASI should I take?** Use the copy menu on a card to make a copy with one change (+2 main ability score, a level up, advantage, GWM/Sharpshooter, Bless), or copy it exactly and change something yourself. The expected damage under each name compares them right away, Simulate for the full picture.
 * **How does my build scale?** DPR Sweep over Level, presets level up and keep your edits.
 * **How fast can we kill this boss?** Load the monster and run Rounds to Kill.
 * **Nova or sustained damage?** Set Rounds per Fight and run Damage per Fight.
@@ -112,9 +112,10 @@ Rough priority order, the first items have the most impact for the least work.
 ### Done in 2.5
 * Dashboard usability: collapsible card sections, labelled attack editing, quick start with recipes, graph descriptions, floating Simulate button, results summary, saved and restorable sessions, readable validation errors
 
+### Done in 2.6
+* Copy with a change from the card (variants for quick what-if comparisons) and live expected damage per round on each card
+
 ### Next
-* Compare variants quickly: "copy with" a change (toggle a feat, +2 to a stat) from the card
-* Live expected damage on each card, updated as you edit
 * Conditional damage: GWM bonus attack on a crit/kill, Colossus Slayer only on damaged targets, Toll the Dead d12 vs damaged targets
 * Surprise as a fight setting (i.e. a chance the enemy is surprised) instead of assuming it for Assassinate
 * Arcane Recovery, Font of Magic and other ways to regain slots

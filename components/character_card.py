@@ -5,6 +5,7 @@ from dash import html, dcc
 from components.plots import COLORS
 from computations.models import Attack, Character, DAMAGE_TYPES, multiple_die_and_mod_from_list
 from game_data import attack_templates
+from components.variants import VARIANTS
 
 INPUT_STYLE = {'paddingTop': '0.0rem', 'paddingBottom': '0.0rem'}
 LABEL_STYLE = {'marginBottom': '0.2rem'}
@@ -173,23 +174,24 @@ C_LABELS = {v: k for k, v in C_LABEL_TO_DICT_MAP.items()}
 
 def extract_character_ui_values(character_from_ui):
     """ Parses the character ui values into a dictionary"""
-    character_dict = {}
+    label_values, description = {}, ""
     # Extract values from the Stats and Bonuses tabs (the Attacks tab holds the attack editor, which reuses some labels)
     for tab in find_components(character_from_ui, 'Tab'):
         if tab['props']['label'] in ['Stats', 'Bonuses']:
-            character_dict.update(label_value_rows(tab))
+            label_values.update(label_value_rows(tab))
             for textarea in find_components(tab, 'Textarea'):
-                character_dict["Description"] = textarea['props'].get('value') or ""
+                description = textarea['props'].get('value') or ""
+    return character_dict_from_labels(label_values, description)
 
+def character_dict_from_labels(label_values, description=""):
+    """ Character dictionary from {ui label: value} """
     # Convert labels to internal dictionary keys
-    description = character_dict.pop("Description", "")
-    character_dict = {C_LABEL_TO_DICT_MAP[k]: v for k, v in character_dict.items() if k in C_LABEL_TO_DICT_MAP}
+    character_dict = {C_LABEL_TO_DICT_MAP[k]: v for k, v in label_values.items() if k in C_LABEL_TO_DICT_MAP}
     character_dict["description"] = description
     # Convert strs to lists
     for key in DIE_MOD_LISTS:
         character_dict[key] = to_list(character_dict.get(key))
     return character_dict
-
 
 def characters_from_ui(characters_list, attack_stores):
     """ Parses the character ui values into a list of characters"""
@@ -214,6 +216,21 @@ def check_row(label, value):
 
 def select_row(label, value, options):
     return label_row(label, dbc.Select(options=options, value=value, style=INPUT_STYLE, size="sm"))
+
+def tag_fields(component, id_type, **keys):
+    """ Gives each label row's input without an id the pattern matching id {"type": id_type, "field": label, **keys},
+        so callbacks can react to any field changing (i.e. the expected damage badge) """
+    children = getattr(component, "children", None)
+    if isinstance(component, dbc.Row) and getattr(component, "class_name", None) == "label-row":
+        label_col, input_col = children
+        if getattr(input_col.children, "id", None) is None:
+            input_col.children.id = {"type": id_type, "field": label_col.children.children, **keys}
+    elif isinstance(children, (list, tuple)):
+        for child in children:
+            tag_fields(child, id_type, **keys)
+    elif children is not None and not isinstance(children, (str, int, float)):
+        tag_fields(children, id_type, **keys)
+    return component
 
 def section(title):
     return dbc.Row(html.H6(title, className="mt-2 mb-1 text-info"))
@@ -302,6 +319,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
             ]),
         ])
     ], class_name="border-0")
+    tag_fields(stats, "character field", index=index)
 
     # Attacks tab
     avals = [a.to_dict() for a in c.attacks] or [Attack(name="Attack Name").to_dict()]
@@ -387,16 +405,29 @@ def generate_character_card(character_name, character=None, color="", index=1):
             collapsible_sections([(title, rows) for title, _, rows in bonus_sections], open_sections),
         ], class_name="p-1")
     ], class_name="border-0")
+    tag_fields(bonuses, "character field", index=index)
+
+    # Copy menu: an exact copy or a copy with one change, to compare variants
+    copy_menu = dbc.DropdownMenu(
+        [dbc.DropdownMenuItem("Copy as a new character", header=True),
+         *[html.Button(label, className="dropdown-item", id={"type": "copy character", "index": index, "variant": key})
+           for key, (label, _) in VARIANTS.items()]],
+        label=html.I(className="fa-solid fa-copy"), size="sm", color="primary", align_end=True, class_name="me-1",
+        toggle_class_name="py-0", id={"type": "copy menu", "index": index})
 
     return dbc.Col(
         dbc.Card([
-            dbc.CardHeader(dbc.Row([
+            dbc.CardHeader([dbc.Row([
                 dbc.Col(html.H5(c.name, style={'color': color, 'whiteSpace': 'nowrap'}, className="mb-0", id={"type": "character name", "index": index}), style={'overflowX': 'auto'}, class_name="pe-0"),
                 # html.Button rather than dbc.Button since n_clicks_timestamp is needed to tell real clicks from cards being added/removed
-                dbc.Col([html.Button(html.I(className="fa-solid fa-copy"), className="btn btn-primary btn-sm me-1", title="Copy character", id={"type": "copy character", "index": index}),
+                dbc.Col([copy_menu,
                          html.Button(html.I(className="fa-solid fa-x"), className="btn btn-danger btn-sm", title="Delete character", id={"type": "delete character", "index": index}),
                          ], width="auto", class_name="d-flex align-items-center")
-            ], align="center", class_name="g-1"), style={'borderTop': f'3px solid {color}'}),
+            ], align="center", class_name="g-1"),
+                html.Div(id={"type": "dpr badge", "index": index}, className="small text-muted dpr-badge",
+                         title="Exact expected damage per round against the current enemy, using Rounds Per Fight for limited uses. "
+                               "Updates as you edit (attacks update when saved)"),
+            ], style={'borderTop': f'3px solid {color}'}),
             dbc.CardBody([
                 dbc.Tabs([
                     dbc.Tab(stats, label="Stats", tab_id="stats"),
