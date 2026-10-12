@@ -2,4 +2,6 @@
 *.pyc
 *.txt
 random/*
-__pycache__
+__pycache__.venv/
+.pytest_cache/
+.ruff_cache/

@@ -1,0 +1,68 @@
+""" Tests for the game database and level up presets """
+import pytest
+
+from computations.models import Attack, Enemy
+from computations.numerical_simulation import simulate_rounds_from_characters
+from game_data import (RULESETS, attack_templates, attacks_from_template, cantrip_tier, enemy_from_preset, enemy_presets,
+                       spell_attacks, weapon_attack)
+from game_data.classes import BUILDS, asi_levels, build_character
+
+def test_weapon_attack():
+    gs = weapon_attack("Greatsword")
+    assert (gs.damage, gs.two_handed, gs.heavy, gs.damage_type) == ("2d6", True, True, "slashing")
+    longsword = weapon_attack("Longsword", two_handed=True)
+    assert longsword.damage == "1d10" and not longsword.heavy
+    assert weapon_attack("Longbow").ability_stat == "dexterity"
+
+@pytest.mark.parametrize("ruleset, level, tier", [("bg3", 4, 1), ("bg3", 5, 2), ("bg3", 10, 3), ("5e", 10, 2), ("5e", 17, 4)])
+def test_cantrip_scaling(ruleset, level, tier):
+    assert cantrip_tier(level, ruleset) == tier
+
+def test_spell_scaling():
+    assert spell_attacks("Fire Bolt", character_level=10)[0].damage == "3d10"
+    assert len(spell_attacks("Eldritch Blast", character_level=10, ruleset="5e")) == 2
+    assert len(spell_attacks("Magic Missile", slot_level=3)) == 5
+    fireball = spell_attacks("Fireball", slot_level=5)[0]
+    assert fireball.damage == "10d6" and fireball.saving_throw and fireball.saving_throw_success_multiplier == 0.5
+    assert spell_attacks("Disintegrate", slot_level=7)[0].damage == "13d6+40"
+
+def test_every_template_builds():
+    for _, value in attack_templates():
+        attacks = attacks_from_template(value, ability_stat="dexterity", character_level=5)
+        assert attacks and all(isinstance(a, Attack) for a in attacks)
+
+def test_every_enemy_preset_builds():
+    for _, value in enemy_presets():
+        enemy = enemy_from_preset(value)
+        assert isinstance(enemy, Enemy) and enemy.armor_class > 0 and enemy.hit_points > 0
+    lich = enemy_from_preset("monster:Lich")
+    assert lich.saving_throw_modifier("intelligence") == 12
+    assert lich.saving_throw_modifier("strength") == 0
+
+def test_asi_levels():
+    assert asi_levels("fighter", "bg3") == [4, 6, 8, 12]
+    assert asi_levels("rogue", "5e") == [4, 8, 10, 12, 16, 19]
+
+@pytest.mark.parametrize("key", BUILDS)
+@pytest.mark.parametrize("ruleset", RULESETS)
+def test_builds_level_up(key, ruleset):
+    max_level = RULESETS[ruleset]["max_level"]
+    enemy = Enemy(armor_class=15)
+    previous = None
+    for level in range(1, max_level + 1):
+        c = build_character(key, level, ruleset)
+        assert c.level == level and c.attacks
+        _, df_by_rounds, _ = simulate_rounds_from_characters([c], enemy, num_rounds=200)
+        assert df_by_rounds[0]["Damage"].mean() >= 0
+        if previous:
+            assert len(c.attacks) >= len(previous.attacks)
+        previous = c
+
+def test_fighter_progression():
+    assert len(build_character("fighter_gwm", 4).attacks) == 1
+    assert len(build_character("fighter_gwm", 5).attacks) == 2
+    assert len(build_character("fighter_gwm", 11).attacks) == 3
+    assert len(build_character("fighter_gwm", 20, "5e").attacks) == 4
+    assert build_character("fighter_gwm", 20).level == 12 # BG3 caps at level 12
+    c = build_character("fighter_gwm", 8)
+    assert c.GWM and c.strength == 20 and c.crit_on == 19

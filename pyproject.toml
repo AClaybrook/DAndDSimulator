@@ -1,0 +1,50 @@
+[project]
+name = "dnd-damage-simulator"
+version = "2.0.0"
+description = "Monte Carlo damage simulator for D&D 5e and Baldur's Gate 3 character builds"
+readme = "ReadMe.md"
+requires-python = ">=3.11"
+dependencies = [
+    "dash>=3.0",
+    "dash-bootstrap-components>=2.0",
+    "gunicorn>=23.0",
+    "numpy>=2.0",
+    "orjson>=3.10",
+    "pandas>=2.2",
+    "plotly>=6.0",
+]
+
+[dependency-groups]
+dev = [
+    "playwright>=1.50",
+    "pytest>=8.0",
+    "ruff>=0.9",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 160
+target-version = "py311"
+extend-exclude = ["random"]
+
+[tool.ruff.format]
+quote-style = "preserve"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = [
+    "E261", # Two spaces before inline comments
+    "E262", # Inline comment should start with '# '
+    "E265", # Block comment should start with '# '
+    "E266", # Too many leading '#' for block comment
+    "E501", # Line too long, long dash layouts read better on one line
+    "B905", # zip() without strict=
+    "UP038",
+    "I001", # Import ordering is grouped by hand
+]
