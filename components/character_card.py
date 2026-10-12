@@ -46,7 +46,7 @@ A_LABEL_TO_VAL = {
     "Damage Type": "damage_type",
     "Weapon Enhancement": "weapon_enhancement",
     "Crit on": "crit_on",
-    "Proficient": "proficent",
+    "Proficient": "proficient",
     "Advantage": "advantage",
     "Disadvantage": "disadvantage",
     "Always Hit": "always_hit",
@@ -254,7 +254,7 @@ def set_attack_from_values(avals, i, index, num_attacks=1):
     sections = [
         ("Roll Modifiers", [
             number_row(A_LABELS["crit_on"], a["crit_on"], 2, 20),
-            check_row(A_LABELS["proficent"], a["proficent"]),
+            check_row(A_LABELS["proficient"], a["proficient"]),
             check_row(A_LABELS["advantage"], a["advantage"]),
             check_row(A_LABELS["disadvantage"], a["disadvantage"]),
             check_row(A_LABELS["always_hit"], a["always_hit"]),
@@ -284,7 +284,7 @@ def set_attack_from_values(avals, i, index, num_attacks=1):
         ]),
     ]
     open_sections = changed_sections(a, defaults, {
-        "Roll Modifiers": ["crit_on", "proficent", "advantage", "disadvantage", "always_hit", "always_crit"],
+        "Roll Modifiers": ["crit_on", "proficient", "advantage", "disadvantage", "always_hit", "always_crit"],
         "Weapon": ["weapon_enhancement", "offhand", "two_handed", "heavy"] if a["type"] != "spell" else [],
         "Spell Saving Throw": ["saving_throw"],
         "Extra Dice": DIE_MOD_LISTS[:4],

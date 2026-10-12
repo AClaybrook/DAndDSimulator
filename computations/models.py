@@ -50,9 +50,13 @@ def multiple_die_and_mod_from_list(die_list):
         total_mod += m
     return num_die, die_sizes, total_mod
 
+# Old field name: new field name, so json files saved before a rename still load
+RENAMED_FIELDS = {"proficent": "proficient", "saving_throw_proficent": "saving_throw_proficient"}
+
 def from_dict(cls, data):
     """ Builds a dataclass from a dictionary, ignoring unknown keys so older/newer json files still load """
     names = {f.name for f in fields(cls) if f.init}
+    data = {RENAMED_FIELDS.get(k, k): v for k, v in data.items()}
     return cls(**{k: v for k, v in data.items() if k in names})
 
 ### Classes ###
@@ -64,7 +68,7 @@ class Attack:
     bonus_attack_die_mod_list: list[str | int] = field(default_factory=list) # Format is ['1d6', 2]
     bonus_damage_die_mod_list: list[str | int] = field(default_factory=list) # Format is ['1d6', 2]
 
-    proficent: bool = True
+    proficient: bool = True
     type: Literal["weapon (melee)", "weapon (ranged)", "spell", "unarmed", "thrown"] = 'weapon (melee)'
     ability_stat: Stat = 'strength'
     damage: str = '1d6' # Used by all attacks, can include a flat modifier i.e. '1d4+1'
@@ -118,7 +122,7 @@ class Creature:
     resistance: bool = False # Resistant to all damage
     vulnerability: bool = False # Vulnerable to all damage
     attacks: list[Attack] = field(default_factory=list)
-    saving_throw_proficent: bool = False
+    saving_throw_proficient: bool = False
     # Stats
     strength: int = 10
     dexterity: int = 10
@@ -271,7 +275,7 @@ class Enemy(Creature):
     armor_class: int = 15
     hit_points: int = 71
     challenge_rating: float = 0
-    # Saving throw modifiers, None means derived from the ability score (and proficiency if saving_throw_proficent)
+    # Saving throw modifiers, None means derived from the ability score (and proficiency if saving_throw_proficient)
     strength_save: int | None = None
     dexterity_save: int | None = None
     constitution_save: int | None = None
@@ -294,7 +298,7 @@ class Enemy(Creature):
         explicit = getattr(self, f"{stat}_save")
         if explicit is not None:
             return explicit
-        return self.ability_modifier(stat) + (self.proficiency_bonus if self.saving_throw_proficent else 0)
+        return self.ability_modifier(stat) + (self.proficiency_bonus if self.saving_throw_proficient else 0)
 
     def damage_multiplier(self, attack: Attack):
         """ Multiplier from resistances, vulnerabilities and immunities for a given attack """
@@ -394,7 +398,7 @@ def calculate_attack_and_damage_context(character, enemy):
         # Attack Roll
         attack_modifier = ability_modifier
         ## Proficiency, Spellcasting and unarmed attacks always add proficiency bonus
-        if attack.proficent or attack.type in ['spell', 'unarmed']:
+        if attack.proficient or attack.type in ['spell', 'unarmed']:
             attack_modifier += character.proficiency_bonus
         # Damage
         damage_modifier = 0

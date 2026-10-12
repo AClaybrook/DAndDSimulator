@@ -79,7 +79,7 @@ def test_spell_save_uses_enemy_save_modifier():
     assert d.save_success_multiplier == 0.5
 
 def test_enemy_saving_throw_defaults_to_ability_and_proficiency():
-    enemy = Enemy(wisdom=14, challenge_rating=9, saving_throw_proficent=True)
+    enemy = Enemy(wisdom=14, challenge_rating=9, saving_throw_proficient=True)
     assert enemy.proficiency_bonus == 4
     assert enemy.saving_throw_modifier("wisdom") == 2 + 4
     assert Enemy(strength=8).saving_throw_modifier("strength") == -1
@@ -105,3 +105,9 @@ def test_from_dict_ignores_unknown_keys():
     c = Character.from_dict({"name": "Old", "strength": 18, "damage_on_miss": 0, "attacks": [{"name": "Axe", "damage": "1d12", "two_handed": True}]})
     assert c.strength == 18
     assert c.attacks[0].heavy # Older files without 'heavy' fall back to two_handed
+
+def test_renamed_fields_still_load():
+    """ Json files saved before 'proficent' was renamed to 'proficient' """
+    character = Character.from_dict({"name": "Old", "attacks": [{"name": "Old", "proficent": False}]})
+    enemy = Enemy.from_dict({"saving_throw_proficent": True})
+    assert not character.attacks[0].proficient and enemy.saving_throw_proficient

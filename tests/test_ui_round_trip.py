@@ -103,3 +103,13 @@ def test_tagged_enemy_fields_match_card_values():
     from_fields = enemy_dict_from_labels(field_values(body, "enemy field").items())
     expected = extract_enemy_ui_values(body)
     assert {k: v for k, v in from_fields.items() if k != "name"} == {k: v for k, v in expected.items() if k != "name"}
+
+def test_large_histograms_are_sampled():
+    import pandas as pd
+    from components.plots import MAX_PLOT_POINTS, generate_plot_data, plot_sample
+    df = pd.DataFrame({"Damage": range(10 * MAX_PLOT_POINTS)})
+    sample = plot_sample(df, 4)
+    assert len(sample) == MAX_PLOT_POINTS // 4 and sample["Damage"].iloc[0] == 0 and sample["Damage"].iloc[-1] == len(df) - 1
+    assert plot_sample(df.head(10), 4) is not None and len(plot_sample(df.head(10), 4)) == 10
+    fig = generate_plot_data([Character(name="A")], [df], title="DPR")
+    assert "sample" in fig.layout.title.text

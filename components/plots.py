@@ -14,6 +14,19 @@ from computations.numerical_simulation import describe
 # Color Palette
 COLORS = px.colors.qualitative.Plotly
 
+# Histograms send every point to the browser, so larger figures plot an evenly spaced sample (tables and stats still use every round)
+MAX_PLOT_POINTS = 400_000
+
+def plot_sample(df, num_series):
+    """ An evenly spaced sample of the rows, so num_series of them together stay under MAX_PLOT_POINTS """
+    max_rows = max(MAX_PLOT_POINTS // max(num_series, 1), 1)
+    if len(df) <= max_rows:
+        return df
+    return df.iloc[np.linspace(0, len(df) - 1, max_rows).astype(np.int64)]
+
+def sampled_title(title, sampled):
+    return f"{title} (plotting a sample of {MAX_PLOT_POINTS:,} values)" if sampled and title else title
+
 def calc_opacity(num_categories, o_init=0.75, o_slope=0.2, o_min=0.25, per_category=5):
     """ Plotly slows down with too many overlapping histograms, so this function reduces the opacity as the number of categories increases"""
     reduction = (num_categories // per_category)*o_slope
@@ -22,8 +35,10 @@ def calc_opacity(num_categories, o_init=0.75, o_slope=0.2, o_min=0.25, per_categ
     # print(f"Opacity: {opacity}")
     return opacity
 
-def generate_plot_data(characters, df_by_rounds, template='plotly_dark',**kwargs):
+def generate_plot_data(characters, df_by_rounds, template='plotly_dark', title=None, **kwargs):
     """ Generates the plot data for the DPR Distribution Histogram"""
+    sampled = sum(len(df) for df in df_by_rounds) > MAX_PLOT_POINTS
+    df_by_rounds = [plot_sample(df, len(df_by_rounds)) for df in df_by_rounds]
     data = pd.concat([pd.DataFrame({'Damage': df_by_round["Damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)]).reset_index(drop=True)
     # Converting types saves about 10x the memory
     data["Damage"] = data["Damage"].astype('int32')
@@ -33,7 +48,8 @@ def generate_plot_data(characters, df_by_rounds, template='plotly_dark',**kwargs
     # print(f"Plot data : {data.memory_usage(deep=False).sum()/1000000} MB")
     # print(f"df_by_rounds (deep): {sum([d.memory_usage(deep=True).sum() for d in df_by_rounds])/1000000} MB")
     # print(f"df_by_rounds : {sum([d.memory_usage(deep=False).sum() for d in df_by_rounds])/1000000} MB")
-    fig = generate_histogram(data, x="Damage", color="Type", marginal='box', opacity=calc_opacity(len(characters)),template=template,**kwargs)
+    fig = generate_histogram(data, x="Damage", color="Type", marginal='box', opacity=calc_opacity(len(characters)),template=template,
+                             title=sampled_title(title, sampled), **kwargs)
 
     return fig
 
@@ -193,12 +209,14 @@ def generate_line_plots(df_acs, groupby='Character', template='plotly_dark', ord
     )
     return fig
 
-def generate_damage_per_attack_histogram(characters, dfs ,template='plotly_dark', **kwargs):
+def generate_damage_per_attack_histogram(characters, dfs ,template='plotly_dark', title=None, **kwargs):
     """ Generates a histogram of damage per attack, used by DPA Distribution"""
     attacks = []
     attack_color_map = {}
+    sampled = sum(len(df) for df in dfs) > MAX_PLOT_POINTS
     for ii, (c, df_c_temp) in enumerate(zip(characters,dfs)):
-        df_c = df_c_temp[["Damage","Attack"]].copy()
+        # Sample before building the labels, which is slow for millions of rows
+        df_c = plot_sample(df_c_temp[["Damage","Attack"]], len(dfs)).copy()
         df_c['Type'] = c.name + "-" + df_c['Attack'].astype(str)
         df_c = df_c.drop('Attack',axis=1)
         attacks.append(df_c)
@@ -208,7 +226,8 @@ def generate_damage_per_attack_histogram(characters, dfs ,template='plotly_dark'
     df_attacks = pd.concat(attacks).reset_index(drop=True)
     df_attacks["Damage"] = df_attacks["Damage"].astype('int16') # This plot is very memory sensitive, need to reduce the size as much as possible
     df_attacks["Type"] = df_attacks["Type"].astype('category')
-    fig = generate_histogram(df_attacks, x="Damage", color="Type", marginal='box',opacity=calc_opacity(len(df_attacks["Type"].unique()),o_slope=0.25), template=template,**kwargs)
+    fig = generate_histogram(df_attacks, x="Damage", color="Type", marginal='box',opacity=calc_opacity(len(df_attacks["Type"].unique()),o_slope=0.25), template=template,
+                             title=sampled_title(title, sampled), **kwargs)
     # Manually override colors
     for data in fig.data:
         data.marker.color = attack_color_map[data.legendgroup]

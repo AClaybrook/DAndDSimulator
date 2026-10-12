@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.6.1 (2026-10-12)
+
+Ported from unpushed local work (January 2024).
+
+- **Faster large distributions:** DPR and DPA histograms plot an evenly spaced sample of at most 400,000 values. Tables and stats still use every round. At 1,000,000 rounds the DPA figure builds in 0.2s instead of 9.7s, and the browser receives 2MB instead of 64MB (DPR: 4MB instead of 43MB). The title says when a plot is sampled.
+- **Independent validation:** a level 6 Oath of Vengeance Paladin (from an older app export) is checked against damage per round values from an external spreadsheet for armor class 10-25. The exact math matches to 4 decimal places, and the simulation matches within noise.
+- Renamed `proficent` to `proficient` (attacks and enemy saving throws). Json files with the old name still load.
+- `.gitignore`: fixed a missing line break that merged `__pycache__` and `.venv/`, and added `.vscode` and `.coverage`.
+
 ## 2.6.0 (2026-10-12)
 
 Quicker comparisons from the character cards, no changes to the simulation itself.

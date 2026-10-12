@@ -2,6 +2,9 @@
 *.pyc
 *.txt
 random/*
-__pycache__.venv/
+__pycache__
+.venv/
 .pytest_cache/
 .ruff_cache/
+.vscode
+.coverage
