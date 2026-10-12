@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.4.0 (2026-10-12)
+
+### New features
+- **Fallback attacks:** an attack's new **Fallback For** field names a limited attack. The fallback is only made once that attack is used up, i.e. Fireball while slots last and then Fire Bolt. Without fights (or if the named attack isn't limited), fallback attacks are never made.
+- **First round conditions:** **First Round Advantage** and **First Round Hits Are Crits** on the character apply to attack rolls in the first round of every fight. This covers Assassinate.
+- **Presets:**
+  - **Evocation Wizard (Fireball, then Fire Bolt):** now limited by spell slots. It previously cast its highest slot Fireball every round. It now casts Fireball with every 3rd level or higher slot (Burning Hands with every slot before level 5), then Fire Bolt.
+  - **Assassin Rogue (Dual Shortswords):** Assassinate from level 3 (assumes surprise).
+  - **Gloom Stalker Ranger (Archer):** Dread Ambusher's extra first turn attack with +1d8 from level 3.
+  - **Fighter 2 / Rogue (Dual Shortswords):** Two Weapon Fighting and Action Surge, then Sneak Attack.
+  - **Sorcadin (Paladin 6 / Sorcerer):** sorcerer levels add multiclass spell slots for more smites.
+- **Attack Breakdown and leaderboard:** the breakdown shows "after Fireball" for fallback attacks, and the leaderboard's attacks per round counts them.
+
+### Changes
+- **Speed:** `simulate_attacks` now makes shallow copies of the contexts instead of `dataclasses.asdict`, which deep copies. Repeated runs of the armor class sweep are slightly faster than 2.3. The level sweep benchmark runs 17 presets instead of 13, and is faster per preset.
+- **Exact calculator:** first round profiles and fallback attacks are covered. Simulation vs analytic tests run for Fireball then Fire Bolt, Assassinate and Dread Ambusher.
+
 ## 2.3.0 (2026-10-12)
 
 ### New features

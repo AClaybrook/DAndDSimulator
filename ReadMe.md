@@ -90,14 +90,17 @@ Rough priority order, the first items have the most impact for the least work.
 * Fights and limited resources: uses per fight for attacks and once per turn damage, Rounds per Fight, Damage per Fight view, fight based Rounds to Kill
 * Resource limited presets (smite slots, superiority dice, Action Surge, ki) and multiclass presets (Sorlock, Hexadin)
 
+### Done in 2.4
+* Fallback attacks (Fireball while slots last, then Fire Bolt), first round advantage and auto crits
+* Assassin Rogue, Gloom Stalker Ranger, Fighter 2 / Rogue and Sorcadin presets, slot limited Fireball Wizard
+
 ### Next
-* Spell slot fallback: cast a leveled spell while slots last, then a cantrip (i.e. Fireball then Fire Bolt), which needs attacks that replace each other
-* First round conditions: Assassinate (advantage and auto crits against surprised enemies), Gloom Stalker's Dread Ambusher preset
-* More multiclass presets (Fighter/Rogue, Paladin/Sorcerer, Barbarian/Fighter)
+* Conditional damage: GWM bonus attack on a crit/kill, Colossus Slayer only on damaged targets, Toll the Dead d12 vs damaged targets
+* Surprise as a fight setting (i.e. a chance the enemy is surprised) instead of assuming it for Assassinate
+* Arcane Recovery, Font of Magic and other ways to regain slots
 * BG3 specific mechanics: weapon actions, Elemental Adept, Savage Attacker per BG3 patch rules, BG3 item database (i.e. +1d4 rings, Gloves of the Belligerent Skald), verified against the game
 
 ### Later
-* Conditional damage: GWM bonus attack on a crit/kill, Colossus Slayer only on damaged targets, Toll the Dead d12 vs damaged targets
 * Multiple enemies and area of effect spells
 * Party mode: buffs between characters (Bless, Haste, Faerie Fire) and turn order
 * Saving/uploading enemies, editable monster database from the UI
@@ -115,7 +118,8 @@ Rough priority order, the first items have the most impact for the least work.
 * Calculations follow the BG3 ruleset by default. Presets and attack templates can use the 5e ruleset instead, which mostly changes the level cap and cantrip/extra attack progression
 * Classes and Races are not fully implemented, just the main damaging perks
 * Resources are tracked per fight, not per rest: limited attacks and once per turn damage have average uses per fight (fractional averages are randomized per fight). Presets convert per rest resources assuming 4 fights per long rest and 2 short rests. Characters without limits behave as if resources are unlimited
-* Limited attacks are used in the first rounds of a fight, limited once per turn damage on the first hits
+* Limited attacks are used in the first rounds of a fight, limited once per turn damage on the first hits. Fallback attacks are made once the limited attack they replace is used up
+* First round conditions (advantage, hits are crits) apply to the first round of every fight, i.e. Assassinate assumes the enemy is surprised
 * No multitarget, single target only
 * Enemys do not fight back/ not considering back and forth combat. So a character with 10 hp and 10 ac is just as good at damage as a character with 100 hp and 20 ac. Only enemy defensive stats matter
 * Do not consider turn order/initive

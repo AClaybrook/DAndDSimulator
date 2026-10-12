@@ -264,12 +264,63 @@ def sorcerer_draconic_fire_bolt(level, ruleset):
 def wizard_evoker_fireball(level, ruleset):
     c = Character(level=level, intelligence=STARTING_PRIMARY, constitution=STARTING_SECONDARY, empowered_evocation=level >= 10)
     taken = apply_asi_plan(c, "wizard", level, ruleset, ["intelligence", "intelligence", "constitution"])
-    slot = full_caster_slot(level)
-    if slot >= 3:
-        c.attacks = spell_attacks("Fireball", ability_stat="intelligence", slot_level=slot, ruleset=ruleset)
-    else:
-        c.attacks = spell_attacks("Burning Hands", ability_stat="intelligence", slot_level=slot, ruleset=ruleset)
-    return _named(c, "Evocation Wizard (Highest Slot Fireball)", level, taken)
+    # Fireball with every 3rd level or higher slot (Burning Hands with every slot before that), then Fire Bolt once the slots run out
+    slots = spell_slots(level)
+    spell, slot_level = ("Fireball", 3) if len(slots) >= 3 else ("Burning Hands", 1)
+    leveled = spell_attacks(spell, ability_stat="intelligence", slot_level=slot_level, ruleset=ruleset)
+    for a in leveled:
+        a.uses_per_fight = per_fight(per_long_rest=sum(slots[slot_level - 1:]))
+    cantrip = spell_attacks("Fire Bolt", ability_stat="intelligence", character_level=level, ruleset=ruleset)
+    for a in cantrip:
+        a.fallback_for = spell
+    c.attacks = leveled + cantrip
+    return _named(c, "Evocation Wizard (Fireball, then Fire Bolt)", level, taken)
+
+def rogue_assassin(level, ruleset):
+    c = rogue_dual_wield(level, ruleset)
+    # Assassinate: advantage against enemies that haven't acted yet, hits against surprised enemies are crits (assumes surprise)
+    c.first_round_advantage = c.first_round_auto_crit = level >= 3
+    return c
+
+def ranger_gloom_stalker(level, ruleset):
+    c = Character(level=level, dexterity=STARTING_PRIMARY, wisdom=STARTING_SECONDARY, archery=level >= 2)
+    taken = apply_asi_plan(c, "ranger", level, ruleset, ["feat:sharpshooter", "dexterity", "dexterity", "wisdom"])
+    hunters_mark = ["1d6"] if level >= 2 else []
+    c.attacks = [weapon_attack("Longbow", bonus_damage=hunters_mark) for _ in range(extra_attacks(level, "ranger", ruleset))]
+    if level >= 3:
+        # Dread Ambusher: an extra attack with +1d8 damage on the first turn of a fight
+        c.attacks.append(replace(weapon_attack("Longbow", bonus_damage=hunters_mark + ["1d8"]), name="Longbow (Dread Ambusher)", uses_per_fight=1))
+    return _named(c, "Gloom Stalker Ranger (Archer)", level, taken)
+
+def fighter_rogue(level, ruleset):
+    """ Fighter 2 (Two Weapon Fighting, Action Surge) then Rogue """
+    fighter_level = min(level, 2)
+    rogue_level = level - fighter_level
+    c = Character(level=level, dexterity=STARTING_PRIMARY, constitution=STARTING_SECONDARY, TWF=True)
+    taken = apply_asi_plan(c, "rogue", rogue_level, ruleset, ["dexterity", "dexterity", "constitution"])
+    if rogue_level:
+        c.once_per_turn_die_mod_list = [f"{ceil(rogue_level / 2)}d6"] # Sneak Attack
+    shortsword = weapon_attack("Shortsword", ability_stat="dexterity")
+    c.attacks = [shortsword, weapon_attack("Shortsword", ability_stat="dexterity", offhand=True)] + action_surge(fighter_level, ruleset, shortsword)
+    c = _named(c, "Fighter 2 / Rogue (Dual Shortswords)", level, taken)
+    c.description += f". Fighter {fighter_level} / Rogue {rogue_level}"
+    return c
+
+def sorcadin(level, ruleset):
+    """ Paladin 6 then Sorcerer, the sorcerer levels add spell slots for smites """
+    paladin_level = min(level, 6)
+    sorcerer_level = level - paladin_level
+    c = Character(level=level, strength=STARTING_PRIMARY, charisma=STARTING_SECONDARY + 2, GWF=paladin_level >= 2)
+    plan = ["feat:GWM", "strength", "strength", "charisma"]
+    taken = apply_asi_plan(c, "paladin", paladin_level, ruleset, plan)
+    taken += apply_asi_plan(c, "sorcerer", sorcerer_level, ruleset, plan[len(taken):])
+    if paladin_level >= 2:
+        # Single class paladins round their caster level up, multiclass spell slots use half the paladin level (rounded down) plus the sorcerer level
+        smite(c, spell_slots(paladin_level // 2 + sorcerer_level if sorcerer_level else ceil(paladin_level / 2)))
+    c.attacks = [weapon_attack("Greatsword") for _ in range(extra_attacks(paladin_level, "paladin", ruleset))]
+    c = _named(c, "Sorcadin (Paladin 6 / Sorcerer)", level, taken)
+    c.description += f". Paladin {paladin_level} / Sorcerer {sorcerer_level}"
+    return c
 
 BUILDS = {b.key: b for b in [
     Build("fighter_gwm", "Champion Fighter (GWM)", "fighter", "Greatsword, Great Weapon Fighting, GWM at 4, crits on 19 from level 3", fighter_champion_gwm),
@@ -280,15 +331,19 @@ BUILDS = {b.key: b for b in [
     Build("paladin_smite", "Paladin (Smite First Hit)", "paladin", "Greatsword, GWF, smites the first hit each round with the highest slot", paladin_smite),
     Build("paladin_crit_fish", "Paladin (Smite Crits Only)", "paladin", "Same as the smite paladin, but only smites critical hits (crit fishing)", paladin_crit_fish),
     Build("rogue_dual_wield", "Rogue (Dual Shortswords)", "rogue", "Two shortswords, Sneak Attack on the first hit each round", rogue_dual_wield),
+    Build("rogue_assassin", "Assassin Rogue (Dual Shortswords)", "rogue", "Sneak Attack, Assassinate from level 3: advantage and crits on hits in the first round (assumes surprise)", rogue_assassin),
     Build("rogue_thief", "Thief Rogue (BG3 Fast Hands)", "rogue", "Dual shortswords, in BG3 Fast Hands' extra bonus action gives a second offhand attack from level 3", rogue_thief),
+    Build("ranger_gloom_stalker", "Gloom Stalker Ranger (Archer)", "ranger", "Longbow, Archery, Hunter's Mark, Sharpshooter at 4, Dread Ambusher's extra first turn attack (+1d8) from level 3", ranger_gloom_stalker),
     Build("ranger_archer", "Hunter Ranger (Archer + Hunter's Mark)", "ranger", "Longbow, Archery, Hunter's Mark, Colossus Slayer, Sharpshooter at 4", ranger_hunter_archer),
     Build("monk_open_hand", "Open Hand Monk (Flurry)", "monk", "Unarmed strikes plus Flurry of Blows every round", monk_open_hand),
     Build("warlock_eb", "Warlock (Eldritch Blast + Hex)", "warlock", "Eldritch Blast with Agonizing Blast and Hex on every beam", warlock_eldritch_blast),
     Build("warlock_hexblade", "Hexblade Warlock (Pact of the Blade)", "warlock", "Charisma longsword with Hex and Hexblade's Curse (not limited per rest), extra attack at 5, Lifedrinker at 12", warlock_hexblade),
     Build("sorlock", "Sorlock (Warlock 2 / Sorcerer)", "multiclass", "Eldritch Blast with Agonizing Blast and Hex, plus a Quickened Eldritch Blast while sorcery points last", sorlock),
+    Build("fighter_rogue", "Fighter 2 / Rogue (Dual Shortswords)", "multiclass", "Two Weapon Fighting and Action Surge from 2 fighter levels, then Rogue Sneak Attack", fighter_rogue),
+    Build("sorcadin", "Sorcadin (Paladin 6 / Sorcerer)", "multiclass", "Greatsword paladin with GWM, sorcerer levels add spell slots for more smites", sorcadin),
     Build("hexadin", "Hexadin (Hexblade 1 / Paladin)", "multiclass", "Charisma longsword with Dueling and Hexblade's Curse, smites from spell slots and the pact slot", hexadin),
     Build("sorcerer_fire_bolt", "Draconic Sorcerer (Fire Bolt)", "sorcerer", "Fire Bolt with Elemental Affinity from level 6", sorcerer_draconic_fire_bolt),
-    Build("wizard_fireball", "Evocation Wizard (Highest Slot Fireball)", "wizard", "Single target Fireball (Burning Hands before level 5) with the highest slot every round", wizard_evoker_fireball),
+    Build("wizard_fireball", "Evocation Wizard (Fireball, then Fire Bolt)", "wizard", "Single target Fireball with every 3rd level or higher slot (Burning Hands before level 5), then Fire Bolt", wizard_evoker_fireball),
 ]}
 
 def build_character(key, level, ruleset="bg3"):

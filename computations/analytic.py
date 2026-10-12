@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 from computations.models import calculate_attack_and_damage_context
+from computations.numerical_simulation import has_fight_limits
 
 # Analytic Values
 def expected_value(die_size):
@@ -75,12 +76,15 @@ def hit_and_crit_chance(num_die=(), die_size=(), modifier=0, difficulty_class=15
         p_hit += p_face * bonus[max(needed, 0):].sum()
     return float(p_hit), float(p_crit)
 
-def expected_attack_damage(attack_context, damage_context, p_first_hit=None):
+def expected_attack_damage(attack_context, damage_context, p_first_hit=None, auto_crit=False):
     """ Expected damage of a single attack (before damage reduction, resistances are applied linearly)
-        p_first_hit is the probability that this attack is the first to hit this round, used for once per turn damage """
+        p_first_hit is the probability that this attack is the first to hit this round, used for once per turn damage.
+        With auto_crit every hit is a crit (i.e. Assassinate against a surprised enemy) """
     a = attack_context if isinstance(attack_context, dict) else asdict(attack_context)
     d = damage_context if isinstance(damage_context, dict) else asdict(damage_context)
     p_hit, p_crit = hit_and_crit_chance(**a)
+    if auto_crit:
+        p_crit = p_hit
     p_miss = 1 - p_hit
 
     base = expected_dice(d["num_die"], d["die_size"], d["reroll_on"], d["advantage"], d["disadvantage"]) + d["modifier"]
@@ -114,18 +118,25 @@ def expected_by_attack(character, enemy, rounds_per_fight=None):
         With rounds_per_fight, attacks and once per turn damage limited per fight are averaged over fights of that many rounds,
         otherwise resources are unlimited (every round is the same) """
     attack_contexts, damage_contexts = calculate_attack_and_damage_context(character, enemy)
-    chances = [hit_and_crit_chance(**asdict(a)) for a in attack_contexts]
-    base = [expected_attack_damage(a, d) for a, d in zip(attack_contexts, damage_contexts)] # Without once per turn damage
-    p_trigger, once_value = [], []
-    for (p_hit, p_crit), d in zip(chances, damage_contexts):
+
+    def profile(a, d, first_round):
+        """ Expected damage without once per turn damage, chance to trigger it and its expected value when it does """
+        a = asdict(a)
+        if first_round and d.first_round_advantage:
+            a["advantage"] = True
+        auto_crit = first_round and d.first_round_auto_crit
+        p_hit, p_crit = hit_and_crit_chance(**a)
+        p_crit = p_hit if auto_crit else p_crit
         p = (p_crit if d.once_crit_only else p_hit) if d.once_per_turn_eligible and (d.once_num_die or d.once_modifier) else 0.0
         once = expected_dice(d.once_num_die, d.once_die_size, d.reroll_on)
-        p_trigger.append(p)
         # Given that this attack used the once per turn damage, the chance it was a crit is p_crit/p
-        once_value.append((once + d.once_modifier + p_crit / p * once) * d.damage_multiplier if p > 0 else 0.0)
+        once_value = (once + d.once_modifier + p_crit / p * once) * d.damage_multiplier if p > 0 else 0.0
+        return expected_attack_damage(a, d, auto_crit=auto_crit), p, once_value
 
-    has_once = any(p_trigger)
-    limited = bool(rounds_per_fight) and (any(d.uses_per_fight for d in damage_contexts) or (has_once and damage_contexts[0].once_uses_per_fight))
+    later_rounds = [profile(a, d, False) for a, d in zip(attack_contexts, damage_contexts)]
+    has_once = any(p for _, p, _ in later_rounds)
+    limited = bool(rounds_per_fight) and has_fight_limits([asdict(d) for d in damage_contexts])
+    first_round = [profile(a, d, True) for a, d in zip(attack_contexts, damage_contexts)] if limited else later_rounds
     num_rounds = rounds_per_fight if limited else 1
     averages = [d.uses_per_fight if limited else 0 for d in damage_contexts] + [damage_contexts[0].once_uses_per_fight if limited and has_once else 0]
 
@@ -136,13 +147,19 @@ def expected_by_attack(character, enemy, rounds_per_fight=None):
         for r in range(num_rounds):
             p_available = 1.0 if once_uses is None else triggered_rounds[:once_uses].sum()
             p_none_yet = 1.0
-            for k, u in enumerate(attack_uses):
-                if u is not None and r >= u:
+            for k, (u, d) in enumerate(zip(attack_uses, damage_contexts)):
+                if d.fallback_index >= 0:
+                    # Made once the limited attack it replaces is used up, never if that attack isn't limited
+                    replaced_uses = attack_uses[d.fallback_index]
+                    if replaced_uses is None or r < replaced_uses:
+                        continue
+                elif u is not None and r >= u:
                     continue # Used up
-                totals[k] += probability * base[k]
-                if p_trigger[k]:
-                    totals[k] += probability * p_available * p_none_yet * p_trigger[k] * once_value[k]
-                    p_none_yet *= 1 - p_trigger[k]
+                base, p_trigger, once_value = (first_round if r == 0 else later_rounds)[k]
+                totals[k] += probability * base
+                if p_trigger:
+                    totals[k] += probability * p_available * p_none_yet * p_trigger * once_value
+                    p_none_yet *= 1 - p_trigger
             if once_uses is not None:
                 q = 1 - p_none_yet
                 triggered_rounds = np.concatenate([triggered_rounds * (1 - q), [0]]) + np.concatenate([[0], triggered_rounds * q])
@@ -152,7 +169,7 @@ def attack_breakdown(character, enemy, rounds_per_fight=None):
     """ Per attack table of to hit chance, crit chance and expected damage for a character against an enemy """
     attack_contexts, damage_contexts = calculate_attack_and_damage_context(character, enemy)
     expected = expected_by_attack(character, enemy, rounds_per_fight)
-    any_limited = any(a.uses_per_fight for a in character.attacks)
+    any_limited = any(a.uses_per_fight or a.fallback_for for a in character.attacks)
     rows = []
     for attack, a, d, e in zip(character.attacks, attack_contexts, damage_contexts, expected):
         p_hit, p_crit = hit_and_crit_chance(**asdict(a))
@@ -171,7 +188,7 @@ def attack_breakdown(character, enemy, rounds_per_fight=None):
             "Crit %": round(100 * p_crit, 1),
         }
         if any_limited:
-            row["Uses/Fight"] = f"{attack.uses_per_fight:g}" if attack.uses_per_fight else "all"
+            row["Uses/Fight"] = f"after {attack.fallback_for}" if attack.fallback_for else f"{attack.uses_per_fight:g}" if attack.uses_per_fight else "all"
         row["Expected"] = round(float(e), 2)
         rows.append(row)
     columns = ["Attack", "To Hit", "Damage", "Hit %", "Crit %"] + (["Uses/Fight"] if any_limited else []) + ["Expected"]
@@ -185,7 +202,16 @@ def attacks_per_round(character, rounds_per_fight=None):
         base = int(np.floor(uses))
         frac = uses - base
         return ((1 - frac) * min(base, rounds_per_fight) + frac * min(base + 1, rounds_per_fight)) / rounds_per_fight
-    return float(sum(made(a.uses_per_fight) for a in character.attacks))
+    limited_uses = {a.name: a.uses_per_fight for a in reversed(character.attacks)} # First attack with a name wins
+    total = 0.0
+    for a in character.attacks:
+        if a.fallback_for and a.fallback_for != a.name and a.fallback_for in limited_uses:
+            # Made in the rounds after the attack it replaces is used up
+            replaced = limited_uses[a.fallback_for]
+            total += 1.0 - made(replaced) if replaced and rounds_per_fight else 0.0
+        else:
+            total += made(a.uses_per_fight)
+    return float(total)
 
 def expected_damage_per_round(character, enemy, rounds_per_fight=None):
     """ Expected (mean) damage per round, ignoring damage reduction and rounding """

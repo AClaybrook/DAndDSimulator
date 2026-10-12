@@ -164,3 +164,42 @@ def test_damage_per_fight_outputs():
     export = fight_export(fights)
     assert len(export) == 1000 and list(export.columns[:3]) == ["Name", "Fight", "Total"]
     assert (export["Total"] == export[[f"Round {r}" for r in range(1, 5)]].sum(axis=1)).all()
+
+FIRE_BOLT = Attack(name="Fire Bolt", type="spell", ability_stat="intelligence", damage="2d10", fallback_for="Fireball")
+FIREBALL = Attack(name="Fireball", type="spell", ability_stat="intelligence", damage="8d6", saving_throw=True, saving_throw_success_multiplier=0.5, uses_per_fight=1.5)
+FALLBACK_CASES = {
+    "fireball_then_fire_bolt": (4, Character(level=5, intelligence=18, attacks=[FIREBALL, FIRE_BOLT])),
+    "assassin": (3, Character(level=5, dexterity=18, once_per_turn_die_mod_list=["3d6"], first_round_advantage=True, first_round_auto_crit=True,
+                              attacks=[Attack(ability_stat="dexterity"), Attack(ability_stat="dexterity", offhand=True)])),
+    "dread_ambusher": (3, Character(level=5, dexterity=18, archery=True, first_round_advantage=True,
+                                    attacks=[Attack(type="weapon (ranged)", ability_stat="dexterity", damage="1d8")] * 2
+                                    + [Attack(name="Dread Ambusher", type="weapon (ranged)", ability_stat="dexterity", damage="1d8", bonus_damage_die_mod_list=["1d8"], uses_per_fight=1)])),
+}
+
+@pytest.mark.parametrize("name", FALLBACK_CASES)
+def test_fallback_and_first_round_match_analytic(name):
+    rounds_per_fight, character = FALLBACK_CASES[name]
+    enemy = Enemy(armor_class=15, dexterity_save=2)
+    expected = expected_damage_per_round(character, enemy, rounds_per_fight)
+    _, df_by_rounds, _ = simulate_rounds_from_characters([character], enemy, num_rounds=FIGHT_ROUNDS, rng=set_seed(5), rounds_per_fight=rounds_per_fight)
+    tolerance = 0.02 * expected + (0.3 if "fireball" in name else 0.05)
+    assert df_by_rounds[0]["Damage"].mean() == pytest.approx(expected, abs=tolerance)
+
+def test_fallback_attacks():
+    from computations.analytic import attacks_per_round
+    rounds_per_fight, character = FALLBACK_CASES["fireball_then_fire_bolt"]
+    # One attack per round: Fireball while it lasts, then Fire Bolt
+    assert attacks_per_round(character, rounds_per_fight) == pytest.approx(1.0)
+    # Without fights the limited attack is made every round, so the fallback never is
+    dfs, _, _ = simulate_rounds_from_characters([character], Enemy(), num_rounds=1000)
+    assert dfs[0].groupby("Attack", observed=True)["Damage"].sum()["Fire Bolt"] == 0
+    assert attacks_per_round(character) == 1.0
+    # A fallback for an unlimited attack is never made
+    unlimited = Character(attacks=[Attack(name="Sword"), Attack(name="Backup", fallback_for="Sword")])
+    assert expected_damage_per_round(unlimited, Enemy(), 3) == pytest.approx(expected_damage_per_round(Character(attacks=[Attack(name="Sword")]), Enemy(), 3))
+
+def test_first_round_conditions_front_load():
+    from computations.numerical_simulation import fight_damage
+    rounds_per_fight, character = FALLBACK_CASES["assassin"]
+    by_round = fight_damage(character, Enemy(armor_class=15), 20_000, rounds_per_fight, rng=set_seed(2)).mean(axis=1)
+    assert by_round[0] > 1.5 * by_round[1]

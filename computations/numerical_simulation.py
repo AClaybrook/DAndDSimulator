@@ -1,6 +1,6 @@
 """ Numerical simulation of D&D combat
     Uses vectorized numpy operations for speed """
-from dataclasses import asdict, replace
+from dataclasses import replace
 import numpy as np
 import pandas as pd
 
@@ -194,8 +194,21 @@ def has_once_damage(d):
     return bool(d.get("once_per_turn_eligible") and (d.get("once_num_die") or d.get("once_modifier")))
 
 def has_fight_limits(damage_contexts):
-    """ True if any attack or the once per turn damage is limited per fight, which needs the slower fight by fight simulation """
-    return any(d.get("uses_per_fight") or (d.get("once_uses_per_fight") and has_once_damage(d)) for d in damage_contexts)
+    """ True if any attack or the once per turn damage is limited per fight, or the first round is special,
+        which needs the slower fight by fight simulation """
+    return any(d.get("uses_per_fight") or (d.get("once_uses_per_fight") and has_once_damage(d))
+               or d.get("first_round_advantage") or d.get("first_round_auto_crit") for d in damage_contexts)
+
+def is_fallback(d):
+    return d.get("fallback_index", -1) >= 0
+
+def inactive_results(num_rounds, damage_only):
+    """ Results of an attack that is never made """
+    if damage_only:
+        return np.zeros(num_rounds, dtype='int32')
+    result = np.zeros((len(RESULT_COLUMNS), num_rounds), dtype='int32')
+    result[0] = np.arange(1, num_rounds + 1)
+    return result
 
 def uses_per_fight(average, num_fights, rng=RNG):
     """ Integer uses for each fight from an average, i.e. 1.5 is 1 or 2 with equal chance """
@@ -212,15 +225,21 @@ def simulate_attacks(attack_contexts, damage_contexts, num_rounds=10000, rng=RNG
         Attack rolls are rolled first so once per turn damage can be applied to the first hit of each round.
         Characters with resources limited per fight are simulated fight by fight when rounds_per_fight is given,
         everything else uses the faster path where every round is independent """
-    attack_contexts = [a if isinstance(a, dict) else asdict(a) for a in attack_contexts]
-    damage_contexts = [d if isinstance(d, dict) else asdict(d) for d in damage_contexts]
+    # Shallow copies are much faster than dataclasses.asdict, the contexts are only read
+    attack_contexts = [a if isinstance(a, dict) else dict(vars(a)) for a in attack_contexts]
+    damage_contexts = [d if isinstance(d, dict) else dict(vars(d)) for d in damage_contexts]
     if rounds_per_fight and has_fight_limits(damage_contexts):
         return simulate_fight_attacks(attack_contexts, damage_contexts, num_rounds, rounds_per_fight, rng=rng, damage_only=damage_only)
-    rolled = [attack_roll(num_rounds, **a, rng=rng) for a in attack_contexts]
+    # Without fights, limited attacks are made every round so their fallback attacks are never needed
+    rolled = [None if is_fallback(d) else attack_roll(num_rounds, **a, rng=rng) for a, d in zip(attack_contexts, damage_contexts)]
 
     hit_already = np.zeros(num_rounds, dtype=bool)
     results = []
-    for (attack_rolls, rolls, hit, crit), d in zip(rolled, damage_contexts):
+    for rolls_k, d in zip(rolled, damage_contexts):
+        if rolls_k is None:
+            results.append(inactive_results(num_rounds, damage_only))
+            continue
+        attack_rolls, rolls, hit, crit = rolls_k
         once_mask = None
         if d.get("once_per_turn_eligible") and (d.get("once_num_die") or d.get("once_modifier")):
             trigger = crit if d.get("once_crit_only") else hit
@@ -249,10 +268,18 @@ def simulate_fight_attacks(attack_contexts, damage_contexts, num_rounds, rounds_
     per_attack = [[] for _ in damage_contexts]
     rounds = np.arange(1, num_fights + 1, dtype='int32')
     for r in range(rounds_per_fight):
-        rolled = [attack_roll(num_fights, **a, rng=rng) for a in attack_contexts]
+        rolled = [attack_roll(num_fights, **({**a, "advantage": True} if r == 0 and d.get("first_round_advantage") else a), rng=rng)
+                  for a, d in zip(attack_contexts, damage_contexts)]
         hit_already = np.zeros(num_fights, dtype=bool)
         for k, ((attack_rolls, rolls, hit, crit), d) in enumerate(zip(rolled, damage_contexts)):
-            active = attack_uses[k] > r if attack_uses[k] is not None else None
+            if r == 0 and d.get("first_round_auto_crit"):
+                crit = hit.copy()
+            if is_fallback(d):
+                # Made once the limited attack it replaces is used up, never if that attack isn't limited
+                limited_uses = attack_uses[d["fallback_index"]]
+                active = limited_uses <= r if limited_uses is not None else np.zeros(num_fights, dtype=bool)
+            else:
+                active = attack_uses[k] > r if attack_uses[k] is not None else None
             if active is not None:
                 hit, crit = hit & active, crit & active
             once_mask = None
@@ -442,7 +469,7 @@ def simulate_rounds_to_kill(characters, enemy, num_rounds=10000, max_rounds=30, 
     results = {}
     for c in characters:
         _, damage_contexts = calculate_attack_and_damage_context(c, enemy)
-        damage_contexts = [asdict(d) for d in damage_contexts]
+        damage_contexts = [dict(vars(d)) for d in damage_contexts]
         if has_fight_limits(damage_contexts):
             cumulative = np.cumsum(fight_damage(c, enemy, min(num_rounds, MAX_FIGHTS_TO_KILL), max_rounds, rng=rng), axis=0)
             killed = cumulative >= max(int(enemy.hit_points), 1)
