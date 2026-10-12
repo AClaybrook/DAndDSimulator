@@ -1,5 +1,5 @@
 """ Analytic (exact) computations, used to validate the numerical simulation and to explain where damage comes from """
-from dataclasses import asdict
+from dataclasses import asdict, replace
 import numpy as np
 import pandas as pd
 
@@ -89,10 +89,11 @@ def expected_attack_damage(attack_context, damage_context, p_first_hit=None):
     miss = expected_dice(d["miss_num_die"], d["miss_damage_die"]) + d["miss_damage_modifier"] + d["save_success_multiplier"] * base
 
     expected = p_hit * base + p_crit * crit_extra + p_miss * miss
-    if p_first_hit is not None and d.get("once_per_turn_eligible") and p_hit > 0:
+    p_trigger = p_crit if d.get("once_crit_only") else p_hit
+    if p_first_hit is not None and d.get("once_per_turn_eligible") and p_trigger > 0:
         once = expected_dice(d["once_num_die"], d["once_die_size"], d["reroll_on"])
-        # Given that this is the first hit, the chance it was a crit is p_crit/p_hit
-        expected += p_first_hit * (once + d["once_modifier"] + p_crit / p_hit * once)
+        # Given that this is the first trigger, the chance it was a crit is p_crit/p_trigger
+        expected += p_first_hit * (once + d["once_modifier"] + p_crit / p_trigger * once)
     return expected * d["damage_multiplier"]
 
 def attack_breakdown(character, enemy):
@@ -103,9 +104,10 @@ def attack_breakdown(character, enemy):
     for attack, a, d in zip(character.attacks, attack_contexts, damage_contexts):
         p_hit, p_crit = hit_and_crit_chance(**asdict(a))
         p_first_hit = None
-        if d.once_per_turn_eligible:
-            p_first_hit = p_no_hit_yet * p_hit
-            p_no_hit_yet *= 1 - p_hit
+        if d.once_per_turn_eligible and (d.once_num_die or d.once_modifier):
+            p_trigger = p_crit if d.once_crit_only else p_hit
+            p_first_hit = p_no_hit_yet * p_trigger
+            p_no_hit_yet *= 1 - p_trigger
         if a.saving_throw:
             to_hit = f"DC {a.difficulty_class} vs {a.modifier:+d}"
         else:
@@ -126,6 +128,37 @@ def attack_breakdown(character, enemy):
 def expected_damage_per_round(character, enemy):
     """ Expected (mean) damage per round, ignoring damage reduction and rounding """
     return float(attack_breakdown(character, enemy)["Expected"].sum())
+
+POWER_ATTACK_FEATS = {"GWM": ("Great Weapon Master", lambda a: a.type == "weapon (melee)" and a.heavy),
+                      "sharpshooter": ("Sharpshooter", lambda a: a.type == "weapon (ranged)")}
+
+def power_attack_insights(character, enemy, armor_classes):
+    """ For each power attack feat (-5 to hit, +10 damage) a character has turned on, finds the armor classes where it is worth using.
+        Uses the exact expected damage, so it is instant """
+    insights = []
+    for flag, (label, applies) in POWER_ATTACK_FEATS.items():
+        if not getattr(character, flag) or not any(applies(a) for a in character.attacks):
+            continue
+        without = replace(character, **{flag: False})
+        gains = {ac: expected_damage_per_round(character, replace(enemy, armor_class=ac)) - expected_damage_per_round(without, replace(enemy, armor_class=ac))
+                 for ac in armor_classes}
+        worth_it = [ac for ac, gain in gains.items() if gain > 0]
+        if not worth_it:
+            advice = "Turn it off at every armor class"
+        elif len(worth_it) == len(gains):
+            advice = f"Keep it on at every armor class ({min(gains)}-{max(gains)})"
+        else:
+            advice = f"Keep it on up to AC {max(worth_it)}, turn it off from AC {max(worth_it) + 1}"
+        gain_now = gains.get(enemy.armor_class)
+        if gain_now is None:
+            gain_now = expected_damage_per_round(character, enemy) - expected_damage_per_round(without, enemy)
+        insights.append({
+            "Character": character.name,
+            "Feat": label,
+            "Advice": advice,
+            f"DPR Gain vs Current Enemy (AC {enemy.armor_class})": round(gain_now, 2),
+        })
+    return insights
 
 def hit_chance(die=20, mod=0, ac=15, advantage=False, disadvantage=False, crit_on=20):
     """ Returns the chance to hit a target with a given armor class """

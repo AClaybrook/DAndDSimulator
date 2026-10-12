@@ -51,11 +51,11 @@ See [CHANGELOG.md](CHANGELOG.md) for what changed in 2.0.
 * Collapsable nav/sidebar
 * Import and Export of characters via json
 * Simulate Combat from UI values
-* 5 different simulation types and corresponding plots:
+* 7 different simulation types and corresponding plots:
     * Damage Per Round
     * Damage Per Attack
-    * Damage Per Round vs Armor Class
-    * Damage Per Attack vs Armor Class
+    * Damage Per Round/Attack vs Armor Class, with insights on when to turn GWM/Sharpshooter off
+    * Damage Per Round/Attack vs Level, preset characters level up realistically
     * Rounds to Kill (uses enemy hit points)
 * Export Damage Results to csv
 * Implement easy callbacks in javascript
@@ -64,19 +64,24 @@ See [CHANGELOG.md](CHANGELOG.md) for what changed in 2.0.
 * Character presets that level up realistically, with a BG3 or 5e ruleset
 * Weapon and spell templates for attacks
 * Monster presets and CR baselines, damage type resistances/vulnerabilities/immunities, per ability saving throws
-* Once per turn damage (sneak attack, smite)
+* Once per turn damage (sneak attack, smite), per attack eligibility and crit only (crit fishing)
 * Leaderboard and exact per attack breakdown
 * Validated numerical sims with tests
 
 ## Roadmap
 Rough priority order, the first items have the most impact for the least work.
 
+### Done in 2.1
+* DPR vs Level sweep with realistic preset level ups, sweep leaderboards
+* GWM/Sharpshooter breakeven insights
+* Per attack once per turn eligibility, crit fishing smites
+* Battle Master, BG3 Thief and crit fishing Paladin builds
+
 ### Next
-* Design of Experiments: vary one parameter (level, AC, a feat on/off) across copies of a character and plot DPR vs that parameter. The level presets make "DPR by level 1-12" an easy first version
-* More builds/subclasses: Battle Master (superiority dice), Gloom Stalker (extra first round attack), Swords/Hexblade Warlock, Tempest/Light Cleric, Thief with two offhand attacks, multiclass presets (i.e. Paladin/Warlock, Fighter/Rogue)
-* BG3 specific mechanics: weapon actions, Elemental Adept, Savage Attacker per BG3 patch rules, BG3 item database (i.e. +1d4 rings, Gloves of the Belligerent Skald)
-* Per attack once per turn eligibility (sneak attack requires finesse/ranged, smite requires melee) and a choice of which hit to smite (first hit vs crit fishing)
-* Show the leaderboard for the vs Armor Class graphs (average over an AC range)
+* More parameter sweeps: enemy saving throw bonus, a single ability score, or a feat on/off as its own series
+* More builds/subclasses: Gloom Stalker (extra first round attack), Swords/Hexblade Warlock, Tempest/Light Cleric, multiclass presets (i.e. Paladin/Warlock, Fighter/Rogue)
+* Keep manual edits when a preset character is swept over levels (apply the card's extra modifiers on top of the rebuilt character)
+* BG3 specific mechanics: weapon actions, Elemental Adept, Savage Attacker per BG3 patch rules, BG3 item database (i.e. +1d4 rings, Gloves of the Belligerent Skald), verified against the game
 
 ### Later
 * Resources per short/long rest: number of encounters and rounds per encounter, so spell slots, rage, ki and smites are limited rather than unlimited
@@ -108,7 +113,7 @@ Rough priority order, the first items have the most impact for the least work.
     * Only some basic checks like GWM only with twohanded weapons 
 * Adjusting rolls needed for critial hits (Crit on) needs to be applied manually, i.e. a Fighter taking the Champion subclass, spell sniper feat need to be accounted for by manually reducing the Character Crit on field (the Champion presets do this for you)
 * Bonus damage dice use the attack's damage type for resistances, i.e. Hex on an Eldritch Blast is treated as force damage
-* Once per turn damage applies to the first hit of any attack roll (not saving throw spells)
+* Once per turn damage applies to the first hit (or crit, if crit only) of any eligible attack roll (not saving throw spells)
 * Rounds to kill resamples simulated rounds, since rounds are independent of each other
 * no status effects, stunned, restrained etc
 

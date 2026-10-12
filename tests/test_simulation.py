@@ -26,6 +26,9 @@ CASES = {
     "fireball": Character(level=5, intelligence=18, attacks=[Attack(type="spell", ability_stat="intelligence", damage="8d6", saving_throw=True, saving_throw_success_multiplier=0.5)]),
     "sacred_flame": Character(level=5, wisdom=18, attacks=[Attack(type="spell", ability_stat="wisdom", damage="2d8", saving_throw=True, saving_throw_success_multiplier=0)]),
     "miss_damage": Character(strength=16, bonus_miss_die_mod_list=["1d4", 1], attacks=[greatsword()]),
+    "smite_crit_fishing": Character(level=11, strength=18, advantage=True, crit_on=19, once_per_turn_die_mod_list=["4d8"], once_per_turn_crit_only=True, attacks=[greatsword(), greatsword()]),
+    "sneak_attack_ranged_only": Character(level=5, dexterity=18, once_per_turn_die_mod_list=["3d6"],
+                                          attacks=[Attack(ability_stat="dexterity", once_per_turn_eligible=False), Attack(type="weapon (ranged)", ability_stat="dexterity", damage="1d8")]),
     "disadvantage": Character(strength=16, disadvantage=True, bonus_crit_die_mod_list=["1d8"], attacks=[greatsword()]),
 }
 
@@ -101,3 +104,13 @@ def test_column_stats_match_numpy():
     import pandas as pd
     df = pd.DataFrame({"a": rng.integers(0, 20, 500)})
     assert describe(df)["a"].tolist() == pytest.approx(df["a"].describe()[["mean", "min", "25%", "50%", "75%", "max"]].tolist())
+
+def test_once_per_turn_options():
+    enemy = Enemy(armor_class=15)
+    base = dict(level=5, strength=18, once_per_turn_die_mod_list=["10d6"], attacks=[greatsword(), greatsword()])
+    always = expected_damage_per_round(Character(**base), enemy)
+    crit_only = expected_damage_per_round(Character(**base, once_per_turn_crit_only=True), enemy)
+    never = expected_damage_per_round(Character(**{**base, "once_per_turn_die_mod_list": []}), enemy)
+    assert never < crit_only < always
+    ineligible = Character(**{**base, "attacks": [greatsword(once_per_turn_eligible=False)] * 2})
+    assert expected_damage_per_round(ineligible, enemy) == pytest.approx(never)

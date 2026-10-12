@@ -1,5 +1,26 @@
 # Changelog
 
+## 2.1.0 (2026-10-12)
+
+### New features
+- **DPR vs Level / DPA vs Level:** sweeps every level of the selected ruleset (1-12 for BG3, 1-20 for 5e), with graph, tables and csv export.
+  - Preset characters are rebuilt at each level, so they gain attacks, feats and features like the real class. Their card shows the new **Level Up Preset** field. Edits made after adding the preset are not kept in the sweep.
+  - Other characters only change their level (proficiency, rage damage and similar).
+- **Sweep leaderboard:** the vs Armor Class and vs Level graphs rank characters by average DPR over the range.
+- **Insights:** in DPR vs Armor Class, every character with Great Weapon Master or Sharpshooter turned on gets the exact AC where the -5/+10 stops paying off. It also shows the DPR gain against the current enemy (it can be negative).
+- **Once per turn damage options:**
+  - **Once Per Turn Eligible** on each attack, so Sneak Attack/Smite can be limited to the right attacks.
+  - **Once Per Turn Only On Crit** on the character, for crit fishing with Divine Smite.
+- **New builds:**
+  - **Battle Master Fighter (GWM):** a damage maneuver on the first hit; superiority dice are d8/d10/d12.
+  - **Paladin (Smite Crits Only).**
+  - **Thief Rogue:** in BG3, Fast Hands' second bonus action is used for a second off-hand attack from level 3.
+
+### Internals
+- `simulate_sweep` generalizes the armor class sweep to any parameter. It only simulates damage, so sweeps stay fast: all 13 presets × 12 levels × 10k rounds takes about 0.2 s, and the benchmark includes it.
+- `game_data.classes.character_at_level` rebuilds a preset character at another level.
+- `Character.preset` records the build and ruleset a character came from.
+
 ## 2.0.0 (2026-10-12)
 
 A modernization pass: bug fixes in the combat math, a much faster simulation, a game database with level-up presets, and a dashboard that works on current Dash.

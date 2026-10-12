@@ -27,3 +27,7 @@ t("DPR 1M rounds", lambda: ns.simulate_rounds_from_characters(chars, enemy, num_
 t("DPR vs AC 10k (16 ACs)", lambda: ns.simulate_rounds_from_characters_multi_acs(chars, enemy, num_rounds=10_000, rng=rng))
 t("DPA vs AC 10k (16 ACs)", lambda: ns.simulate_rounds_from_characters_multi_acs(chars, enemy, num_rounds=10_000, by_round=False, rng=rng))
 t("DPR vs AC 100k (16 ACs)", lambda: ns.simulate_rounds_from_characters_multi_acs(chars, enemy, num_rounds=100_000, rng=rng), n=3)
+
+from game_data.classes import BUILDS, build_character, character_at_level  # noqa: E402
+presets = [build_character(key, 1) for key in BUILDS]
+t("DPR vs Level 10k (all presets, L1-12)", lambda: ns.simulate_rounds_from_characters_by_level(presets, enemy, range(1, 13), character_at_level, num_rounds=10_000, rng=rng))
