@@ -51,7 +51,7 @@ See [CHANGELOG.md](CHANGELOG.md) for what changed in 2.0.
 * Collapsable nav/sidebar
 * Import and Export of characters via json
 * Simulate Combat from UI values
-* 5 simulation types and corresponding plots:
+* 6 simulation types and corresponding plots:
     * Damage Per Round
     * Damage Per Attack
     * Damage Per Round/Attack sweeps over a parameter:
@@ -60,6 +60,7 @@ See [CHANGELOG.md](CHANGELOG.md) for what changed in 2.0.
         * Enemy Save Bonus
         * Attack Ability Score
     * Rounds to Kill (uses enemy hit points)
+    * Damage per Fight, damage by round of the fight with limited resources
 * Export Damage Results to csv
 * Implement easy callbacks in javascript
 * Reduce memory of dataframes
@@ -85,14 +86,17 @@ Rough priority order, the first items have the most impact for the least work.
 * Level sweeps keep manual edits to preset characters
 * Two Weapon Fighting Champion and Hexblade Warlock builds
 
+### Done in 2.3
+* Fights and limited resources: uses per fight for attacks and once per turn damage, Rounds per Fight, Damage per Fight view, fight based Rounds to Kill
+* Resource limited presets (smite slots, superiority dice, Action Surge, ki) and multiclass presets (Sorlock, Hexadin)
+
 ### Next
-* Multiclass presets (i.e. Paladin/Warlock, Fighter/Rogue), which need per-class level splits for features and spell slots
-* First round effects: Gloom Stalker's Dread Ambusher, Assassinate, and other once per fight bonuses (needs a per-encounter view rather than per-round averages)
-* Resource limited presets: smites, superiority dice and Hexblade's Curse per short/long rest (see Later)
+* Spell slot fallback: cast a leveled spell while slots last, then a cantrip (i.e. Fireball then Fire Bolt), which needs attacks that replace each other
+* First round conditions: Assassinate (advantage and auto crits against surprised enemies), Gloom Stalker's Dread Ambusher preset
+* More multiclass presets (Fighter/Rogue, Paladin/Sorcerer, Barbarian/Fighter)
 * BG3 specific mechanics: weapon actions, Elemental Adept, Savage Attacker per BG3 patch rules, BG3 item database (i.e. +1d4 rings, Gloves of the Belligerent Skald), verified against the game
 
 ### Later
-* Resources per short/long rest: number of encounters and rounds per encounter, so spell slots, rage, ki and smites are limited rather than unlimited
 * Conditional damage: GWM bonus attack on a crit/kill, Colossus Slayer only on damaged targets, Toll the Dead d12 vs damaged targets
 * Multiple enemies and area of effect spells
 * Party mode: buffs between characters (Bless, Haste, Faerie Fire) and turn order
@@ -110,7 +114,8 @@ Rough priority order, the first items have the most impact for the least work.
 ## Current Assumptions/Limitations ##
 * Calculations follow the BG3 ruleset by default. Presets and attack templates can use the 5e ruleset instead, which mostly changes the level cap and cantrip/extra attack progression
 * Classes and Races are not fully implemented, just the main damaging perks
-* Assume resources are unlimited (i.e. not tracking spell slots)
+* Resources are tracked per fight, not per rest: limited attacks and once per turn damage have average uses per fight (fractional averages are randomized per fight). Presets convert per rest resources assuming 4 fights per long rest and 2 short rests. Characters without limits behave as if resources are unlimited
+* Limited attacks are used in the first rounds of a fight, limited once per turn damage on the first hits
 * No multitarget, single target only
 * Enemys do not fight back/ not considering back and forth combat. So a character with 10 hp and 10 ac is just as good at damage as a character with 100 hp and 20 ac. Only enemy defensive stats matter
 * Do not consider turn order/initive

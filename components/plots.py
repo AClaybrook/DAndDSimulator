@@ -4,9 +4,11 @@
 import warnings
 import plotly.express as px
 import plotly.graph_objects as go
+import numpy as np
 import pandas as pd
 from dash import html
 import dash_bootstrap_components as dbc
+from computations.analytic import attacks_per_round
 from computations.numerical_simulation import describe
 
 # Color Palette
@@ -216,24 +218,24 @@ def generate_damage_per_attack_histogram(characters, dfs ,template='plotly_dark'
 def color_header(name, ii):
     return html.Span("\u25CF ", style={'color': COLORS[ii % len(COLORS)]}), name
 
-def build_leaderboard(characters, df_by_rounds):
+def build_leaderboard(characters, df_by_rounds, rounds_per_fight=None):
     """ Ranks characters by mean damage per round """
     rows = []
     for ii, (c, df) in enumerate(zip(characters, df_by_rounds)):
-        num_attacks = max(len(c.attacks), 1)
+        num_attacks = max(attacks_per_round(c, rounds_per_fight), 1e-9)
         rows.append({
             "ii": ii,
             "Character": c.name,
             "Mean DPR": df["Damage"].mean(),
             "Median": df["Damage"].median(),
             "25%-75%": f"{df['Damage'].quantile(0.25):g} - {df['Damage'].quantile(0.75):g}",
-            "Attacks": len(c.attacks),
+            "Attacks": f"{attacks_per_round(c, rounds_per_fight):.3g}",
             "Hit %": 100 * df["Hit"].mean() / num_attacks,
             "Crit %": 100 * df["Hit (Crit)"].mean() / num_attacks,
         })
     rows.sort(key=lambda r: r["Mean DPR"], reverse=True)
     best = rows[0]["Mean DPR"] if rows else 0
-    header = html.Thead(html.Tr([html.Th(h) for h in ["#", "Character", "Mean DPR", "vs Best", "Median", "25%-75%", "Attacks", "Hit %", "Crit %"]]))
+    header = html.Thead(html.Tr([html.Th(h) for h in ["#", "Character", "Mean DPR", "vs Best", "Median", "25%-75%", "Attacks/Round", "Hit %", "Crit %"]]))
     body = html.Tbody([
         html.Tr([
             html.Td(rank),
@@ -348,3 +350,62 @@ def build_insights(insights):
         ])),
         dbc.Row(dbc.Col(dbc.Table.from_dataframe(pd.DataFrame(insights), striped=True, bordered=True, hover=True, responsive=True, size="sm"))),
     ]
+
+def generate_fight_plot(fights, template='plotly_dark'):
+    """ Average damage in each round of a fight, shows bursts from limited resources at the start of fights """
+    fig = go.Figure()
+    for ii, (name, damage) in enumerate(fights.items()):
+        rounds = list(range(1, damage.shape[0] + 1))
+        fig.add_trace(go.Scatter(
+            name=name,
+            x=rounds,
+            y=damage.mean(axis=1),
+            mode='lines+markers',
+            line=dict(color=COLORS[ii % len(COLORS)]),
+        ))
+    num_rounds = next(iter(fights.values())).shape[0] if fights else 0
+    fig.update_layout(
+        title=f"Damage by Round of a {num_rounds} Round Fight",
+        xaxis_title='Round of the Fight',
+        yaxis_title='Average Damage',
+        xaxis=dict(dtick=1),
+        template=template,
+    )
+    return fig
+
+def fight_summary(fights):
+    """ Table of total damage per fight and how it is spread over the rounds """
+    rows = []
+    for name, damage in fights.items():
+        totals = damage.sum(axis=0)
+        by_round = damage.mean(axis=1)
+        rows.append({
+            "Character": name,
+            "Mean Fight Damage": round(float(totals.mean()), 2),
+            "Median": float(np.median(totals)),
+            "25%": float(np.percentile(totals, 25)),
+            "75%": float(np.percentile(totals, 75)),
+            "Average per Round": round(float(by_round.mean()), 2),
+            "Round 1": round(float(by_round[0]), 2),
+            "Last Round": round(float(by_round[-1]), 2),
+        })
+    rows.sort(key=lambda r: r["Mean Fight Damage"], reverse=True)
+    return [
+        dbc.Row(dbc.Col([
+            html.H4("Damage per Fight", className="mt-3 mb-0"),
+            html.P("Limited attacks are used in the first rounds of each fight and limited once per turn damage is used on the first hits until it runs out",
+                   className="small text-muted"),
+        ])),
+        dbc.Row(dbc.Col(dbc.Table.from_dataframe(pd.DataFrame(rows), striped=True, bordered=True, hover=True, responsive=True, size="sm"))),
+    ]
+
+def fight_export(fights):
+    """ One row per character and fight, with the damage of each round """
+    frames = []
+    for name, damage in fights.items():
+        df = pd.DataFrame(damage.T, columns=[f"Round {r}" for r in range(1, damage.shape[0] + 1)])
+        df.insert(0, "Total", damage.sum(axis=0))
+        df.insert(0, "Fight", range(1, damage.shape[1] + 1))
+        df.insert(0, "Name", name)
+        frames.append(df)
+    return pd.concat(frames, ignore_index=True)

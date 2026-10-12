@@ -7,7 +7,7 @@ from dash.exceptions import PreventUpdate
 from dash import dcc, html, Input, Output, State, Patch, MATCH, ALL, ctx, clientside_callback, ClientsideFunction
 from computations.analytic import attack_breakdown, power_attack_insights
 from computations.models import Character, Enemy
-from computations.numerical_simulation import simulate_rounds_from_characters, set_seed, simulate_rounds_to_kill
+from computations.numerical_simulation import simulate_rounds_from_characters, set_seed, simulate_rounds_to_kill, simulate_fights
 from game_data import attacks_from_template, enemy_from_preset
 from game_data.classes import build_character
 
@@ -17,7 +17,7 @@ from components.callback_helpers import (get_active_ids_and_new_id, get_new_id, 
                                          rename_card, unique_name)
 from components.plots import (COLORS, generate_plot_data, add_tables, summary_stats, generate_line_plots, generate_damage_per_attack_histogram,
                               build_tables_row, build_leaderboard, build_breakdown_tables, generate_rounds_to_kill_plot, rounds_to_kill_summary,
-                              build_sweep_leaderboard, build_insights)
+                              build_sweep_leaderboard, build_insights, generate_fight_plot, fight_summary, fight_export)
 from components.character_card import generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values, characters_from_ui
 from components.enemy_card import extract_enemy_ui_values, generate_enemy_card_body
 from components.sweeps import SWEEP_PARAMETERS, run_sweep
@@ -25,6 +25,7 @@ from components.sweeps import SWEEP_PARAMETERS, run_sweep
 MAX_CHARACTERS = min(8, len(COLORS)) # There are 10 colors and 4 characters fit per row, so 8 is a good max
 ARMOR_CLASSES = range(10, 26)
 MAX_ROUNDS_TO_KILL = 20
+DEFAULT_ROUNDS_PER_FIGHT = 3
 
 def parse_simulation_inputs(num_rounds, attack_stores, characters_list, enemy_card_body, numerical_options):
     """ Shared validation for simulate and export. Returns (characters, enemy, rng, alert) """
@@ -442,10 +443,11 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         State("numerical-options", "value"),
         State("ruleset", "value"),
         State("sweep-parameter", "value"),
+        State("rounds-per-fight", "value"),
         prevent_initial_call=True
     )
     @timeit
-    def simulate(clicked, num_rounds, attack_stores, characters_list, enemy_card_body, simulate_type, numerical_options, ruleset, sweep_parameter):
+    def simulate(clicked, num_rounds, attack_stores, characters_list, enemy_card_body, simulate_type, numerical_options, ruleset, sweep_parameter, rounds_per_fight):
         if not clicked:
             raise PreventUpdate
 
@@ -458,17 +460,19 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         if error is not None:
             return fig, tables, error, spinner
 
-        breakdown = build_breakdown_tables(characters, [attack_breakdown(c, enemy) for c in characters])
+        rounds_per_fight = max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)
+        breakdown = build_breakdown_tables(characters, [attack_breakdown(c, enemy, rounds_per_fight) for c in characters])
         error_message = "Could not simulate combat, please check that all fields are filled out correctly"
 
         # Simulate
         if simulate_type in ["DPR Distribution", "DPA Distribution"]:
-            res, error = try_and_except_alert(error_message, simulate_rounds_from_characters, characters, enemy, num_rounds=num_rounds, save_memory=True, rng=rng)
+            res, error = try_and_except_alert(error_message, simulate_rounds_from_characters, characters, enemy, num_rounds=num_rounds, save_memory=True, rng=rng,
+                                              rounds_per_fight=rounds_per_fight)
             if error is not None:
                 return fig, tables, error, spinner
 
             dfs, df_by_rounds, df_by_attacks = res
-            leaderboard = build_leaderboard(characters, df_by_rounds)
+            leaderboard = build_leaderboard(characters, df_by_rounds, rounds_per_fight)
             if simulate_type == "DPR Distribution":
                 fig = generate_plot_data(characters, df_by_rounds, template=template, title="Damage Per Round Distribution")
                 tables = leaderboard + add_tables(df_by_rounds, characters, by_round=True, width=3) + breakdown
@@ -477,7 +481,8 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
                 tables = leaderboard + add_tables(df_by_attacks, characters, by_round=False, width=3) + breakdown
         elif simulate_type in SWEEPS:
             x_col, by_round = sweep_parameter, SWEEPS[simulate_type]
-            df_acs, error = try_and_except_alert(error_message, run_sweep, characters, enemy, x_col, by_round=by_round, ruleset=ruleset, num_rounds=num_rounds, rng=rng)
+            df_acs, error = try_and_except_alert(error_message, run_sweep, characters, enemy, x_col, by_round=by_round, ruleset=ruleset, num_rounds=num_rounds, rng=rng,
+                                                 rounds_per_fight=rounds_per_fight)
             if error is not None:
                 return fig, tables, error, spinner
 
@@ -487,7 +492,7 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             leaderboard = build_sweep_leaderboard(df_acs, x_col, order) if by_round else []
             insights = []
             if x_col == "Armor Class":
-                insights = build_insights([i for c in characters for i in power_attack_insights(c, enemy, ARMOR_CLASSES)])
+                insights = build_insights([i for c in characters for i in power_attack_insights(c, enemy, ARMOR_CLASSES, rounds_per_fight)])
             if by_round:
                 df_acs = reformat_df_ac(df_acs, by_round=by_round, x=x_col)
                 data_summary = [df_acs.loc[df_acs['Character'] == c_name, :].drop("Character", axis=1) for c_name in order]
@@ -501,6 +506,13 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
                 return fig, tables, error, spinner
             fig = generate_rounds_to_kill_plot(df_rtk, MAX_ROUNDS_TO_KILL, enemy.hit_points, template=template)
             tables = rounds_to_kill_summary(df_rtk, MAX_ROUNDS_TO_KILL) + breakdown
+        elif simulate_type == "Damage per Fight":
+            fights, error = try_and_except_alert(error_message, simulate_fights, characters, enemy, num_fights=max(num_rounds // rounds_per_fight, 1),
+                                                 rounds_per_fight=rounds_per_fight, rng=rng)
+            if error is not None:
+                return fig, tables, error, spinner
+            fig = generate_fight_plot(fights, template=template)
+            tables = fight_summary(fights) + breakdown
         return fig, tables, None, spinner
 
 
@@ -518,10 +530,11 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         State("numerical-options", "value"),
         State("ruleset", "value"),
         State("sweep-parameter", "value"),
+        State("rounds-per-fight", "value"),
         prevent_initial_call=True
     )
     @timeit
-    def export_results(clicked, export_type, num_rounds, attack_stores, characters_list, enemy_card_body, numerical_options, ruleset, sweep_parameter):
+    def export_results(clicked, export_type, num_rounds, attack_stores, characters_list, enemy_card_body, numerical_options, ruleset, sweep_parameter, rounds_per_fight):
         if not clicked:
             raise PreventUpdate
 
@@ -536,9 +549,11 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         # Simulate
         dfs = []
         names = [c.name for c in characters]
+        rounds_per_fight = max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)
         error_message = "Could not simulate combat, please check that all fields are filled out correctly"
         if export_type in ["DPR Summary", "DPA Summary", "DPR Distribution", "DPA Distribution"]:
-            res, error = try_and_except_alert(error_message, simulate_rounds_from_characters, characters, enemy, num_rounds=num_rounds, rng=rng)
+            res, error = try_and_except_alert(error_message, simulate_rounds_from_characters, characters, enemy, num_rounds=num_rounds, rng=rng,
+                                              rounds_per_fight=rounds_per_fight)
             if error is not None:
                 return export, error, spinner
 
@@ -557,7 +572,8 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
 
         elif export_type in SWEEPS:
             x_col, by_round = sweep_parameter, SWEEPS[export_type]
-            df_acs, error = try_and_except_alert(error_message, run_sweep, characters, enemy, x_col, by_round=by_round, ruleset=ruleset, num_rounds=num_rounds, rng=rng)
+            df_acs, error = try_and_except_alert(error_message, run_sweep, characters, enemy, x_col, by_round=by_round, ruleset=ruleset, num_rounds=num_rounds, rng=rng,
+                                                 rounds_per_fight=rounds_per_fight)
             if error is not None:
                 return export, error, spinner
             dfs = [reformat_df_ac(df_acs, by_round=True, x=x_col)] if by_round else per_attack_ac_tables(df_acs, names, x=x_col)
@@ -567,6 +583,12 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
                 return export, error, spinner
             df_rtk.index.name = "Fight"
             dfs = [df_rtk]
+        elif export_type == "Damage per Fight":
+            fights, error = try_and_except_alert(error_message, simulate_fights, characters, enemy, num_fights=max(num_rounds // rounds_per_fight, 1),
+                                                 rounds_per_fight=rounds_per_fight, rng=rng)
+            if error is not None:
+                return export, error, spinner
+            dfs = [fight_export(fights)]
         else:
             raise PreventUpdate
 

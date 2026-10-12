@@ -190,13 +190,32 @@ def describe(g):
 
 RESULT_COLUMNS = ['Round', 'Damage', 'Damage (From Hit)', 'Damage (From Crit)', 'Damage (Miss/Fail)', 'Attack Roll', 'Attack Roll (Die)', 'Hit', 'Hit (Non-Crit)', 'Hit (Crit)']
 
-def simulate_attacks(attack_contexts, damage_contexts, num_rounds=10000, rng=RNG, damage_only=False):
+def has_once_damage(d):
+    return bool(d.get("once_per_turn_eligible") and (d.get("once_num_die") or d.get("once_modifier")))
+
+def has_fight_limits(damage_contexts):
+    """ True if any attack or the once per turn damage is limited per fight, which needs the slower fight by fight simulation """
+    return any(d.get("uses_per_fight") or (d.get("once_uses_per_fight") and has_once_damage(d)) for d in damage_contexts)
+
+def uses_per_fight(average, num_fights, rng=RNG):
+    """ Integer uses for each fight from an average, i.e. 1.5 is 1 or 2 with equal chance """
+    base = int(np.floor(average))
+    uses = np.full(num_fights, base, dtype='int32')
+    if average > base:
+        uses += rng.random(num_fights) < average - base
+    return uses
+
+def simulate_attacks(attack_contexts, damage_contexts, num_rounds=10000, rng=RNG, damage_only=False, rounds_per_fight=None):
     """ Simulate every attack of a character for num_rounds rounds, returns a list of numpy arrays (one per attack)
         with shape (RESULT_COLUMNS, num_rounds), or only the damage when damage_only.
         Arrays are column-major so each column is contiguous in memory, which is much faster for large simulations
-        Attack rolls are rolled first so once per turn damage can be applied to the first hit of each round """
+        Attack rolls are rolled first so once per turn damage can be applied to the first hit of each round.
+        Characters with resources limited per fight are simulated fight by fight when rounds_per_fight is given,
+        everything else uses the faster path where every round is independent """
     attack_contexts = [a if isinstance(a, dict) else asdict(a) for a in attack_contexts]
     damage_contexts = [d if isinstance(d, dict) else asdict(d) for d in damage_contexts]
+    if rounds_per_fight and has_fight_limits(damage_contexts):
+        return simulate_fight_attacks(attack_contexts, damage_contexts, num_rounds, rounds_per_fight, rng=rng, damage_only=damage_only)
     rolled = [attack_roll(num_rounds, **a, rng=rng) for a in attack_contexts]
 
     hit_already = np.zeros(num_rounds, dtype=bool)
@@ -218,6 +237,47 @@ def simulate_attacks(attack_contexts, damage_contexts, num_rounds=10000, rng=RNG
         results.append(result)
     return results
 
+def simulate_fight_attacks(attack_contexts, damage_contexts, num_rounds, rounds_per_fight, rng=RNG, damage_only=False):
+    """ Simulates fights of rounds_per_fight rounds, so limited attacks are only made in the first rounds of each fight
+        and limited once per turn damage runs out. Results are laid out round by round: index = round * num_fights + fight,
+        so the first num_rounds results are returned like simulate_attacks """
+    num_fights = -(-num_rounds // rounds_per_fight)
+    attack_uses = [uses_per_fight(d["uses_per_fight"], num_fights, rng) if d.get("uses_per_fight") else None for d in damage_contexts]
+    once_average = next((d.get("once_uses_per_fight") for d in damage_contexts if has_once_damage(d)), 0)
+    once_left = uses_per_fight(once_average, num_fights, rng) if once_average else None
+
+    per_attack = [[] for _ in damage_contexts]
+    rounds = np.arange(1, num_fights + 1, dtype='int32')
+    for r in range(rounds_per_fight):
+        rolled = [attack_roll(num_fights, **a, rng=rng) for a in attack_contexts]
+        hit_already = np.zeros(num_fights, dtype=bool)
+        for k, ((attack_rolls, rolls, hit, crit), d) in enumerate(zip(rolled, damage_contexts)):
+            active = attack_uses[k] > r if attack_uses[k] is not None else None
+            if active is not None:
+                hit, crit = hit & active, crit & active
+            once_mask = None
+            if has_once_damage(d):
+                trigger = crit if d.get("once_crit_only") else hit
+                once_mask = trigger & ~hit_already
+                if once_left is not None:
+                    once_mask &= once_left > 0
+                    once_left -= once_mask
+                hit_already |= trigger
+            columns = damage_roll(hit, crit, **d, once_mask=once_mask, rng=rng)
+            if active is not None:
+                # Unused attacks don't happen, so they deal no damage (not even on a miss) and have no rolls
+                columns = [np.where(active, col, 0) for col in columns]
+                attack_rolls, rolls = np.where(active, attack_rolls, 0), np.where(active, rolls, 0)
+            if damage_only:
+                per_attack[k].append(columns[0])
+                continue
+            result = np.empty((len(RESULT_COLUMNS), num_fights), dtype='int32')
+            result[0] = rounds + r * num_fights
+            for ii, col in enumerate((*columns, attack_rolls, rolls, hit, hit & ~crit, crit), start=1):
+                result[ii] = col
+            per_attack[k].append(result)
+    return [np.concatenate(arrays, axis=-1)[..., :num_rounds] for arrays in per_attack]
+
 def simulate_rounds(attack_context, damage_context, num_rounds=10000, rng=RNG):
     """ Simulate rounds of combat for a given attack_context and damage_context"""
     results = simulate_attacks([attack_context], [damage_context], num_rounds=num_rounds, rng=rng)[0]
@@ -230,12 +290,12 @@ def group_by_name(results, attack_names):
         grouped.setdefault(name, []).append(result)
     return {name: arrays[0] if len(arrays) == 1 else np.concatenate(arrays, axis=-1) for name, arrays in grouped.items()}
 
-def simulate_rounds_from_contexts(attack_contexts, damage_contexts, attack_names, by_round=True, cols=None, num_rounds=10000, rng=RNG):
+def simulate_rounds_from_contexts(attack_contexts, damage_contexts, attack_names, by_round=True, cols=None, num_rounds=10000, rng=RNG, rounds_per_fight=None):
     """ Simulate rounds of combat from a list of attacks and damage contexts
         Returns a dict of dataframes per attack name and a dataframe of the totals per round """
     damage_only = cols == 'Damage'
     columns = ['Damage'] if damage_only else RESULT_COLUMNS
-    results = simulate_attacks(attack_contexts, damage_contexts, num_rounds=num_rounds, rng=rng, damage_only=damage_only)
+    results = simulate_attacks(attack_contexts, damage_contexts, num_rounds=num_rounds, rng=rng, damage_only=damage_only, rounds_per_fight=rounds_per_fight)
     keep = [columns.index(c) for c in ([cols] if isinstance(cols, str) else cols)] if cols else list(range(len(columns)))
     out_columns = [columns[ii] for ii in keep]
 
@@ -257,8 +317,9 @@ def simulate_rounds_from_contexts(attack_contexts, damage_contexts, attack_names
 
 
 @timeit
-def simulate_rounds_from_characters(characters, enemy, num_rounds=10000, save_memory=False, rng=RNG):
-    """ Simulate rounds of combat for a list of characters against an enemy"""
+def simulate_rounds_from_characters(characters, enemy, num_rounds=10000, save_memory=False, rng=RNG, rounds_per_fight=None):
+    """ Simulate rounds of combat for a list of characters against an enemy.
+        With rounds_per_fight, resources limited per fight are spread over fights of that many rounds """
     dfs = []
     df_by_rounds = []
     dfs_by_attack = []
@@ -267,7 +328,7 @@ def simulate_rounds_from_characters(characters, enemy, num_rounds=10000, save_me
         # Attack and Damage Contexts
         attack_contexts, damage_contexts = calculate_attack_and_damage_context(c, enemy)
         attack_names = [a.name for a in c.attacks]
-        results = simulate_attacks(attack_contexts, damage_contexts, num_rounds=num_rounds, rng=rng)
+        results = simulate_attacks(attack_contexts, damage_contexts, num_rounds=num_rounds, rng=rng, rounds_per_fight=rounds_per_fight)
         grouped = {}
         for result, name in zip(results, attack_names):
             grouped.setdefault(name, []).append(result)
@@ -300,7 +361,7 @@ def simulate_rounds_from_characters(characters, enemy, num_rounds=10000, save_me
         df_by_rounds.append(pd.DataFrame(total[1:].T, columns=RESULT_COLUMNS[1:], index=pd.RangeIndex(1, num_rounds + 1, name='Round')))
     return dfs, df_by_rounds, dfs_by_attack
 
-def simulate_sweep(cases, label, num_rounds=10000, by_round=True, rng=RNG):
+def simulate_sweep(cases, label, num_rounds=10000, by_round=True, rng=RNG, rounds_per_fight=None):
     """ Simulate a parameter sweep. cases is an iterable of (value, characters, enemy), characters are grouped by name across values.
         Only the damage is simulated, which keeps sweeps fast. Returns one row of summary stats per value and character (or attack) """
     rows = []
@@ -308,7 +369,7 @@ def simulate_sweep(cases, label, num_rounds=10000, by_round=True, rng=RNG):
         for c in characters:
             # Attack and Damage Contexts
             attack_contexts, damage_contexts = calculate_attack_and_damage_context(c, enemy)
-            damages = simulate_attacks(attack_contexts, damage_contexts, num_rounds=num_rounds, rng=rng, damage_only=True)
+            damages = simulate_attacks(attack_contexts, damage_contexts, num_rounds=num_rounds, rng=rng, damage_only=True, rounds_per_fight=rounds_per_fight)
             if by_round:
                 # Summary Stats for each value
                 total = np.sum(damages, axis=0) if damages else np.zeros(num_rounds, dtype='int32')
@@ -325,17 +386,17 @@ def simulate_sweep(cases, label, num_rounds=10000, by_round=True, rng=RNG):
     return pd.DataFrame(rows, columns=columns, index=['Damage'] * len(rows))
 
 @timeit
-def simulate_rounds_from_characters_multi_acs(characters, enemy, armor_classes=None, num_rounds=10000, by_round=True, rng=RNG):
+def simulate_rounds_from_characters_multi_acs(characters, enemy, armor_classes=None, num_rounds=10000, by_round=True, rng=RNG, rounds_per_fight=None):
     """ Simulate rounds of combat for a list of characters against multiple armor classes"""
     armor_classes = armor_classes or range(10, 26)
     cases = ((ac, characters, replace(enemy, armor_class=ac)) for ac in armor_classes)
-    return simulate_sweep(cases, 'Armor Class', num_rounds=num_rounds, by_round=by_round, rng=rng)
+    return simulate_sweep(cases, 'Armor Class', num_rounds=num_rounds, by_round=by_round, rng=rng, rounds_per_fight=rounds_per_fight)
 
 @timeit
-def simulate_rounds_from_characters_by_level(characters, enemy, levels, character_at_level, num_rounds=10000, by_round=True, rng=RNG):
+def simulate_rounds_from_characters_by_level(characters, enemy, levels, character_at_level, num_rounds=10000, by_round=True, rng=RNG, rounds_per_fight=None):
     """ Simulate rounds of combat for a list of characters at each level, character_at_level(character, level) builds each variant """
     cases = ((level, [character_at_level(c, level) for c in characters], enemy) for level in levels)
-    return simulate_sweep(cases, 'Level', num_rounds=num_rounds, by_round=by_round, rng=rng)
+    return simulate_sweep(cases, 'Level', num_rounds=num_rounds, by_round=by_round, rng=rng, rounds_per_fight=rounds_per_fight)
 
 def rounds_to_kill(damage_per_round, hit_points, max_rounds=30, num_fights=None, rng=RNG):
     """ Number of rounds needed to deal hit_points damage, for num_fights simulated fights.
@@ -356,11 +417,38 @@ def rounds_to_kill(damage_per_round, hit_points, max_rounds=30, num_fights=None,
             break
     return result
 
+def fight_damage(character, enemy, num_fights, rounds_per_fight, rng=RNG):
+    """ Damage of every round of num_fights fights, shape (rounds_per_fight, num_fights) """
+    attack_contexts, damage_contexts = calculate_attack_and_damage_context(character, enemy)
+    num_rounds = num_fights * rounds_per_fight
+    damages = simulate_attacks(attack_contexts, damage_contexts, num_rounds=num_rounds, rng=rng, damage_only=True, rounds_per_fight=rounds_per_fight)
+    total = np.sum(damages, axis=0) if damages else np.zeros(num_rounds, dtype='int32')
+    # Fight by fight results are laid out round by round, independent rounds can be arranged any way
+    return total.reshape(rounds_per_fight, num_fights)
+
+@timeit
+def simulate_fights(characters, enemy, num_fights=10000, rounds_per_fight=3, rng=RNG):
+    """ Damage per round of each fight for every character, {name: array of shape (rounds_per_fight, num_fights)} """
+    return {c.name: fight_damage(c, enemy, num_fights, rounds_per_fight, rng=rng) for c in characters}
+
+# Fight by fight rounds to kill simulates max_rounds rounds per fight, this many fights is plenty for the distribution
+MAX_FIGHTS_TO_KILL = 50_000
+
 @timeit
 def simulate_rounds_to_kill(characters, enemy, num_rounds=10000, max_rounds=30, rng=RNG):
-    """ Distribution of the number of rounds each character needs to kill the enemy """
-    _, df_by_rounds, _ = simulate_rounds_from_characters(characters, enemy, num_rounds=num_rounds, save_memory=True, rng=rng)
-    return pd.DataFrame({
-        c.name: rounds_to_kill(df["Damage"].to_numpy(), enemy.hit_points, max_rounds=max_rounds, rng=rng)
-        for c, df in zip(characters, df_by_rounds)
-    })
+    """ Distribution of the number of rounds each character needs to kill the enemy.
+        Characters with resources limited per fight are simulated fight by fight (so bursts at the start count),
+        for the rest independent rounds are resampled which is much faster """
+    results = {}
+    for c in characters:
+        _, damage_contexts = calculate_attack_and_damage_context(c, enemy)
+        damage_contexts = [asdict(d) for d in damage_contexts]
+        if has_fight_limits(damage_contexts):
+            cumulative = np.cumsum(fight_damage(c, enemy, min(num_rounds, MAX_FIGHTS_TO_KILL), max_rounds, rng=rng), axis=0)
+            killed = cumulative >= max(int(enemy.hit_points), 1)
+            results[c.name] = np.where(killed.any(axis=0), killed.argmax(axis=0) + 1, max_rounds + 1).astype('int32')
+        else:
+            _, df_by_round = simulate_rounds_from_contexts(*calculate_attack_and_damage_context(c, enemy), [a.name for a in c.attacks],
+                                                           cols='Damage', num_rounds=num_rounds, rng=rng)
+            results[c.name] = rounds_to_kill(df_by_round["Damage"].to_numpy(), enemy.hit_points, max_rounds=max_rounds, rng=rng)
+    return pd.DataFrame(results)

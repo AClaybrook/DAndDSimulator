@@ -25,6 +25,41 @@ def asi_levels(class_name, ruleset="bg3"):
         levels += [10]
     return sorted(lv for lv in levels if lv <= RULESETS[ruleset]["max_level"])
 
+# Adventuring day used to turn resources per rest into average uses per fight
+FIGHTS_PER_LONG_REST = 4
+SHORT_RESTS_PER_LONG_REST = 2
+
+def per_fight(per_long_rest=0, per_short_rest=0):
+    """ Average uses per fight of resources that recover on a long and/or short rest """
+    return round((per_long_rest + per_short_rest * (SHORT_RESTS_PER_LONG_REST + 1)) / FIGHTS_PER_LONG_REST, 2)
+
+# Spell slots per slot level for a full caster (or the multiclass spellcaster table) by caster level
+FULL_CASTER_SLOTS = {
+    1: [2], 2: [3], 3: [4, 2], 4: [4, 3], 5: [4, 3, 2], 6: [4, 3, 3], 7: [4, 3, 3, 1], 8: [4, 3, 3, 2],
+    9: [4, 3, 3, 3, 1], 10: [4, 3, 3, 3, 2], 11: [4, 3, 3, 3, 2, 1], 12: [4, 3, 3, 3, 2, 1], 13: [4, 3, 3, 3, 2, 1, 1],
+    14: [4, 3, 3, 3, 2, 1, 1], 15: [4, 3, 3, 3, 2, 1, 1, 1], 16: [4, 3, 3, 3, 2, 1, 1, 1], 17: [4, 3, 3, 3, 2, 1, 1, 1, 1],
+    18: [4, 3, 3, 3, 3, 1, 1, 1, 1], 19: [4, 3, 3, 3, 3, 2, 1, 1, 1], 20: [4, 3, 3, 3, 3, 2, 2, 1, 1],
+}
+
+def spell_slots(caster_level):
+    """ Spell slots per slot level for a caster level, i.e. a single class paladin uses ceil(level / 2) """
+    return FULL_CASTER_SLOTS.get(int(caster_level), [])
+
+def smite(character, slots, pact_slots_per_short_rest=0, pact_slot_level=0):
+    """ Divine Smite on the first hit each round with the highest slot, limited by the slots per day """
+    highest = max(len(slots), pact_slot_level)
+    if highest:
+        character.once_per_turn_die_mod_list = [f"{min(1 + highest, 5)}d8"]
+        character.once_per_turn_uses_per_fight = per_fight(per_long_rest=sum(slots), per_short_rest=pact_slots_per_short_rest)
+
+def action_surge(level, ruleset, attack):
+    """ Action Surge attacks (fighter level 2+), used at the start of fights """
+    if level < 2:
+        return []
+    surges = 2 if level >= 17 and ruleset == "5e" else 1
+    uses = per_fight(per_short_rest=surges)
+    return [replace(attack, name=f"{attack.name} (Action Surge)", uses_per_fight=uses) for _ in range(extra_attacks(level, "fighter", ruleset))]
+
 def half_caster_slot(level):
     """ Highest spell slot for paladins and rangers """
     return 0 if level < 2 else 1 if level < 5 else 2 if level < 9 else 3 if level < 13 else 4 if level < 17 else 5
@@ -80,6 +115,7 @@ def fighter_champion_gwm(level, ruleset):
     taken = apply_asi_plan(c, "fighter", level, ruleset, ["feat:GWM", "strength", "strength", "feat:savage_attacker", "constitution"])
     c.crit_on = 20 - (level >= 3) - (level >= 15) # Improved/Superior Critical
     c.attacks = [weapon_attack("Greatsword") for _ in range(extra_attacks(level, "fighter", ruleset))]
+    c.attacks += action_surge(level, ruleset, weapon_attack("Greatsword"))
     return _named(c, "Champion Fighter (GWM)", level, taken)
 
 def fighter_two_weapon(level, ruleset):
@@ -89,6 +125,7 @@ def fighter_two_weapon(level, ruleset):
     # Dual Wielder allows non-light weapons
     weapon = "Longsword" if "Dual Wielder" in taken else "Shortsword"
     c.attacks = [weapon_attack(weapon) for _ in range(extra_attacks(level, "fighter", ruleset))] + [weapon_attack(weapon, offhand=True)]
+    c.attacks += action_surge(level, ruleset, weapon_attack(weapon))
     return _named(c, "Champion Fighter (Two Weapon Fighting)", level, taken)
 
 def fighter_archer(level, ruleset):
@@ -96,6 +133,7 @@ def fighter_archer(level, ruleset):
     taken = apply_asi_plan(c, "fighter", level, ruleset, ["feat:sharpshooter", "dexterity", "dexterity", "constitution"])
     c.crit_on = 20 - (level >= 3) - (level >= 15)
     c.attacks = [weapon_attack("Longbow") for _ in range(extra_attacks(level, "fighter", ruleset))]
+    c.attacks += action_surge(level, ruleset, weapon_attack("Longbow"))
     return _named(c, "Champion Fighter (Archer)", level, taken)
 
 def barbarian_berserker(level, ruleset):
@@ -111,10 +149,8 @@ def paladin_smite(level, ruleset):
     c = Character(level=level, strength=STARTING_PRIMARY, charisma=STARTING_SECONDARY + 2, GWF=level >= 2)
     taken = apply_asi_plan(c, "paladin", level, ruleset, ["feat:GWM", "strength", "strength", "charisma"])
     c.improved_divine_smite = level >= 11
-    slot = half_caster_slot(level)
-    if slot:
-        # Smite the first hit each round with the highest slot
-        c.once_per_turn_die_mod_list = [f"{min(1 + slot, 5)}d8"]
+    if level >= 2:
+        smite(c, spell_slots(ceil(level / 2)))
     c.attacks = [weapon_attack("Greatsword") for _ in range(extra_attacks(level, "paladin", ruleset))]
     return _named(c, "Paladin (Smite First Hit)", level, taken)
 
@@ -122,9 +158,11 @@ def fighter_battle_master(level, ruleset):
     c = Character(level=level, strength=STARTING_PRIMARY, constitution=STARTING_SECONDARY, GWF=True)
     taken = apply_asi_plan(c, "fighter", level, ruleset, ["feat:GWM", "strength", "strength", "feat:savage_attacker", "constitution"])
     if level >= 3:
-        # A damage maneuver (i.e. Trip Attack) on the first hit each round, superiority dice grow at 10 and 18
+        # A damage maneuver (i.e. Trip Attack) on the first hit each round, superiority dice grow at 10 and 18 and recover on a short rest
         c.once_per_turn_die_mod_list = [f"1d{8 + 2 * ((level >= 10) + (level >= 18))}"]
+        c.once_per_turn_uses_per_fight = per_fight(per_short_rest=4 + (level >= 7) + (level >= 15))
     c.attacks = [weapon_attack("Greatsword") for _ in range(extra_attacks(level, "fighter", ruleset))]
+    c.attacks += action_surge(level, ruleset, weapon_attack("Greatsword"))
     return _named(c, "Battle Master Fighter (GWM)", level, taken)
 
 def paladin_crit_fish(level, ruleset):
@@ -159,9 +197,11 @@ def monk_open_hand(level, ruleset):
     c = Character(level=level, dexterity=STARTING_PRIMARY, wisdom=STARTING_SECONDARY + 2)
     taken = apply_asi_plan(c, "monk", level, ruleset, ["dexterity", "dexterity", "wisdom"])
     martial_arts = 4 + 2 * ((level >= 5) + (level >= 11) + (level >= 17))
-    flurry = 2 if level >= 2 else 1 # Martial Arts bonus action strike, Flurry of Blows from level 2
-    num_attacks = extra_attacks(level, "monk", ruleset) + flurry
-    c.attacks = [Attack(name="Unarmed Strike", type="unarmed", ability_stat="dexterity", damage=f"1d{martial_arts}", damage_type="bludgeoning") for _ in range(num_attacks)]
+    strike = Attack(name="Unarmed Strike", type="unarmed", ability_stat="dexterity", damage=f"1d{martial_arts}", damage_type="bludgeoning")
+    # Attack action plus the Martial Arts bonus action strike, Flurry of Blows (from level 2) adds a strike for 1 ki, ki is the monk level per short rest
+    c.attacks = [replace(strike) for _ in range(extra_attacks(level, "monk", ruleset) + 1)]
+    if level >= 2:
+        c.attacks.append(replace(strike, name="Flurry of Blows", uses_per_fight=per_fight(per_short_rest=level)))
     return _named(c, "Open Hand Monk (Flurry)", level, taken)
 
 def warlock_eldritch_blast(level, ruleset):
@@ -181,6 +221,39 @@ def warlock_hexblade(level, ruleset):
     num_attacks = 2 if level >= 5 else 1 # Thirsting Blade / Pact of the Blade extra attack
     c.attacks = [weapon_attack("Longsword", ability_stat="charisma", bonus_damage=["1d6"]) for _ in range(num_attacks)] # Hex
     return _named(c, "Hexblade Warlock (Pact of the Blade)", level, taken)
+
+def sorlock(level, ruleset):
+    """ Warlock 2 (Agonizing Blast) then Sorcerer, Quickened Spell casts a second Eldritch Blast with sorcery points """
+    warlock_level = min(level, 2)
+    sorcerer_level = level - warlock_level
+    c = Character(level=level, charisma=STARTING_PRIMARY, constitution=STARTING_SECONDARY, agonizing_blast=warlock_level >= 2)
+    taken = apply_asi_plan(c, "sorcerer", sorcerer_level, ruleset, ["charisma", "charisma", "constitution"])
+    blasts = spell_attacks("Eldritch Blast", ability_stat="charisma", character_level=level, ruleset=ruleset, bonus_damage=["1d6"]) # Hex
+    c.attacks = [replace(a, name=f"Eldritch Blast Beam {ii + 1}") for ii, a in enumerate(blasts)]
+    # Metamagic at sorcerer level 2 in BG3 (3 in 5e), Quickened Spell costs 3 sorcery points in BG3 (2 in 5e), sorcery points = sorcerer level per long rest
+    metamagic_level, quicken_cost = (2, 3) if ruleset == "bg3" else (3, 2)
+    if sorcerer_level >= metamagic_level:
+        uses = per_fight(per_long_rest=sorcerer_level // quicken_cost)
+        c.attacks += [replace(a, name=f"Quickened Eldritch Blast Beam {ii + 1}", uses_per_fight=uses) for ii, a in enumerate(blasts)]
+    c = _named(c, "Sorlock (Warlock 2 / Sorcerer)", level, taken)
+    c.description += f". Warlock {warlock_level} / Sorcerer {sorcerer_level}"
+    return c
+
+def hexadin(level, ruleset):
+    """ Hexblade Warlock 1 then Paladin: charisma weapon attacks, Hexblade's Curse, and smites with both spell and pact slots """
+    paladin_level = level - 1
+    c = Character(level=level, charisma=STARTING_PRIMARY, constitution=STARTING_SECONDARY, dueling=paladin_level >= 2)
+    taken = apply_asi_plan(c, "paladin", paladin_level, ruleset, ["charisma", "charisma", "constitution"])
+    c.bonus_damage_die_mod_list = [str(c.proficiency_bonus)] # Hexblade's Curse
+    c.crit_on = 19
+    c.improved_divine_smite = paladin_level >= 11
+    if paladin_level >= 2:
+        # Multiclass spell slots use half the paladin level (rounded down), plus the warlock's first level pact slot each short rest
+        smite(c, spell_slots(paladin_level // 2), pact_slots_per_short_rest=1, pact_slot_level=1)
+    c.attacks = [weapon_attack("Longsword", ability_stat="charisma") for _ in range(extra_attacks(paladin_level, "paladin", ruleset))]
+    c = _named(c, "Hexadin (Hexblade 1 / Paladin)", level, taken)
+    c.description += f". Warlock 1 / Paladin {paladin_level}"
+    return c
 
 def sorcerer_draconic_fire_bolt(level, ruleset):
     c = Character(level=level, charisma=STARTING_PRIMARY, constitution=STARTING_SECONDARY, elemental_affinity=level >= 6)
@@ -212,6 +285,8 @@ BUILDS = {b.key: b for b in [
     Build("monk_open_hand", "Open Hand Monk (Flurry)", "monk", "Unarmed strikes plus Flurry of Blows every round", monk_open_hand),
     Build("warlock_eb", "Warlock (Eldritch Blast + Hex)", "warlock", "Eldritch Blast with Agonizing Blast and Hex on every beam", warlock_eldritch_blast),
     Build("warlock_hexblade", "Hexblade Warlock (Pact of the Blade)", "warlock", "Charisma longsword with Hex and Hexblade's Curse (not limited per rest), extra attack at 5, Lifedrinker at 12", warlock_hexblade),
+    Build("sorlock", "Sorlock (Warlock 2 / Sorcerer)", "multiclass", "Eldritch Blast with Agonizing Blast and Hex, plus a Quickened Eldritch Blast while sorcery points last", sorlock),
+    Build("hexadin", "Hexadin (Hexblade 1 / Paladin)", "multiclass", "Charisma longsword with Dueling and Hexblade's Curse, smites from spell slots and the pact slot", hexadin),
     Build("sorcerer_fire_bolt", "Draconic Sorcerer (Fire Bolt)", "sorcerer", "Fire Bolt with Elemental Affinity from level 6", sorcerer_draconic_fire_bolt),
     Build("wizard_fireball", "Evocation Wizard (Highest Slot Fireball)", "wizard", "Single target Fireball (Burning Hands before level 5) with the highest slot every round", wizard_evoker_fireball),
 ]}

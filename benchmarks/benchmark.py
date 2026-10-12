@@ -19,7 +19,7 @@ def t(label, f, n=5):
             start = time.perf_counter()
             f()
             times.append(time.perf_counter() - start)
-    print(f"{label:38s} median {statistics.median(times)*1000:8.1f} ms")
+    print(f"{label:46s} median {statistics.median(times)*1000:8.1f} ms")
 rng = ns.set_seed(1)
 t("DPR 10k rounds", lambda: ns.simulate_rounds_from_characters(chars, enemy, num_rounds=10_000, save_memory=True, rng=rng))
 t("DPR 100k rounds", lambda: ns.simulate_rounds_from_characters(chars, enemy, num_rounds=100_000, save_memory=True, rng=rng))
@@ -31,3 +31,8 @@ t("DPR vs AC 100k (16 ACs)", lambda: ns.simulate_rounds_from_characters_multi_ac
 from game_data.classes import BUILDS, build_character, character_at_level  # noqa: E402
 presets = [build_character(key, 1) for key in BUILDS]
 t("DPR vs Level 10k (all presets, L1-12)", lambda: ns.simulate_rounds_from_characters_by_level(presets, enemy, range(1, 13), character_at_level, num_rounds=10_000, rng=rng))
+limited = [build_character(key, 8) for key in ("fighter_gwm", "paladin_smite", "fighter_battle_master", "sorlock")]
+t("DPR 100k, limited resources (3 round fights)", lambda: ns.simulate_rounds_from_characters(limited, enemy, num_rounds=100_000, save_memory=True, rng=rng, rounds_per_fight=3))
+t("DPR vs Level 10k, 3 round fights", lambda: ns.simulate_rounds_from_characters_by_level(presets, enemy, range(1, 13), character_at_level, num_rounds=10_000, rng=rng, rounds_per_fight=3))
+t("Damage per Fight 10k fights x 3 rounds", lambda: ns.simulate_fights(limited, enemy, num_fights=10_000, rounds_per_fight=3, rng=rng))
+t("Rounds to Kill 10k (limited, fights)", lambda: ns.simulate_rounds_to_kill(limited, replace(enemy, hit_points=150), num_rounds=10_000, max_rounds=20, rng=rng))
