@@ -16,6 +16,7 @@ from components.character_card import generate_character_cards
 from components.enemy_card import generate_enemy_card
 from game_data import RULESETS, enemy_from_monster
 from game_data.classes import BUILDS
+from components.sweeps import SWEEP_PARAMETERS
 
 # %%
 # Example
@@ -76,18 +77,20 @@ def simulate_rounds_input():
                 dbc.RadioItems(
                     options=[
                         {"label": "DPR Distribution", "value": "DPR Distribution",},
-                        {"label": "DPR vs Armor Class", "value": "DPR vs Armor Class"},
+                        {"label": "DPR Sweep", "value": "DPR Sweep"},
                         {"label": "DPA Distribution", "value": "DPA Distribution",},
-                        {"label": "DPA vs Armor Class", "value": "DPA vs Armor Class"},
-                        {"label": "DPR vs Level", "value": "DPR vs Level"},
-                        {"label": "DPA vs Level", "value": "DPA vs Level"},
+                        {"label": "DPA Sweep", "value": "DPA Sweep"},
                         {"label": "Rounds to Kill", "value": "Rounds to Kill"},
                     ],
                     value="DPR Distribution",
                     id="simulate-type",
                     inline=True,
                     ),
-                dbc.FormText("Level sweeps rebuild preset characters at every level of the selected ruleset, other characters only change their level"),
+                dbc.InputGroup([
+                    dbc.InputGroupText("Sweep"),
+                    dbc.Select(options=[{"label": p, "value": p} for p in SWEEP_PARAMETERS], value="Armor Class", id="sweep-parameter"),
+                ], size="sm", class_name="mt-1"),
+                dbc.FormText(id="sweep-description"),
             ], xs=12, md=6, xl=5),
             dbc.Col([
                 dbc.Label("Numerical Options"),
@@ -158,12 +161,10 @@ content = html.Div(dbc.Container([
                         options=[
                             {"label": "DPR Summary", "value": "DPR Summary"},
                             {"label": "DPR Distribution", "value": "DPR Distribution",},
-                            {"label": "DPR vs Armor Class", "value": "DPR vs Armor Class"},
+                            {"label": "DPR Sweep", "value": "DPR Sweep"},
                             {"label": "DPA Summary", "value": "DPA Summary"},
                             {"label": "DPA Distribution", "value": "DPA Distribution",},
-                            {"label": "DPA vs Armor Class", "value": "DPA vs Armor Class"},
-                            {"label": "DPR vs Level", "value": "DPR vs Level"},
-                            {"label": "DPA vs Level", "value": "DPA vs Level"},
+                            {"label": "DPA Sweep", "value": "DPA Sweep"},
                             {"label": "Rounds to Kill", "value": "Rounds to Kill"},
                             ],
                         value='DPR Summary', id='export-type'),

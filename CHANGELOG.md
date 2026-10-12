@@ -1,5 +1,26 @@
 # Changelog
 
+## 2.2.0 (2026-10-12)
+
+### New features
+- **Sweep parameter dropdown:** the graph types are now "DPR Sweep" and "DPA Sweep", plus a parameter to sweep. The same applies to csv exports. Parameters:
+  - **Armor Class** (10-25), with the GWM/Sharpshooter insights.
+  - **Level** (every level of the selected ruleset).
+  - **Enemy Save Bonus** (-2 to +14 on every save): shows how saving throw spells fall off against high save monsters.
+  - **Attack Ability Score** (8-20 for the ability most of a character's attacks use): shows what an ASI or a stat item is worth.
+- **Level sweeps keep your edits to preset characters.** Changes made after adding a preset are carried to every level:
+  - Ability scores keep their difference from the preset, so ASIs still happen.
+  - Other fields keep your value (i.e. Bless in Bonus Attack Mod).
+  - Edited attacks keep their edits, and new copies of an attack get the edits of its last copy.
+  - Deleted attacks stay deleted, and added attacks are kept.
+- **New builds:**
+  - **Champion Fighter (Two Weapon Fighting):** Dual Wielder longswords from level 4, to compare against GWM.
+  - **Hexblade Warlock (Pact of the Blade):** a Charisma longsword with Hex and Hexblade's Curse, Thirsting Blade at 5 and Lifedrinker at 12.
+
+### Changes
+- **Preset feats without a simulator flag** (i.e. Dual Wielder) can now be part of a build's ASI plan.
+- **Speed:** the simulation itself is unchanged. Compared back to back with 2.1 on the same machine, every benchmark is equal or faster.
+
 ## 2.1.0 (2026-10-12)
 
 ### New features

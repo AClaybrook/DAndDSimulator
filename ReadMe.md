@@ -51,11 +51,14 @@ See [CHANGELOG.md](CHANGELOG.md) for what changed in 2.0.
 * Collapsable nav/sidebar
 * Import and Export of characters via json
 * Simulate Combat from UI values
-* 7 different simulation types and corresponding plots:
+* 5 simulation types and corresponding plots:
     * Damage Per Round
     * Damage Per Attack
-    * Damage Per Round/Attack vs Armor Class, with insights on when to turn GWM/Sharpshooter off
-    * Damage Per Round/Attack vs Level, preset characters level up realistically
+    * Damage Per Round/Attack sweeps over a parameter:
+        * Armor Class, with insights on when to turn GWM/Sharpshooter off
+        * Level, preset characters level up realistically and keep your edits
+        * Enemy Save Bonus
+        * Attack Ability Score
     * Rounds to Kill (uses enemy hit points)
 * Export Damage Results to csv
 * Implement easy callbacks in javascript
@@ -77,10 +80,15 @@ Rough priority order, the first items have the most impact for the least work.
 * Per attack once per turn eligibility, crit fishing smites
 * Battle Master, BG3 Thief and crit fishing Paladin builds
 
+### Done in 2.2
+* Sweep parameter dropdown with Enemy Save Bonus and Attack Ability Score sweeps
+* Level sweeps keep manual edits to preset characters
+* Two Weapon Fighting Champion and Hexblade Warlock builds
+
 ### Next
-* More parameter sweeps: enemy saving throw bonus, a single ability score, or a feat on/off as its own series
-* More builds/subclasses: Gloom Stalker (extra first round attack), Swords/Hexblade Warlock, Tempest/Light Cleric, multiclass presets (i.e. Paladin/Warlock, Fighter/Rogue)
-* Keep manual edits when a preset character is swept over levels (apply the card's extra modifiers on top of the rebuilt character)
+* Multiclass presets (i.e. Paladin/Warlock, Fighter/Rogue), which need per-class level splits for features and spell slots
+* First round effects: Gloom Stalker's Dread Ambusher, Assassinate, and other once per fight bonuses (needs a per-encounter view rather than per-round averages)
+* Resource limited presets: smites, superiority dice and Hexblade's Curse per short/long rest (see Later)
 * BG3 specific mechanics: weapon actions, Elemental Adept, Savage Attacker per BG3 patch rules, BG3 item database (i.e. +1d4 rings, Gloves of the Belligerent Skald), verified against the game
 
 ### Later

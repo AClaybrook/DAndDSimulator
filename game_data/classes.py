@@ -2,11 +2,12 @@
     Each build levels up like the real class: attacks per round, fighting styles, feats/ability score improvements,
     subclass features, cantrip scaling and spell slots all depend on the character level and ruleset.
     The output is a plain Character, so everything can still be tweaked in the UI afterwards. """
-from dataclasses import dataclass, replace
+from copy import deepcopy
+from dataclasses import asdict, dataclass, fields, replace
 from math import ceil
 from collections.abc import Callable
 
-from computations.models import Attack, Character
+from computations.models import Attack, Character, STATS
 from game_data import RULESETS, cantrip_tier, spell_attacks, weapon_attack
 
 # Point buy (15) + racial/background bonus (+2), the usual optimized starting primary stat
@@ -41,7 +42,9 @@ def apply_asi_plan(character, class_name, level, ruleset, plan):
         while remaining:
             choice = remaining.pop(0)
             if choice.startswith("feat:"):
-                setattr(character, choice[5:], True)
+                # Feats the simulator models are flags on the character, others (i.e. Dual Wielder) only change the build's gear
+                if hasattr(character, choice[5:]):
+                    setattr(character, choice[5:], True)
                 taken.append(FEAT_LABELS.get(choice[5:], choice[5:]))
                 break
             if getattr(character, choice) < 20:
@@ -78,6 +81,15 @@ def fighter_champion_gwm(level, ruleset):
     c.crit_on = 20 - (level >= 3) - (level >= 15) # Improved/Superior Critical
     c.attacks = [weapon_attack("Greatsword") for _ in range(extra_attacks(level, "fighter", ruleset))]
     return _named(c, "Champion Fighter (GWM)", level, taken)
+
+def fighter_two_weapon(level, ruleset):
+    c = Character(level=level, strength=STARTING_PRIMARY, constitution=STARTING_SECONDARY, TWF=True)
+    taken = apply_asi_plan(c, "fighter", level, ruleset, ["feat:Dual Wielder", "strength", "strength", "feat:savage_attacker", "constitution"])
+    c.crit_on = 20 - (level >= 3) - (level >= 15)
+    # Dual Wielder allows non-light weapons
+    weapon = "Longsword" if "Dual Wielder" in taken else "Shortsword"
+    c.attacks = [weapon_attack(weapon) for _ in range(extra_attacks(level, "fighter", ruleset))] + [weapon_attack(weapon, offhand=True)]
+    return _named(c, "Champion Fighter (Two Weapon Fighting)", level, taken)
 
 def fighter_archer(level, ruleset):
     c = Character(level=level, dexterity=STARTING_PRIMARY, constitution=STARTING_SECONDARY, archery=True)
@@ -160,6 +172,16 @@ def warlock_eldritch_blast(level, ruleset):
         a.name = f"Eldritch Blast Beam {ii + 1}"
     return _named(c, "Warlock (Eldritch Blast + Hex)", level, taken)
 
+def warlock_hexblade(level, ruleset):
+    c = Character(level=level, charisma=STARTING_PRIMARY, constitution=STARTING_SECONDARY, lifedrinker=level >= 12)
+    taken = apply_asi_plan(c, "warlock", level, ruleset, ["charisma", "charisma", "constitution"])
+    # Hexblade's Curse: proficiency bonus to damage and crits on 19, Hex Warrior: charisma weapon attacks
+    c.bonus_damage_die_mod_list = [str(c.proficiency_bonus)]
+    c.crit_on = 19
+    num_attacks = 2 if level >= 5 else 1 # Thirsting Blade / Pact of the Blade extra attack
+    c.attacks = [weapon_attack("Longsword", ability_stat="charisma", bonus_damage=["1d6"]) for _ in range(num_attacks)] # Hex
+    return _named(c, "Hexblade Warlock (Pact of the Blade)", level, taken)
+
 def sorcerer_draconic_fire_bolt(level, ruleset):
     c = Character(level=level, charisma=STARTING_PRIMARY, constitution=STARTING_SECONDARY, elemental_affinity=level >= 6)
     taken = apply_asi_plan(c, "sorcerer", level, ruleset, ["charisma", "charisma", "constitution"])
@@ -179,6 +201,7 @@ def wizard_evoker_fireball(level, ruleset):
 BUILDS = {b.key: b for b in [
     Build("fighter_gwm", "Champion Fighter (GWM)", "fighter", "Greatsword, Great Weapon Fighting, GWM at 4, crits on 19 from level 3", fighter_champion_gwm),
     Build("fighter_battle_master", "Battle Master Fighter (GWM)", "fighter", "Greatsword, GWF, GWM, a damage maneuver on the first hit each round (superiority dice are not limited)", fighter_battle_master),
+    Build("fighter_two_weapon", "Champion Fighter (Two Weapon Fighting)", "fighter", "Two weapon fighting style, Dual Wielder at 4 for longswords, crits on 19 from level 3", fighter_two_weapon),
     Build("fighter_archer", "Champion Fighter (Archer)", "fighter", "Longbow, Archery, Sharpshooter at 4", fighter_archer),
     Build("barbarian_berserker", "Berserker Barbarian (Reckless)", "barbarian", "Greataxe, always raging, Reckless Attack, Frenzy, GWM at 4", barbarian_berserker),
     Build("paladin_smite", "Paladin (Smite First Hit)", "paladin", "Greatsword, GWF, smites the first hit each round with the highest slot", paladin_smite),
@@ -188,6 +211,7 @@ BUILDS = {b.key: b for b in [
     Build("ranger_archer", "Hunter Ranger (Archer + Hunter's Mark)", "ranger", "Longbow, Archery, Hunter's Mark, Colossus Slayer, Sharpshooter at 4", ranger_hunter_archer),
     Build("monk_open_hand", "Open Hand Monk (Flurry)", "monk", "Unarmed strikes plus Flurry of Blows every round", monk_open_hand),
     Build("warlock_eb", "Warlock (Eldritch Blast + Hex)", "warlock", "Eldritch Blast with Agonizing Blast and Hex on every beam", warlock_eldritch_blast),
+    Build("warlock_hexblade", "Hexblade Warlock (Pact of the Blade)", "warlock", "Charisma longsword with Hex and Hexblade's Curse (not limited per rest), extra attack at 5, Lifedrinker at 12", warlock_hexblade),
     Build("sorcerer_fire_bolt", "Draconic Sorcerer (Fire Bolt)", "sorcerer", "Fire Bolt with Elemental Affinity from level 6", sorcerer_draconic_fire_bolt),
     Build("wizard_fireball", "Evocation Wizard (Highest Slot Fireball)", "wizard", "Single target Fireball (Burning Hands before level 5) with the highest slot every round", wizard_evoker_fireball),
 ]}
@@ -203,12 +227,61 @@ def build_character(key, level, ruleset="bg3"):
     character.preset = f"{key}:{ruleset}"
     return character
 
+# Fields decided by leveling up, edits to these on a preset character are not carried to other levels
+LEVEL_UP_FIELDS = {"name", "level", "preset", "description", "attacks"}
+
+def _keyed_attacks(attacks):
+    """ Pairs each attack with (name, occurrence), i.e. the second 'Greatsword' is ('Greatsword', 1) """
+    counts = {}
+    keyed = []
+    for a in attacks:
+        keyed.append(((a.name, counts.get(a.name, 0)), a))
+        counts[a.name] = counts.get(a.name, 0) + 1
+    return keyed
+
+def _attack_edits(edited, original):
+    return {k: v for k, v in asdict(edited).items() if v != getattr(original, k)}
+
+def apply_edits(character, original, rebuilt):
+    """ Carries the edits made to a preset character (compared to the preset at the character's level) over to a rebuilt character.
+        Ability scores keep their difference (so ability score improvements still happen), other fields keep the edited value.
+        Attacks are matched by name and order: edited attacks keep their edits (new copies of an attack get the edits of its last copy),
+        deleted attacks stay deleted and added attacks are kept """
+    changes = {}
+    for f in fields(Character):
+        mine, base = getattr(character, f.name), getattr(original, f.name)
+        if f.name in LEVEL_UP_FIELDS or mine == base:
+            continue
+        changes[f.name] = max(1, min(30, getattr(rebuilt, f.name) + mine - base)) if f.name in STATS else mine
+    rebuilt = replace(rebuilt, **changes)
+
+    original_attacks = dict(_keyed_attacks(original.attacks))
+    my_attacks = dict(_keyed_attacks(character.attacks))
+    last_edits = {}
+    for key, a in _keyed_attacks(original.attacks):
+        if key in my_attacks:
+            last_edits[key[0]] = _attack_edits(my_attacks[key], a)
+    attacks = []
+    for key, a in _keyed_attacks(rebuilt.attacks):
+        if key in original_attacks:
+            if key not in my_attacks:
+                continue # Deleted by the user
+            edits = _attack_edits(my_attacks[key], original_attacks[key])
+        else:
+            edits = last_edits.get(key[0], {})
+        attacks.append(replace(a, **deepcopy(edits)))
+    attacks += [deepcopy(a) for key, a in my_attacks.items() if key not in original_attacks]
+    rebuilt.attacks = attacks
+    return rebuilt
+
 def character_at_level(character, level):
-    """ The character at another level. Preset characters are rebuilt so they gain attacks, feats and features like the real class
-        (edits made after creating the preset are not kept), other characters only change their level """
+    """ The character at another level. Preset characters are rebuilt so they gain attacks, feats and features like the real class,
+        keeping any edits made after creating the preset (see apply_edits), other characters only change their level """
     key, _, ruleset = (character.preset or "").partition(":")
     if key in BUILDS:
-        rebuilt = build_character(key, level, ruleset if ruleset in RULESETS else "bg3")
+        ruleset = ruleset if ruleset in RULESETS else "bg3"
+        original = build_character(key, character.level, ruleset)
+        rebuilt = apply_edits(character, original, build_character(key, level, ruleset))
         rebuilt.name = character.name
         return rebuilt
     return replace(character, level=level)

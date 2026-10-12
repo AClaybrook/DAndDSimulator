@@ -83,3 +83,31 @@ def test_dpr_by_level_sweep():
     assert barbarian[12] > 3 * barbarian[1]
     df_attacks = simulate_rounds_from_characters_by_level(characters, Enemy(), range(1, 4), character_at_level, num_rounds=500, by_round=False)
     assert {"Character-Attack", "Level"} <= set(df_attacks.columns)
+
+def test_level_sweep_keeps_manual_edits():
+    card = build_character("fighter_gwm", 5)
+    card.strength += 1 # 20 at level 5 after the edit
+    card.bonus_attack_die_mod_list = ["1d4"] # Bless
+    card.attacks[0].weapon_enhancement = 1
+    card.attacks[1].weapon_enhancement = 1
+    card.attacks.append(weapon_attack("Handaxe"))
+    rebuilt = character_at_level(card, 11)
+    plain = build_character("fighter_gwm", 11)
+    assert rebuilt.bonus_attack_die_mod_list == ["1d4"]
+    assert rebuilt.strength == min(30, plain.strength + 1)
+    assert [a.name for a in rebuilt.attacks] == ["Greatsword"] * 3 + ["Handaxe"]
+    # The new third greatsword gets the edits of the last edited copy
+    assert all(a.weapon_enhancement == 1 for a in rebuilt.attacks[:3])
+    assert rebuilt.GWM and rebuilt.crit_on == plain.crit_on
+
+def test_level_sweep_keeps_deleted_attacks_deleted():
+    card = build_character("rogue_dual_wield", 5)
+    card.attacks = card.attacks[:1]
+    assert [a.name for a in character_at_level(card, 9).attacks] == ["Shortsword"]
+
+def test_unedited_preset_rebuilds_exactly():
+    card = build_character("paladin_smite", 7)
+    rebuilt = character_at_level(card, 9)
+    expected = build_character("paladin_smite", 9)
+    expected.name = card.name
+    assert rebuilt == expected
