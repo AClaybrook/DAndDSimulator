@@ -2,7 +2,7 @@
 import dash_bootstrap_components as dbc
 from dash import html
 from components.plots import COLORS
-from components.character_card import check_row, number_row, text_row, to_list, to_str, label_value_rows
+from components.character_card import check_row, number_row, text_row, to_list, to_str, label_value_rows, tag_fields
 from computations.models import Enemy, STATS
 from game_data import enemy_presets
 
@@ -28,7 +28,7 @@ preset_options = [{"label": label, "value": value} for label, value in enemy_pre
 def generate_enemy_card_body(enemy=None):
     """ The label/value rows of the enemy card """
     e = enemy or Enemy()
-    return [
+    rows = [
         text_row(E_LABELS["name"], e.name, id="enemy-name-input"),
         number_row(E_LABELS["armor_class"], e.armor_class, 1, 35),
         number_row(E_LABELS["hit_points"], e.hit_points, 1, 2000),
@@ -40,6 +40,7 @@ def generate_enemy_card_body(enemy=None):
         text_row(E_LABELS["immunities"], to_str(e.immunities), DAMAGE_TYPE_PLACEHOLDER),
         *[number_row(E_LABELS[f"{stat}_save"], e.saving_throw_modifier(stat), -10, 30) for stat in STATS],
     ]
+    return [tag_fields(row, "enemy field") for row in rows]
 
 def generate_enemy_card(enemy=None, color=COLORS[0]):
     """ Generates the enemy card"""
@@ -57,7 +58,11 @@ def generate_enemy_card(enemy=None, color=COLORS[0]):
 
 def extract_enemy_ui_values(enemy_card_body):
     """ Extracts the enemy ui values to a dictionary"""
-    enemy_dict = {E_LABELS_TO_VALS[k]: v for k, v in label_value_rows(enemy_card_body) if k in E_LABELS_TO_VALS}
+    return enemy_dict_from_labels(label_value_rows(enemy_card_body))
+
+def enemy_dict_from_labels(label_values):
+    """ Enemy dictionary from (ui label, value) pairs """
+    enemy_dict = {E_LABELS_TO_VALS[k]: v for k, v in label_values if k in E_LABELS_TO_VALS}
     for key in DAMAGE_TYPE_LISTS:
         enemy_dict[key] = [t.lower() for t in to_list(enemy_dict.get(key))]
     return enemy_dict

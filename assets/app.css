@@ -171,3 +171,9 @@ input:invalid {
   color: inherit;
   box-shadow: none;
 }
+
+/* Expected damage badge under the character name */
+.dpr-badge {
+    min-height: 1.2rem;
+    margin-top: 0.15rem;
+}

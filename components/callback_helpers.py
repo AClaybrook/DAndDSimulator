@@ -33,7 +33,7 @@ def new_card_click(timestamps, last_handled):
     triggered = ctx.triggered_id
     if not triggered:
         return None
-    index = [i["id"]["index"] for i in ctx.inputs_list[0]].index(triggered["index"])
+    index = [i["id"] for i in ctx.inputs_list[0]].index(triggered)
     timestamp = timestamps[index]
     if not timestamp or timestamp <= (last_handled or 0):
         return None

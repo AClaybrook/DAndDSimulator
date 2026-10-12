@@ -5,7 +5,7 @@ import pandas as pd
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 from dash import dcc, html, Input, Output, State, Patch, MATCH, ALL, ctx, clientside_callback, ClientsideFunction, no_update
-from computations.analytic import attack_breakdown, power_attack_insights
+from computations.analytic import attack_breakdown, expected_damage_per_round, power_attack_insights
 from computations.models import Character, Enemy
 from computations.numerical_simulation import simulate_rounds_from_characters, set_seed, simulate_rounds_to_kill, simulate_fights
 from game_data import attacks_from_template, enemy_from_preset
@@ -21,8 +21,9 @@ from components.plots import (COLORS, generate_plot_data, add_tables, summary_st
                               results_summary)
 from components.help import GRAPH_DESCRIPTIONS
 from components.character_card import (generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values, characters_from_ui,
-                                       label_value_rows, validation_errors)
-from components.enemy_card import extract_enemy_ui_values, generate_enemy_card_body
+                                       label_value_rows, validation_errors, character_dict_from_labels)
+from components.enemy_card import extract_enemy_ui_values, generate_enemy_card_body, enemy_dict_from_labels
+from components.variants import make_variant
 from components.sweeps import SWEEP_PARAMETERS, run_sweep
 from components.session import SETTINGS_IDS, describe_session, make_session, parse_session
 
@@ -215,35 +216,88 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         Output("active_ids", "data", allow_duplicate=True),
         Output("character-alerts", "children", allow_duplicate=True),
         Output("last-card-click", "data", allow_duplicate=True),
-        Input({'type': 'copy character', "index": ALL}, "n_clicks_timestamp"),
+        Input({'type': 'copy character', "index": ALL, "variant": ALL}, "n_clicks_timestamp"),
         State("character_row", "children"),
+        State({'type': 'attack_store', "index": ALL}, "data"),
         State("active_ids", "data"),
         State("last-card-click", "data"),
         prevent_initial_call=True
     )
     @timeit
-    def copy_character(timestamps, characters, active_ids_json, last_handled):
+    def copy_character(timestamps, characters, attack_stores, active_ids_json, last_handled):
+        """ Copies a card as is, or as a variant with one change (see components/variants.py) """
         clicked_at = new_card_click(timestamps, last_handled)
         if clicked_at is None:
             raise PreventUpdate
 
-        copy_id = ctx.triggered_id["index"]
+        copy_id, variant = ctx.triggered_id["index"], ctx.triggered_id["variant"]
         active_ids, new_id = get_active_ids_and_new_id(active_ids_json)
         # Don't add more than max characters
         if new_id >= MAX_CHARACTERS:
             return Patch(), active_ids_json, alert(f"Max of {MAX_CHARACTERS} characters reached", color="warning"), clicked_at
 
-        # Copy the existing character and replace its id, color, name and button clicks
-        character = characters[active_ids.index(copy_id)]
-        character = replace_card_index_and_color(reset_clicks(character), copy_id, new_id, COLORS[new_id])
+        position = active_ids.index(copy_id)
         existing_names = {extract_character_ui_values(c)["name"] for c in characters}
-        character = rename_card(character, unique_name(extract_character_ui_values(character)["name"], existing_names))
+        if variant == "copy":
+            # Copy the existing card, including unsaved edits, and replace its id, color, name and button clicks
+            character = replace_card_index_and_color(reset_clicks(characters[position]), copy_id, new_id, COLORS[new_id])
+            character = rename_card(character, unique_name(extract_character_ui_values(character)["name"], existing_names))
+        else:
+            values = extract_character_ui_values(characters[position])
+            issues = validation_errors(values, json.loads(attack_stores[position]))
+            if issues:
+                return Patch(), active_ids_json, alert(f"Please fix {values.get('name')} before copying: " + "; ".join(issues), color="warning"), clicked_at
+            original, error = try_and_except_alert("Could not copy the character", characters_from_ui, [characters[position]], [attack_stores[position]])
+            if error is not None:
+                return Patch(), active_ids_json, error, clicked_at
+            try:
+                variant_character = make_variant(original[0], variant)
+            except ValueError as e:
+                return Patch(), active_ids_json, alert(str(e), color="warning"), clicked_at
+            if variant_character.name in existing_names:
+                variant_character.name = unique_name(variant_character.name, existing_names)
+            character = generate_character_card(variant_character.name, character=variant_character, color=COLORS[new_id], index=new_id)
 
         patched_children = Patch()
         patched_children.append(character)
         active_ids.append(new_id)
 
         return patched_children, set_active_ids(active_ids), None, clicked_at
+
+    @app.callback(
+        Output("enemy-values", "data"),
+        Input({'type': 'enemy field', "field": ALL}, "value"),
+    )
+    def enemy_values(values):
+        """ The enemy as a dictionary, or None if a field is empty. Callbacks with a MATCH output aren't triggered by
+            pattern matching inputs without the MATCH key, so the expected damage badges use this instead """
+        enemy_dict = enemy_dict_from_labels((i["id"]["field"], v) for i, v in zip(ctx.inputs_list[0], values))
+        if any(v is None for k, v in enemy_dict.items() if k not in ("resistances", "vulnerabilities", "immunities")):
+            return None
+        return enemy_dict
+
+    @app.callback(
+        Output({'type': 'dpr badge', "index": MATCH}, "children"),
+        Input({'type': 'character field', "index": MATCH, "field": ALL}, "value"),
+        Input({'type': 'character level', "index": MATCH}, "value"),
+        Input({'type': 'attack_store', "index": MATCH}, "data"),
+        Input("enemy-values", "data"),
+        Input("rounds-per-fight", "value"),
+    )
+    def expected_damage_badge(field_values, level, avals, enemy_dict, rounds_per_fight):
+        """ Exact expected damage per round against the current enemy, updated as the card is edited """
+        labels = [i["id"]["field"] for i in ctx.inputs_list[0]]
+        character_dict = {**character_dict_from_labels(dict(zip(labels, field_values))), "level": level}
+        attacks = json.loads(avals)
+        problems = validation_errors(character_dict, attacks)
+        if problems or not enemy_dict:
+            return html.Span("Expected damage: check the inputs (hover for details)", title="; ".join(problems) or "The enemy has empty fields")
+        try:
+            character = Character.from_dict({**character_dict, "attacks": attacks})
+            dpr = expected_damage_per_round(character, Enemy.from_dict(enemy_dict), rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT)
+        except Exception as e: # pylint: disable=broad-exception-caught
+            return html.Span("Expected damage: check the inputs (hover for details)", title=str(e))
+        return [html.B(f"{dpr:.1f}", className="text-light"), " expected damage per round"]
 
     ## Attacks
 

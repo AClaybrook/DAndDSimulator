@@ -207,6 +207,7 @@ floating_simulate = dbc.Button([html.I(className="fa-solid fa-dice-d20 me-2"), "
 stores = [
     dcc.Store(id="ui-prefs", storage_type="local"), # Per browser preferences, i.e. hiding the quick start
     dcc.Store(id="scroll-dummy"),
+    dcc.Store(id="enemy-values"), # The enemy's current values, used by the expected damage on each character card
     dcc.Store(id="saved-session", storage_type="local"), # Last simulated session, offered for restore after a reload
 ]
 
