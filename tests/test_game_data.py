@@ -141,3 +141,27 @@ def test_multiclass_builds():
     # Paladin 5: multiclass caster level 2 (3 first level slots) plus the pact slot recovering on short rests
     assert hexadin.once_per_turn_die_mod_list == ["2d8"] and hexadin.once_per_turn_uses_per_fight == 1.5
     assert not build_character("hexadin", 2).once_per_turn_die_mod_list
+
+def test_fireball_wizard_falls_back_to_fire_bolt():
+    wizard = build_character("wizard_fireball", 7)
+    assert [a.name for a in wizard.attacks] == ["Fireball", "Fire Bolt"]
+    # Wizard 7: 3 + 1 slots of 3rd level or higher over 4 fights
+    assert wizard.attacks[0].uses_per_fight == 1 and wizard.attacks[1].fallback_for == "Fireball"
+    assert build_character("wizard_fireball", 3).attacks[0].name == "Burning Hands"
+
+def test_first_round_presets():
+    assassin = build_character("rogue_assassin", 3)
+    assert assassin.first_round_advantage and assassin.first_round_auto_crit
+    assert not build_character("rogue_assassin", 2).first_round_auto_crit
+    gloom = build_character("ranger_gloom_stalker", 5)
+    ambush = [a for a in gloom.attacks if a.uses_per_fight]
+    assert len(ambush) == 1 and ambush[0].bonus_damage_die_mod_list == ["1d6", "1d8"]
+
+def test_more_multiclass_builds():
+    fighter_rogue = build_character("fighter_rogue", 7)
+    assert fighter_rogue.TWF and fighter_rogue.once_per_turn_die_mod_list == ["3d6"] and fighter_rogue.description.endswith("Fighter 2 / Rogue 5")
+    assert sum(1 for a in fighter_rogue.attacks if a.uses_per_fight) == 1 # Action Surge
+    sorcadin = build_character("sorcadin", 10)
+    # Paladin 6 / Sorcerer 4: caster level 7 (4, 3, 3, 1 slots), smiting with a 4th level slot
+    assert sorcadin.once_per_turn_die_mod_list == ["5d8"] and sorcadin.once_per_turn_uses_per_fight == 2.75
+    assert build_character("sorcadin", 6).once_per_turn_uses_per_fight == build_character("paladin_smite", 6).once_per_turn_uses_per_fight

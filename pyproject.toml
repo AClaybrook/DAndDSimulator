@@ -1,6 +1,6 @@
 [project]
 name = "dnd-damage-simulator"
-version = "2.3.0"
+version = "2.4.0"
 description = "Monte Carlo damage simulator for D&D 5e and Baldur's Gate 3 character builds"
 readme = "ReadMe.md"
 requires-python = ">=3.11"
