@@ -204,8 +204,9 @@ def simulate_attacks(attack_contexts, damage_contexts, num_rounds=10000, rng=RNG
     for (attack_rolls, rolls, hit, crit), d in zip(rolled, damage_contexts):
         once_mask = None
         if d.get("once_per_turn_eligible") and (d.get("once_num_die") or d.get("once_modifier")):
-            once_mask = hit & ~hit_already
-            hit_already |= hit
+            trigger = crit if d.get("once_crit_only") else hit
+            once_mask = trigger & ~hit_already
+            hit_already |= trigger
         damage, hit_damage, crit_damage, miss_damage = damage_roll(hit, crit, **d, once_mask=once_mask, rng=rng)
         if damage_only:
             results.append(damage)
@@ -299,34 +300,42 @@ def simulate_rounds_from_characters(characters, enemy, num_rounds=10000, save_me
         df_by_rounds.append(pd.DataFrame(total[1:].T, columns=RESULT_COLUMNS[1:], index=pd.RangeIndex(1, num_rounds + 1, name='Round')))
     return dfs, df_by_rounds, dfs_by_attack
 
-@timeit
-def simulate_rounds_from_characters_multi_acs(characters, enemy, armor_classes=None, num_rounds=10000, by_round=True, rng=RNG):
-    """ Simulate rounds of combat for a list of characters against multiple armor classes"""
-
-    if not armor_classes:
-        armor_classes = range(10, 26)
-
+def simulate_sweep(cases, label, num_rounds=10000, by_round=True, rng=RNG):
+    """ Simulate a parameter sweep. cases is an iterable of (value, characters, enemy), characters are grouped by name across values.
+        Only the damage is simulated, which keeps sweeps fast. Returns one row of summary stats per value and character (or attack) """
     rows = []
-    for ac in armor_classes:
-        enemy_ac = replace(enemy, armor_class=ac)
+    for value, characters, enemy in cases:
         for c in characters:
             # Attack and Damage Contexts
-            attack_contexts, damage_contexts = calculate_attack_and_damage_context(c, enemy_ac)
+            attack_contexts, damage_contexts = calculate_attack_and_damage_context(c, enemy)
             damages = simulate_attacks(attack_contexts, damage_contexts, num_rounds=num_rounds, rng=rng, damage_only=True)
             if by_round:
-                # Summary Stats for each AC
+                # Summary Stats for each value
                 total = np.sum(damages, axis=0) if damages else np.zeros(num_rounds, dtype='int32')
-                rows.append([*column_stats(total), c.name, ac])
+                rows.append([*column_stats(total), c.name, value])
             else:
-                # Regroup by attacks with the same name, Summary Stats for each attack for each AC
+                # Regroup by attacks with the same name, Summary Stats for each attack for each value
                 grouped = {}
                 for values, name in zip(damages, [a.name for a in c.attacks]):
                     grouped.setdefault(name, []).append(values)
                 for name, values in grouped.items():
-                    rows.append([*column_stats(values), f"{c.name}-{name}", c.name, ac])
+                    rows.append([*column_stats(values), f"{c.name}-{name}", c.name, value])
 
-    columns = STAT_NAMES + (['Character'] if by_round else ['Character-Attack', 'Character']) + ['Armor Class']
+    columns = STAT_NAMES + (['Character'] if by_round else ['Character-Attack', 'Character']) + [label]
     return pd.DataFrame(rows, columns=columns, index=['Damage'] * len(rows))
+
+@timeit
+def simulate_rounds_from_characters_multi_acs(characters, enemy, armor_classes=None, num_rounds=10000, by_round=True, rng=RNG):
+    """ Simulate rounds of combat for a list of characters against multiple armor classes"""
+    armor_classes = armor_classes or range(10, 26)
+    cases = ((ac, characters, replace(enemy, armor_class=ac)) for ac in armor_classes)
+    return simulate_sweep(cases, 'Armor Class', num_rounds=num_rounds, by_round=by_round, rng=rng)
+
+@timeit
+def simulate_rounds_from_characters_by_level(characters, enemy, levels, character_at_level, num_rounds=10000, by_round=True, rng=RNG):
+    """ Simulate rounds of combat for a list of characters at each level, character_at_level(character, level) builds each variant """
+    cases = ((level, [character_at_level(c, level) for c in characters], enemy) for level in levels)
+    return simulate_sweep(cases, 'Level', num_rounds=num_rounds, by_round=by_round, rng=rng)
 
 def rounds_to_kill(damage_per_round, hit_points, max_rounds=30, num_fights=None, rng=RNG):
     """ Number of rounds needed to deal hit_points damage, for num_fights simulated fights.

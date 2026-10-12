@@ -125,8 +125,8 @@ def add_tables(data, characters, by_round=True, width=12):
 
     return build_tables_row(characters, data_summary, width=width, by_round=by_round)
 
-def generate_line_plots(df_acs, groupby='Character', template='plotly_dark', order=None):
-    """ Generates a line plot of damage vs armor class, used by DPR vs Armor Class and DPA vs Armor Class"""
+def generate_line_plots(df_acs, groupby='Character', template='plotly_dark', order=None, x_col='Armor Class'):
+    """ Generates a line plot of damage vs armor class (or another swept parameter), used by DPR/DPA vs Armor Class and Level"""
     fig = go.Figure()
     if not order:
         order = df_acs['Character'].unique()
@@ -136,7 +136,7 @@ def generate_line_plots(df_acs, groupby='Character', template='plotly_dark', ord
         df_c = df_acs.loc[df_acs['Character']==c, :]
         for name, g in df_c.groupby(groupby):
             ii = jj
-            x = g["Armor Class"]
+            x = g[x_col]
             fig.add_trace(
                 go.Scatter(
                     name=f"{name} (mean)",
@@ -183,9 +183,9 @@ def generate_line_plots(df_acs, groupby='Character', template='plotly_dark', ord
                 ))
             # ii+=1 # If difference colors for each attack are desired
     fig.update_layout(
-        xaxis_title='Armor Class',
+        xaxis_title=x_col,
         yaxis_title='Damage',
-        title='Damage Per Round vs Armor Class' if groupby=='Character' else 'Damage Per Attack vs Armor Class',
+        title=f'Damage Per Round vs {x_col}' if groupby=='Character' else f'Damage Per Attack vs {x_col}',
         template=template,
         legend_traceorder="normal",
     )
@@ -309,4 +309,42 @@ def rounds_to_kill_summary(df_rtk, max_rounds):
     return [
         dbc.Row(dbc.Col(html.H4("Rounds to Kill", className="mt-3"))),
         dbc.Row(dbc.Col(dbc.Table.from_dataframe(summary.reset_index(), striped=True, bordered=True, hover=True, responsive=True, size="sm"))),
+    ]
+
+def build_sweep_leaderboard(df_sweep, x_col, order):
+    """ Ranks characters by their average damage per round over the swept range """
+    rows = []
+    for ii, name in enumerate(order):
+        g = df_sweep.loc[df_sweep["Character"] == name]
+        if g.empty:
+            continue
+        rows.append({"ii": ii, "Character": name, "avg": g["mean"].astype(float).mean(),
+                     "low": g["mean"].astype(float).iloc[0], "high": g["mean"].astype(float).iloc[-1]})
+    rows.sort(key=lambda r: r["avg"], reverse=True)
+    first, last = df_sweep[x_col].iloc[0], df_sweep[x_col].iloc[-1]
+    header = html.Thead(html.Tr([html.Th(h) for h in ["#", "Character", f"Average DPR ({x_col} {first}-{last})", f"DPR at {first}", f"DPR at {last}"]]))
+    body = html.Tbody([
+        html.Tr([
+            html.Td(rank),
+            html.Td(color_header(r["Character"], r["ii"])),
+            html.Td(html.B(f"{r['avg']:.2f}")),
+            html.Td(f"{r['low']:.2f}"),
+            html.Td(f"{r['high']:.2f}"),
+        ]) for rank, r in enumerate(rows, start=1)
+    ])
+    return [
+        dbc.Row(dbc.Col(html.H4("Leaderboard", className="mt-3"))),
+        dbc.Row(dbc.Col(dbc.Table([header, body], striped=True, bordered=True, hover=True, responsive=True, size="sm"))),
+    ]
+
+def build_insights(insights):
+    """ Table of when to turn power attack feats (GWM, Sharpshooter) on or off """
+    if not insights:
+        return []
+    return [
+        dbc.Row(dbc.Col([
+            html.H4("Insights", className="mt-3 mb-0"),
+            html.P("Exact expected damage with each power attack feat on vs off against the current enemy's defenses at each armor class", className="small text-muted"),
+        ])),
+        dbc.Row(dbc.Col(dbc.Table.from_dataframe(pd.DataFrame(insights), striped=True, bordered=True, hover=True, responsive=True, size="sm"))),
     ]

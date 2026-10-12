@@ -53,6 +53,7 @@ A_LABEL_TO_VAL = {
     "Offhand": "offhand",
     "Twohanded": "two_handed",
     "Heavy": "heavy",
+    "Once Per Turn Eligible": "once_per_turn_eligible",
     "Saving Throw": "saving_throw",
     "Saving Throw Stat": "saving_throw_stat",
     "Successful Saving Throw Multiplier": "saving_throw_success_multiplier",
@@ -106,6 +107,7 @@ C_LABEL_TO_DICT_MAP = {
     "Intelligence": "intelligence",
     "Wisdom": "wisdom",
     "Charisma": "charisma",
+    "Level Up Preset": "preset",
 
     # Bonuses
     "Crit on": "crit_on",
@@ -117,6 +119,7 @@ C_LABEL_TO_DICT_MAP = {
     "Bonus Crit Mod": "bonus_crit_die_mod_list",
     "Bonus Miss Mod": "bonus_miss_die_mod_list",
     "Once Per Turn Damage": "once_per_turn_die_mod_list",
+    "Once Per Turn Only On Crit": "once_per_turn_crit_only",
     "Great Weapon Master": "GWM",
     "Savage Attacker": "savage_attacker",
     "Sharpshooter": "sharpshooter",
@@ -208,6 +211,7 @@ def set_attack_from_values(avals, i, index, num_attacks=1):
         check_row(A_LABELS["disadvantage"], a["disadvantage"]),
         check_row(A_LABELS["always_hit"], a["always_hit"]),
         check_row(A_LABELS["always_crit"], a["always_crit"]),
+        check_row(A_LABELS["once_per_turn_eligible"], a["once_per_turn_eligible"]),
         # Weapon specific
         section("Weapon"),
         number_row(A_LABELS["weapon_enhancement"], a["weapon_enhancement"], 0, 10),
@@ -238,6 +242,8 @@ def generate_character_card(character_name, character=None, color="", index=1):
             text_row(C_LABELS["name"], c.name, id={"type": "character name input", "index": index}),
             number_row(C_LABELS["level"], c.level, 1, 20, id={"type": "character level", "index": index}),
             *[number_row(C_LABELS[stat], getattr(c, stat), 1, 30) for stat in ["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"]],
+            # DPR vs Level rebuilds preset characters at each level, clear it to only change the level
+            text_row(C_LABELS["preset"], c.preset, placeholder="none (only level changes)"),
             dbc.Row([
                 dbc.Textarea(value=c.description, placeholder="Optional Description", style={'width': '100%', 'minHeight': '10vh'}, class_name="mt-2"),
             ]),
@@ -279,6 +285,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
             text_row(C_LABELS["bonus_crit_die_mod_list"], to_str(c.bonus_crit_die_mod_list), DICE_PLACEHOLDER),
             text_row(C_LABELS["bonus_miss_die_mod_list"], to_str(c.bonus_miss_die_mod_list), DICE_PLACEHOLDER),
             text_row(C_LABELS["once_per_turn_die_mod_list"], to_str(c.once_per_turn_die_mod_list), "i.e. 3d6 (sneak attack)"),
+            check_row(C_LABELS["once_per_turn_crit_only"], c.once_per_turn_crit_only),
             section("Feats"),
             check_row(C_LABELS["GWM"], c.GWM),
             check_row(C_LABELS["savage_attacker"], c.savage_attacker),

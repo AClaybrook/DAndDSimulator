@@ -1,11 +1,11 @@
 """ Tests for the game database and level up presets """
 import pytest
 
-from computations.models import Attack, Enemy
-from computations.numerical_simulation import simulate_rounds_from_characters
+from computations.models import Attack, Character, Enemy
+from computations.numerical_simulation import simulate_rounds_from_characters, simulate_rounds_from_characters_by_level
 from game_data import (RULESETS, attack_templates, attacks_from_template, cantrip_tier, enemy_from_preset, enemy_presets,
                        spell_attacks, weapon_attack)
-from game_data.classes import BUILDS, asi_levels, build_character
+from game_data.classes import BUILDS, asi_levels, build_character, character_at_level
 
 def test_weapon_attack():
     gs = weapon_attack("Greatsword")
@@ -66,3 +66,20 @@ def test_fighter_progression():
     assert build_character("fighter_gwm", 20).level == 12 # BG3 caps at level 12
     c = build_character("fighter_gwm", 8)
     assert c.GWM and c.strength == 20 and c.crit_on == 19
+
+def test_character_at_level():
+    preset = build_character("fighter_gwm", 3)
+    preset.name = "Renamed"
+    rebuilt = character_at_level(preset, 11)
+    assert rebuilt.name == "Renamed" and len(rebuilt.attacks) == 3 and rebuilt.preset == "fighter_gwm:bg3"
+    plain = Character(name="Plain", attacks=[weapon_attack("Greatsword")])
+    assert character_at_level(plain, 9).level == 9 and len(character_at_level(plain, 9).attacks) == 1
+
+def test_dpr_by_level_sweep():
+    characters = [build_character("barbarian_berserker", 1), Character(name="Plain", strength=16, attacks=[weapon_attack("Greatsword")])]
+    df = simulate_rounds_from_characters_by_level(characters, Enemy(armor_class=15), range(1, 13), character_at_level, num_rounds=2000)
+    assert set(df["Level"]) == set(range(1, 13))
+    barbarian = df[df["Character"] == characters[0].name].set_index("Level")["mean"]
+    assert barbarian[12] > 3 * barbarian[1]
+    df_attacks = simulate_rounds_from_characters_by_level(characters, Enemy(), range(1, 4), character_at_level, num_rounds=500, by_round=False)
+    assert {"Character-Attack", "Level"} <= set(df_attacks.columns)

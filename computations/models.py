@@ -84,6 +84,8 @@ class Attack:
     saving_throw: bool = False
     saving_throw_stat: Stat = 'dexterity'
     saving_throw_success_multiplier: float = 0.5
+    # Whether the character's once per turn damage (sneak attack, smite) can be added to this attack
+    once_per_turn_eligible: bool = True
     # Extra damage dice on a crit (i.e. brutal critical) and damage on a miss/successful save (i.e. graze)
     bonus_crit_die_mod_list: list[str | int] = field(default_factory=list) # Format is ['1d6', 2]
     bonus_miss_die_mod_list: list[str | int] = field(default_factory=list) # Format is ['1d6', 2]
@@ -136,6 +138,7 @@ class Creature:
     bonus_miss_die_mod_list: list[str | int] = field(default_factory=list)
     # Bonus damage applied to the first hit each round, i.e. sneak attack or a divine smite
     once_per_turn_die_mod_list: list[str | int] = field(default_factory=list)
+    once_per_turn_crit_only: bool = False # Only use it on a crit, i.e. crit fishing with divine smite
     # Additional Spell DC
     additional_spell_dc: int = 0
 
@@ -228,6 +231,8 @@ class Character(Creature):
     empowered_evocation: bool = False # add intelligence modifier to evocation spell damage
     # Sorcerer
     elemental_affinity: bool = False # add charisma modifier to spell damage of matching element
+    # Prebuilt character this was created from ("build:ruleset"), used to rebuild it at other levels
+    preset: str = ''
 
     @property
     def rage_damage(self):
@@ -352,6 +357,7 @@ class DamageContext:
     once_die_size: list[int] = field(default_factory=list)
     once_modifier: int = 0
     once_per_turn_eligible: bool = False
+    once_crit_only: bool = False
 
 def calculate_attack_and_damage_context(character, enemy):
     """ Extracts the attack and damage contexts for a given character and enemy """
@@ -522,7 +528,8 @@ def calculate_attack_and_damage_context(character, enemy):
             once_num_die=list(once_num_die),
             once_die_size=list(once_die_size),
             once_modifier=once_modifier,
-            once_per_turn_eligible=not saving_throw,
+            once_per_turn_eligible=attack.once_per_turn_eligible and not saving_throw,
+            once_crit_only=character.once_per_turn_crit_only,
         )
 
         attack_contexts.append(attack_context)

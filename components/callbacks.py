@@ -5,19 +5,20 @@ import pandas as pd
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 from dash import dcc, html, Input, Output, State, Patch, MATCH, ALL, ctx, clientside_callback, ClientsideFunction
-from computations.analytic import attack_breakdown
+from computations.analytic import attack_breakdown, power_attack_insights
 from computations.models import Character, Enemy
 from computations.numerical_simulation import (simulate_rounds_from_characters, set_seed, simulate_rounds_from_characters_multi_acs,
-                                               simulate_rounds_to_kill)
-from game_data import attacks_from_template, enemy_from_preset
-from game_data.classes import build_character
+                                               simulate_rounds_from_characters_by_level, simulate_rounds_to_kill)
+from game_data import RULESETS, attacks_from_template, enemy_from_preset
+from game_data.classes import build_character, character_at_level
 
 from utilities.helper_functions import timeit
 from components.callback_helpers import (get_active_ids_and_new_id, get_new_id, set_active_ids, try_and_except_alert, reformat_df_ac, alert,
                                          button_was_clicked, new_card_click, reset_clicks, replace_card_index_and_color, per_attack_ac_tables,
                                          rename_card, unique_name)
 from components.plots import (COLORS, generate_plot_data, add_tables, summary_stats, generate_line_plots, generate_damage_per_attack_histogram,
-                              build_tables_row, build_leaderboard, build_breakdown_tables, generate_rounds_to_kill_plot, rounds_to_kill_summary)
+                              build_tables_row, build_leaderboard, build_breakdown_tables, generate_rounds_to_kill_plot, rounds_to_kill_summary,
+                              build_sweep_leaderboard, build_insights)
 from components.character_card import generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values, characters_from_ui
 from components.enemy_card import extract_enemy_ui_values, generate_enemy_card_body
 
@@ -51,7 +52,22 @@ def parse_simulation_inputs(num_rounds, attack_stores, characters_list, enemy_ca
         lambda: Enemy.from_dict(extract_enemy_ui_values(enemy_card_body)))
     return characters, enemy, rng, error
 
-def dpa_vs_ac_tables(df_acs, order):
+# Sweep graph types: (swept column, by round)
+SWEEPS = {
+    "DPR vs Armor Class": ("Armor Class", True),
+    "DPA vs Armor Class": ("Armor Class", False),
+    "DPR vs Level": ("Level", True),
+    "DPA vs Level": ("Level", False),
+}
+
+def run_sweep(characters, enemy, x_col, by_round, ruleset, num_rounds, rng):
+    """ Runs a sweep simulation over armor class or level """
+    if x_col == "Armor Class":
+        return simulate_rounds_from_characters_multi_acs(characters, enemy, armor_classes=ARMOR_CLASSES, num_rounds=num_rounds, by_round=by_round, rng=rng)
+    levels = range(1, RULESETS[ruleset or "bg3"]["max_level"] + 1)
+    return simulate_rounds_from_characters_by_level(characters, enemy, levels, character_at_level, num_rounds=num_rounds, by_round=by_round, rng=rng)
+
+def dpa_vs_ac_tables(df_acs, order, x_col='Armor Class'):
     """ One table per character with a column group per attack """
     data_summary = []
     for c_name in order:
@@ -61,7 +77,7 @@ def dpa_vs_ac_tables(df_acs, order):
             g = g.copy()
             g["mean"] = g["mean"].astype(float).round(2)
             attack_name = n[len(c_name)+1:]
-            reshaped = pd.concat({attack_name: g.set_index('Armor Class').drop(['Character-Attack', 'Character'], axis=1).T})
+            reshaped = pd.concat({attack_name: g.set_index(x_col).drop(['Character-Attack', 'Character'], axis=1).T})
             c_summary.append(reshaped.T)
         data_summary.append(pd.concat(c_summary, axis=1))
     return data_summary
@@ -429,10 +445,11 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         State("enemy-card-body", "children"),
         State("simulate-type", "value"),
         State("numerical-options", "value"),
+        State("ruleset", "value"),
         prevent_initial_call=True
     )
     @timeit
-    def simulate(clicked, num_rounds, attack_stores, characters_list, enemy_card_body, simulate_type, numerical_options):
+    def simulate(clicked, num_rounds, attack_stores, characters_list, enemy_card_body, simulate_type, numerical_options, ruleset):
         if not clicked:
             raise PreventUpdate
 
@@ -462,22 +479,25 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             elif simulate_type == "DPA Distribution":
                 fig = generate_damage_per_attack_histogram(characters, dfs, template=template, title="Damage Per Attack Distribution")
                 tables = leaderboard + add_tables(df_by_attacks, characters, by_round=False, width=3) + breakdown
-        elif simulate_type in ["DPR vs Armor Class", "DPA vs Armor Class"]:
-            by_round = simulate_type == "DPR vs Armor Class"
-            df_acs, error = try_and_except_alert(error_message, simulate_rounds_from_characters_multi_acs, characters, enemy,
-                                                 armor_classes=ARMOR_CLASSES, num_rounds=num_rounds, by_round=by_round, rng=rng)
+        elif simulate_type in SWEEPS:
+            x_col, by_round = SWEEPS[simulate_type]
+            df_acs, error = try_and_except_alert(error_message, run_sweep, characters, enemy, x_col, by_round, ruleset, num_rounds, rng)
             if error is not None:
                 return fig, tables, error, spinner
 
             groupby = "Character" if by_round else "Character-Attack"
             order = [c.name for c in characters]
-            fig = generate_line_plots(df_acs, template=template, groupby=groupby, order=order)
+            fig = generate_line_plots(df_acs, template=template, groupby=groupby, order=order, x_col=x_col)
+            leaderboard = build_sweep_leaderboard(df_acs, x_col, order) if by_round else []
+            insights = []
+            if x_col == "Armor Class":
+                insights = build_insights([i for c in characters for i in power_attack_insights(c, enemy, ARMOR_CLASSES)])
             if by_round:
-                df_acs = reformat_df_ac(df_acs, by_round=by_round)
+                df_acs = reformat_df_ac(df_acs, by_round=by_round, x=x_col)
                 data_summary = [df_acs.loc[df_acs['Character'] == c_name, :].drop("Character", axis=1) for c_name in order]
             else:
-                data_summary = dpa_vs_ac_tables(df_acs, order)
-            tables = build_tables_row(characters, data_summary, width=3, by_round=by_round) + breakdown
+                data_summary = dpa_vs_ac_tables(df_acs, order, x_col=x_col)
+            tables = leaderboard + insights + build_tables_row(characters, data_summary, width=3, by_round=by_round) + breakdown
         elif simulate_type == "Rounds to Kill":
             df_rtk, error = try_and_except_alert(error_message, simulate_rounds_to_kill, characters, enemy,
                                                  num_rounds=num_rounds, max_rounds=MAX_ROUNDS_TO_KILL, rng=rng)
@@ -500,10 +520,11 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         State("character_row", "children"),
         State("enemy-card-body", "children"),
         State("numerical-options", "value"),
+        State("ruleset", "value"),
         prevent_initial_call=True
     )
     @timeit
-    def export_results(clicked, export_type, num_rounds, attack_stores, characters_list, enemy_card_body, numerical_options):
+    def export_results(clicked, export_type, num_rounds, attack_stores, characters_list, enemy_card_body, numerical_options, ruleset):
         if not clicked:
             raise PreventUpdate
 
@@ -537,13 +558,12 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
                 data.insert(0, 'Name', name)
                 dfs.append(data)
 
-        elif export_type in ["DPR vs Armor Class", "DPA vs Armor Class"]:
-            by_round = export_type == "DPR vs Armor Class"
-            df_acs, error = try_and_except_alert(error_message, simulate_rounds_from_characters_multi_acs, characters, enemy,
-                                                 armor_classes=ARMOR_CLASSES, num_rounds=num_rounds, by_round=by_round, rng=rng)
+        elif export_type in SWEEPS:
+            x_col, by_round = SWEEPS[export_type]
+            df_acs, error = try_and_except_alert(error_message, run_sweep, characters, enemy, x_col, by_round, ruleset, num_rounds, rng)
             if error is not None:
                 return export, error, spinner
-            dfs = [reformat_df_ac(df_acs, by_round=True)] if by_round else per_attack_ac_tables(df_acs, names)
+            dfs = [reformat_df_ac(df_acs, by_round=True, x=x_col)] if by_round else per_attack_ac_tables(df_acs, names, x=x_col)
         elif export_type == "Rounds to Kill":
             df_rtk, error = try_and_except_alert(error_message, simulate_rounds_to_kill, characters, enemy, num_rounds=num_rounds, max_rounds=MAX_ROUNDS_TO_KILL, rng=rng)
             if error is not None:

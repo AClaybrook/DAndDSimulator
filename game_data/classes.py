@@ -2,7 +2,7 @@
     Each build levels up like the real class: attacks per round, fighting styles, feats/ability score improvements,
     subclass features, cantrip scaling and spell slots all depend on the character level and ruleset.
     The output is a plain Character, so everything can still be tweaked in the UI afterwards. """
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from math import ceil
 from collections.abc import Callable
 
@@ -106,6 +106,27 @@ def paladin_smite(level, ruleset):
     c.attacks = [weapon_attack("Greatsword") for _ in range(extra_attacks(level, "paladin", ruleset))]
     return _named(c, "Paladin (Smite First Hit)", level, taken)
 
+def fighter_battle_master(level, ruleset):
+    c = Character(level=level, strength=STARTING_PRIMARY, constitution=STARTING_SECONDARY, GWF=True)
+    taken = apply_asi_plan(c, "fighter", level, ruleset, ["feat:GWM", "strength", "strength", "feat:savage_attacker", "constitution"])
+    if level >= 3:
+        # A damage maneuver (i.e. Trip Attack) on the first hit each round, superiority dice grow at 10 and 18
+        c.once_per_turn_die_mod_list = [f"1d{8 + 2 * ((level >= 10) + (level >= 18))}"]
+    c.attacks = [weapon_attack("Greatsword") for _ in range(extra_attacks(level, "fighter", ruleset))]
+    return _named(c, "Battle Master Fighter (GWM)", level, taken)
+
+def paladin_crit_fish(level, ruleset):
+    c = paladin_smite(level, ruleset)
+    c.once_per_turn_crit_only = True
+    return c
+
+def rogue_thief(level, ruleset):
+    c = rogue_dual_wield(level, ruleset)
+    if level >= 3 and ruleset == "bg3":
+        # Fast Hands gives a second bonus action in BG3, used for a second offhand attack
+        c.attacks.append(weapon_attack("Shortsword", ability_stat="dexterity", offhand=True))
+    return c
+
 def rogue_dual_wield(level, ruleset):
     c = Character(level=level, dexterity=STARTING_PRIMARY, constitution=STARTING_SECONDARY)
     taken = apply_asi_plan(c, "rogue", level, ruleset, ["dexterity", "dexterity", "constitution"])
@@ -157,10 +178,13 @@ def wizard_evoker_fireball(level, ruleset):
 
 BUILDS = {b.key: b for b in [
     Build("fighter_gwm", "Champion Fighter (GWM)", "fighter", "Greatsword, Great Weapon Fighting, GWM at 4, crits on 19 from level 3", fighter_champion_gwm),
+    Build("fighter_battle_master", "Battle Master Fighter (GWM)", "fighter", "Greatsword, GWF, GWM, a damage maneuver on the first hit each round (superiority dice are not limited)", fighter_battle_master),
     Build("fighter_archer", "Champion Fighter (Archer)", "fighter", "Longbow, Archery, Sharpshooter at 4", fighter_archer),
     Build("barbarian_berserker", "Berserker Barbarian (Reckless)", "barbarian", "Greataxe, always raging, Reckless Attack, Frenzy, GWM at 4", barbarian_berserker),
     Build("paladin_smite", "Paladin (Smite First Hit)", "paladin", "Greatsword, GWF, smites the first hit each round with the highest slot", paladin_smite),
+    Build("paladin_crit_fish", "Paladin (Smite Crits Only)", "paladin", "Same as the smite paladin, but only smites critical hits (crit fishing)", paladin_crit_fish),
     Build("rogue_dual_wield", "Rogue (Dual Shortswords)", "rogue", "Two shortswords, Sneak Attack on the first hit each round", rogue_dual_wield),
+    Build("rogue_thief", "Thief Rogue (BG3 Fast Hands)", "rogue", "Dual shortswords, in BG3 Fast Hands' extra bonus action gives a second offhand attack from level 3", rogue_thief),
     Build("ranger_archer", "Hunter Ranger (Archer + Hunter's Mark)", "ranger", "Longbow, Archery, Hunter's Mark, Colossus Slayer, Sharpshooter at 4", ranger_hunter_archer),
     Build("monk_open_hand", "Open Hand Monk (Flurry)", "monk", "Unarmed strikes plus Flurry of Blows every round", monk_open_hand),
     Build("warlock_eb", "Warlock (Eldritch Blast + Hex)", "warlock", "Eldritch Blast with Agonizing Blast and Hex on every beam", warlock_eldritch_blast),
@@ -171,6 +195,22 @@ BUILDS = {b.key: b for b in [
 def build_character(key, level, ruleset="bg3"):
     """ Builds a prebuilt character at a given level """
     level = max(1, min(int(level), RULESETS[ruleset]["max_level"]))
-    return BUILDS[key].build(level, ruleset)
+    character = BUILDS[key].build(level, ruleset)
+    # Builds that extend another build keep its name, so name it after the build that was asked for
+    base_label = character.name.rsplit(" L", 1)[0]
+    character.name = f"{BUILDS[key].label} L{level}"
+    character.description = character.description.replace(base_label, BUILDS[key].label, 1)
+    character.preset = f"{key}:{ruleset}"
+    return character
 
-__all__ = ["BUILDS", "build_character", "asi_levels", "cantrip_tier"]
+def character_at_level(character, level):
+    """ The character at another level. Preset characters are rebuilt so they gain attacks, feats and features like the real class
+        (edits made after creating the preset are not kept), other characters only change their level """
+    key, _, ruleset = (character.preset or "").partition(":")
+    if key in BUILDS:
+        rebuilt = build_character(key, level, ruleset if ruleset in RULESETS else "bg3")
+        rebuilt.name = character.name
+        return rebuilt
+    return replace(character, level=level)
+
+__all__ = ["BUILDS", "build_character", "character_at_level", "asi_levels", "cantrip_tier"]

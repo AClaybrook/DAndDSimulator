@@ -100,25 +100,25 @@ def try_and_except_alert(alert_message, func, *args, **kwargs):
         print(f"{func.__name__} failed: {e!r}")
         return None, alert(f"{alert_message} ({e})")
 
-def reformat_df_ac(df, by_round=True):
-    """Reformats the armor class dataframe"""
+def reformat_df_ac(df, by_round=True, x='Armor Class'):
+    """Reformats the armor class (or other sweep) dataframe"""
     if by_round:
         df_acs = df.reset_index(drop=True)
-        ac_col = df_acs.pop("Armor Class")
-        df_acs.insert(0, 'Armor Class', ac_col)
+        ac_col = df_acs.pop(x)
+        df_acs.insert(0, x, ac_col)
         name_col = df_acs.pop("Character")
         df_acs.insert(0, 'Character', name_col)
-        df_acs.set_index(['Armor Class'], inplace=True)
+        df_acs.set_index([x], inplace=True)
         df_acs["mean"] = df_acs["mean"].astype(float).round(2)
         return df_acs
     else:
         new_dfs = []
         for n, g in df.groupby('Character-Attack'):
-            reshaped = pd.concat({n: g.set_index('Armor Class').drop(['Character-Attack', 'Character'], axis=1).T})
+            reshaped = pd.concat({n: g.set_index(x).drop(['Character-Attack', 'Character'], axis=1).T})
             new_dfs.append(reshaped)
         return pd.concat(new_dfs).T
 
-def per_attack_ac_tables(df_acs, character_names):
+def per_attack_ac_tables(df_acs, character_names, x='Armor Class'):
     """ Splits the DPA vs Armor Class results into one table per character, used by tables and exports """
     data_summary = []
     for c_name in character_names:
@@ -129,6 +129,6 @@ def per_attack_ac_tables(df_acs, character_names):
             g["mean"] = g["mean"].astype(float).round(2)
             attack_name = n[len(c_name)+1:]
             g["Attack"] = attack_name
-            c_summary.append(g.set_index('Armor Class').drop(['Character-Attack'], axis=1))
+            c_summary.append(g.set_index(x).drop(['Character-Attack'], axis=1))
         data_summary.append(pd.concat(c_summary) if c_summary else pd.DataFrame())
     return data_summary
