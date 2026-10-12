@@ -87,3 +87,17 @@ def test_attack_breakdown_columns():
     df = attack_breakdown(CASES["sneak_attack"], Enemy())
     assert list(df["Attack"]) == ["Attack", "Attack"]
     assert df["Expected"].iloc[0] > df["Expected"].iloc[1]
+
+def test_column_stats_match_numpy():
+    from computations.numerical_simulation import column_stats, describe
+    rng = np.random.default_rng(0)
+    for values in (rng.integers(-5, 60, size=1001, dtype='int32'), rng.integers(0, 3, size=10, dtype='int32'), np.array([7], dtype='int32')):
+        expected = [values.mean(), *np.percentile(values, [0, 25, 50, 75, 100])]
+        assert column_stats(values) == pytest.approx(expected)
+        # A list of arrays is treated as one concatenated array
+        assert column_stats([values[:3], values[3:]]) == pytest.approx(expected)
+    floats = rng.random(100)
+    assert column_stats(floats) == pytest.approx([floats.mean(), *np.percentile(floats, [0, 25, 50, 75, 100])])
+    import pandas as pd
+    df = pd.DataFrame({"a": rng.integers(0, 20, 500)})
+    assert describe(df)["a"].tolist() == pytest.approx(df["a"].describe()[["mean", "min", "25%", "50%", "75%", "max"]].tolist())

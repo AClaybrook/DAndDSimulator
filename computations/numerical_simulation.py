@@ -120,8 +120,11 @@ def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multi
     miss_damage[miss] = misses
 
     # Track total, hit, crit, and miss/fail damage
-    raw_total = hit_damage + crit_damage + miss_damage
-    total_damage = np.floor(np.maximum(raw_total, 0) * damage_multiplier).astype('int32')
+    total_damage = hit_damage + crit_damage + miss_damage
+    if modifier < 0 or miss_damage_modifier < 0 or crit_damage_modifier < 0 or once_modifier < 0:
+        np.maximum(total_damage, 0, out=total_damage)
+    if damage_multiplier != 1:
+        total_damage = np.floor(total_damage * damage_multiplier).astype('int32')
     if damage_reduction:
         total_damage = np.maximum(total_damage - damage_reduction, 0)
     if damage_multiplier != 1:
@@ -136,65 +139,116 @@ def attack(num_rolls, attack_context, damage_context, rng=RNG, once_mask=None):
     total_damage, hit_damage, crit_damage, miss_damage = damage_roll(hit, crit, **damage_context, once_mask=once_mask, rng=rng)
     return attack_rolls, rolls, hit, crit, total_damage, hit_damage, crit_damage, miss_damage
 
+STAT_NAMES = ['mean', 'min', '25%', '50%', '75%', 'max']
+PERCENTILES = np.array([0, 25, 50, 75, 100])
+
+def _bincount(values):
+    """ Counts of each integer value, returns (counts, lowest value) """
+    try:
+        return np.bincount(values), 0
+    except ValueError: # Negative values
+        low = int(values.min())
+        return np.bincount(values - low), low
+
+def column_stats(values):
+    """ Mean and percentiles of a 1d array (or a list of 1d arrays treated as one).
+        Integer results use counting (O(n), no copies or sorting) rather than a partition,
+        giving identical results to np.percentile (linear interpolation) several times faster """
+    parts = values if isinstance(values, (list, tuple)) else [values]
+    n = sum(len(p) for p in parts)
+    if n == 0:
+        return [np.nan] * len(STAT_NAMES)
+    if not all(np.issubdtype(p.dtype, np.integer) for p in parts):
+        merged = np.concatenate(parts)
+        return [merged.mean(), *np.percentile(merged, PERCENTILES)]
+    binned = [_bincount(p) for p in parts if len(p)]
+    low = min(lo for _, lo in binned)
+    size = max(len(c) + lo - low for c, lo in binned)
+    counts = np.zeros(size, dtype=np.int64)
+    for c, lo in binned:
+        counts[lo - low:lo - low + len(c)] += c
+    cumulative = np.cumsum(counts)
+    position = PERCENTILES / 100 * (n - 1)
+    below, above = np.floor(position).astype(np.int64), np.ceil(position).astype(np.int64)
+    v_below = np.searchsorted(cumulative, below, side='right') + low
+    v_above = np.searchsorted(cumulative, above, side='right') + low
+    mean = np.dot(np.arange(size, dtype=np.float64), counts) / n + low
+    return [mean, *(v_below + (v_above - v_below) * (position - below))]
+
+def describe_array(values, columns):
+    """ describe() for a column-major 2d numpy array, i.e. values[ii] is the column named columns[ii].
+        values can also be a list of such arrays which are treated as if they were concatenated """
+    parts = values if isinstance(values, list) else [values]
+    parts = [np.atleast_2d(p) for p in parts]
+    return pd.DataFrame(np.array([column_stats([p[ii] for p in parts]) for ii in range(len(columns))]).T, index=STAT_NAMES, columns=columns)
+
 def describe(g):
     """ Faster implementation of pandas describe """
-    desc = pd.concat([g.agg(["mean"]), g.agg(np.percentile, q=[0, 25, 50, 75, 100])])
-    desc.index = ['mean', 'min', '25%', '50%', '75%', 'max']
-    return desc
+    if isinstance(g, pd.Series):
+        g = g.to_frame()
+    return describe_array(g.to_numpy().T, g.columns)
 
 RESULT_COLUMNS = ['Round', 'Damage', 'Damage (From Hit)', 'Damage (From Crit)', 'Damage (Miss/Fail)', 'Attack Roll', 'Attack Roll (Die)', 'Hit', 'Hit (Non-Crit)', 'Hit (Crit)']
 
-def simulate_attacks(attack_contexts, damage_contexts, num_rounds=10000, rng=RNG):
+def simulate_attacks(attack_contexts, damage_contexts, num_rounds=10000, rng=RNG, damage_only=False):
     """ Simulate every attack of a character for num_rounds rounds, returns a list of numpy arrays (one per attack)
+        with shape (RESULT_COLUMNS, num_rounds), or only the damage when damage_only.
+        Arrays are column-major so each column is contiguous in memory, which is much faster for large simulations
         Attack rolls are rolled first so once per turn damage can be applied to the first hit of each round """
     attack_contexts = [a if isinstance(a, dict) else asdict(a) for a in attack_contexts]
     damage_contexts = [d if isinstance(d, dict) else asdict(d) for d in damage_contexts]
     rolled = [attack_roll(num_rounds, **a, rng=rng) for a in attack_contexts]
 
     hit_already = np.zeros(num_rounds, dtype=bool)
-    rounds = np.arange(1, num_rounds + 1, dtype='int32')
     results = []
     for (attack_rolls, rolls, hit, crit), d in zip(rolled, damage_contexts):
         once_mask = None
-        if d.get("once_per_turn_eligible"):
+        if d.get("once_per_turn_eligible") and (d.get("once_num_die") or d.get("once_modifier")):
             once_mask = hit & ~hit_already
             hit_already |= hit
         damage, hit_damage, crit_damage, miss_damage = damage_roll(hit, crit, **d, once_mask=once_mask, rng=rng)
-        results.append(np.array((rounds, damage, hit_damage, crit_damage, miss_damage, attack_rolls, rolls, hit, hit != crit, crit), dtype='int32').T)
+        if damage_only:
+            results.append(damage)
+            continue
+        result = np.empty((len(RESULT_COLUMNS), num_rounds), dtype='int32')
+        result[0] = np.arange(1, num_rounds + 1)
+        for ii, col in enumerate((damage, hit_damage, crit_damage, miss_damage, attack_rolls, rolls, hit, hit & ~crit, crit), start=1):
+            result[ii] = col
+        results.append(result)
     return results
 
 def simulate_rounds(attack_context, damage_context, num_rounds=10000, rng=RNG):
     """ Simulate rounds of combat for a given attack_context and damage_context"""
     results = simulate_attacks([attack_context], [damage_context], num_rounds=num_rounds, rng=rng)[0]
-    return pd.DataFrame(results, columns=RESULT_COLUMNS)
+    return pd.DataFrame(results.T, columns=RESULT_COLUMNS)
+
+def group_by_name(results, attack_names):
+    """ Concatenates the results of attacks that share a name, keeping the first occurrence order """
+    grouped = {}
+    for result, name in zip(results, attack_names):
+        grouped.setdefault(name, []).append(result)
+    return {name: arrays[0] if len(arrays) == 1 else np.concatenate(arrays, axis=-1) for name, arrays in grouped.items()}
 
 def simulate_rounds_from_contexts(attack_contexts, damage_contexts, attack_names, by_round=True, cols=None, num_rounds=10000, rng=RNG):
-    """ Simulate rounds of combat from a list of attacks and damage contexts """
-    attack_df_dict = {}
-    df_by_round = None
-    results = simulate_attacks(attack_contexts, damage_contexts, num_rounds=num_rounds, rng=rng)
-    for result, attack_name in zip(results, attack_names):
-        df_per_attack = pd.DataFrame(result, columns=RESULT_COLUMNS)
-        if cols:
-            df_per_attack = df_per_attack[cols]
-            if isinstance(df_per_attack, pd.Series):
-                df_per_attack = pd.DataFrame(df_per_attack)
-        if attack_name in attack_df_dict:
-            attack_df_dict[attack_name] = pd.concat([attack_df_dict[attack_name], df_per_attack], ignore_index=True)
-        else:
-            attack_df_dict[attack_name] = df_per_attack
-        if by_round:
-            if df_by_round is None:
-                df_by_round = df_per_attack.copy()
-            else:
-                df_by_round = df_by_round.add(df_per_attack, fill_value=0)
+    """ Simulate rounds of combat from a list of attacks and damage contexts
+        Returns a dict of dataframes per attack name and a dataframe of the totals per round """
+    damage_only = cols == 'Damage'
+    columns = ['Damage'] if damage_only else RESULT_COLUMNS
+    results = simulate_attacks(attack_contexts, damage_contexts, num_rounds=num_rounds, rng=rng, damage_only=damage_only)
+    keep = [columns.index(c) for c in ([cols] if isinstance(cols, str) else cols)] if cols else list(range(len(columns)))
+    out_columns = [columns[ii] for ii in keep]
 
+    attack_df_dict = {
+        name: pd.DataFrame(np.atleast_2d(values)[keep].T, columns=out_columns)
+        for name, values in group_by_name(results, attack_names).items()
+    }
+
+    df_by_round = None
     if by_round:
-        if df_by_round is None:
-            # A character without attacks deals no damage
-            df_by_round = pd.DataFrame(0, index=range(num_rounds), columns=[cols] if isinstance(cols, str) else (cols or RESULT_COLUMNS))
-        df_by_round.index = df_by_round.index+1
-        df_by_round.index.name = 'Round'
+        total = np.zeros((len(columns), num_rounds), dtype='int32')
+        for result in results:
+            total += result
+        df_by_round = pd.DataFrame(total[keep].T, columns=out_columns, index=pd.RangeIndex(1, num_rounds + 1, name='Round'))
         if 'Round' in df_by_round.columns:
             df_by_round = df_by_round.drop('Round', axis=1)
 
@@ -211,32 +265,38 @@ def simulate_rounds_from_characters(characters, enemy, num_rounds=10000, save_me
     for c in characters:
         # Attack and Damage Contexts
         attack_contexts, damage_contexts = calculate_attack_and_damage_context(c, enemy)
-
-        # Per Attack
         attack_names = [a.name for a in c.attacks]
-        attack_df_dict, df_by_round = simulate_rounds_from_contexts(attack_contexts, damage_contexts, attack_names, by_round=True, num_rounds=num_rounds, rng=rng)
+        results = simulate_attacks(attack_contexts, damage_contexts, num_rounds=num_rounds, rng=rng)
+        grouped = {}
+        for result, name in zip(results, attack_names):
+            grouped.setdefault(name, []).append(result)
+        names = list(grouped)
+        ordered = [r for arrays in grouped.values() for r in arrays]
 
-        # All Attacks per Round
-        if attack_df_dict:
-            df = pd.concat(attack_df_dict).reset_index().drop('level_1', axis=1).rename({'level_0': 'Attack'}, axis=1)
-        else:
-            df = pd.DataFrame(columns=['Attack'] + RESULT_COLUMNS)
-        df['Attack'] = df['Attack'].astype('category')
+        # All Attacks per Round, built with numpy and categorical codes which is much faster than concatenating dataframes
+        codes = np.repeat(np.arange(len(names), dtype='int16'), [len(arrays) * num_rounds for arrays in grouped.values()])
+        attack_col = pd.Categorical.from_codes(codes, categories=names) if names else pd.Categorical([])
         if save_memory:
-            dfs.append(df[["Damage", "Attack"]])
+            damage = np.concatenate([r[1] for r in ordered]) if ordered else np.zeros(0, dtype='int32')
+            df = pd.DataFrame({"Damage": damage, "Attack": attack_col})
         else:
-            dfs.append(df)
+            all_attacks = np.concatenate(ordered, axis=1) if ordered else np.zeros((len(RESULT_COLUMNS), 0), dtype='int32')
+            df = pd.DataFrame(all_attacks.T, columns=RESULT_COLUMNS)
+            df.insert(0, "Attack", attack_col)
+        dfs.append(df)
 
         # Summary Stats grouped by attack, easier to do this now rather than tracking labels for each attack
-        # Using a dictionaries for grouping is much faster than using pandas groupby, apply, and describe
-        if attack_df_dict:
-            df_by_attack = pd.concat({n: describe(g.drop('Round', axis=1)) for n, g in attack_df_dict.items()})
+        if grouped:
+            df_by_attack = pd.concat({n: describe_array([r[1:] for r in arrays], RESULT_COLUMNS[1:]) for n, arrays in grouped.items()})
         else:
             df_by_attack = pd.DataFrame()
         dfs_by_attack.append(df_by_attack)
 
         # Grouped by Round
-        df_by_rounds.append(df_by_round)
+        total = np.zeros((len(RESULT_COLUMNS), num_rounds), dtype='int32')
+        for result in results:
+            total += result
+        df_by_rounds.append(pd.DataFrame(total[1:].T, columns=RESULT_COLUMNS[1:], index=pd.RangeIndex(1, num_rounds + 1, name='Round')))
     return dfs, df_by_rounds, dfs_by_attack
 
 @timeit
@@ -246,37 +306,27 @@ def simulate_rounds_from_characters_multi_acs(characters, enemy, armor_classes=N
     if not armor_classes:
         armor_classes = range(10, 26)
 
-    df_multi_ac = []
-
+    rows = []
     for ac in armor_classes:
         enemy_ac = replace(enemy, armor_class=ac)
         for c in characters:
             # Attack and Damage Contexts
             attack_contexts, damage_contexts = calculate_attack_and_damage_context(c, enemy_ac)
-            attack_names = [a.name for a in c.attacks]
-            # Simulate all attacks
+            damages = simulate_attacks(attack_contexts, damage_contexts, num_rounds=num_rounds, rng=rng, damage_only=True)
             if by_round:
-                _, df_by_round = simulate_rounds_from_contexts(attack_contexts, damage_contexts, attack_names, cols='Damage', by_round=by_round, num_rounds=num_rounds, rng=rng)
-
                 # Summary Stats for each AC
-                df_ac = describe(df_by_round).T
-                df_ac['Character'] = c.name
-                df_ac['Armor Class'] = ac
-                df_multi_ac.append(df_ac)
-
+                total = np.sum(damages, axis=0) if damages else np.zeros(num_rounds, dtype='int32')
+                rows.append([*column_stats(total), c.name, ac])
             else:
-                attack_df_dict, _ = simulate_rounds_from_contexts(attack_contexts, damage_contexts, attack_names, cols='Damage', by_round=by_round, num_rounds=num_rounds, rng=rng)
+                # Regroup by attacks with the same name, Summary Stats for each attack for each AC
+                grouped = {}
+                for values, name in zip(damages, [a.name for a in c.attacks]):
+                    grouped.setdefault(name, []).append(values)
+                for name, values in grouped.items():
+                    rows.append([*column_stats(values), f"{c.name}-{name}", c.name, ac])
 
-                # Regroup by attacks with the same name
-                for name, g in attack_df_dict.items():
-                    # Summary Stats for each attack for each AC
-                    df_ac = describe(g).T
-                    df_ac['Character-Attack'] = f"{c.name}-{name}"
-                    df_ac['Character'] = c.name
-                    df_ac['Armor Class'] = ac
-                    df_multi_ac.append(df_ac)
-
-    return pd.concat(df_multi_ac)
+    columns = STAT_NAMES + (['Character'] if by_round else ['Character-Attack', 'Character']) + ['Armor Class']
+    return pd.DataFrame(rows, columns=columns, index=['Damage'] * len(rows))
 
 def rounds_to_kill(damage_per_round, hit_points, max_rounds=30, num_fights=None, rng=RNG):
     """ Number of rounds needed to deal hit_points damage, for num_fights simulated fights.
