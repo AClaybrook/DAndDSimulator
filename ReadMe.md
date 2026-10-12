@@ -19,71 +19,83 @@ Live here: https://d-and-d-damage-simulator-745953dd5908.herokuapp.com/
 * https://forums.giantitp.com/showthread.php?582779-Comprehensive-DPR-Calculator-%28v2-0%29
 * https://anydice.com/program/22f8c
 
-## How to Install and Run Locally 
+## How to Install and Run Locally
 * Download or git clone the repo from: https://github.com/AClaybrook/DAndDSimulator
-* Linux terminal install instructions:
-    * Install the python and requirements
-        * Install python3.11+ if needed from https://www.python.org/downloads/
-        * Install pipenv if needed `pip install pipenv` 
-        * `pipenv install --ignore-pipfile`
-    * Activate the virtual environment
-        * `pipenv shell`
-    * Launch the App on localhost 8050:
-        * `python app.py`
-        * Or run app.py from VsCode
+* Install [uv](https://docs.astral.sh/uv/getting-started/installation/) (it installs the right Python version for you)
+* `uv sync` to create the virtual environment and install the dependencies
+* Launch the App on localhost 8050:
+    * `uv run python app.py`
+    * Or select the `.venv` interpreter and run app.py from VsCode
+* Development:
+    * `uv run pytest` to run the tests (the simulation is validated against exact analytic results)
+    * `uv run ruff check .` to lint
+    * `uv run python -m benchmarks.benchmark` to time the simulation, run it before and after changing `computations/`
+
+See [CHANGELOG.md](CHANGELOG.md) for what changed in 2.0.
 
 # Technical Notes/Features:
+
+## Project Layout
+* `computations/`: the generic simulator
+    * `models.py`: Character, Enemy and Attack dataclasses, and the translation of class features into attack/damage contexts
+    * `numerical_simulation.py`: vectorized numpy simulation
+    * `analytic.py`: exact expected damage, used for tests and the Attack Breakdown tables
+* `game_data/`: the optional game database, everything it produces is a plain Character/Enemy/Attack that can still be edited
+    * `weapons.json`, `spells.json`, `monsters.json`: SRD weapons, spells, and monster defenses
+    * `classes.py`: prebuilt characters that level up (attacks, feats/ASIs, subclass features, cantrip scaling, spell slots) for the BG3 and 5e rulesets
+* `components/`: Dash layout and callbacks
+* `tests/`, `benchmarks/`
 
 ## Completed Features:
 * UI: Character, Enemy, Simulator, and Tables
 * Collapsable nav/sidebar
 * Import and Export of characters via json
 * Simulate Combat from UI values
-* 4 different simulation types and corresponding plots:
+* 5 different simulation types and corresponding plots:
     * Damage Per Round
     * Damage Per Attack
     * Damage Per Round vs Armor Class
     * Damage Per Attack vs Armor Class
+    * Rounds to Kill (uses enemy hit points)
 * Export Damage Results to csv
-* Implement easy callbacks in javascript 
+* Implement easy callbacks in javascript
 * Reduce memory of dataframes
 * Random Seed toggle for random vs repeatable results
+* Character presets that level up realistically, with a BG3 or 5e ruleset
+* Weapon and spell templates for attacks
+* Monster presets and CR baselines, damage type resistances/vulnerabilities/immunities, per ability saving throws
+* Once per turn damage (sneak attack, smite)
+* Leaderboard and exact per attack breakdown
+* Validated numerical sims with tests
 
-## In Works
-* UI design
-    * Update attacks based on selected type
-* Double check values are identical when reading elements
-    * characters and attacks in UI get translated to python and back the same way
-* Performance gains in callbacks
+## Roadmap
+Rough priority order, the first items have the most impact for the least work.
 
-## TODO
-* Import Character Presets
-* Design of Experiments (vary a specified parameter)
-* "Leaderboard"
-* Tips for UI
-* Validate numerical sims and implement tests
+### Next
+* Design of Experiments: vary one parameter (level, AC, a feat on/off) across copies of a character and plot DPR vs that parameter. The level presets make "DPR by level 1-12" an easy first version
+* More builds/subclasses: Battle Master (superiority dice), Gloom Stalker (extra first round attack), Swords/Hexblade Warlock, Tempest/Light Cleric, Thief with two offhand attacks, multiclass presets (i.e. Paladin/Warlock, Fighter/Rogue)
+* BG3 specific mechanics: weapon actions, Elemental Adept, Savage Attacker per BG3 patch rules, BG3 item database (i.e. +1d4 rings, Gloves of the Belligerent Skald)
+* Per attack once per turn eligibility (sneak attack requires finesse/ranged, smite requires melee) and a choice of which hit to smite (first hit vs crit fishing)
+* Show the leaderboard for the vs Armor Class graphs (average over an AC range)
+
+### Later
+* Resources per short/long rest: number of encounters and rounds per encounter, so spell slots, rage, ki and smites are limited rather than unlimited
+* Conditional damage: GWM bonus attack on a crit/kill, Colossus Slayer only on damaged targets, Toll the Dead d12 vs damaged targets
+* Multiple enemies and area of effect spells
+* Party mode: buffs between characters (Bless, Haste, Faerie Fire) and turn order
+* Saving/uploading enemies, editable monster database from the UI
+* Extract "insights", i.e. when to turn on/off GWM/Sharpshooter (the AC where it stops paying off)
+* Damage Source diffs, i.e. the damage gained from Bless
+* Variable Color Theme
+* Better app logging
 
 ### Backlog
-* 5e vs BG3 ruleset
-    * Currently all calculations are implemented using the BG3 ruleset
-* Expendable resources/damage over time
-    * Can currently be simulated as a different character
-* Simulate turns to kill a monster
 * Ability checks
-* Monsters presets
-* Saving/uploading enemys
-* Variable Color Theme
-* Concept of # of encounters per short/long rest for resources
-* Extract "insights", i.e. when to turn on/off GWM/Sharpshooter
-    * Have to manually look at graphs/tables currently
-* Damage Source, to see impact of various combinations, i.e. damage gain from bless
-    * Alternatively could just implement diffing characters
-* Multiple Enemys
-* Summary Stats Section
-* Better app logging
-* Preview character bonuses to attack
+* Status effects: stunned, restrained, prone
+* Enemies fighting back (hit points/AC of the character mattering)
 
 ## Current Assumptions/Limitations ##
+* Calculations follow the BG3 ruleset by default. Presets and attack templates can use the 5e ruleset instead, which mostly changes the level cap and cantrip/extra attack progression
 * Classes and Races are not fully implemented, just the main damaging perks
 * Assume resources are unlimited (i.e. not tracking spell slots)
 * No multitarget, single target only
@@ -94,12 +106,16 @@ Live here: https://d-and-d-damage-simulator-745953dd5908.herokuapp.com/
 * Focused on damage, therefore actions that do not involve damage as not implemented
 * Validation of build feasability is not done. Garbage in/ garbage out
     * Only some basic checks like GWM only with twohanded weapons 
-* Adjusting rolls needed for critial hits (Crit on) needs to be applied manually, i.e. a Fighter taking the Champion subclass, spell sniper feat need to be accounted for by manually reducing the Character Crit on field
+* Adjusting rolls needed for critial hits (Crit on) needs to be applied manually, i.e. a Fighter taking the Champion subclass, spell sniper feat need to be accounted for by manually reducing the Character Crit on field (the Champion presets do this for you)
+* Bonus damage dice use the attack's damage type for resistances, i.e. Hex on an Eldritch Blast is treated as force damage
+* Once per turn damage applies to the first hit of any attack roll (not saving throw spells)
+* Rounds to kill resamples simulated rounds, since rounds are independent of each other
 * no status effects, stunned, restrained etc
 
 ### Callback Implementation Quirks:
 * Copy callback and others get called unintentionally when a character is deleted, because the Inputs techically change
-    * Solution is to check time of the last clicked button and skip if copy wasn't clicked last
+    * Solution is to check the time of the clicked button (n_clicks_timestamp) against the last handled click, stored in `last-card-click`
+    * dbc.Button no longer has n_clicks_timestamp, so the card buttons are html.Button with bootstrap classes
 * Can not use MATCH for an Inuput when an Output doesn't have a MATCH, thus have to reach in ALL Inputs
 
 ### Build ideas

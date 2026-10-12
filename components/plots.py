@@ -1,13 +1,13 @@
 """ Plotting and tables for the app """
 # Themes here: https://plotly.com/python/templates/
 
-from typing import List
 import warnings
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 from dash import html
 import dash_bootstrap_components as dbc
+from computations.numerical_simulation import describe
 
 # Color Palette
 COLORS = px.colors.qualitative.Plotly
@@ -37,7 +37,6 @@ def generate_plot_data(characters, df_by_rounds, template='plotly_dark',**kwargs
 
 def generate_histogram(data, x, color, marginal='violin', histnorm='percent', barmode='overlay', opacity=0.75, **kwargs):
     """ Generic histogram helper function with marginal plot"""
-    print(f"Plot data in hist: {data.memory_usage(deep=True).sum()/1000000} MB")
     with warnings.catch_warnings():
         warnings.simplefilter(action='ignore', category=FutureWarning)
         fig = px.histogram(
@@ -83,14 +82,14 @@ def generate_cdf_plot(data):
 
 
 
-def summary_stats(data: List, by_round=True):
+def summary_stats(data: list, by_round=True):
     """ Extracts summary stats to be used for tables and exports"""
     df_summary = []
     for datac in data:
         if by_round:
             datac = datac.drop(["Attack Roll", "Attack Roll (Die)", "Hit (Non-Crit)", "Hit (Crit)"], axis=1)
             datac.rename(columns={"Hit": "Num Hits","Hit (Non-Crit)": "Num Hits (Non-Crit)","Hit (Crit)": "Num Hits (Crit)"}, inplace=True)
-            df_summaryc = datac.describe().drop(["count","std"],axis=0).round(2).T
+            df_summaryc = describe(datac).round(2).T
             df_summaryc.index.set_names([""], inplace=True)
             df_summary.append(df_summaryc)
         else:
@@ -106,16 +105,16 @@ def summary_stats(data: List, by_round=True):
 def build_tables_row(characters, data_summary, by_round=True, width=12):
     """ Builds the tables section from simulation data """
     if by_round:
-        table_list = [dbc.Row(dbc.Col(html.H4("Per Round")))]
+        table_list = [dbc.Row(dbc.Col(html.H4("Per Round", className="mt-3")))]
     else:
-        table_list = [dbc.Row(dbc.Col(html.H4("Per Attack")))]
+        table_list = [dbc.Row(dbc.Col(html.H4("Per Attack", className="mt-3")))]
     row = []
     for ii, (c, df_table) in enumerate(zip(characters, data_summary)):
         col = []
-        col.append(html.H4(c.name, style={'color': COLORS[ii]}))
-        col.append(dbc.Table.from_dataframe(df_table, striped=True, bordered=True, hover=True, responsive=True, index=True))
+        col.append(html.H5(c.name, style={'color': COLORS[ii]}))
+        col.append(dbc.Table.from_dataframe(df_table, striped=True, bordered=True, hover=True, responsive=True, index=True, size="sm"))
         col.append(html.Br())
-        row.append(dbc.Col(col, width={"size": width}))
+        row.append(dbc.Col(col, xs=12, md=6, xl=width))
 
     table_list.append(dbc.Row(row))
     return table_list
@@ -125,23 +124,6 @@ def add_tables(data, characters, by_round=True, width=12):
     data_summary = summary_stats(data, by_round=by_round)
 
     return build_tables_row(characters, data_summary, width=width, by_round=by_round)
-
-def data_to_store(characters, dfs):
-    """ Stores character names and associated data in a dictionary, in perparation for use in a dcc.Store """
-    store = {}
-    for ii, (c, df) in enumerate(zip(characters, dfs)):
-        store[f"{ii},{c.name}"] = df.to_dict('records')
-    return store
-
-def data_from_store(store):
-    """ Extracts character names and associated data from a dcc.Store component """
-    dfs = []
-    names = []
-    for key, data in store.items():
-        _, name = key.split(',')
-        names.append(name)
-        dfs.append(pd.DataFrame(data))
-    return names, dfs
 
 def generate_line_plots(df_acs, groupby='Character', template='plotly_dark', order=None):
     """ Generates a line plot of damage vs armor class, used by DPR vs Armor Class and DPA vs Armor Class"""
@@ -209,25 +191,6 @@ def generate_line_plots(df_acs, groupby='Character', template='plotly_dark', ord
     )
     return fig
 
-def line_plots(df_acs, template='plotly_dark'):
-    """ A simple plot of damage vs armor class"""
-    for _, g in df_acs.groupby('Character'):
-
-        fig = go.Figure()
-        fig.add_trace(go.Line(
-                name = g['Character'].iloc[0],
-                x=g['Armor Class'],
-                y=g['mean'],
-                error_y=dict(
-                    type='data',
-                    symmetric=False,
-                    array=g['75%'],
-                    arrayminus=g['25%'])
-                ))
-    fig.update_layout(xaxis_title="Armor Class", yaxis_title="Damage", template=template)
-    fig.show()
-    return fig
-
 def generate_damage_per_attack_histogram(characters, dfs ,template='plotly_dark', **kwargs):
     """ Generates a histogram of damage per attack, used by DPA Distribution"""
     attacks = []
@@ -245,7 +208,105 @@ def generate_damage_per_attack_histogram(characters, dfs ,template='plotly_dark'
     df_attacks["Type"] = df_attacks["Type"].astype('category')
     fig = generate_histogram(df_attacks, x="Damage", color="Type", marginal='box',opacity=calc_opacity(len(df_attacks["Type"].unique()),o_slope=0.25), template=template,**kwargs)
     # Manually override colors
-    for ii, data in enumerate(fig.data):
+    for data in fig.data:
         data.marker.color = attack_color_map[data.legendgroup]
 
     return fig
+
+def color_header(name, ii):
+    return html.Span("\u25CF ", style={'color': COLORS[ii % len(COLORS)]}), name
+
+def build_leaderboard(characters, df_by_rounds):
+    """ Ranks characters by mean damage per round """
+    rows = []
+    for ii, (c, df) in enumerate(zip(characters, df_by_rounds)):
+        num_attacks = max(len(c.attacks), 1)
+        rows.append({
+            "ii": ii,
+            "Character": c.name,
+            "Mean DPR": df["Damage"].mean(),
+            "Median": df["Damage"].median(),
+            "25%-75%": f"{df['Damage'].quantile(0.25):g} - {df['Damage'].quantile(0.75):g}",
+            "Attacks": len(c.attacks),
+            "Hit %": 100 * df["Hit"].mean() / num_attacks,
+            "Crit %": 100 * df["Hit (Crit)"].mean() / num_attacks,
+        })
+    rows.sort(key=lambda r: r["Mean DPR"], reverse=True)
+    best = rows[0]["Mean DPR"] if rows else 0
+    header = html.Thead(html.Tr([html.Th(h) for h in ["#", "Character", "Mean DPR", "vs Best", "Median", "25%-75%", "Attacks", "Hit %", "Crit %"]]))
+    body = html.Tbody([
+        html.Tr([
+            html.Td(rank),
+            html.Td(color_header(r["Character"], r["ii"])),
+            html.Td(html.B(f"{r['Mean DPR']:.2f}")),
+            html.Td(f"{100 * r['Mean DPR'] / best:.0f}%" if best else "-"),
+            html.Td(f"{r['Median']:g}"),
+            html.Td(r["25%-75%"]),
+            html.Td(r["Attacks"]),
+            html.Td(f"{r['Hit %']:.1f}"),
+            html.Td(f"{r['Crit %']:.1f}"),
+        ]) for rank, r in enumerate(rows, start=1)
+    ])
+    return [
+        dbc.Row(dbc.Col(html.H4("Leaderboard", className="mt-3"))),
+        dbc.Row(dbc.Col(dbc.Table([header, body], striped=True, bordered=True, hover=True, responsive=True, size="sm"))),
+    ]
+
+def build_breakdown_tables(characters, breakdowns, width=3):
+    """ Per attack hit chance and expected damage (exact, from computations.analytic) """
+    row = []
+    for ii, (c, df) in enumerate(zip(characters, breakdowns)):
+        total = df["Expected"].sum()
+        row.append(dbc.Col([
+            html.H5(c.name, style={'color': COLORS[ii]}),
+            dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, responsive=True, size="sm"),
+            html.P(f"Expected damage per round: {total:.2f}", className="small text-muted"),
+        ], xs=12, md=6, xl=width))
+    return [
+        dbc.Row(dbc.Col([
+            html.H4("Attack Breakdown", className="mt-3 mb-0"),
+            html.P("Exact hit chances and expected damage against the current enemy, useful to check the inputs are what you expect", className="small text-muted"),
+        ])),
+        dbc.Row(row),
+    ]
+
+def generate_rounds_to_kill_plot(df_rtk, max_rounds, hit_points, template='plotly_dark'):
+    """ Probability the enemy is dead by each round, one line per character """
+    fig = go.Figure()
+    rounds = list(range(1, max_rounds + 1))
+    for ii, name in enumerate(df_rtk.columns):
+        values = df_rtk[name].to_numpy()
+        fig.add_trace(go.Scatter(
+            name=name,
+            x=rounds,
+            y=[100 * (values <= r).mean() for r in rounds],
+            mode='lines+markers',
+            line=dict(color=COLORS[ii % len(COLORS)]),
+        ))
+    fig.update_layout(
+        title=f"Rounds to Kill ({hit_points} HP)",
+        xaxis_title='Round',
+        yaxis_title='Enemy Dead By Round (%)',
+        yaxis_range=[0, 102],
+        template=template,
+    )
+    # Zoom in on the rounds before every character has (almost) always killed the enemy
+    last_interesting = int(df_rtk.quantile(0.995).max()) if len(df_rtk) else max_rounds
+    fig.update_xaxes(range=[0.5, min(max_rounds, last_interesting + 1) + 0.5], dtick=1)
+    return fig
+
+def rounds_to_kill_summary(df_rtk, max_rounds):
+    """ Summary table of the rounds to kill per character """
+    summary = pd.DataFrame({
+        "Mean Rounds": df_rtk.mean().round(2),
+        "Median": df_rtk.median(),
+        "25%": df_rtk.quantile(0.25),
+        "75%": df_rtk.quantile(0.75),
+        "Dead by Round 3 (%)": (100 * (df_rtk <= 3).mean()).round(1),
+        f"Alive After {max_rounds} (%)": (100 * (df_rtk > max_rounds).mean()).round(1),
+    })
+    summary.index.name = "Character"
+    return [
+        dbc.Row(dbc.Col(html.H4("Rounds to Kill", className="mt-3"))),
+        dbc.Row(dbc.Col(dbc.Table.from_dataframe(summary.reset_index(), striped=True, bordered=True, hover=True, responsive=True, size="sm"))),
+    ]

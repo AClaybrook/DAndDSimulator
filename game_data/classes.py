@@ -4,7 +4,7 @@
     The output is a plain Character, so everything can still be tweaked in the UI afterwards. """
 from dataclasses import dataclass
 from math import ceil
-from typing import Callable
+from collections.abc import Callable
 
 from computations.models import Attack, Character
 from game_data import RULESETS, cantrip_tier, spell_attacks, weapon_attack

@@ -16,7 +16,6 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "playwright>=1.50",
     "pytest>=8.0",
     "ruff>=0.9",
 ]
@@ -45,6 +44,5 @@ ignore = [
     "E266", # Too many leading '#' for block comment
     "E501", # Line too long, long dash layouts read better on one line
     "B905", # zip() without strict=
-    "UP038",
     "I001", # Import ordering is grouped by hand
 ]

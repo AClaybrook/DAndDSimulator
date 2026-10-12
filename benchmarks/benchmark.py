@@ -1,6 +1,9 @@
 """ Simulation speed benchmark. Run from the repo root: python -m benchmarks.benchmark
     Speed matters, check this before and after changing computations/ """
-import time, statistics, sys, io, contextlib
+import contextlib
+import io
+import statistics
+import time
 from dataclasses import replace
 from computations.models import Character, Enemy, Attack
 from computations import numerical_simulation as ns
@@ -13,7 +16,9 @@ def t(label, f, n=5):
     times = []
     for _ in range(n):
         with contextlib.redirect_stdout(io.StringIO()):
-            s = time.perf_counter(); f(); times.append(time.perf_counter() - s)
+            start = time.perf_counter()
+            f()
+            times.append(time.perf_counter() - start)
     print(f"{label:38s} median {statistics.median(times)*1000:8.1f} ms")
 rng = ns.set_seed(1)
 t("DPR 10k rounds", lambda: ns.simulate_rounds_from_characters(chars, enemy, num_rounds=10_000, save_memory=True, rng=rng))

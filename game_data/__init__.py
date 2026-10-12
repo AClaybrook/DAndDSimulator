@@ -173,4 +173,5 @@ def attacks_from_template(value, ability_stat=None, character_level=1, ruleset="
         finesse_or_ranged = weapons()[name]["kind"] == "ranged" or "finesse" in weapons()[name].get("properties", [])
         stat = ability_stat if ability_stat in ("strength", "dexterity") and finesse_or_ranged else None
         return [weapon_attack(name, ability_stat=stat, two_handed=True if grip == "2h" else None)]
-    return spell_attacks(name, ability_stat=ability_stat or "charisma", character_level=character_level, ruleset=ruleset)
+    spell_stat = ability_stat if ability_stat in ("intelligence", "wisdom", "charisma") else "charisma"
+    return spell_attacks(name, ability_stat=spell_stat, character_level=character_level, ruleset=ruleset)
