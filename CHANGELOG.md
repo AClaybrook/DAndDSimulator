@@ -1,5 +1,39 @@
 # Changelog
 
+## 2.5.0 (2026-10-12)
+
+Usability and workflow, no changes to the simulation itself.
+
+### Workflow
+- **Quick Start** at the top of the page. It covers the three step workflow and recipes for common questions (best build, is GWM worth it, which feat, scaling, rounds to kill, nova vs sustained, checking the numbers). It can be hidden, and the browser remembers that.
+- **"What do you want to know?"** Every graph type now has a one line description of the question it answers. The sweep parameter only shows for the sweep graphs, and the simulator settings are grouped together.
+- **Floating Simulate button:** always reachable at the bottom right. After any simulation the page scrolls to the results.
+- **Results summary:** a one line summary starts every result, i.e. "Fighter GWM + Advantage leads with 51.55 damage per round, 44% ahead of Fighter Advantage (35.92) against Mind Flayer". Each graph type has its own wording, i.e. rounds to kill or damage per fight.
+
+### Character cards
+- **Bonuses tab:** grouped into collapsible sections:
+  - Roll Modifiers
+  - Crit and Miss Damage
+  - Once Per Turn
+  - First Round
+  - Feats
+  - Fighting Styles
+  - Class and Race Features
+
+  Sections the character uses start expanded, so presets show what matters.
+- **Attack editor:** a hint explains how editing works. The attack list comes first. Uncommon fields are in collapsible sections (Roll Modifiers, Weapon, Spell Saving Throw, Extra Dice, Limits Per Fight). The icon buttons are now labelled **Save**, **Add new** and **Delete**, and "Num Attacks" is now **Copies to Add**.
+- **Reading values back:** the UI is now walked recursively. Rows can be nested in any layout, and the round trip tests still check that every preset survives the trip unchanged.
+
+### Sessions
+- **Autosave:** every simulation saves the session (characters, enemy and settings) in the browser. After a reload, a banner offers to **restore** it.
+- **Export/Import:** now saves and loads the whole session (characters, enemy, rounds, rounds per fight, graph type, sweep parameter and ruleset) as `dnd_session.json`. Older character only files still import, and add their characters to the current ones.
+
+### Errors
+- **Specific validation:** problems are listed by character and field before simulating, i.e. "Fighter: Strength is empty", "attack 'Greatsword': Weapon Damage '2d' should be dice or numbers like 1d6, 2". Enemy fields left empty are named too.
+
+### Fixes
+- The floating button sits above Dash's dev tools badge, so it can be clicked in debug mode.
+
 ## 2.4.0 (2026-10-12)
 
 ### New features

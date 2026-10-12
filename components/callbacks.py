@@ -4,7 +4,7 @@ import base64
 import pandas as pd
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
-from dash import dcc, html, Input, Output, State, Patch, MATCH, ALL, ctx, clientside_callback, ClientsideFunction
+from dash import dcc, html, Input, Output, State, Patch, MATCH, ALL, ctx, clientside_callback, ClientsideFunction, no_update
 from computations.analytic import attack_breakdown, power_attack_insights
 from computations.models import Character, Enemy
 from computations.numerical_simulation import simulate_rounds_from_characters, set_seed, simulate_rounds_to_kill, simulate_fights
@@ -17,10 +17,14 @@ from components.callback_helpers import (get_active_ids_and_new_id, get_new_id, 
                                          rename_card, unique_name)
 from components.plots import (COLORS, generate_plot_data, add_tables, summary_stats, generate_line_plots, generate_damage_per_attack_histogram,
                               build_tables_row, build_leaderboard, build_breakdown_tables, generate_rounds_to_kill_plot, rounds_to_kill_summary,
-                              build_sweep_leaderboard, build_insights, generate_fight_plot, fight_summary, fight_export)
-from components.character_card import generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values, characters_from_ui
+                              build_sweep_leaderboard, build_insights, generate_fight_plot, fight_summary, fight_export,
+                              results_summary)
+from components.help import GRAPH_DESCRIPTIONS
+from components.character_card import (generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values, characters_from_ui,
+                                       label_value_rows, validation_errors)
 from components.enemy_card import extract_enemy_ui_values, generate_enemy_card_body
 from components.sweeps import SWEEP_PARAMETERS, run_sweep
+from components.session import SETTINGS_IDS, describe_session, make_session, parse_session
 
 MAX_CHARACTERS = min(8, len(COLORS)) # There are 10 colors and 4 characters fit per row, so 8 is a good max
 ARMOR_CLASSES = range(10, 26)
@@ -36,6 +40,16 @@ def parse_simulation_inputs(num_rounds, attack_stores, characters_list, enemy_ca
     if not num_rounds or num_rounds < 1:
         return None, None, rng, alert("Invalid Number of Rounds")
 
+    # Check each character's values first, so problems can be reported by name and field
+    problems = []
+    for ii, c in enumerate(characters_list):
+        values = extract_character_ui_values(c)
+        issues = validation_errors(values, json.loads(attack_stores[ii]))
+        if issues:
+            problems.append(html.Li([html.B(values.get("name") or f"Character {ii + 1}"), ": " + "; ".join(issues)]))
+    if problems:
+        return None, None, rng, alert(["Please fix these before simulating:", html.Ul(problems, className="mb-0")], color="warning")
+
     # Parse characters
     characters, error = try_and_except_alert(
         "Could not parse characters, please check that all fields are filled out correctly",
@@ -48,9 +62,13 @@ def parse_simulation_inputs(num_rounds, attack_stores, characters_list, enemy_ca
         return None, None, rng, alert("Characters names must be unique")
 
     # Parse enemy
+    enemy_values = extract_enemy_ui_values(enemy_card_body)
+    empty = [label for label, value in label_value_rows(enemy_card_body) if value is None and label not in ("Resistances", "Vulnerabilities", "Immunities")]
+    if empty:
+        return None, None, rng, alert(f"Please fill in the enemy's {', '.join(empty)}", color="warning")
     enemy, error = try_and_except_alert(
         "Could not parse enemy, please check that all fields are filled out correctly",
-        lambda: Enemy.from_dict(extract_enemy_ui_values(enemy_card_body)))
+        lambda: Enemy.from_dict(enemy_values))
     return characters, enemy, rng, error
 
 # Sweep graph/export types: by round (DPR) or by attack (DPA), the swept parameter is chosen separately
@@ -371,15 +389,37 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         enemy = enemy_from_preset(preset)
         return generate_enemy_card_body(enemy), enemy.name
 
+    SETTINGS_STATES = [State(component_id, "value") for component_id in SETTINGS_IDS.values()]
+
+    def session_outputs(characters, enemy, settings):
+        """ Replaces every character, the enemy (if any) and settings (if given) with a loaded session """
+        characters = characters[:MAX_CHARACTERS]
+        cards = [generate_character_card(c.name, character=c, color=COLORS[ii], index=ii) for ii, c in enumerate(characters)]
+        enemy_outputs = (generate_enemy_card_body(enemy), enemy.name) if enemy is not None else (no_update, no_update)
+        setting_values = tuple(settings.get(key, no_update) for key in SETTINGS_IDS)
+        return (cards, set_active_ids(list(range(len(characters)))), *enemy_outputs, *setting_values)
+
+    SESSION_OUTPUTS = [
+        Output('character_row', 'children', allow_duplicate=True),
+        Output('active_ids', 'data', allow_duplicate=True),
+        Output("enemy-card-body", "children", allow_duplicate=True),
+        Output("enemy-name", "children", allow_duplicate=True),
+        *[Output(component_id, "value", allow_duplicate=True) for component_id in SETTINGS_IDS.values()],
+    ]
+    NO_SESSION_CHANGE = (no_update,) * len(SESSION_OUTPUTS)
+
     @app.callback(
             Output('download-characters', 'data'),
             Input('export-button', 'n_clicks'),
             State("character_row", "children"),
             State({"type": "attack_store", "index": ALL}, "data"),
+            State("enemy-card-body", "children"),
+            *SETTINGS_STATES,
             prevent_initial_call=True
     )
     @timeit
-    def export_character(clicked, characters_ui, attack_stores):
+    def export_session(clicked, characters_ui, attack_stores, enemy_card_body, *settings):
+        """ Exports the characters, enemy and simulator settings to a json file that Import loads back """
         if not clicked:
             raise PreventUpdate
 
@@ -388,53 +428,119 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             c_dict = extract_character_ui_values(c)
             c_dict["attacks"] = json.loads(attack_stores[ii])
             c_dicts.append(c_dict)
-
-        return dict(content=json.dumps(c_dicts, indent=4), filename="characters.json")
+        session = make_session(c_dicts, extract_enemy_ui_values(enemy_card_body), dict(zip(SETTINGS_IDS, settings)))
+        return dict(content=json.dumps(session, indent=4), filename="dnd_session.json")
 
     @app.callback(
-            Output('character_row', 'children', allow_duplicate=True),
-            Output('active_ids', 'data', allow_duplicate=True),
+            *SESSION_OUTPUTS,
             Output('character-alerts', 'children'),
             Input('upload-button', 'contents'),
             State("active_ids", "data"),
             prevent_initial_call=True
     )
     @timeit
-    def import_characters(contents, active_ids_json):
+    def import_session(contents, active_ids_json):
+        """ Loads a session file (replacing everything) or adds the characters of an older characters only file """
         if contents is None:
             raise PreventUpdate
 
         content_type, content_string = contents.split(',')
         if 'json' not in content_type:
-            return Patch(), active_ids_json, alert("Import Failed. Only json files are supported")
+            return *NO_SESSION_CHANGE, alert("Import Failed. Only json files are supported")
         try:
-            characters_list = json.loads(base64.b64decode(content_string).decode('utf-8'))
+            data = json.loads(base64.b64decode(content_string).decode('utf-8'))
         except Exception as e:
             print(e)
-            return Patch(), active_ids_json, alert("Import Failed. Cannot parse json file")
+            return *NO_SESSION_CHANGE, alert("Import Failed. Cannot parse json file")
 
-        # Parse characters, stopping at the first that fails
-        characters = []
-        error = None
-        for c in characters_list if isinstance(characters_list, list) else [characters_list]:
-            try:
-                characters.append(Character.from_dict(c))
-            except Exception as e:
-                print(e)
-                name = c.get('name', 'Unknown') if isinstance(c, dict) else 'Unknown'
-                error = alert(f"Import Failed. Cannot parse character '{name}'. Skipping any remaining characters")
-                break
+        characters, enemy, settings, error = parse_session(data)
+        if isinstance(data, dict) and "characters" in data:
+            if not characters:
+                return *NO_SESSION_CHANGE, alert(error or "Import Failed. The session has no characters")
+            message = alert(error, color="warning") if error else alert(f"Loaded session: {describe_session(data)}", color="success")
+            return *session_outputs(characters, enemy, settings), message
 
+        # Older exports are a list of characters, which are added to the current ones
         patched_children, active_ids, warning = append_cards(characters, active_ids_json)
-        return patched_children, active_ids, error or warning
+        return patched_children, active_ids, *NO_SESSION_CHANGE[2:], (alert(error) if error else warning)
+
+    @app.callback(
+        Output("restore-banner", "is_open"),
+        Output("restore-text", "children"),
+        Input("url", "pathname"),
+        State("saved-session", "data"),
+    )
+    def offer_restore(_, saved_session):
+        """ Offers to restore the session saved in this browser by the last simulation """
+        if not saved_session or not saved_session.get("characters"):
+            return False, ""
+        return True, f"Your last session is saved in this browser ({describe_session(saved_session)})."
+
+    @app.callback(
+        *SESSION_OUTPUTS,
+        Output("restore-banner", "is_open", allow_duplicate=True),
+        Output("character-alerts", "children", allow_duplicate=True),
+        Input("restore-session-button", "n_clicks"),
+        State("saved-session", "data"),
+        prevent_initial_call=True
+    )
+    def restore_session(n_clicks, saved_session):
+        if not n_clicks or not saved_session:
+            raise PreventUpdate
+        characters, enemy, settings, error = parse_session(saved_session)
+        if not characters:
+            return *NO_SESSION_CHANGE, False, alert(error or "Could not restore the last session")
+        return *session_outputs(characters, enemy, settings), False, (alert(error, color="warning") if error else None)
 
     # NOTE: Using a data store caused memory issues in the deployed environment on heroku, often exceeding 1 GB and there is a 0.5 GB limit, resimulating is faster
+    @app.callback(
+        Output("graph-description", "children"),
+        Output("sweep-controls", "style"),
+        Input("simulate-type", "value"),
+    )
+    def describe_graph(simulate_type):
+        return GRAPH_DESCRIPTIONS.get(simulate_type, ""), {"display": "block" if simulate_type in SWEEPS else "none"}
+
+    @app.callback(
+        Output("ui-prefs", "data"),
+        Input("quick-start-toggle", "n_clicks"),
+        State("ui-prefs", "data"),
+        prevent_initial_call=True
+    )
+    def toggle_quick_start(n_clicks, prefs):
+        prefs = prefs or {}
+        return {**prefs, "quick_start_open": not prefs.get("quick_start_open", True)}
+
+    @app.callback(
+        Output("quick-start-collapse", "is_open"),
+        Output("quick-start-toggle", "children"),
+        Input("ui-prefs", "data"),
+    )
+    def show_quick_start(prefs):
+        is_open = (prefs or {}).get("quick_start_open", True)
+        return is_open, "Hide" if is_open else "Show"
+
+    # Bring the results into view when a simulation finishes, i.e. after using the floating simulate button
+    clientside_callback(
+        """function(figure) {
+            const results = document.getElementById("results-summary");
+            if (results) { results.scrollIntoView({behavior: "smooth", block: "start"}); }
+            return window.dash_clientside.no_update;
+        }""",
+        Output("scroll-dummy", "data"),
+        Input("dist-plot", "figure"),
+        prevent_initial_call=True
+    )
+
     @app.callback(
         Output('dist-plot', "figure"),
         Output('damage-tables', "children"),
         Output('simulate-alerts', "children"),
         Output("simulate-spinner", "children"),
+        Output("results-summary", "children"),
+        Output("saved-session", "data"),
         Input("simulate-button", "n_clicks"),
+        Input("simulate-float", "n_clicks"),
         State("simulate-input", "value"),
         State({'type': 'attack_store', "index": ALL}, "data"),
         State("character_row", "children"),
@@ -447,18 +553,22 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         prevent_initial_call=True
     )
     @timeit
-    def simulate(clicked, num_rounds, attack_stores, characters_list, enemy_card_body, simulate_type, numerical_options, ruleset, sweep_parameter, rounds_per_fight):
-        if not clicked:
+    def simulate(clicked, float_clicked, num_rounds, attack_stores, characters_list, enemy_card_body, simulate_type, numerical_options, ruleset, sweep_parameter, rounds_per_fight):
+        if not clicked and not float_clicked:
             raise PreventUpdate
 
         # Default Outputs
         fig = Patch()
         tables = Patch()
         spinner = "Simulate!"
+        summary = None
 
         characters, enemy, rng, error = parse_simulation_inputs(num_rounds, attack_stores, characters_list, enemy_card_body, numerical_options)
         if error is not None:
-            return fig, tables, error, spinner
+            return fig, tables, error, spinner, summary, no_update
+        # Remember the session in this browser, so it can be restored after a reload
+        session = make_session(characters, enemy, {"num_rounds": num_rounds, "rounds_per_fight": rounds_per_fight, "graph": simulate_type,
+                                                   "sweep_parameter": sweep_parameter, "ruleset": ruleset})
 
         rounds_per_fight = max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)
         breakdown = build_breakdown_tables(characters, [attack_breakdown(c, enemy, rounds_per_fight) for c in characters])
@@ -469,10 +579,11 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             res, error = try_and_except_alert(error_message, simulate_rounds_from_characters, characters, enemy, num_rounds=num_rounds, save_memory=True, rng=rng,
                                               rounds_per_fight=rounds_per_fight)
             if error is not None:
-                return fig, tables, error, spinner
+                return fig, tables, error, spinner, summary, session
 
             dfs, df_by_rounds, df_by_attacks = res
             leaderboard = build_leaderboard(characters, df_by_rounds, rounds_per_fight)
+            summary = results_summary({c.name: df["Damage"].mean() for c, df in zip(characters, df_by_rounds)}, "damage per round", context=f"against {enemy.name}.")
             if simulate_type == "DPR Distribution":
                 fig = generate_plot_data(characters, df_by_rounds, template=template, title="Damage Per Round Distribution")
                 tables = leaderboard + add_tables(df_by_rounds, characters, by_round=True, width=3) + breakdown
@@ -484,12 +595,14 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             df_acs, error = try_and_except_alert(error_message, run_sweep, characters, enemy, x_col, by_round=by_round, ruleset=ruleset, num_rounds=num_rounds, rng=rng,
                                                  rounds_per_fight=rounds_per_fight)
             if error is not None:
-                return fig, tables, error, spinner
+                return fig, tables, error, spinner, summary, session
 
             groupby = "Character" if by_round else "Character-Attack"
             order = [c.name for c in characters]
             fig = generate_line_plots(df_acs, template=template, groupby=groupby, order=order, x_col=x_col)
             leaderboard = build_sweep_leaderboard(df_acs, x_col, order) if by_round else []
+            averages = df_acs.groupby(["Character", x_col])["mean"].sum().groupby("Character").mean()
+            summary = results_summary({name: averages[name] for name in order if name in averages}, f"average damage per round over {x_col} {df_acs[x_col].min()} to {df_acs[x_col].max()}")
             insights = []
             if x_col == "Armor Class":
                 insights = build_insights([i for c in characters for i in power_attack_insights(c, enemy, ARMOR_CLASSES, rounds_per_fight)])
@@ -503,17 +616,19 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             df_rtk, error = try_and_except_alert(error_message, simulate_rounds_to_kill, characters, enemy,
                                                  num_rounds=num_rounds, max_rounds=MAX_ROUNDS_TO_KILL, rng=rng)
             if error is not None:
-                return fig, tables, error, spinner
+                return fig, tables, error, spinner, summary, session
             fig = generate_rounds_to_kill_plot(df_rtk, MAX_ROUNDS_TO_KILL, enemy.hit_points, template=template)
             tables = rounds_to_kill_summary(df_rtk, MAX_ROUNDS_TO_KILL) + breakdown
+            summary = results_summary(df_rtk.mean().to_dict(), "rounds on average", higher_is_better=False, context=f"to kill {enemy.name} ({enemy.hit_points} HP).")
         elif simulate_type == "Damage per Fight":
             fights, error = try_and_except_alert(error_message, simulate_fights, characters, enemy, num_fights=max(num_rounds // rounds_per_fight, 1),
                                                  rounds_per_fight=rounds_per_fight, rng=rng)
             if error is not None:
-                return fig, tables, error, spinner
+                return fig, tables, error, spinner, summary, session
             fig = generate_fight_plot(fights, template=template)
             tables = fight_summary(fights) + breakdown
-        return fig, tables, None, spinner
+            summary = results_summary({name: damage.sum(axis=0).mean() for name, damage in fights.items()}, f"damage per {rounds_per_fight} round fight", context=f"against {enemy.name}.")
+        return fig, tables, None, spinner, summary, session
 
 
     # Resimulate since storing data is very memory intensive. Could implment client side callbacks, but this is sufficient for now

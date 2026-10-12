@@ -33,6 +33,21 @@ Live here: https://d-and-d-damage-simulator-745953dd5908.herokuapp.com/
 
 See [CHANGELOG.md](CHANGELOG.md) for what changed in 2.0.
 
+## Using the Dashboard
+1. **Characters**: add presets (Preset, Level, +), which level up like the real class, or blank characters, then tweak them. Card sections expand when the character uses them, attacks are edited by clicking one, changing it and pressing Save.
+2. **Enemy**: load a monster or a CR baseline, or type in armor class, hit points, saves and resistances.
+3. **Simulate**: pick what you want to know (each graph type says what it answers) and press Simulate, the floating button works from anywhere. Results start with a one line summary.
+
+Common questions:
+* **Which build does the most damage?** Add a few presets, Simulate with DPR Distribution and read the Leaderboard.
+* **Is Great Weapon Master or Sharpshooter worth it?** DPR Sweep over Armor Class, the Insights table shows the armor class to turn it off.
+* **Which feat or ASI should I take?** Copy a character, change one thing on the copy and compare the two.
+* **How does my build scale?** DPR Sweep over Level, presets level up and keep your edits.
+* **How fast can we kill this boss?** Load the monster and run Rounds to Kill.
+* **Nova or sustained damage?** Set Rounds per Fight and run Damage per Fight.
+
+Sessions: every simulation saves the session in your browser, after a reload you are offered to restore it. Export saves the characters, enemy and settings to a json file that Import loads back (older character only files are still added to the current characters).
+
 # Technical Notes/Features:
 
 ## Project Layout
@@ -94,7 +109,12 @@ Rough priority order, the first items have the most impact for the least work.
 * Fallback attacks (Fireball while slots last, then Fire Bolt), first round advantage and auto crits
 * Assassin Rogue, Gloom Stalker Ranger, Fighter 2 / Rogue and Sorcadin presets, slot limited Fireball Wizard
 
+### Done in 2.5
+* Dashboard usability: collapsible card sections, labelled attack editing, quick start with recipes, graph descriptions, floating Simulate button, results summary, saved and restorable sessions, readable validation errors
+
 ### Next
+* Compare variants quickly: "copy with" a change (toggle a feat, +2 to a stat) from the card
+* Live expected damage on each card, updated as you edit
 * Conditional damage: GWM bonus attack on a crit/kill, Colossus Slayer only on damaged targets, Toll the Dead d12 vs damaged targets
 * Surprise as a fight setting (i.e. a chance the enemy is surprised) instead of assuming it for Assassinate
 * Arcane Recovery, Font of Magic and other ways to regain slots

@@ -142,3 +142,32 @@ input:invalid {
 #damage-tables table {
   font-size: 0.85rem;
 }
+/* Simulate button that is always reachable */
+#simulate-float {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 4.5rem; /* Clears the Dash dev tools badge in debug mode */
+  z-index: 1050;
+  border-radius: 2rem;
+  padding: 0.6rem 1.2rem;
+}
+
+/* Collapsible sections inside character cards */
+.card-sections .accordion-button {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.875rem;
+}
+
+.card-sections .accordion-body {
+  padding: 0.4rem 0.6rem;
+}
+
+#results-summary .alert {
+  font-size: 1rem;
+}
+
+.card-sections .accordion-button:not(.collapsed) {
+  background-color: rgba(55, 90, 127, 0.35);
+  color: inherit;
+  box-shadow: none;
+}

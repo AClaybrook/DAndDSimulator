@@ -59,3 +59,15 @@ def test_import_older_exports(filename):
         except Exception: # characters_skip.json purposely has a broken character
             break
     assert characters and all(c.attacks for c in characters)
+
+def test_validation_errors_name_the_field():
+    from components.character_card import validation_errors
+    attack = {"name": "Greatsword", "damage": "2d", "crit_on": None, "bonus_damage_die_mod_list": ["1d6", "x"]}
+    problems = validation_errors({"strength": None, "level": 5, "bonus_attack_die_mod_list": ["1d4"]}, [attack])
+    assert "Strength is empty" in problems
+    assert "attack 'Greatsword': Crit on is empty" in problems
+    assert any("Weapon Damage '2d'" in p for p in problems) and any("Bonus Damage Mod" in p for p in problems)
+    assert validation_errors({"level": 5}, []) == ["it has no attacks"]
+    good = build_character("fighter_gwm", 5)
+    card = serialize(generate_character_card(good.name, character=good, index=0))
+    assert validation_errors(extract_character_ui_values(card), [a.to_dict() for a in good.attacks]) == []
