@@ -1,0 +1,33 @@
+{
+    "_source": "Monster statistics from the 5e SRD 5.1 (CC-BY-4.0) and Monster Manual (Mind Flayer). Only the defensive stats used by the simulator are listed",
+    "monsters": [
+        {"name": "Training Dummy", "cr": 0, "armor_class": 10, "hit_points": 1000, "abilities": [10, 10, 10, 10, 10, 10]},
+        {"name": "Bandit", "cr": 0.125, "armor_class": 12, "hit_points": 11, "abilities": [11, 12, 12, 10, 10, 10]},
+        {"name": "Goblin", "cr": 0.25, "armor_class": 15, "hit_points": 7, "abilities": [8, 14, 10, 10, 8, 8]},
+        {"name": "Wolf", "cr": 0.25, "armor_class": 13, "hit_points": 11, "abilities": [12, 15, 12, 3, 12, 6]},
+        {"name": "Skeleton", "cr": 0.25, "armor_class": 13, "hit_points": 13, "abilities": [10, 14, 15, 6, 8, 5], "vulnerabilities": ["bludgeoning"], "immunities": ["poison"]},
+        {"name": "Zombie", "cr": 0.25, "armor_class": 8, "hit_points": 22, "abilities": [13, 6, 16, 3, 6, 5], "saves": {"wisdom": 0}, "immunities": ["poison"]},
+        {"name": "Hobgoblin", "cr": 0.5, "armor_class": 18, "hit_points": 11, "abilities": [13, 12, 12, 10, 10, 9]},
+        {"name": "Orc", "cr": 0.5, "armor_class": 13, "hit_points": 15, "abilities": [16, 12, 16, 7, 11, 10]},
+        {"name": "Gnoll", "cr": 0.5, "armor_class": 15, "hit_points": 22, "abilities": [14, 12, 11, 6, 10, 7]},
+        {"name": "Bugbear", "cr": 1, "armor_class": 16, "hit_points": 27, "abilities": [15, 14, 13, 8, 11, 9]},
+        {"name": "Ogre", "cr": 2, "armor_class": 11, "hit_points": 59, "abilities": [19, 8, 16, 5, 7, 7]},
+        {"name": "Bandit Captain", "cr": 2, "armor_class": 15, "hit_points": 65, "abilities": [15, 16, 14, 14, 11, 14], "saves": {"strength": 4, "dexterity": 5, "wisdom": 2}},
+        {"name": "Owlbear", "cr": 3, "armor_class": 13, "hit_points": 59, "abilities": [20, 12, 17, 3, 12, 7]},
+        {"name": "Minotaur", "cr": 3, "armor_class": 14, "hit_points": 76, "abilities": [18, 11, 16, 6, 16, 9]},
+        {"name": "Troll", "cr": 5, "armor_class": 15, "hit_points": 84, "abilities": [18, 13, 20, 7, 9, 7]},
+        {"name": "Hill Giant", "cr": 5, "armor_class": 13, "hit_points": 105, "abilities": [21, 8, 19, 5, 9, 6]},
+        {"name": "Mind Flayer", "cr": 7, "armor_class": 15, "hit_points": 71, "abilities": [11, 12, 12, 19, 17, 17], "saves": {"intelligence": 7, "wisdom": 6, "charisma": 6}},
+        {"name": "Hydra", "cr": 8, "armor_class": 15, "hit_points": 172, "abilities": [20, 12, 20, 2, 10, 7]},
+        {"name": "Fire Giant", "cr": 9, "armor_class": 18, "hit_points": 162, "abilities": [25, 9, 23, 10, 14, 13], "saves": {"dexterity": 3, "constitution": 10, "charisma": 5}, "immunities": ["fire"]},
+        {"name": "Young Red Dragon", "cr": 10, "armor_class": 18, "hit_points": 178, "abilities": [23, 10, 21, 14, 11, 19], "saves": {"dexterity": 4, "constitution": 9, "wisdom": 4, "charisma": 8}, "immunities": ["fire"]},
+        {"name": "Stone Golem", "cr": 10, "armor_class": 17, "hit_points": 178, "abilities": [22, 9, 20, 3, 11, 1], "immunities": ["poison", "psychic", "bludgeoning (nonmagical)", "piercing (nonmagical)", "slashing (nonmagical)"]},
+        {"name": "Vampire", "cr": 13, "armor_class": 16, "hit_points": 144, "abilities": [18, 18, 18, 17, 15, 18], "saves": {"dexterity": 9, "wisdom": 7, "charisma": 9}, "resistances": ["necrotic", "bludgeoning (nonmagical)", "piercing (nonmagical)", "slashing (nonmagical)"]},
+        {"name": "Iron Golem", "cr": 16, "armor_class": 20, "hit_points": 210, "abilities": [24, 9, 20, 3, 11, 1], "immunities": ["fire", "poison", "psychic", "bludgeoning (nonmagical)", "piercing (nonmagical)", "slashing (nonmagical)"]},
+        {"name": "Adult Red Dragon", "cr": 17, "armor_class": 19, "hit_points": 256, "abilities": [27, 10, 25, 16, 13, 21], "saves": {"dexterity": 6, "constitution": 13, "wisdom": 7, "charisma": 11}, "immunities": ["fire"]},
+        {"name": "Balor", "cr": 19, "armor_class": 19, "hit_points": 262, "abilities": [26, 15, 22, 20, 16, 22], "saves": {"strength": 14, "constitution": 12, "wisdom": 9, "charisma": 12}, "resistances": ["cold", "lightning", "bludgeoning (nonmagical)", "piercing (nonmagical)", "slashing (nonmagical)"], "immunities": ["fire", "poison"]},
+        {"name": "Lich", "cr": 21, "armor_class": 17, "hit_points": 135, "abilities": [11, 16, 16, 20, 14, 16], "saves": {"constitution": 10, "intelligence": 12, "wisdom": 9}, "resistances": ["cold", "lightning", "necrotic"], "immunities": ["poison", "bludgeoning (nonmagical)", "piercing (nonmagical)", "slashing (nonmagical)"]},
+        {"name": "Ancient Red Dragon", "cr": 24, "armor_class": 22, "hit_points": 546, "abilities": [30, 10, 29, 18, 15, 23], "saves": {"dexterity": 7, "constitution": 16, "wisdom": 9, "charisma": 13}, "immunities": ["fire"]},
+        {"name": "Tarrasque", "cr": 30, "armor_class": 25, "hit_points": 676, "abilities": [30, 11, 30, 3, 11, 11], "saves": {"intelligence": 5, "wisdom": 9, "charisma": 9}, "immunities": ["fire", "poison", "bludgeoning (nonmagical)", "piercing (nonmagical)", "slashing (nonmagical)"]}
+    ]
+}

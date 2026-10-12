@@ -6,7 +6,7 @@ from dash import html
 # it consists of a title, and a toggle, the latter is hidden on large screens
 sidebar_header = dbc.Row(
     [
-        dbc.Col(html.H2("D & D Damage Simulator",style={"textAlign":"left","fontSize":"x-large","display":"inline"}),width=9,style={"display": "inline"}),
+        dbc.Col(html.H2(["D&D Damage", html.Br(), "Simulator"], style={"textAlign": "left", "fontSize": "1.2rem", "marginBottom": 0}), width=9),
         dbc.Col(
             [
                 html.Button(
@@ -40,9 +40,8 @@ sidebar = html.Div(
             [
                 html.Hr(),
                 html.P(
-                    "For the D&D theorycrafters of the world.",
-                    "links.",
-                    className="lead",
+                    "For the D&D and Baldur's Gate 3 theorycrafters of the world.",
+                    className="small text-muted",
                 ),
             ],
             id="blurb",
