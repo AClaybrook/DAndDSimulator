@@ -409,3 +409,19 @@ def fight_export(fights):
         df.insert(0, "Name", name)
         frames.append(df)
     return pd.concat(frames, ignore_index=True)
+
+def results_summary(values, unit, higher_is_better=True, context=""):
+    """ One line summary of a simulation: who comes out on top and by how much """
+    if not values:
+        return None
+    ranked = sorted(values.items(), key=lambda kv: kv[1], reverse=higher_is_better)
+    best, best_value = ranked[0]
+    text = [html.B(best), f" leads with {best_value:.2f} {unit}"]
+    if len(ranked) > 1:
+        second, second_value = ranked[1]
+        if second_value:
+            difference = (best_value / second_value - 1) if higher_is_better else (1 - best_value / second_value)
+            text.append(f", {100 * difference:.0f}% {'ahead of' if higher_is_better else 'faster than'} {second} ({second_value:.2f})")
+    if context:
+        text.append(f" {context}")
+    return dbc.Alert([html.I(className="fa-solid fa-trophy me-2"), *text], color="info", class_name="py-2 mb-2")

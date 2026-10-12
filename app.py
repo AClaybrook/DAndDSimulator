@@ -8,7 +8,7 @@ from dash import dcc, html, Dash
 import dash_bootstrap_components as dbc
 from computations.models import Character, Attack
 from computations.numerical_simulation import simulate_rounds_from_characters
-from components.plots import generate_plot_data, add_tables, build_leaderboard, build_breakdown_tables
+from components.plots import generate_plot_data, add_tables, build_leaderboard, build_breakdown_tables, results_summary
 from computations.analytic import attack_breakdown
 from components.callbacks import register_callbacks
 from components.sidebar import sidebar
@@ -17,6 +17,7 @@ from components.enemy_card import generate_enemy_card
 from game_data import RULESETS, enemy_from_monster
 from game_data.classes import BUILDS
 from components.sweeps import SWEEP_PARAMETERS
+from components.help import GRAPH_DESCRIPTIONS, quick_start
 
 # %%
 # Example
@@ -64,57 +65,52 @@ def preset_builder():
     ], size="sm")
 
 def simulate_rounds_input():
-    """ Generates the simulator input section"""
+    """ Generates the simulator input section: what to simulate, settings and the simulate button """
     return dbc.Row([
         dbc.Row(dbc.Col(id="simulate-alerts")),
         dbc.Row([
             dbc.Col([
-                dbc.Label('Number Of Rounds'),
-                dbc.Input(type="number", value=10_000, min=1, max=1_000_000, step=1, style={'display': 'inline-block'},id="simulate-input"),
-                dbc.Label("Rounds Per Fight", class_name="mt-2"),
-                dbc.Input(type="number", value=3, min=1, max=20, step=1, id="rounds-per-fight"),
-                dbc.FormText("Limited attacks and once per turn uses are spread over fights of this many rounds"),
-            ], xs=12, md=3, xl=2),
-            dbc.Col([
-                dbc.Label("Graph Type"),
+                dbc.Label("What do you want to know?", class_name="fw-bold"),
                 dbc.RadioItems(
-                    options=[
-                        {"label": "DPR Distribution", "value": "DPR Distribution",},
-                        {"label": "DPR Sweep", "value": "DPR Sweep"},
-                        {"label": "DPA Distribution", "value": "DPA Distribution",},
-                        {"label": "DPA Sweep", "value": "DPA Sweep"},
-                        {"label": "Rounds to Kill", "value": "Rounds to Kill"},
-                        {"label": "Damage per Fight", "value": "Damage per Fight"},
-                    ],
+                    options=[{"label": graph, "value": graph} for graph in GRAPH_DESCRIPTIONS],
                     value="DPR Distribution",
                     id="simulate-type",
                     inline=True,
                     ),
-                dbc.InputGroup([
-                    dbc.InputGroupText("Sweep"),
-                    dbc.Select(options=[{"label": p, "value": p} for p in SWEEP_PARAMETERS], value="Armor Class", id="sweep-parameter"),
-                ], size="sm", class_name="mt-1"),
-                dbc.FormText(id="sweep-description"),
-            ], xs=12, md=6, xl=5),
+                html.Div(GRAPH_DESCRIPTIONS["DPR Distribution"], id="graph-description", className="small text-info mt-1"),
+                html.Div([
+                    dbc.InputGroup([
+                        dbc.InputGroupText("Sweep"),
+                        dbc.Select(options=[{"label": p, "value": p} for p in SWEEP_PARAMETERS], value="Armor Class", id="sweep-parameter"),
+                    ], size="sm", class_name="mt-2"),
+                    dbc.FormText(id="sweep-description"),
+                ], id="sweep-controls", style={"display": "none"}),
+            ], xs=12, lg=7),
             dbc.Col([
-                dbc.Label("Numerical Options"),
+                dbc.Label("Settings", class_name="fw-bold"),
+                dbc.InputGroup([
+                    dbc.InputGroupText("Rounds simulated"),
+                    dbc.Input(type="number", value=10_000, min=1, max=1_000_000, step=1, id="simulate-input"),
+                ], size="sm", class_name="mb-1"),
+                dbc.InputGroup([
+                    dbc.InputGroupText("Rounds per fight"),
+                    dbc.Input(type="number", value=3, min=1, max=20, step=1, id="rounds-per-fight"),
+                ], size="sm", class_name="mb-1"),
+                dbc.FormText("Limited attacks, smites and first round effects are spread over fights of this many rounds"),
                 dbc.Checklist(
                     options=[
                         {"label": "Randomize Seed", "value": 1},
                     ],
                     value=[1],
                     id="numerical-options",
-                    # inline=True,
                     switch=True,
+                    class_name="mt-1",
                     ),
-            ], xs=12, md=3, xl=2),
-        ],justify="start"),
-        dbc.Row(
+            ], xs=12, md=8, lg=3),
             dbc.Col(
-                dbc.Button(dbc.Spinner("Simulate!", color="light", size="sm", id='simulate-spinner'), color="primary", id="simulate-button", style={'width': '100%'}),
-                xs=12, md=3, xl=2
-            ),
-        class_name="mb-2"),
+                dbc.Button(dbc.Spinner("Simulate!", color="light", size="sm", id='simulate-spinner'), color="primary", size="lg", id="simulate-button", class_name="w-100"),
+                xs=12, md=4, lg=2, class_name="d-flex align-items-center"),
+        ], justify="start", class_name="g-3 mb-2"),
     ])
 
 app = Dash(__name__, external_stylesheets=[style_sheet, dbc.icons.FONT_AWESOME], title="D&D Damage Simulator")
@@ -125,15 +121,16 @@ fig = generate_plot_data(characters, df_by_rounds, template=template, title="Dam
 
 
 content = html.Div(dbc.Container([
+    quick_start(),
     # Character Builder
     html.Section([
         dbc.Row([
             dbc.Col(html.H3("Character Builder", id='character-builder', className="mb-0")),
             dbc.Col([
                 dbc.InputGroup([
-                    dbc.Button(html.I(className="fa-solid fa-download"), color="secondary", id="export-button", title="Export characters to json"),
+                    dbc.Button(html.I(className="fa-solid fa-download"), color="secondary", id="export-button", title="Export session (characters, enemy and settings) to json"),
                     dcc.Download(id="download-characters"),
-                    dcc.Upload(dbc.Button(html.I(className="fa-solid fa-upload"), color="info", id="import-button", title="Import characters from json"), id='upload-button', multiple=False),
+                    dcc.Upload(dbc.Button(html.I(className="fa-solid fa-upload"), color="info", id="import-button", title="Import a session, or add characters from an older characters file"), id='upload-button', multiple=False),
                 ], class_name="justify-content-end"),
             ], width="auto"),
         ], align="center", class_name="mb-2"),
@@ -146,6 +143,12 @@ content = html.Div(dbc.Container([
             xs=12, md=4, xl=3, class_name="mb-2"),
             dbc.Col(preset_builder(), xs=12, md=8, xl=7, class_name="mb-2"),
         ]),
+        # Offers to restore the session this browser saved on its last simulation, shown after a reload
+        dbc.Alert([
+            html.I(className="fa-solid fa-clock-rotate-left me-2"),
+            html.Span(id="restore-text"),
+            dbc.Button("Restore it", id="restore-session-button", color="success", size="sm", class_name="ms-2"),
+        ], id="restore-banner", color="secondary", dismissable=True, is_open=False, class_name="py-2 mb-2 d-flex align-items-center"),
         dbc.Row(id="character-alerts"),
         dbc.Row(generate_character_cards(characters), id="character_row"),
         dcc.Store(id='active_ids', data=json.dumps(list(range(len(characters))))), # Used to keep track of character ids, since character can be added, copied and deleted
@@ -179,6 +182,8 @@ content = html.Div(dbc.Container([
             ], width="auto"),
         ], align="center", class_name="mb-2"),
         simulate_rounds_input(),
+        html.Div(results_summary({c.name: df["Damage"].mean() for c, df in zip(characters, df_by_rounds)}, "damage per round", context=f"against {enemy.name}."),
+                 id="results-summary"),
         dbc.Row([
                 dcc.Graph(
                     id='dist-plot',
@@ -196,7 +201,16 @@ content = html.Div(dbc.Container([
     ], className="panel"),
 ], fluid=True), id="page-content")
 
-app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
+# Always reachable simulate button, results scroll into view when a simulation finishes
+floating_simulate = dbc.Button([html.I(className="fa-solid fa-dice-d20 me-2"), "Simulate"], color="primary", id="simulate-float", class_name="shadow",
+                               title="Simulate with the current settings")
+stores = [
+    dcc.Store(id="ui-prefs", storage_type="local"), # Per browser preferences, i.e. hiding the quick start
+    dcc.Store(id="scroll-dummy"),
+    dcc.Store(id="saved-session", storage_type="local"), # Last simulated session, offered for restore after a reload
+]
+
+app.layout = html.Div([dcc.Location(id="url"), sidebar, content, floating_simulate, *stores])
 
 #%%
 
