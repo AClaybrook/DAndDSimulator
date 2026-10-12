@@ -58,11 +58,19 @@ def test_builds_level_up(key, ruleset):
             assert len(c.attacks) >= len(previous.attacks)
         previous = c
 
+def every_round(character):
+    """ Attacks made every round, not limited per fight """
+    return [a for a in character.attacks if not a.uses_per_fight]
+
 def test_fighter_progression():
-    assert len(build_character("fighter_gwm", 4).attacks) == 1
-    assert len(build_character("fighter_gwm", 5).attacks) == 2
-    assert len(build_character("fighter_gwm", 11).attacks) == 3
-    assert len(build_character("fighter_gwm", 20, "5e").attacks) == 4
+    assert len(every_round(build_character("fighter_gwm", 4))) == 1
+    assert len(every_round(build_character("fighter_gwm", 5))) == 2
+    assert len(every_round(build_character("fighter_gwm", 11))) == 3
+    assert len(every_round(build_character("fighter_gwm", 20, "5e"))) == 4
+    # Action Surge repeats the attack action once per short rest (twice from 17 in 5e)
+    surge = [a for a in build_character("fighter_gwm", 11).attacks if a.uses_per_fight]
+    assert len(surge) == 3 and surge[0].uses_per_fight == 0.75
+    assert build_character("fighter_gwm", 1).attacks == every_round(build_character("fighter_gwm", 1))
     assert build_character("fighter_gwm", 20).level == 12 # BG3 caps at level 12
     c = build_character("fighter_gwm", 8)
     assert c.GWM and c.strength == 20 and c.crit_on == 19
@@ -71,7 +79,7 @@ def test_character_at_level():
     preset = build_character("fighter_gwm", 3)
     preset.name = "Renamed"
     rebuilt = character_at_level(preset, 11)
-    assert rebuilt.name == "Renamed" and len(rebuilt.attacks) == 3 and rebuilt.preset == "fighter_gwm:bg3"
+    assert rebuilt.name == "Renamed" and len(every_round(rebuilt)) == 3 and rebuilt.preset == "fighter_gwm:bg3"
     plain = Character(name="Plain", attacks=[weapon_attack("Greatsword")])
     assert character_at_level(plain, 9).level == 9 and len(character_at_level(plain, 9).attacks) == 1
 
@@ -95,9 +103,9 @@ def test_level_sweep_keeps_manual_edits():
     plain = build_character("fighter_gwm", 11)
     assert rebuilt.bonus_attack_die_mod_list == ["1d4"]
     assert rebuilt.strength == min(30, plain.strength + 1)
-    assert [a.name for a in rebuilt.attacks] == ["Greatsword"] * 3 + ["Handaxe"]
+    assert [a.name for a in every_round(rebuilt)] == ["Greatsword"] * 3 + ["Handaxe"]
     # The new third greatsword gets the edits of the last edited copy
-    assert all(a.weapon_enhancement == 1 for a in rebuilt.attacks[:3])
+    assert all(a.weapon_enhancement == 1 for a in every_round(rebuilt)[:3])
     assert rebuilt.GWM and rebuilt.crit_on == plain.crit_on
 
 def test_level_sweep_keeps_deleted_attacks_deleted():
@@ -111,3 +119,25 @@ def test_unedited_preset_rebuilds_exactly():
     expected = build_character("paladin_smite", 9)
     expected.name = card.name
     assert rebuilt == expected
+
+def test_resource_limits_per_fight():
+    paladin = build_character("paladin_smite", 5)
+    # Paladin 5 has 4 + 2 slots, over 4 fights per long rest
+    assert paladin.once_per_turn_die_mod_list == ["3d8"] and paladin.once_per_turn_uses_per_fight == 1.5
+    battle_master = build_character("fighter_battle_master", 7)
+    assert battle_master.once_per_turn_uses_per_fight == 3.75 # 5 superiority dice per short rest
+    monk = build_character("monk_open_hand", 6)
+    assert [a.name for a in monk.attacks].count("Flurry of Blows") == 1 and monk.attacks[-1].uses_per_fight == 4.5
+
+def test_multiclass_builds():
+    sorlock = build_character("sorlock", 6)
+    assert sorlock.agonizing_blast and sorlock.description.endswith("Warlock 2 / Sorcerer 4")
+    quickened = [a for a in sorlock.attacks if a.uses_per_fight]
+    assert len(quickened) == 2 and quickened[0].uses_per_fight == 0.25 # 4 sorcery points, 3 per quickened spell in BG3
+    assert len([a for a in build_character("sorlock", 6, "5e").attacks if a.uses_per_fight]) == 2
+    assert not any(a.uses_per_fight for a in build_character("sorlock", 3).attacks) # No metamagic yet
+    hexadin = build_character("hexadin", 6)
+    assert len(hexadin.attacks) == 2 and hexadin.dueling and hexadin.crit_on == 19
+    # Paladin 5: multiclass caster level 2 (3 first level slots) plus the pact slot recovering on short rests
+    assert hexadin.once_per_turn_die_mod_list == ["2d8"] and hexadin.once_per_turn_uses_per_fight == 1.5
+    assert not build_character("hexadin", 2).once_per_turn_die_mod_list

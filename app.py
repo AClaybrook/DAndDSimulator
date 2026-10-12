@@ -71,6 +71,9 @@ def simulate_rounds_input():
             dbc.Col([
                 dbc.Label('Number Of Rounds'),
                 dbc.Input(type="number", value=10_000, min=1, max=1_000_000, step=1, style={'display': 'inline-block'},id="simulate-input"),
+                dbc.Label("Rounds Per Fight", class_name="mt-2"),
+                dbc.Input(type="number", value=3, min=1, max=20, step=1, id="rounds-per-fight"),
+                dbc.FormText("Limited attacks and once per turn uses are spread over fights of this many rounds"),
             ], xs=12, md=3, xl=2),
             dbc.Col([
                 dbc.Label("Graph Type"),
@@ -81,6 +84,7 @@ def simulate_rounds_input():
                         {"label": "DPA Distribution", "value": "DPA Distribution",},
                         {"label": "DPA Sweep", "value": "DPA Sweep"},
                         {"label": "Rounds to Kill", "value": "Rounds to Kill"},
+                        {"label": "Damage per Fight", "value": "Damage per Fight"},
                     ],
                     value="DPR Distribution",
                     id="simulate-type",
@@ -166,6 +170,7 @@ content = html.Div(dbc.Container([
                             {"label": "DPA Distribution", "value": "DPA Distribution",},
                             {"label": "DPA Sweep", "value": "DPA Sweep"},
                             {"label": "Rounds to Kill", "value": "Rounds to Kill"},
+                            {"label": "Damage per Fight", "value": "Damage per Fight"},
                             ],
                         value='DPR Summary', id='export-type'),
                     dbc.Button(dbc.Spinner(html.I(className="fa-solid fa-download"), color="secondary", id="export-spinner", size="sm"), color="secondary", id="export-results-button", title="Export results to csv"),

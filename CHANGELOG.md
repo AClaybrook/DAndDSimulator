@@ -1,5 +1,32 @@
 # Changelog
 
+## 2.3.0 (2026-10-12)
+
+### New features
+- **Fights and limited resources.**
+  - **Uses Per Fight** on attacks: limited attacks such as Action Surge or a quickened spell are made in the first rounds of each fight.
+  - **Once Per Turn Uses Per Fight** on characters: smites, superiority dice or sneak attacks run out.
+  - **Fractional averages** (i.e. 1.5) are randomized per fight between 1 and 2 uses.
+  - **Rounds Per Fight** (simulator input, default 3): every graph averages over fights of that many rounds. Characters without limits are unaffected.
+- **Damage per Fight:** a graph of average damage in each round of a fight, which shows opening bursts. The table has total fight damage, round 1 vs the last round, and a csv export with every fight.
+- **Rounds to Kill** simulates whole fights for characters with limited resources, so a first round burst counts. Other characters still use the faster resampling.
+- **Resource limited presets** (assuming 4 fights per long rest and 2 short rests):
+  - Paladin smites use the real paladin spell slot table, and the smite dice use the highest slot.
+  - Battle Master superiority dice are limited per short rest.
+  - Fighters get **Action Surge**.
+  - The Monk's Flurry of Blows strike costs ki.
+- **Multiclass presets:**
+  - **Sorlock (Warlock 2 / Sorcerer):** Eldritch Blast with Agonizing Blast and Hex, plus a Quickened Eldritch Blast while sorcery points last. Metamagic comes at sorcerer 2 in BG3 (3 in 5e), and Quickened Spell costs 3 sorcery points in BG3 (2 in 5e).
+  - **Hexadin (Hexblade 1 / Paladin):** Charisma longsword with Dueling and Hexblade's Curse. Smites use multiclass spell slots (half the paladin level) plus the warlock pact slot each short rest.
+- **Leaderboard** shows attacks made per round, and Hit %/Crit % are per attack actually made.
+- **Attack Breakdown** shows Uses/Fight when any attack is limited.
+
+### Internals
+- `simulate_fight_attacks` simulates fight by fight. `simulate_attacks` uses it only when a character has limits and `rounds_per_fight` is given, so the fast path is untouched.
+- `simulate_fights` and `fight_damage` give damage per round of each fight.
+- `expected_by_attack` extends the exact calculator to fights. It covers every combination of fractional uses, and a dynamic program over rounds tracks once per turn uses. Tests check the fight simulation against it for Action Surge, limited and crit only smites, quickened blasts and a limited Fireball.
+- **Benchmarks:** new lines cover the fight path. With limits, 100k rounds takes about 170 ms; without limits, timings match 2.2. The level sweep benchmark is slower only because presets now have more attacks.
+
 ## 2.2.0 (2026-10-12)
 
 ### New features

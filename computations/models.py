@@ -86,6 +86,8 @@ class Attack:
     saving_throw_success_multiplier: float = 0.5
     # Whether the character's once per turn damage (sneak attack, smite) can be added to this attack
     once_per_turn_eligible: bool = True
+    # Limited attacks (i.e. Action Surge, quickened spells): average uses per fight, used in the first rounds. 0 means every round
+    uses_per_fight: float = 0
     # Extra damage dice on a crit (i.e. brutal critical) and damage on a miss/successful save (i.e. graze)
     bonus_crit_die_mod_list: list[str | int] = field(default_factory=list) # Format is ['1d6', 2]
     bonus_miss_die_mod_list: list[str | int] = field(default_factory=list) # Format is ['1d6', 2]
@@ -139,6 +141,7 @@ class Creature:
     # Bonus damage applied to the first hit each round, i.e. sneak attack or a divine smite
     once_per_turn_die_mod_list: list[str | int] = field(default_factory=list)
     once_per_turn_crit_only: bool = False # Only use it on a crit, i.e. crit fishing with divine smite
+    once_per_turn_uses_per_fight: float = 0 # Average uses per fight (i.e. spell slots for smites), 0 means unlimited
     # Additional Spell DC
     additional_spell_dc: int = 0
 
@@ -358,6 +361,9 @@ class DamageContext:
     once_modifier: int = 0
     once_per_turn_eligible: bool = False
     once_crit_only: bool = False
+    once_uses_per_fight: float = 0
+    # Average uses per fight of a limited attack, 0 means every round
+    uses_per_fight: float = 0
 
 def calculate_attack_and_damage_context(character, enemy):
     """ Extracts the attack and damage contexts for a given character and enemy """
@@ -530,6 +536,8 @@ def calculate_attack_and_damage_context(character, enemy):
             once_modifier=once_modifier,
             once_per_turn_eligible=attack.once_per_turn_eligible and not saving_throw,
             once_crit_only=character.once_per_turn_crit_only,
+            once_uses_per_fight=character.once_per_turn_uses_per_fight or 0,
+            uses_per_fight=attack.uses_per_fight or 0,
         )
 
         attack_contexts.append(attack_context)

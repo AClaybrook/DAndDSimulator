@@ -38,8 +38,8 @@ SWEEP_PARAMETERS = {
 }
 
 @timeit
-def run_sweep(characters, enemy, parameter, by_round=True, ruleset="bg3", num_rounds=10000, **kwargs):
+def run_sweep(characters, enemy, parameter, by_round=True, ruleset="bg3", num_rounds=10000, rounds_per_fight=None, **kwargs):
     """ Simulates a sweep over one of the SWEEP_PARAMETERS """
     values_for, apply, _ = SWEEP_PARAMETERS[parameter]
     cases = ((value, *apply(characters, enemy, value)) for value in values_for(ruleset or "bg3"))
-    return simulate_sweep(cases, parameter, num_rounds=num_rounds, by_round=by_round, **kwargs)
+    return simulate_sweep(cases, parameter, num_rounds=num_rounds, by_round=by_round, rounds_per_fight=rounds_per_fight, **kwargs)

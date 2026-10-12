@@ -114,3 +114,53 @@ def test_once_per_turn_options():
     assert never < crit_only < always
     ineligible = Character(**{**base, "attacks": [greatsword(once_per_turn_eligible=False)] * 2})
     assert expected_damage_per_round(ineligible, enemy) == pytest.approx(never)
+
+FIGHT_ROUNDS = 240_000 # Divisible by every rounds per fight used below, so every simulated fight is complete
+FIGHT_CASES = {
+    "action_surge": (3, Character(level=5, strength=18, attacks=[greatsword()] * 2 + [greatsword(uses_per_fight=0.75)] * 2)),
+    "limited_smites": (4, Character(level=5, strength=18, once_per_turn_die_mod_list=["3d8"], once_per_turn_uses_per_fight=1.5, attacks=[greatsword()] * 2)),
+    "crit_fishing_one_smite": (3, Character(level=11, strength=18, advantage=True, once_per_turn_die_mod_list=["4d8"], once_per_turn_crit_only=True,
+                                            once_per_turn_uses_per_fight=1, attacks=[greatsword()] * 2)),
+    "quickened_blasts": (3, Character(level=5, charisma=18, agonizing_blast=True,
+                                      attacks=[Attack(type="spell", ability_stat="charisma", damage="1d10", bonus_damage_die_mod_list=["1d6"])] * 2
+                                      + [Attack(name="Quickened", type="spell", ability_stat="charisma", damage="1d10", uses_per_fight=1.25)] * 2)),
+    "limited_fireball_and_sneak": (5, Character(level=5, dexterity=18, intelligence=18, once_per_turn_die_mod_list=["3d6"], once_per_turn_uses_per_fight=2,
+                                                attacks=[Attack(ability_stat="dexterity"), Attack(type="spell", ability_stat="intelligence", damage="8d6", saving_throw=True,
+                                                                                                    saving_throw_success_multiplier=0.5, uses_per_fight=1)])),
+}
+
+@pytest.mark.parametrize("name", FIGHT_CASES)
+def test_fight_simulation_matches_analytic(name):
+    rounds_per_fight, character = FIGHT_CASES[name]
+    enemy = Enemy(armor_class=16, dexterity_save=2)
+    expected = expected_damage_per_round(character, enemy, rounds_per_fight)
+    _, df_by_rounds, _ = simulate_rounds_from_characters([character], enemy, num_rounds=FIGHT_ROUNDS, rng=set_seed(11), rounds_per_fight=rounds_per_fight)
+    tolerance = 0.02 * expected + (0.3 if "fireball" in name else 0.05)
+    assert df_by_rounds[0]["Damage"].mean() == pytest.approx(expected, abs=tolerance)
+    # Limits only lower damage compared to unlimited resources
+    assert expected <= expected_damage_per_round(character, enemy) + 1e-9
+
+def test_limited_resources_front_load_damage():
+    from computations.numerical_simulation import fight_damage
+    rounds_per_fight, character = FIGHT_CASES["action_surge"]
+    by_round = fight_damage(character, Enemy(armor_class=15), 20_000, rounds_per_fight, rng=set_seed(3)).mean(axis=1)
+    assert by_round[0] > 1.25 * by_round[1] and by_round[1] == pytest.approx(by_round[2], rel=0.05)
+
+def test_rounds_to_kill_uses_fights_for_limited_resources():
+    enemy = Enemy(armor_class=15, hit_points=40)
+    burst = Character(name="Burst", strength=18, level=5, attacks=[greatsword()] * 2 + [greatsword(uses_per_fight=1)] * 6)
+    df = simulate_rounds_to_kill([burst], enemy, num_rounds=5000, max_rounds=10)
+    # Eight attacks in the first round usually kill a 40 hp enemy straight away
+    assert (df["Burst"] == 1).mean() > 0.5
+
+def test_damage_per_fight_outputs():
+    from computations.numerical_simulation import simulate_fights
+    from components.plots import fight_export, fight_summary, generate_fight_plot
+    characters = [FIGHT_CASES["action_surge"][1], CASES["basic"]]
+    characters[0] = Character(**{**characters[0].__dict__, "name": "Surge"})
+    fights = simulate_fights(characters, Enemy(), num_fights=500, rounds_per_fight=4)
+    assert {name: damage.shape for name, damage in fights.items()} == {"Surge": (4, 500), "Character": (4, 500)}
+    assert len(generate_fight_plot(fights).data) == 2 and fight_summary(fights)
+    export = fight_export(fights)
+    assert len(export) == 1000 and list(export.columns[:3]) == ["Name", "Fight", "Total"]
+    assert (export["Total"] == export[[f"Round {r}" for r in range(1, 5)]].sum(axis=1)).all()

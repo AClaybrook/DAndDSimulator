@@ -96,18 +96,66 @@ def expected_attack_damage(attack_context, damage_context, p_first_hit=None):
         expected += p_first_hit * (once + d["once_modifier"] + p_crit / p_trigger * once)
     return expected * d["damage_multiplier"]
 
-def attack_breakdown(character, enemy):
+def _uses_realizations(averages):
+    """ Every combination of integer uses for average uses per fight (None = unlimited), with its probability.
+        i.e. an average of 1.5 is 1 or 2 uses with equal chance, like the simulation """
+    combos = [(1.0, [])]
+    for average in averages:
+        if not average:
+            options = [(1.0, None)]
+        else:
+            base = int(np.floor(average))
+            options = [(1 - (average - base), base), (average - base, base + 1)]
+        combos = [(p * q, uses + [u]) for p, uses in combos for q, u in options if q > 0]
+    return combos
+
+def expected_by_attack(character, enemy, rounds_per_fight=None):
+    """ Exact expected damage of each attack, averaged per round.
+        With rounds_per_fight, attacks and once per turn damage limited per fight are averaged over fights of that many rounds,
+        otherwise resources are unlimited (every round is the same) """
+    attack_contexts, damage_contexts = calculate_attack_and_damage_context(character, enemy)
+    chances = [hit_and_crit_chance(**asdict(a)) for a in attack_contexts]
+    base = [expected_attack_damage(a, d) for a, d in zip(attack_contexts, damage_contexts)] # Without once per turn damage
+    p_trigger, once_value = [], []
+    for (p_hit, p_crit), d in zip(chances, damage_contexts):
+        p = (p_crit if d.once_crit_only else p_hit) if d.once_per_turn_eligible and (d.once_num_die or d.once_modifier) else 0.0
+        once = expected_dice(d.once_num_die, d.once_die_size, d.reroll_on)
+        p_trigger.append(p)
+        # Given that this attack used the once per turn damage, the chance it was a crit is p_crit/p
+        once_value.append((once + d.once_modifier + p_crit / p * once) * d.damage_multiplier if p > 0 else 0.0)
+
+    has_once = any(p_trigger)
+    limited = bool(rounds_per_fight) and (any(d.uses_per_fight for d in damage_contexts) or (has_once and damage_contexts[0].once_uses_per_fight))
+    num_rounds = rounds_per_fight if limited else 1
+    averages = [d.uses_per_fight if limited else 0 for d in damage_contexts] + [damage_contexts[0].once_uses_per_fight if limited and has_once else 0]
+
+    totals = np.zeros(len(attack_contexts))
+    for probability, uses in _uses_realizations(averages):
+        attack_uses, once_uses = uses[:-1], uses[-1]
+        triggered_rounds = np.array([1.0]) # Distribution of the number of rounds once per turn damage was used so far
+        for r in range(num_rounds):
+            p_available = 1.0 if once_uses is None else triggered_rounds[:once_uses].sum()
+            p_none_yet = 1.0
+            for k, u in enumerate(attack_uses):
+                if u is not None and r >= u:
+                    continue # Used up
+                totals[k] += probability * base[k]
+                if p_trigger[k]:
+                    totals[k] += probability * p_available * p_none_yet * p_trigger[k] * once_value[k]
+                    p_none_yet *= 1 - p_trigger[k]
+            if once_uses is not None:
+                q = 1 - p_none_yet
+                triggered_rounds = np.concatenate([triggered_rounds * (1 - q), [0]]) + np.concatenate([[0], triggered_rounds * q])
+    return totals / num_rounds
+
+def attack_breakdown(character, enemy, rounds_per_fight=None):
     """ Per attack table of to hit chance, crit chance and expected damage for a character against an enemy """
     attack_contexts, damage_contexts = calculate_attack_and_damage_context(character, enemy)
+    expected = expected_by_attack(character, enemy, rounds_per_fight)
+    any_limited = any(a.uses_per_fight for a in character.attacks)
     rows = []
-    p_no_hit_yet = 1.0
-    for attack, a, d in zip(character.attacks, attack_contexts, damage_contexts):
+    for attack, a, d, e in zip(character.attacks, attack_contexts, damage_contexts, expected):
         p_hit, p_crit = hit_and_crit_chance(**asdict(a))
-        p_first_hit = None
-        if d.once_per_turn_eligible and (d.once_num_die or d.once_modifier):
-            p_trigger = p_crit if d.once_crit_only else p_hit
-            p_first_hit = p_no_hit_yet * p_trigger
-            p_no_hit_yet *= 1 - p_trigger
         if a.saving_throw:
             to_hit = f"DC {a.difficulty_class} vs {a.modifier:+d}"
         else:
@@ -115,24 +163,38 @@ def attack_breakdown(character, enemy):
             to_hit = f"{a.modifier:+d}" + (f" + {bonus_dice}" if bonus_dice else "")
         dice = " + ".join(f"{n}d{s}" for n, s in zip(d.num_die, d.die_size))
         damage = dice + (f" {d.modifier:+d}" if d.modifier else "")
-        rows.append({
+        row = {
             "Attack": attack.name,
             "To Hit": to_hit,
             "Damage": damage or "0",
             "Hit %": round(100 * p_hit, 1),
             "Crit %": round(100 * p_crit, 1),
-            "Expected": round(expected_attack_damage(a, d, p_first_hit), 2),
-        })
-    return pd.DataFrame(rows, columns=["Attack", "To Hit", "Damage", "Hit %", "Crit %", "Expected"])
+        }
+        if any_limited:
+            row["Uses/Fight"] = f"{attack.uses_per_fight:g}" if attack.uses_per_fight else "all"
+        row["Expected"] = round(float(e), 2)
+        rows.append(row)
+    columns = ["Attack", "To Hit", "Damage", "Hit %", "Crit %"] + (["Uses/Fight"] if any_limited else []) + ["Expected"]
+    return pd.DataFrame(rows, columns=columns)
 
-def expected_damage_per_round(character, enemy):
+def attacks_per_round(character, rounds_per_fight=None):
+    """ Average number of attacks made per round, attacks limited per fight are only made in some rounds """
+    def made(uses):
+        if not uses or not rounds_per_fight:
+            return 1.0
+        base = int(np.floor(uses))
+        frac = uses - base
+        return ((1 - frac) * min(base, rounds_per_fight) + frac * min(base + 1, rounds_per_fight)) / rounds_per_fight
+    return float(sum(made(a.uses_per_fight) for a in character.attacks))
+
+def expected_damage_per_round(character, enemy, rounds_per_fight=None):
     """ Expected (mean) damage per round, ignoring damage reduction and rounding """
-    return float(attack_breakdown(character, enemy)["Expected"].sum())
+    return float(expected_by_attack(character, enemy, rounds_per_fight).sum())
 
 POWER_ATTACK_FEATS = {"GWM": ("Great Weapon Master", lambda a: a.type == "weapon (melee)" and a.heavy),
                       "sharpshooter": ("Sharpshooter", lambda a: a.type == "weapon (ranged)")}
 
-def power_attack_insights(character, enemy, armor_classes):
+def power_attack_insights(character, enemy, armor_classes, rounds_per_fight=None):
     """ For each power attack feat (-5 to hit, +10 damage) a character has turned on, finds the armor classes where it is worth using.
         Uses the exact expected damage, so it is instant """
     insights = []
@@ -140,9 +202,10 @@ def power_attack_insights(character, enemy, armor_classes):
         if not getattr(character, flag) or not any(applies(a) for a in character.attacks):
             continue
         without = replace(character, **{flag: False})
-        gains = {ac: expected_damage_per_round(character, replace(enemy, armor_class=ac)) - expected_damage_per_round(without, replace(enemy, armor_class=ac))
-                 for ac in armor_classes}
-        worth_it = [ac for ac, gain in gains.items() if gain > 0]
+        def gain_vs(e, without=without):
+            return expected_damage_per_round(character, e, rounds_per_fight) - expected_damage_per_round(without, e, rounds_per_fight)
+        gains = {ac: gain_vs(replace(enemy, armor_class=ac)) for ac in armor_classes}
+        worth_it = [ac for ac, g in gains.items() if g > 0]
         if not worth_it:
             advice = "Turn it off at every armor class"
         elif len(worth_it) == len(gains):
@@ -151,7 +214,7 @@ def power_attack_insights(character, enemy, armor_classes):
             advice = f"Keep it on up to AC {max(worth_it)}, turn it off from AC {max(worth_it) + 1}"
         gain_now = gains.get(enemy.armor_class)
         if gain_now is None:
-            gain_now = expected_damage_per_round(character, enemy) - expected_damage_per_round(without, enemy)
+            gain_now = gain_vs(enemy)
         insights.append({
             "Character": character.name,
             "Feat": label,
