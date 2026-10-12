@@ -322,7 +322,7 @@ def build_sweep_leaderboard(df_sweep, x_col, order):
                      "low": g["mean"].astype(float).iloc[0], "high": g["mean"].astype(float).iloc[-1]})
     rows.sort(key=lambda r: r["avg"], reverse=True)
     first, last = df_sweep[x_col].iloc[0], df_sweep[x_col].iloc[-1]
-    header = html.Thead(html.Tr([html.Th(h) for h in ["#", "Character", f"Average DPR ({x_col} {first}-{last})", f"DPR at {first}", f"DPR at {last}"]]))
+    header = html.Thead(html.Tr([html.Th(h) for h in ["#", "Character", f"Average DPR ({x_col} {first} to {last})", f"DPR at {first}", f"DPR at {last}"]]))
     body = html.Tbody([
         html.Tr([
             html.Td(rank),

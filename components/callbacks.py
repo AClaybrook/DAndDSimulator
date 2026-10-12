@@ -7,10 +7,9 @@ from dash.exceptions import PreventUpdate
 from dash import dcc, html, Input, Output, State, Patch, MATCH, ALL, ctx, clientside_callback, ClientsideFunction
 from computations.analytic import attack_breakdown, power_attack_insights
 from computations.models import Character, Enemy
-from computations.numerical_simulation import (simulate_rounds_from_characters, set_seed, simulate_rounds_from_characters_multi_acs,
-                                               simulate_rounds_from_characters_by_level, simulate_rounds_to_kill)
-from game_data import RULESETS, attacks_from_template, enemy_from_preset
-from game_data.classes import build_character, character_at_level
+from computations.numerical_simulation import simulate_rounds_from_characters, set_seed, simulate_rounds_to_kill
+from game_data import attacks_from_template, enemy_from_preset
+from game_data.classes import build_character
 
 from utilities.helper_functions import timeit
 from components.callback_helpers import (get_active_ids_and_new_id, get_new_id, set_active_ids, try_and_except_alert, reformat_df_ac, alert,
@@ -21,6 +20,7 @@ from components.plots import (COLORS, generate_plot_data, add_tables, summary_st
                               build_sweep_leaderboard, build_insights)
 from components.character_card import generate_character_card, set_attack_from_values, extract_attack_ui_values, extract_character_ui_values, characters_from_ui
 from components.enemy_card import extract_enemy_ui_values, generate_enemy_card_body
+from components.sweeps import SWEEP_PARAMETERS, run_sweep
 
 MAX_CHARACTERS = min(8, len(COLORS)) # There are 10 colors and 4 characters fit per row, so 8 is a good max
 ARMOR_CLASSES = range(10, 26)
@@ -52,20 +52,8 @@ def parse_simulation_inputs(num_rounds, attack_stores, characters_list, enemy_ca
         lambda: Enemy.from_dict(extract_enemy_ui_values(enemy_card_body)))
     return characters, enemy, rng, error
 
-# Sweep graph types: (swept column, by round)
-SWEEPS = {
-    "DPR vs Armor Class": ("Armor Class", True),
-    "DPA vs Armor Class": ("Armor Class", False),
-    "DPR vs Level": ("Level", True),
-    "DPA vs Level": ("Level", False),
-}
-
-def run_sweep(characters, enemy, x_col, by_round, ruleset, num_rounds, rng):
-    """ Runs a sweep simulation over armor class or level """
-    if x_col == "Armor Class":
-        return simulate_rounds_from_characters_multi_acs(characters, enemy, armor_classes=ARMOR_CLASSES, num_rounds=num_rounds, by_round=by_round, rng=rng)
-    levels = range(1, RULESETS[ruleset or "bg3"]["max_level"] + 1)
-    return simulate_rounds_from_characters_by_level(characters, enemy, levels, character_at_level, num_rounds=num_rounds, by_round=by_round, rng=rng)
+# Sweep graph/export types: by round (DPR) or by attack (DPA), the swept parameter is chosen separately
+SWEEPS = {"DPR Sweep": True, "DPA Sweep": False}
 
 def dpa_vs_ac_tables(df_acs, order, x_col='Armor Class'):
     """ One table per character with a column group per attack """
@@ -364,6 +352,13 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         return set_attack_from_values([values], 0, ctx.triggered_id["index"], num_attacks=len(attacks))
 
     @app.callback(
+        Output("sweep-description", "children"),
+        Input("sweep-parameter", "value"),
+    )
+    def describe_sweep(parameter):
+        return SWEEP_PARAMETERS[parameter][2] if parameter in SWEEP_PARAMETERS else ""
+
+    @app.callback(
         Output("enemy-card-body", "children"),
         Output("enemy-name", "children", allow_duplicate=True),
         Input("enemy-preset", "value"),
@@ -446,10 +441,11 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         State("simulate-type", "value"),
         State("numerical-options", "value"),
         State("ruleset", "value"),
+        State("sweep-parameter", "value"),
         prevent_initial_call=True
     )
     @timeit
-    def simulate(clicked, num_rounds, attack_stores, characters_list, enemy_card_body, simulate_type, numerical_options, ruleset):
+    def simulate(clicked, num_rounds, attack_stores, characters_list, enemy_card_body, simulate_type, numerical_options, ruleset, sweep_parameter):
         if not clicked:
             raise PreventUpdate
 
@@ -480,8 +476,8 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
                 fig = generate_damage_per_attack_histogram(characters, dfs, template=template, title="Damage Per Attack Distribution")
                 tables = leaderboard + add_tables(df_by_attacks, characters, by_round=False, width=3) + breakdown
         elif simulate_type in SWEEPS:
-            x_col, by_round = SWEEPS[simulate_type]
-            df_acs, error = try_and_except_alert(error_message, run_sweep, characters, enemy, x_col, by_round, ruleset, num_rounds, rng)
+            x_col, by_round = sweep_parameter, SWEEPS[simulate_type]
+            df_acs, error = try_and_except_alert(error_message, run_sweep, characters, enemy, x_col, by_round=by_round, ruleset=ruleset, num_rounds=num_rounds, rng=rng)
             if error is not None:
                 return fig, tables, error, spinner
 
@@ -521,10 +517,11 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         State("enemy-card-body", "children"),
         State("numerical-options", "value"),
         State("ruleset", "value"),
+        State("sweep-parameter", "value"),
         prevent_initial_call=True
     )
     @timeit
-    def export_results(clicked, export_type, num_rounds, attack_stores, characters_list, enemy_card_body, numerical_options, ruleset):
+    def export_results(clicked, export_type, num_rounds, attack_stores, characters_list, enemy_card_body, numerical_options, ruleset, sweep_parameter):
         if not clicked:
             raise PreventUpdate
 
@@ -559,8 +556,8 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
                 dfs.append(data)
 
         elif export_type in SWEEPS:
-            x_col, by_round = SWEEPS[export_type]
-            df_acs, error = try_and_except_alert(error_message, run_sweep, characters, enemy, x_col, by_round, ruleset, num_rounds, rng)
+            x_col, by_round = sweep_parameter, SWEEPS[export_type]
+            df_acs, error = try_and_except_alert(error_message, run_sweep, characters, enemy, x_col, by_round=by_round, ruleset=ruleset, num_rounds=num_rounds, rng=rng)
             if error is not None:
                 return export, error, spinner
             dfs = [reformat_df_ac(df_acs, by_round=True, x=x_col)] if by_round else per_attack_ac_tables(df_acs, names, x=x_col)
