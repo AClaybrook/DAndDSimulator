@@ -3,7 +3,7 @@
 from collections import defaultdict
 from dataclasses import dataclass
 
-from bg3.build import ACT_KEYS, equipment_at
+from bg3.build import ACT_KEYS, buffs_at, equipment_at
 from bg3.items import SLOT_LABELS, catalog
 
 MAX_PARTY_SIZE = 4
@@ -11,7 +11,7 @@ MAX_PARTY_SIZE = 4
 @dataclass
 class Conflict:
     act: str
-    kind: str # shared (several characters), duplicate (one character, two slots), two_handed, wrong_slot, too_early, unknown
+    kind: str # shared (several characters), duplicate (one character, two slots), two_handed, wrong_slot, too_early, unknown, elixirs
     item: str # Item key
     members: list[str]
     message: str
@@ -38,6 +38,10 @@ def build_conflicts(build, act, items=None):
         if len(slots) > 1:
             conflicts.append(Conflict(act, "duplicate", key, [build.name],
                                       f"{build.name}: {items[key].name} is unique but equipped in {' and '.join(SLOT_LABELS[s] for s in slots)}"))
+    exclusive = [b.name for b in buffs_at(build, act) if b.exclusive]
+    if len(exclusive) > 1:
+        conflicts.append(Conflict(act, "elixirs", "", [build.name],
+                                  f"{build.name}: only one of {', '.join(exclusive)} works at a time, each ends the elixir drunk before"))
     for hand in ("melee", "ranged"):
         main, off = items.get(gear.get(f"{hand}_main", "")), gear.get(f"{hand}_off")
         if main is not None and main.two_handed and off:

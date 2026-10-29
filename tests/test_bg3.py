@@ -162,3 +162,13 @@ def test_gear_advice():
     assert not [i for i, _, _ in slot_suggestions(fighter(), 1, "helmet", ENEMY, 3, ITEMS) if i.key == "test:keen_helm"] # Act 3 item
     conflict = next(c for c in party_conflicts([build, other], ITEMS) if c.kind == "shared" and c.act == "1")
     assert set(shared_item_gains([build, other], conflict, ENEMY, 3, ITEMS)) == {"Lae'zel", "Karlach"}
+
+def test_elixirs():
+    from bg3.buffs import BUFFS
+    giant, vicious = BUFFS["elixir:elixir_of_hill_giant_strength"], BUFFS["elixir:elixir_of_viciousness"]
+    assert giant.exclusive and vicious.exclusive and not BUFFS["elixir:elixir_of_heroism"].exclusive
+    character = compile_build(fighter(buffs={"1": [giant.key]}), 1, ITEMS)
+    assert character.strength == 21
+    assert all(a.crit_on == 18 for a in compile_build(fighter(buffs={"1": [vicious.key]}), 1, ITEMS).attacks) # Champion 19, then one lower
+    both = fighter(buffs={"1": [giant.key, vicious.key]})
+    assert [c.kind for c in build_conflicts(both, 1, ITEMS)] == ["elixirs"]

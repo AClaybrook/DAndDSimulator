@@ -62,7 +62,11 @@ def gear_table():
     return html.Div(rows, className="bg3-gear-table")
 
 def buff_options(act):
-    return [{"label": b.name, "value": b.key} for b in BUFFS.values() if b.act <= int(act)]
+    """ Spells, then elixirs, available by an act. Hover for what isn't modelled """
+    def label(b):
+        name = b.name.replace("Elixir of ", "Elixir: ")
+        return html.Span(name + (" ✦" if b.effects else ""), title=b.notes or "")
+    return [{"label": label(b), "value": b.key} for b in BUFFS.values() if b.act <= int(act)]
 
 def planner():
     """ The planner section """

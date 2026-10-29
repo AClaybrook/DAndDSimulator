@@ -323,5 +323,45 @@ def build():
     print(f"{len(items)} items, {modelled} with modelled effects, acts: "
           f"{ {a: sum(1 for i in items if i['act'] == a) for a in (1, 2, 3, None)} }")
 
+
+# Elixirs that change damage, by name. Their text is short, so effects are written by hand from it
+ELIXIR_EFFECTS = {
+    "Elixir of Hill Giant Strength": [{"kind": "ability_min", "stat": "strength", "value": 21}],
+    "Elixir of Cloud Giant Strength": [{"kind": "ability_min", "stat": "strength", "value": 27}],
+    "Elixir of Viciousness": [{"kind": "crit_range", "value": 1}],
+    "Elixir of Heroism": [{"kind": "attack_dice", "value": "1d4"}],
+    "Elixir of the Colossus": [{"kind": "damage_bonus", "value": "1d4", "applies_to": "weapon"}],
+    # 3 stacks of Arcane Acuity, which lose 2 turns each time the drinker takes damage
+    "Elixir of Battlemage's Power": [{"kind": "spell_dc", "value": 3}, {"kind": "attack_bonus", "value": 3, "applies_to": "spell"}],
+    "Elixir of Bloodlust": [],
+}
+
+def build_elixirs():
+    """ data/buffs.json: elixirs that change damage, with the act they can be bought or found in """
+    locations, characters = load_acts()
+    with open(RAW / "elixirs.json", encoding="utf-8") as f:
+        pages = json.load(f)
+    buffs = []
+    for title, text in sorted(pages.items()):
+        if title not in ELIXIR_EFFECTS:
+            continue
+        params = {k: plain_text(v) for k, v in template_params(text, "Misc item page").items()}
+        effect_text = params.get("effect", "")
+        buffs.append({
+            "key": key_for(title).replace("bg3:", "elixir:"),
+            "name": title,
+            "act": item_act({"wikitext": text}, params, locations, characters) or 1,
+            "effects": ELIXIR_EFFECTS[title],
+            "notes": re.sub(r"\s+", " ", re.sub(r"\{\{.*", "", effect_text, flags=re.S)).strip(" *")[:300],
+            # Most elixirs end the effect of the one drunk before
+            "exclusive": bool(re.search(r"Replaces effects? (?:of|from) other elixirs", effect_text)),
+            "source": f"https://bg3.wiki/wiki/{title.replace(' ', '_')}",
+        })
+    with open(DATA / "buffs.json", "w", encoding="utf-8") as f:
+        json.dump({"_source": "Elixirs from bg3.wiki (CC BY-NC-SA 4.0), effects written from their text by bg3/build_items.py",
+                   "patch": "8", "buffs": buffs}, f, indent=1, ensure_ascii=False)
+    print(f"{len(buffs)} elixirs: " + ", ".join(f"{b['name']} (Act {b['act']}{', exclusive' if b['exclusive'] else ''})" for b in buffs))
+
 if __name__ == "__main__":
     build()
+    build_elixirs()

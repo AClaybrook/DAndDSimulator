@@ -160,7 +160,18 @@ def act_categories():
     with open(RAW / "act_categories.json", "w", encoding="utf-8") as f:
         json.dump({c: members(c) for c in categories}, f)
 
+def fetch_elixirs():
+    """ Elixir pages, some are damage buffs """
+    data = api(action="query", list="categorymembers", cmtitle="Category:Elixirs", cmlimit=500)
+    titles = [m["title"] for m in data["query"]["categorymembers"]]
+    pages = {}
+    for ii in range(0, len(titles), BATCH):
+        pages.update({title: text for title, (text, _) in wikitext(titles[ii:ii + BATCH]).items()})
+    with open(RAW / "elixirs.json", "w", encoding="utf-8") as f:
+        json.dump(pages, f)
+    print(f"fetched {len(pages)} elixirs")
+
 if __name__ == "__main__":
-    steps = {"fetch": fetch, "parse": parse, "passives": fetch_passives, "acts": act_categories}
-    for step in sys.argv[1:] or ["fetch", "parse", "passives", "acts"]:
+    steps = {"fetch": fetch, "parse": parse, "passives": fetch_passives, "acts": act_categories, "elixirs": fetch_elixirs}
+    for step in sys.argv[1:] or ["fetch", "parse", "passives", "acts", "elixirs"]:
         steps[step]()

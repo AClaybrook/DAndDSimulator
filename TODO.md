@@ -3,10 +3,10 @@
 Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user facing summary of each release.
 
 ## Active
-- [ ] Elixirs from bg3.wiki as buffs (Hill Giant Strength, Viciousness, Bloodlust and others that change damage)
+- [ ] Character builder: race, class levels with subclasses (including the Patch 8 subclasses), point buy, background, feats, replacing class presets
 
 ## Next
-- [ ] Character builder: race, class levels with subclasses (including the Patch 8 subclasses), point buy, background, feats, replacing class presets
+- [ ] Elixir of Bloodlust (extra action on a kill) and kill based effects in general
 - [ ] Arcane Acuity, Lightning Charges, Momentum and other stacking effects
 - [ ] Per weapon rerolls (Twist of Fortune, Knife of the Undermountain King) and per item Great Weapon Fighting style effects
 - [ ] Concentration: one caster can't keep Bless, Haste and Hex up at once, flag buffs that need more casters than the party has
@@ -24,4 +24,5 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - 2026-10-29: Cross-check with the community unique item checklist sheet: act fixes, skipped template spellings, unobtainable items
 - 2026-10-29: Eight example builds with gear per act, loadable into any party slot
 - 2026-10-29: Gear advice: what each equipped item adds, best items for a slot at an act (with who else uses them), and each character's gain from a shared item in the conflict report
+- 2026-10-29: Elixirs from bg3.wiki as buffs (Hill Giant and Cloud Giant Strength, Viciousness, Heroism, Colossus, Battlemage's Power), with a warning when more than one elixir that replaces the others is selected
 - 2026-10-29: Generic +1/+2/+3 trader gear gets an estimated act from its enchantment, items of unknown act are only suggested for Act 3
