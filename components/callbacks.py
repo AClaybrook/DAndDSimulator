@@ -26,6 +26,12 @@ from components.enemy_card import extract_enemy_ui_values, generate_enemy_card_b
 from components.variants import make_variant
 from components.sweeps import SWEEP_PARAMETERS, run_sweep
 from components.session import SETTINGS_IDS, describe_session, make_session, parse_session
+from components.bg3_planner import (DEFAULT_PARTY, MAX_PARTY_SIZE, conditional_options, conflicts_list, dpr_table, gear_highlights,
+                                    inherited_placeholders)
+from bg3.build import ACT_KEYS, Bg3Build, compile_build
+from bg3.checkpoints import ACTS, act_level
+from bg3.party import party_conflicts
+from game_data.classes import BUILDS
 
 MAX_CHARACTERS = min(8, len(COLORS)) # There are 10 colors and 4 characters fit per row, so 8 is a good max
 ARMOR_CLASSES = range(10, 26)
@@ -764,3 +770,113 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         # Export to csv
         export = dcc.send_data_frame(pd.concat(dfs).to_csv, f"{export_type}.csv")
         return export, None, spinner
+
+    ## BG3 Party Planner
+
+    @app.callback(
+        Output("bg3-party", "data"),
+        Output("bg3-member-tabs", "children"),
+        Output("bg3-member-tabs", "active_tab"),
+        Output("bg3-name", "value"),
+        Output("bg3-preset", "value"),
+        Output({"type": "bg3-level", "act": ALL}, "value"),
+        Output({"type": "bg3-gear", "slot": ALL, "act": ALL}, "value"),
+        Output({"type": "bg3-gear", "slot": ALL, "act": ALL}, "className"),
+        Output({"type": "bg3-gear", "slot": ALL, "act": ALL}, "placeholder"),
+        Output({"type": "bg3-buffs", "act": ALL}, "value"),
+        Output("bg3-conditions", "options"),
+        Output("bg3-conditions", "value"),
+        Output("bg3-conflicts", "children"),
+        Output("bg3-dpr", "children"),
+        Input("bg3-member-tabs", "active_tab"),
+        Input("bg3-add-member", "n_clicks"),
+        Input("bg3-remove-member", "n_clicks"),
+        Input("bg3-name", "value"),
+        Input("bg3-preset", "value"),
+        Input({"type": "bg3-level", "act": ALL}, "value"),
+        Input({"type": "bg3-gear", "slot": ALL, "act": ALL}, "value"),
+        Input({"type": "bg3-buffs", "act": ALL}, "value"),
+        Input("bg3-conditions", "value"),
+        Input("enemy-values", "data"),
+        Input("rounds-per-fight", "value"),
+        State("bg3-party", "data"),
+    )
+    def sync_planner(active_tab, _add, _remove, name, preset, levels, gear, buffs, conditions, enemy_dict, rounds_per_fight, party):
+        """ Keeps the party store and the member editor in sync. Editing updates the selected member, switching members loads them """
+        party = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)] or [Bg3Build.from_dict(DEFAULT_PARTY[0])]
+        selected = min(int(active_tab or 0), len(party) - 1)
+        triggered = ctx.triggered_id
+        level_ids = [i["id"] for i in ctx.inputs_list[5]]
+        gear_ids = [i["id"] for i in ctx.inputs_list[6]]
+        buff_ids = [i["id"] for i in ctx.inputs_list[7]]
+        editor_changed = triggered in ("bg3-name", "bg3-preset", "bg3-conditions") or (isinstance(triggered, dict) and triggered.get("type") in ("bg3-level", "bg3-gear", "bg3-buffs"))
+
+        if triggered == "bg3-add-member" and len(party) < MAX_PARTY_SIZE:
+            party.append(Bg3Build(f"Character {len(party) + 1}", "fighter_gwm"))
+            selected = len(party) - 1
+        elif triggered == "bg3-remove-member" and len(party) > 1:
+            del party[selected]
+            selected = min(selected, len(party) - 1)
+        elif editor_changed:
+            # Save the editor into the selected member
+            member = party[selected]
+            member.name = name or f"Character {selected + 1}"
+            member.preset = preset if preset in BUILDS else member.preset
+            member.levels = {gid["act"]: int(v) for gid, v in zip(level_ids, levels) if v and int(v) != ACTS[int(gid["act"])][1]}
+            member.equipment = {}
+            for gid, value in zip(gear_ids, gear):
+                if value:
+                    member.equipment.setdefault(gid["act"], {})[gid["slot"]] = value
+            member.buffs = {bid["act"]: list(v or []) for bid, v in zip(buff_ids, buffs) if v}
+            member.conditions = list(conditions or [])
+
+        member = party[selected]
+        conflicts = party_conflicts(party)
+        enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
+        tabs = [dbc.Tab(label=b.name, tab_id=str(ii)) for ii, b in enumerate(party)]
+        outputs_from_member = not editor_changed
+        return (
+            [b.to_dict() for b in party],
+            tabs,
+            str(selected),
+            member.name if outputs_from_member else no_update,
+            member.preset if outputs_from_member else no_update,
+            [act_level(gid["act"], member.levels) for gid in level_ids] if outputs_from_member else [no_update] * len(level_ids),
+            [member.equipment.get(gid["act"], {}).get(gid["slot"]) for gid in gear_ids] if outputs_from_member else [no_update] * len(gear_ids),
+            gear_highlights(member, conflicts, gear_ids),
+            inherited_placeholders(member, gear_ids),
+            [member.buffs.get(bid["act"], []) for bid in buff_ids] if outputs_from_member else [no_update] * len(buff_ids),
+            conditional_options(member),
+            [c for c in member.conditions if c in {o["value"] for o in conditional_options(member)}] if outputs_from_member else no_update,
+            conflicts_list(conflicts),
+            dpr_table(party, enemy, max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)),
+        )
+
+    @app.callback(
+        Output("character_row", "children", allow_duplicate=True),
+        Output("active_ids", "data", allow_duplicate=True),
+        Output("character-alerts", "children", allow_duplicate=True),
+        Input("bg3-send", "n_clicks"),
+        State("bg3-send-act", "value"),
+        State("bg3-party", "data"),
+        State("bg3-member-tabs", "active_tab"),
+        State("character_row", "children"),
+        State("active_ids", "data"),
+        prevent_initial_call=True
+    )
+    def send_party_to_simulator(n_clicks, which, party, active_tab, cards, active_ids_json):
+        """ Adds the planner's characters, compiled at a checkpoint, as cards for the simulator """
+        if not n_clicks or not party:
+            raise PreventUpdate
+        builds = [Bg3Build.from_dict(b) for b in party]
+        if which == "member":
+            member = builds[min(int(active_tab or 0), len(builds) - 1)]
+            characters = [compile_build(member, act) for act in ACT_KEYS]
+        else:
+            characters = [compile_build(b, which) for b in builds]
+        existing = {extract_character_ui_values(c)["name"] for c in cards}
+        for c in characters:
+            if c.name in existing:
+                c.name = unique_name(c.name, existing)
+            existing.add(c.name)
+        return append_cards(characters, active_ids_json)

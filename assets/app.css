@@ -177,3 +177,16 @@ input:invalid {
     min-height: 1.2rem;
     margin-top: 0.15rem;
 }
+
+/* BG3 planner gear table */
+.bg3-gear-table .Select-control, .bg3-gear .Select-control {
+    min-height: 28px;
+}
+.bg3-gear {
+    font-size: 0.8rem;
+    color: #222;
+}
+.bg3-conflict .Select-control, .bg3-conflict > div {
+    border: 2px solid #f39c12 !important;
+    border-radius: 4px;
+}

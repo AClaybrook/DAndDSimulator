@@ -18,6 +18,7 @@ from game_data import RULESETS, enemy_from_monster
 from game_data.classes import BUILDS
 from components.sweeps import SWEEP_PARAMETERS
 from components.help import GRAPH_DESCRIPTIONS, quick_start
+from components.bg3_planner import planner
 
 # %%
 # Example
@@ -122,6 +123,7 @@ fig = generate_plot_data(characters, df_by_rounds, template=template, title="Dam
 
 content = html.Div(dbc.Container([
     quick_start(),
+    planner(),
     # Character Builder
     html.Section([
         dbc.Row([
