@@ -1,20 +1,129 @@
 {
     "_note": "Hand checked effects that replace the parsed ones, by item name. Conditional effects are toggles in the planner",
     "items": {
-        "Necklace of Elemental Augmentation": {"effects": [
-            {"kind": "damage_bonus_ability", "stat": "spellcasting", "applies_to": "spell", "condition": "Cantrips dealing Acid, Cold, Fire, Lightning or Thunder damage"}]},
-        "Dragon's Grasp": {"effects": [{"kind": "damage_bonus", "value": "1d4", "applies_to": "self", "condition": "Against Burning targets"}]},
-        "Firestoker": {"effects": [{"kind": "damage_bonus", "value": "1d4", "applies_to": "self", "condition": "Against Burning targets"}]},
-        "Exterminator's Axe": {"effects": [{"kind": "extra_damage", "value": "1d6 fire", "applies_to": "self", "condition": "Against Plants, Myconids and Small creatures"}]},
-        "Ring of Elemental Infusion": {"effects": [
-            {"kind": "damage_bonus", "value": "1d4", "applies_to": "weapon", "condition": "First weapon hit after an elemental spell or cantrip"}]},
-        "Ring of Absolute Force": {"effects": [{"kind": "damage_bonus", "value": 1, "applies_to": "all", "condition": "Wearer bears the Absolute's Brand, Thunder damage attacks"}]},
-        "Gloves of the Balanced Hands": {"effects": [{"kind": "flag", "value": "TWF"}]},
-        "Monster Slayer Glaive": {"effects": [{"kind": "damage_bonus", "value": "1d4", "applies_to": "self", "condition": "Against Monstrosities"}]},
-        "Gandrel's Aspiration": {"effects": [{"kind": "advantage", "applies_to": "self", "condition": "Against Monstrosities"}]},
-        "Witchbreaker": {"effects": [{"kind": "advantage", "applies_to": "self", "condition": "Against concentrating creatures"}]},
-        "Unseen Menace": {"effects": [
-            {"kind": "advantage", "applies_to": "self", "condition": "Weapon is invisible (lost for 2 rounds after a miss)"},
-            {"kind": "crit_range", "value": 1, "applies_to": "self"}]}
+        "Necklace of Elemental Augmentation": {
+            "effects": [
+                {
+                    "kind": "damage_bonus_ability",
+                    "stat": "spellcasting",
+                    "applies_to": "spell",
+                    "condition": "Cantrips dealing Acid, Cold, Fire, Lightning or Thunder damage"
+                }
+            ]
+        },
+        "Dragon's Grasp": {
+            "effects": [
+                {
+                    "kind": "damage_bonus",
+                    "value": "1d4",
+                    "applies_to": "self",
+                    "condition": "Against Burning targets"
+                }
+            ]
+        },
+        "Firestoker": {
+            "effects": [
+                {
+                    "kind": "damage_bonus",
+                    "value": "1d4",
+                    "applies_to": "self",
+                    "condition": "Against Burning targets"
+                }
+            ]
+        },
+        "Exterminator's Axe": {
+            "effects": [
+                {
+                    "kind": "extra_damage",
+                    "value": "1d6 fire",
+                    "applies_to": "self",
+                    "condition": "Against Plants, Myconids and Small creatures"
+                }
+            ]
+        },
+        "Ring of Elemental Infusion": {
+            "effects": [
+                {
+                    "kind": "damage_bonus",
+                    "value": "1d4",
+                    "applies_to": "weapon",
+                    "condition": "First weapon hit after an elemental spell or cantrip"
+                }
+            ]
+        },
+        "Ring of Absolute Force": {
+            "effects": [
+                {
+                    "kind": "damage_bonus",
+                    "value": 1,
+                    "applies_to": "all",
+                    "condition": "Wearer bears the Absolute's Brand, Thunder damage attacks"
+                }
+            ]
+        },
+        "Gloves of the Balanced Hands": {
+            "effects": [
+                {
+                    "kind": "flag",
+                    "value": "TWF"
+                }
+            ]
+        },
+        "Monster Slayer Glaive": {
+            "effects": [
+                {
+                    "kind": "damage_bonus",
+                    "value": "1d4",
+                    "applies_to": "self",
+                    "condition": "Against Monstrosities"
+                }
+            ]
+        },
+        "Gandrel's Aspiration": {
+            "effects": [
+                {
+                    "kind": "advantage",
+                    "applies_to": "self",
+                    "condition": "Against Monstrosities"
+                }
+            ]
+        },
+        "Witchbreaker": {
+            "effects": [
+                {
+                    "kind": "advantage",
+                    "applies_to": "self",
+                    "condition": "Against concentrating creatures"
+                }
+            ]
+        },
+        "Unseen Menace": {
+            "effects": [
+                {
+                    "kind": "advantage",
+                    "applies_to": "self",
+                    "condition": "Weapon is invisible (lost for 2 rounds after a miss)"
+                },
+                {
+                    "kind": "crit_range",
+                    "value": 1,
+                    "applies_to": "self"
+                }
+            ]
+        },
+        "Corellon's Grace": {
+            "effects": [
+                {
+                    "kind": "attack_bonus",
+                    "value": 1,
+                    "applies_to": "unarmed"
+                },
+                {
+                    "kind": "damage_bonus",
+                    "value": 1,
+                    "applies_to": "unarmed"
+                }
+            ]
+        }
     }
 }

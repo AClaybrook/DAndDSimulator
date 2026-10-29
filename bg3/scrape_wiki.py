@@ -59,11 +59,16 @@ def fetch(templates=TEMPLATES):
             time.sleep(0.5)
 
 def template_params(text, template_name):
-    """ Top level |key=value parameters of the first use of a template, nested templates and links are kept as text """
-    start = text.find("{{" + template_name)
-    if start < 0:
+    """ Top level |key=value parameters of the first use of a template, nested templates and links are kept as text.
+        The name matches any case and with or without spaces, i.e. 'Weapon page' matches {{WeaponPage and {{weapon page """
+    pattern = r"\{\{\s*" + r"\s*".join(re.escape(word) for word in template_name.split()) + r"\s*(?=[|\n}])"
+    match = re.search(pattern, text, re.I)
+    if match is None and " " not in template_name:
+        match = re.search(r"\{\{\s*" + re.escape(template_name) + r"\s*(?=[|\n}])", text, re.I)
+    if match is None:
         return {}
-    depth, ii, body_start = 0, start, start + 2 + len(template_name)
+    start = match.start()
+    depth, ii, body_start = 0, start, match.end()
     while ii < len(text):
         if text.startswith("{{", ii):
             depth, ii = depth + 1, ii + 2
@@ -110,11 +115,13 @@ def parse():
             page = json.loads(line)
             # Pages use the template's short names, i.e. {{WeaponPage for Template:Weapon page
             name = page["template"].split(":", 1)[1]
-            params = template_params(page["wikitext"], name.replace(" page", "Page")) or template_params(page["wikitext"], name)
+            params = template_params(page["wikitext"], name)
             parsed.append({"title": page["title"], "template": page["template"], "timestamp": page["timestamp"],
                            "source": f"https://bg3.wiki/wiki/{urllib.parse.quote(page['title'].replace(' ', '_'))}",
                            "params": {k: plain_text(v) for k, v in params.items()},
-                           "categories": re.findall(r"\[\[Category:([^\]|]+)", page["wikitext"])})
+                           "categories": re.findall(r"\[\[Category:([^\]|]+)", page["wikitext"]),
+                           # Items that can't be found in a normal playthrough
+                           "unobtainable": bool(re.search(r"\{\{\s*(?:unobtainable|inaccessible|unusable)\s*\}\}", page["wikitext"], re.I))})
     with open(RAW / "parsed.json", "w", encoding="utf-8") as f:
         json.dump(parsed, f, indent=1)
     keys = {}
@@ -123,5 +130,37 @@ def parse():
             keys[k] = keys.get(k, 0) + 1
     print(f"parsed {len(parsed)} pages, parameters by use: {sorted(keys.items(), key=lambda kv: -kv[1])[:40]}")
 
+def fetch_passives():
+    """ The passive feature pages the parsed items use, most item effects are described there """
+    with open(RAW / "parsed.json", encoding="utf-8") as f:
+        parsed = json.load(f)
+    names = sorted({n.strip() for p in parsed for k in ("passives", "passives main hand", "passives off hand")
+                    for n in (p["params"].get(k) or "").split(",") if n.strip()})
+    passives = {}
+    for ii in range(0, len(names), BATCH):
+        passives.update({title: text for title, (text, _) in wikitext(names[ii:ii + BATCH]).items()})
+        time.sleep(0.5)
+    with open(RAW / "passives.json", "w", encoding="utf-8") as f:
+        json.dump(passives, f)
+    print(f"fetched {len(passives)} of {len(names)} passive features")
+
+def act_categories():
+    """ Locations and characters by act, used to work out where items are found """
+    def members(category):
+        out, params = [], {"action": "query", "list": "categorymembers", "cmtitle": category, "cmlimit": 500}
+        while True:
+            data = api(**params)
+            out += [m["title"] for m in data["query"]["categorymembers"]]
+            if "continue" not in data:
+                return out
+            params.update(data["continue"])
+            time.sleep(0.3)
+    categories = ["Category:Prologue Locations", "Category:Act One Locations", "Category:Act Two Locations", "Category:Act Three Locations",
+                  "Category:Characters in Act One", "Category:Characters in Act Two", "Category:Characters in Act Three"]
+    with open(RAW / "act_categories.json", "w", encoding="utf-8") as f:
+        json.dump({c: members(c) for c in categories}, f)
+
 if __name__ == "__main__":
-    {"fetch": fetch, "parse": parse}[sys.argv[1] if len(sys.argv) > 1 else "fetch"]()
+    steps = {"fetch": fetch, "parse": parse, "passives": fetch_passives, "acts": act_categories}
+    for step in sys.argv[1:] or ["fetch", "parse", "passives", "acts"]:
+        steps[step]()

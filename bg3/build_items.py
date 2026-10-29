@@ -191,7 +191,8 @@ def _parse_sentence(sentence, own_weapon):
         return [{"kind": "attack_bonus", "value": int(m.group(1)), "applies_to": "self" if own_weapon else "all"}]
     if m := re.search(r"\+(\d+) bonus to damage and Attack Rolls", sentence, re.I):
         return [{"kind": "attack_bonus", "value": int(m.group(1)), "applies_to": scope}, {"kind": "damage_bonus", "value": int(m.group(1)), "applies_to": scope}]
-    if re.search(r"number you need to roll a Critical Hit (?:while attacking )?is reduced by (?:1|one)", sentence, re.I):
+    if re.search(r"number you need to roll a Critical Hit (?:while attacking )?is reduced by (?:1|one)|"
+                 r"Reduce the number you need to roll a Critical Hit (?:while attacking )?by (?:1|one)", sentence, re.I):
         condition = sentence if re.match(r"While|When|If", sentence) else ""
         return [{"kind": "crit_range", "value": 1, **({"condition": condition} if condition else {})}]
     for m in re.finditer(r"(?:also )?deal(?:s)? (?:an )?(?:additional|extra)?\s*" + DAMAGE + r"(?: points of \w+)?(?: damage)?", sentence):
@@ -226,6 +227,10 @@ def weapon_stats(params):
         "properties": props,
     }
 
+def norm(name):
+    """ Name for matching across sources: ascii, lower case, letters and digits only """
+    return re.sub(r"[^a-z0-9]", "", unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode().lower())
+
 def key_for(title):
     """ 'Selûne's Spear of Night' -> 'bg3:selune_s_spear_of_night' """
     ascii_title = unicodedata.normalize("NFKD", title).encode("ascii", "ignore").decode()
@@ -245,6 +250,10 @@ def build():
         for name, text in json.load(f).items():
             params = template_params(text, "Passive feature page") or template_params(text, "Passive Feature Page")
             passives[name] = plain_text(params.get("description", "")).replace("\n", " ")
+    # Community checklist sheet (scrape_sheet.py), its area tabs give the act an item is found in
+    sheet_path = RAW / "sheet_items.json"
+    sheet = {norm(i["name"]): i for i in json.loads(sheet_path.read_text(encoding="utf-8"))} if sheet_path.exists() else {}
+    act_changes, seen = [], set()
     overrides_path = DATA / "effect_overrides.json"
     overrides = json.loads(overrides_path.read_text(encoding="utf-8"))["items"] if overrides_path.exists() else {}
     base_names = {v for v in WEAPON_BASE.values()}
@@ -253,11 +262,11 @@ def build():
     for entry in parsed:
         params, title = entry["params"], entry["title"]
         item_type = params.get("type")
-        is_weapon = entry["template"].endswith("Weapon page")
+        is_weapon = entry["template"].lower().replace(" ", "").endswith("weaponpage")
         if item_type in SKIP_TYPES or (not is_weapon and item_type not in SLOT_BY_TYPE):
             continue
-        if title in base_names:
-            continue # Base weapons come from the weapon table
+        if title in base_names or entry.get("unobtainable"):
+            continue # Base weapons come from the weapon table, unobtainable items can't be planned around
         where = plain_text(raw_param(pages[title]["wikitext"], "where to find"))
         generic = bool(re.fullmatch(r".+ \+\d", title)) or "Sold by any trader" in where or "levelled magic" in where
         lines = [params.get("special", "")]
@@ -281,11 +290,22 @@ def build():
             "location": params.get("where to find location") or where[:120],
             "source": entry["source"],
         }
+        listed = sheet.get(norm(title))
+        if listed:
+            seen.add(norm(title))
+            if item["act"] != listed["act"]:
+                act_changes.append((title, item["act"], listed["act"]))
+                item["act"] = listed["act"]
         if title in overrides:
             item.update(overrides[title])
             item["reviewed"] = True
         items.append(item)
 
+    if sheet:
+        print(f"checklist sheet: {len(seen)} of {len(sheet)} listed items matched, act set from the sheet for {len(act_changes)}:")
+        for title, wiki_act, sheet_act in act_changes:
+            print(f"  {title}: {wiki_act} -> {sheet_act}")
+        print(f"  listed in the sheet but not exported: {sorted(i['name'] for k, i in sheet.items() if k not in seen)}")
     items.sort(key=lambda i: (i["act"] or 9, i["slot"], i["name"]))
     out = {
         "_source": "Exported from bg3.wiki (CC BY-NC-SA 4.0) by bg3/scrape_wiki.py and bg3/build_items.py, every item links to its page. "

@@ -30,6 +30,32 @@
    "source": "https://bg3.wiki/wiki/Absolute%27s_Talisman"
   },
   {
+   "key": "bg3:amulet_of_branding",
+   "name": "Amulet of Branding",
+   "slot": "amulet",
+   "act": 1,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Brand the Weak level=1 recharge=Long Rest",
+   "location": "Crèche Y'llek",
+   "source": "https://bg3.wiki/wiki/Amulet_of_Branding"
+  },
+  {
+   "key": "bg3:amulet_of_misty_step",
+   "name": "Amulet of Misty Step",
+   "slot": "amulet",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Misty Step level=2 recharge=Short Rest cost=bonus",
+   "location": "Defiled Temple",
+   "source": "https://bg3.wiki/wiki/Amulet_of_Misty_Step"
+  },
+  {
    "key": "bg3:amulet_of_restoration",
    "name": "Amulet of Restoration",
    "slot": "amulet",
@@ -43,6 +69,19 @@
    "source": "https://bg3.wiki/wiki/Amulet_of_Restoration"
   },
   {
+   "key": "bg3:amulet_of_selune_s_chosen",
+   "name": "Amulet of Selûne's Chosen",
+   "slot": "amulet",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Selûne's Dream",
+   "location": "Shattered Sanctum",
+   "source": "https://bg3.wiki/wiki/Amulet_of_Sel%C3%BBne%27s_Chosen"
+  },
+  {
    "key": "bg3:amulet_of_silvanus",
    "name": "Amulet of Silvanus",
    "slot": "amulet",
@@ -54,6 +93,19 @@
    "notes": "Lesser Restoration level=2 recharge=Short Rest cost=action",
    "location": "Emerald Grove",
    "source": "https://bg3.wiki/wiki/Amulet_of_Silvanus"
+  },
+  {
+   "key": "bg3:amulet_of_the_unworthy",
+   "name": "Amulet of the Unworthy",
+   "slot": "amulet",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Resistance to Slashing damage; Vulnerability to Bludgeoning damage",
+   "location": "Underdark",
+   "source": "https://bg3.wiki/wiki/Amulet_of_the_Unworthy"
   },
   {
    "key": "bg3:beastmaster_s_chain",
@@ -152,26 +204,6 @@
    "notes": "Voice of the Circle",
    "location": "Ebonlake Grotto",
    "source": "https://bg3.wiki/wiki/Envoy%27s_Amulet"
-  },
-  {
-   "key": "bg3:ilmater_s_aid",
-   "name": "Ilmater's Aid",
-   "slot": "amulet",
-   "act": 1,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "1d4 force",
-     "applies_to": "spell",
-     "condition": "Non-Cantrip spells deal an additional 1d4 Force damage when the wearer drops to half their hit points or lower"
-    }
-   ],
-   "notes": "",
-   "location": "In a gilded chest near Polma (Early Access only)",
-   "source": "https://bg3.wiki/wiki/Ilmater%27s_Aid"
   },
   {
    "key": "bg3:komira_s_locket",
@@ -312,19 +344,6 @@
    "source": "https://bg3.wiki/wiki/Silver_Pendant"
   },
   {
-   "key": "bg3:tarnished_charm",
-   "name": "Tarnished Charm",
-   "slot": "amulet",
-   "act": 1,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Makes it easier for the wearer to succeed on death saving throws",
-   "location": "Riverside Teahouse",
-   "source": "https://bg3.wiki/wiki/Tarnished_Charm"
-  },
-  {
    "key": "bg3:tarnished_locket",
    "name": "Tarnished Locket",
    "slot": "amulet",
@@ -401,6 +420,19 @@
    "notes": "Detect Thoughts level=2 recharge=Long Rest cost=action",
    "location": "Arcane Tower",
    "source": "https://bg3.wiki/wiki/Uncovered_Mysteries"
+  },
+  {
+   "key": "bg3:adamantine_scale_mail",
+   "name": "Adamantine Scale Mail",
+   "slot": "armour",
+   "act": 1,
+   "rarity": "Very Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Attackers can't land Critical Hits on the wearer; All incoming damage is reduced by 1; When a melee attack hits you, the attacker is sent Reeling for 2 turns",
+   "location": "Adamantine Forge",
+   "source": "https://bg3.wiki/wiki/Adamantine_Scale_Mail"
   },
   {
    "key": "bg3:adamantine_splint_armour",
@@ -585,19 +617,6 @@
    "source": "https://bg3.wiki/wiki/Chain_Shirt_%2B2"
   },
   {
-   "key": "bg3:chain_of_liberation",
-   "name": "Chain of Liberation",
-   "slot": "armour",
-   "act": 1,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Once per turn, the wearer can reduce the duration of their Momentum by 1 turn to Sprint",
-   "location": "Selûnite Outpost",
-   "source": "https://bg3.wiki/wiki/Chain_of_Liberation"
-  },
-  {
    "key": "bg3:damaged_dark_justiciar_armour",
    "name": "Damaged Dark Justiciar Armour",
    "slot": "armour",
@@ -661,19 +680,6 @@
    "notes": "",
    "location": "Nautiloid",
    "source": "https://bg3.wiki/wiki/Druid_Leather_Armour"
-  },
-  {
-   "key": "bg3:emblazoned_plate_of_the_marshal",
-   "name": "Emblazoned Plate of the Marshal",
-   "slot": "armour",
-   "act": 1,
-   "rarity": "Very Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Fire Shield level=4 recharge=Long Rest cost=action; All incoming damage is reduced by 2; You have Resistance to Fire damage and a +2 bonus to Saving Throws",
-   "location": "Wyrm's Rock Fortress",
-   "source": "https://bg3.wiki/wiki/Emblazoned_Plate_of_the_Marshal"
   },
   {
    "key": "bg3:faded_drow_leather_armour",
@@ -765,6 +771,19 @@
    "notes": "Grants Resistance to Fire damage; Armour Class +1; Fire Shield: Warm level=4 recharge=Long Rest cost=bonus",
    "location": "Campsite (Act One)",
    "source": "https://bg3.wiki/wiki/Infernal_Robe"
+  },
+  {
+   "key": "bg3:leather_armour",
+   "name": "Leather Armour",
+   "slot": "armour",
+   "act": 1,
+   "rarity": "Common",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "",
+   "location": "Nautiloid",
+   "source": "https://bg3.wiki/wiki/Leather_Armour"
   },
   {
    "key": "bg3:leather_armour_1",
@@ -1202,6 +1221,19 @@
    "source": "https://bg3.wiki/wiki/Boots_of_Genial_Striding"
   },
   {
+   "key": "bg3:boots_of_speed",
+   "name": "Boots of Speed",
+   "slot": "boots",
+   "act": 1,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Click Heels",
+   "location": "Ebonlake Grotto",
+   "source": "https://bg3.wiki/wiki/Boots_of_Speed"
+  },
+  {
    "key": "bg3:boots_of_stormy_clamour",
    "name": "Boots of Stormy Clamour",
    "slot": "boots",
@@ -1241,6 +1273,19 @@
    "source": "https://bg3.wiki/wiki/Cinder_Shoes"
   },
   {
+   "key": "bg3:disintegrating_night_walkers",
+   "name": "Disintegrating Night Walkers",
+   "slot": "boots",
+   "act": 1,
+   "rarity": "Story",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Misty Step level=2 recharge=Short Rest cost=bonus; The affected creature cannot be Enwebbed, Entangled, or Ensnared (Ensnaring Strike) and cannot slip on Grease or Ice",
+   "location": "Grymforge",
+   "source": "https://bg3.wiki/wiki/Disintegrating_Night_Walkers"
+  },
+  {
    "key": "bg3:dreamsome_boots",
    "name": "Dreamsome Boots",
    "slot": "boots",
@@ -1252,19 +1297,6 @@
    "notes": "Athletics +1",
    "location": "Worn by Dream Guardian Dream Guardians in the final fight scenario",
    "source": "https://bg3.wiki/wiki/Dreamsome_Boots"
-  },
-  {
-   "key": "bg3:featherlight_boots",
-   "name": "Featherlight Boots",
-   "slot": "boots",
-   "act": 1,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "When the wearer has 50% Hit Points or less, their Movement Speed is increased by m=3 ft=10",
-   "location": "Rewarded by Glut Sovereign Glut for completing Avenge Glut's Circle (Early Access only)",
-   "source": "https://bg3.wiki/wiki/Featherlight_Boots"
   },
   {
    "key": "bg3:grovetender_boots",
@@ -1410,6 +1442,32 @@
    "source": "https://bg3.wiki/wiki/Swiresy_Shoes"
   },
   {
+   "key": "bg3:the_speedy_lightfeet",
+   "name": "The Speedy Lightfeet",
+   "slot": "boots",
+   "act": 1,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Athletics +1; When the wearer Dash Dashes or takes a similar action in combat, they gain 3 Lightning Charges",
+   "location": "Blighted Village",
+   "source": "https://bg3.wiki/wiki/The_Speedy_Lightfeet"
+  },
+  {
+   "key": "bg3:the_watersparkers",
+   "name": "The Watersparkers",
+   "slot": "boots",
+   "act": 1,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "When the wearer stands in Water during combat, it becomes Electrified Water; If the wearer starts their turn on an Electrified Water surface, they gain 3 Lightning Charges",
+   "location": "Shattered Sanctum",
+   "source": "https://bg3.wiki/wiki/The_Watersparkers"
+  },
+  {
    "key": "bg3:varsh_ko_kuu_s_boots",
    "name": "Varsh Ko'kuu's Boots",
    "slot": "boots",
@@ -1447,6 +1505,19 @@
    "notes": "",
    "location": "In the Peculiar Clothing Chest in the Traveller's Chest at the Campsite",
    "source": "https://bg3.wiki/wiki/Cape_of_the_Red_Prince"
+  },
+  {
+   "key": "bg3:the_deathstalker_mantle",
+   "name": "The Deathstalker Mantle",
+   "slot": "cloak",
+   "act": 1,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Once per turn when you kill an enemy, shroud yourself in primeval darkness to become Invisible for 2 turns",
+   "location": "Campsite (Act One)",
+   "source": "https://bg3.wiki/wiki/The_Deathstalker_Mantle"
   },
   {
    "key": "bg3:abyss_beckoners",
@@ -1552,6 +1623,19 @@
    "source": "https://bg3.wiki/wiki/Gloves_of_Baneful_Striking"
   },
   {
+   "key": "bg3:gloves_of_belligerent_skies",
+   "name": "Gloves of Belligerent Skies",
+   "slot": "gloves",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "When the wearer deals Thunder, Lightning, or Radiant damage, inflict 2 turns of Reverberation upon the target(s)",
+   "location": "Crèche Y'llek",
+   "source": "https://bg3.wiki/wiki/Gloves_of_Belligerent_Skies"
+  },
+  {
    "key": "bg3:gloves_of_cinder_and_sizzle",
    "name": "Gloves of Cinder and Sizzle",
    "slot": "gloves",
@@ -1593,32 +1677,6 @@
    "notes": "The enchantment has no effect if their Dexterity score is higher without it",
    "location": "Crèche Y'llek",
    "source": "https://bg3.wiki/wiki/Gloves_of_Dexterity"
-  },
-  {
-   "key": "bg3:gloves_of_fire_resistance",
-   "name": "Gloves of Fire Resistance",
-   "slot": "gloves",
-   "act": 1,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "When the wearer has 50% Hit Points or less, they have Resistance to Fire damage",
-   "location": "Rewarded by Derryth Bonecloak for completing Find the Mushroom Picker (Early Access only)",
-   "source": "https://bg3.wiki/wiki/Gloves_of_Fire_Resistance"
-  },
-  {
-   "key": "bg3:gloves_of_flint_and_steel",
-   "name": "Gloves of Flint and Steel",
-   "slot": "gloves",
-   "act": 1,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "When the wearer deals Fire damage, the target has to succeed a Constitution Saving Throw or start Burning",
-   "location": "Rewarded by Derryth Bonecloak for completing Find the Mushroom Picker (Early Access only)",
-   "source": "https://bg3.wiki/wiki/Gloves_of_Flint_and_Steel"
   },
   {
    "key": "bg3:gloves_of_hail_of_thorns",
@@ -1893,6 +1951,19 @@
    "source": "https://bg3.wiki/wiki/Cap_of_Curing"
   },
   {
+   "key": "bg3:cap_of_wrath",
+   "name": "Cap of Wrath",
+   "slot": "helmet",
+   "act": 1,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "During combat, when the wearer starts their turn with 50% Hit Points or less, they gain Wrath for 2 turns",
+   "location": "Grymforge",
+   "source": "https://bg3.wiki/wiki/Cap_of_Wrath"
+  },
+  {
    "key": "bg3:circlet_of_blasting",
    "name": "Circlet of Blasting",
    "slot": "helmet",
@@ -1932,6 +2003,19 @@
    "source": "https://bg3.wiki/wiki/Dark_Justiciar_Helm"
   },
   {
+   "key": "bg3:dark_justiciar_mask",
+   "name": "Dark Justiciar Mask",
+   "slot": "helmet",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Intimidation +1",
+   "location": "Abandoned Refuge",
+   "source": "https://bg3.wiki/wiki/Dark_Justiciar_Mask"
+  },
+  {
    "key": "bg3:devilfoil_mask",
    "name": "Devilfoil Mask",
    "slot": "helmet",
@@ -1943,6 +2027,19 @@
    "notes": "Grants the Infernal Legion condition while worn",
    "location": "Grymforge",
    "source": "https://bg3.wiki/wiki/Devilfoil_Mask"
+  },
+  {
+   "key": "bg3:diadem_of_arcane_synergy",
+   "name": "Diadem of Arcane Synergy",
+   "slot": "helmet",
+   "act": 1,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "When you inflict a condition, gain Arcane Synergy for 2 turns",
+   "location": "Crèche Y'llek",
+   "source": "https://bg3.wiki/wiki/Diadem_of_Arcane_Synergy"
   },
   {
    "key": "bg3:frayed_drow_hood",
@@ -2021,6 +2118,19 @@
    "notes": "Constitution Saving Throws +1; Creatures who miss their Attack Rolls against the wearer must make a Dexterity 14 or take 1d4 Radiant damage",
    "location": "Rosymorn Monastery",
    "source": "https://bg3.wiki/wiki/Holy_Lance_Helm"
+  },
+  {
+   "key": "bg3:key_of_the_ancients",
+   "name": "Key of the Ancients",
+   "slot": "helmet",
+   "act": 1,
+   "rarity": "Story",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Nature +1; While standing in front of the stone door in Nettie Nettie's room in the Druid Grove, you can open a shortcut to the Underground Passage",
+   "location": "Underground Passage",
+   "source": "https://bg3.wiki/wiki/Key_of_the_Ancients"
   },
   {
    "key": "bg3:leather_helmet",
@@ -2288,19 +2398,6 @@
    "source": "https://bg3.wiki/wiki/Mage%27s_Friend"
   },
   {
-   "key": "bg3:orphic_ring",
-   "name": "Orphic Ring",
-   "slot": "ring",
-   "act": 1,
-   "rarity": "Very Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Confusion level=5 recharge=Long Rest cost=action",
-   "location": "Astral Plane",
-   "source": "https://bg3.wiki/wiki/Orphic_Ring"
-  },
-  {
    "key": "bg3:ring_of_absolute_force",
    "name": "Ring of Absolute Force",
    "slot": "ring",
@@ -2320,6 +2417,19 @@
    "location": "Grymforge",
    "source": "https://bg3.wiki/wiki/Ring_of_Absolute_Force",
    "reviewed": true
+  },
+  {
+   "key": "bg3:ring_of_arcane_synergy",
+   "name": "Ring of Arcane Synergy",
+   "slot": "ring",
+   "act": 1,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "When you deal damage with a Cantrip, you gain Arcane Synergy for 2 turns",
+   "location": "Crèche Y'llek",
+   "source": "https://bg3.wiki/wiki/Ring_of_Arcane_Synergy"
   },
   {
    "key": "bg3:ring_of_being_really_invisible",
@@ -2380,26 +2490,6 @@
    "notes": "When you fail a Dexterity, you can use your reaction to succeed instead",
    "location": "Campsite (Act One)",
    "source": "https://bg3.wiki/wiki/Ring_of_Evasion"
-  },
-  {
-   "key": "bg3:ring_of_fire",
-   "name": "Ring of Fire",
-   "slot": "ring",
-   "act": 1,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "1 fire",
-     "applies_to": "all",
-     "condition": "When dealing Fire damage, the wearer deals an additional 1 Fire"
-    }
-   ],
-   "notes": "",
-   "location": "Rewarded by Glut Sovereign Glut for completing Avenge Glut's Circle (Early Access only)",
-   "source": "https://bg3.wiki/wiki/Ring_of_Fire"
   },
   {
    "key": "bg3:ring_of_flinging",
@@ -2656,6 +2746,19 @@
    "source": "https://bg3.wiki/wiki/Adamantine_Shield"
   },
   {
+   "key": "bg3:fossilised_shell",
+   "name": "Fossilised Shell",
+   "slot": "shield",
+   "act": 1,
+   "rarity": "Common",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "",
+   "location": "The Festering Cove",
+   "source": "https://bg3.wiki/wiki/Fossilised_Shell"
+  },
+  {
    "key": "bg3:glowing_shield",
    "name": "Glowing Shield",
    "slot": "shield",
@@ -2828,6 +2931,30 @@
    "notes": "If an adamantine weapon hits an object, the hit is always critical; This weapon ignores resistance to Bludgeoning damage",
    "location": "Adamantine Forge",
    "source": "https://bg3.wiki/wiki/Adamantine_Mace"
+  },
+  {
+   "key": "bg3:adamantine_scimitar",
+   "name": "Adamantine Scimitar",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": {
+    "base": "Scimitar",
+    "kind": "melee",
+    "damage": "1d6",
+    "versatile_damage": null,
+    "damage_type": "slashing",
+    "enhancement": 1,
+    "properties": [
+     "finesse",
+     "light"
+    ]
+   },
+   "effects": [],
+   "notes": "If an adamantine weapon hits an object, the hit is always critical; This weapon ignores Resistance to Slashing damage",
+   "location": "Adamantine Forge",
+   "source": "https://bg3.wiki/wiki/Adamantine_Scimitar"
   },
   {
    "key": "bg3:assassin_s_touch",
@@ -3185,6 +3312,41 @@
    "source": "https://bg3.wiki/wiki/Club_of_Hill_Giant_Strength"
   },
   {
+   "key": "bg3:corellon_s_grace",
+   "name": "Corellon's Grace",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": {
+    "base": "Quarterstaff",
+    "kind": "melee",
+    "damage": "1d6",
+    "versatile_damage": "1d8",
+    "damage_type": "bludgeoning",
+    "enhancement": 0,
+    "properties": [
+     "versatile"
+    ]
+   },
+   "effects": [
+    {
+     "kind": "attack_bonus",
+     "value": 1,
+     "applies_to": "unarmed"
+    },
+    {
+     "kind": "damage_bonus",
+     "value": 1,
+     "applies_to": "unarmed"
+    }
+   ],
+   "notes": "You gain a +1 bonus to melee unarmeds and damage; While the wielder is not wearing armour, they receive a +2 bonus to SavingThrows",
+   "location": "The Hollow",
+   "source": "https://bg3.wiki/wiki/Corellon%27s_Grace",
+   "reviewed": true
+  },
+  {
    "key": "bg3:corrosive_flail",
    "name": "Corrosive Flail",
    "slot": "weapon",
@@ -3201,7 +3363,7 @@
     "properties": []
    },
    "effects": [],
-   "notes": "",
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Ebonlake Grotto",
    "source": "https://bg3.wiki/wiki/Corrosive_Flail"
   },
@@ -3227,6 +3389,29 @@
    "notes": "If the wielder deals Acid, Fire, Lightning, Radiant, or Necrotic damage, it becomes resistant to that damage type for 2 turns",
    "location": "Ebonlake Grotto",
    "source": "https://bg3.wiki/wiki/Creation%27s_Echo"
+  },
+  {
+   "key": "bg3:crossbow_of_arcane_force",
+   "name": "Crossbow of Arcane Force",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": {
+    "base": "Heavy Crossbow",
+    "kind": "ranged",
+    "damage": "1d10",
+    "versatile_damage": null,
+    "damage_type": "piercing",
+    "enhancement": 1,
+    "properties": [
+     "two-handed"
+    ]
+   },
+   "effects": [],
+   "notes": "",
+   "location": "Crèche Y'llek",
+   "source": "https://bg3.wiki/wiki/Crossbow_of_Arcane_Force"
   },
   {
    "key": "bg3:crude_mace",
@@ -3312,7 +3497,7 @@
     "properties": []
    },
    "effects": [],
-   "notes": "ArmourClass +1; Reduce incoming Bludgeoning, Piercing, and Slashing damage by 1",
+   "notes": "ArmourClass +1; Reduce incoming Bludgeoning, Piercing, and Slashing damage by 1; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Crèche Y'llek",
    "source": "https://bg3.wiki/wiki/Defender_Flail"
   },
@@ -3336,7 +3521,7 @@
     ]
    },
    "effects": [],
-   "notes": "Each strike fills the target with a chilling dread that prevents it from regaining hit points; Undead creatures also get Disadvantage on Attack Rolls",
+   "notes": "Each strike fills the target with a chilling dread that prevents it from regaining hit points; Undead creatures also get Disadvantage on Attack Rolls; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Goblin Camp",
    "source": "https://bg3.wiki/wiki/Doom_Hammer"
   },
@@ -3435,6 +3620,29 @@
    "reviewed": true
   },
   {
+   "key": "bg3:faithbreaker",
+   "name": "Faithbreaker",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": {
+    "base": "Warhammer",
+    "kind": "melee",
+    "damage": "1d8",
+    "versatile_damage": "1d10",
+    "damage_type": "bludgeoning",
+    "enhancement": 1,
+    "properties": [
+     "versatile"
+    ]
+   },
+   "effects": [],
+   "notes": "",
+   "location": "Shattered Sanctum",
+   "source": "https://bg3.wiki/wiki/Faithbreaker"
+  },
+  {
    "key": "bg3:firestoker",
    "name": "Firestoker",
    "slot": "weapon",
@@ -3482,7 +3690,7 @@
     "properties": []
    },
    "effects": [],
-   "notes": "",
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Sold by any trader using the magic melee table",
    "source": "https://bg3.wiki/wiki/Flail_%2B1"
   },
@@ -3540,6 +3748,30 @@
    "notes": "Your weapon hits hard enough to send your target Reeling for 2 turns",
    "location": "Zhentarim Basement",
    "source": "https://bg3.wiki/wiki/Giantbreaker"
+  },
+  {
+   "key": "bg3:githyanki_crossbow",
+   "name": "Githyanki Crossbow",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": {
+    "base": "Heavy Crossbow",
+    "kind": "ranged",
+    "damage": "1d10",
+    "versatile_damage": null,
+    "damage_type": "piercing",
+    "enhancement": 1,
+    "properties": [
+     "heavy",
+     "two-handed"
+    ]
+   },
+   "effects": [],
+   "notes": "",
+   "location": "Mountain Pass: Carried by Chost Raider Chost, Zastri Raider Zastri and Voss Kith'rak Voss of the githyanki patrol",
+   "source": "https://bg3.wiki/wiki/Githyanki_Crossbow"
   },
   {
    "key": "bg3:githyanki_greatsword",
@@ -3716,29 +3948,6 @@
    "source": "https://bg3.wiki/wiki/Glaive_%2B1"
   },
   {
-   "key": "bg3:gnarled_tree_branch",
-   "name": "Gnarled Tree Branch",
-   "slot": "weapon",
-   "act": 1,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Greatclub",
-    "kind": "melee",
-    "damage": "2d8",
-    "versatile_damage": null,
-    "damage_type": "bludgeoning",
-    "enhancement": 0,
-    "properties": [
-     "two-handed"
-    ]
-   },
-   "effects": [],
-   "notes": "Not usable by humanoids",
-   "location": "Carried by Polma, Gurgon, and Chock",
-   "source": "https://bg3.wiki/wiki/Gnarled_Tree_Branch"
-  },
-  {
    "key": "bg3:goblin_bow",
    "name": "Goblin Bow",
    "slot": "weapon",
@@ -3839,29 +4048,6 @@
    "source": "https://bg3.wiki/wiki/Greataxe_%2B1"
   },
   {
-   "key": "bg3:greatclub_minotaur",
-   "name": "Greatclub (Minotaur)",
-   "slot": "weapon",
-   "act": 1,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Greatclub",
-    "kind": "melee",
-    "damage": "2d12",
-    "versatile_damage": null,
-    "damage_type": "bludgeoning",
-    "enhancement": 0,
-    "properties": [
-     "two-handed"
-    ]
-   },
-   "effects": [],
-   "notes": "Not usable by humanoids",
-   "location": "Carried by the Minotaurs in the Underdark\n* Carried by the Minotaurs summoned by Helsik",
-   "source": "https://bg3.wiki/wiki/Greatclub_%28Minotaur%29"
-  },
-  {
    "key": "bg3:greatclub_1",
    "name": "Greatclub +1",
    "slot": "weapon",
@@ -3880,7 +4066,7 @@
     ]
    },
    "effects": [],
-   "notes": "",
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Sold by any trader using the magic melee table\n* Goblin Camp: Sold by Grat -99 424\n* Last Light Inn: Carried by Marcus F",
    "source": "https://bg3.wiki/wiki/Greatclub_%2B1"
   },
@@ -3953,9 +4139,32 @@
     ]
    },
    "effects": [],
-   "notes": "When the wearer Jump Jumps, they deal 1d4 Thunder damage in a m=3 radius upon landing",
+   "notes": "When the wearer Jump Jumps, they deal 1d4 Thunder damage in a m=3 radius upon landing; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Waukeen's Rest",
    "source": "https://bg3.wiki/wiki/Hamarhraft"
+  },
+  {
+   "key": "bg3:hand_crossbow_1",
+   "name": "Hand Crossbow +1",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": false,
+   "weapon": {
+    "base": "Hand Crossbow",
+    "kind": "ranged",
+    "damage": "1d6",
+    "versatile_damage": null,
+    "damage_type": "piercing",
+    "enhancement": 1,
+    "properties": [
+     "light"
+    ]
+   },
+   "effects": [],
+   "notes": "",
+   "location": "Ebonlake Grotto",
+   "source": "https://bg3.wiki/wiki/Hand_Crossbow_%2B1"
   },
   {
    "key": "bg3:harold",
@@ -4004,29 +4213,6 @@
    "notes": "",
    "location": "Shattered Sanctum",
    "source": "https://bg3.wiki/wiki/Heavy_Crossbow_%2B1"
-  },
-  {
-   "key": "bg3:heavy_spiked_club",
-   "name": "Heavy Spiked Club",
-   "slot": "weapon",
-   "act": 1,
-   "rarity": "",
-   "unique": true,
-   "weapon": {
-    "base": "Greatclub",
-    "kind": "melee",
-    "damage": "2d8",
-    "versatile_damage": null,
-    "damage_type": "bludgeoning",
-    "enhancement": 0,
-    "properties": [
-     "two-handed"
-    ]
-   },
-   "effects": [],
-   "notes": "Not usable by humanoids",
-   "location": "Carried by Buthir and Lump in the Blighted Village",
-   "source": "https://bg3.wiki/wiki/Heavy_Spiked_Club"
   },
   {
    "key": "bg3:hoppy",
@@ -4127,6 +4313,30 @@
    "source": "https://bg3.wiki/wiki/Intransigent_Warhammer"
   },
   {
+   "key": "bg3:jagged_spear",
+   "name": "Jagged Spear",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": {
+    "base": "Spear",
+    "kind": "melee",
+    "damage": "1d6",
+    "versatile_damage": "1d8",
+    "damage_type": "piercing",
+    "enhancement": 0,
+    "properties": [
+     "thrown",
+     "versatile"
+    ]
+   },
+   "effects": [],
+   "notes": "Tortured creatures may receive Disadvantage on Constitution Saving Throws",
+   "location": "Shattered Sanctum",
+   "source": "https://bg3.wiki/wiki/Jagged_Spear"
+  },
+  {
    "key": "bg3:jorgoral_s_greatsword",
    "name": "Jorgoral's Greatsword",
    "slot": "weapon",
@@ -4149,6 +4359,63 @@
    "notes": "",
    "location": "Carried by Greymon Corsair Greymon while the party first travel on Gekh Coal Gekh's raft across the lake to Grymforge",
    "source": "https://bg3.wiki/wiki/Jorgoral%27s_Greatsword"
+  },
+  {
+   "key": "bg3:king_s_knife",
+   "name": "King's Knife",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Common",
+   "unique": true,
+   "weapon": {
+    "base": "Longsword",
+    "kind": "melee",
+    "damage": "1d8",
+    "versatile_damage": "1d10",
+    "damage_type": "slashing",
+    "enhancement": 0,
+    "properties": [
+     "versatile"
+    ]
+   },
+   "effects": [],
+   "notes": "",
+   "location": "Grymforge",
+   "source": "https://bg3.wiki/wiki/King%27s_Knife"
+  },
+  {
+   "key": "bg3:knife_of_the_undermountain_king",
+   "name": "Knife of the Undermountain King",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Very Rare",
+   "unique": true,
+   "weapon": {
+    "base": "Shortsword",
+    "kind": "melee",
+    "damage": "1d6",
+    "versatile_damage": null,
+    "damage_type": "piercing",
+    "enhancement": 2,
+    "properties": [
+     "finesse",
+     "light"
+    ]
+   },
+   "effects": [
+    {
+     "kind": "crit_range",
+     "value": 1
+    },
+    {
+     "kind": "advantage",
+     "applies_to": "self",
+     "condition": "You have Advantage on Attack Rolls against Lightly or Heavily Obscured targets when using this blade"
+    }
+   ],
+   "notes": "This effect can stack; When you roll 2 damage or less, reroll the dice, taking the highest result",
+   "location": "Crèche Y'llek",
+   "source": "https://bg3.wiki/wiki/Knife_of_the_Undermountain_King"
   },
   {
    "key": "bg3:larethian_s_wrath",
@@ -4196,6 +4463,30 @@
    "notes": "",
    "location": "The Hollow",
    "source": "https://bg3.wiki/wiki/Light_Crossbow_%2B1"
+  },
+  {
+   "key": "bg3:light_hammer_1",
+   "name": "Light Hammer +1",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": false,
+   "weapon": {
+    "base": "Light Hammer",
+    "kind": "melee",
+    "damage": "1d4",
+    "versatile_damage": null,
+    "damage_type": "bludgeoning",
+    "enhancement": 1,
+    "properties": [
+     "light",
+     "thrown"
+    ]
+   },
+   "effects": [],
+   "notes": "",
+   "location": "Sold by any trader using the magic melee table",
+   "source": "https://bg3.wiki/wiki/Light_Hammer_%2B1"
   },
   {
    "key": "bg3:light_of_creation",
@@ -4276,6 +4567,33 @@
    "source": "https://bg3.wiki/wiki/Longsword_%2B1"
   },
   {
+   "key": "bg3:loviatar_s_scourge",
+   "name": "Loviatar's Scourge",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": {
+    "base": "Mace",
+    "kind": "melee",
+    "damage": "1d6",
+    "versatile_damage": null,
+    "damage_type": "bludgeoning",
+    "enhancement": 0,
+    "properties": []
+   },
+   "effects": [
+    {
+     "kind": "extra_damage",
+     "value": "1d6 necrotic",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "Grants Resistance to Necrotic damage; Deals an additional 1d6 Necrotic drs=yes damage to nearby targets, including the wielder",
+   "location": "Shattered Sanctum",
+   "source": "https://bg3.wiki/wiki/Loviatar%27s_Scourge"
+  },
+  {
    "key": "bg3:mace_1",
    "name": "Mace +1",
    "slot": "weapon",
@@ -4340,7 +4658,7 @@
     ]
    },
    "effects": [],
-   "notes": "",
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Sold by any trader using the magic melee table",
    "source": "https://bg3.wiki/wiki/Maul_%2B1"
   },
@@ -4452,9 +4770,44 @@
     "properties": []
    },
    "effects": [],
-   "notes": "",
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Sold by any trader using the magic melee table",
    "source": "https://bg3.wiki/wiki/Morningstar_%2B1"
+  },
+  {
+   "key": "bg3:mourning_frost",
+   "name": "Mourning Frost",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Very Rare",
+   "unique": true,
+   "weapon": {
+    "base": "Quarterstaff",
+    "kind": "melee",
+    "damage": "1d6",
+    "versatile_damage": "1d8",
+    "damage_type": "bludgeoning",
+    "enhancement": 1,
+    "properties": [
+     "versatile"
+    ]
+   },
+   "effects": [
+    {
+     "kind": "extra_damage",
+     "value": "1 cold",
+     "applies_to": "self",
+     "condition": "When dealing Cold damage, the wielder deals an additional 1 Cold"
+    },
+    {
+     "kind": "extra_damage",
+     "value": "1d4 cold",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "Ray of Frost level=0; Dealing Cold damage with a spell possibly inflicts Chilled upon the target",
+   "location": "Underdark",
+   "source": "https://bg3.wiki/wiki/Mourning_Frost"
   },
   {
    "key": "bg3:nature_s_snare",
@@ -4625,6 +4978,30 @@
    "notes": "",
    "location": "Apothecary's Cellar",
    "source": "https://bg3.wiki/wiki/Poo-Scraper"
+  },
+  {
+   "key": "bg3:practice_sword",
+   "name": "Practice Sword",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Common",
+   "unique": true,
+   "weapon": {
+    "base": "Shortsword",
+    "kind": "melee",
+    "damage": "1d4",
+    "versatile_damage": null,
+    "damage_type": "bludgeoning",
+    "enhancement": 0,
+    "properties": [
+     "finesse",
+     "light"
+    ]
+   },
+   "effects": [],
+   "notes": "",
+   "location": "Emerald Grove",
+   "source": "https://bg3.wiki/wiki/Practice_Sword"
   },
   {
    "key": "bg3:quarterstaff_1",
@@ -5111,6 +5488,30 @@
    "source": "https://bg3.wiki/wiki/Shortbow_%2B1"
   },
   {
+   "key": "bg3:shortsword_1",
+   "name": "Shortsword +1",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": false,
+   "weapon": {
+    "base": "Shortsword",
+    "kind": "melee",
+    "damage": "1d6",
+    "versatile_damage": null,
+    "damage_type": "piercing",
+    "enhancement": 1,
+    "properties": [
+     "finesse",
+     "light"
+    ]
+   },
+   "effects": [],
+   "notes": "",
+   "location": "Sold by any trader using the magic melee table",
+   "source": "https://bg3.wiki/wiki/Shortsword_%2B1"
+  },
+  {
    "key": "bg3:shortsword_of_first_blood",
    "name": "Shortsword of First Blood",
    "slot": "weapon",
@@ -5157,6 +5558,30 @@
    "notes": "",
    "location": "The Festering Cove",
    "source": "https://bg3.wiki/wiki/Sickle_of_BOOOAL"
+  },
+  {
+   "key": "bg3:skybreaker",
+   "name": "Skybreaker",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": {
+    "base": "Light Hammer",
+    "kind": "melee",
+    "damage": "1d4",
+    "versatile_damage": null,
+    "damage_type": "bludgeoning",
+    "enhancement": 1,
+    "properties": [
+     "light",
+     "thrown"
+    ]
+   },
+   "effects": [],
+   "notes": "Searing Smite level=1 recharge=Long Rest hit cost=bonus",
+   "location": "Arcane Tower",
+   "source": "https://bg3.wiki/wiki/Skybreaker"
   },
   {
    "key": "bg3:sorrow",
@@ -5354,39 +5779,6 @@
    "notes": "Ray of Sickness level=1 recharge=Short Rest cost=action",
    "location": "Overgrown Tunnel",
    "source": "https://bg3.wiki/wiki/Staff_of_Crones"
-  },
-  {
-   "key": "bg3:staff_of_the_emperor",
-   "name": "Staff of the Emperor",
-   "slot": "weapon",
-   "act": 1,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Quarterstaff",
-    "kind": "melee",
-    "damage": "1d6",
-    "versatile_damage": "1d8",
-    "damage_type": "bludgeoning",
-    "enhancement": 2,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "spell_dc",
-     "value": 1
-    },
-    {
-     "kind": "attack_bonus",
-     "value": 1,
-     "applies_to": "spell"
-    }
-   ],
-   "notes": "When the wielder succeeds a Saving Throw, the foe that caused the throw needs to make an Intelligence or be Stunned for 1 turn",
-   "location": "Astral Plane",
-   "source": "https://bg3.wiki/wiki/Staff_of_the_Emperor"
   },
   {
    "key": "bg3:staff_of_the_moonmaiden",
@@ -5627,6 +6019,27 @@
    "source": "https://bg3.wiki/wiki/The_Baneful"
   },
   {
+   "key": "bg3:the_blood_of_lathander",
+   "name": "The Blood of Lathander",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Legendary",
+   "unique": true,
+   "weapon": {
+    "base": "Mace",
+    "kind": "melee",
+    "damage": "1d6",
+    "versatile_damage": null,
+    "damage_type": "bludgeoning",
+    "enhancement": 3,
+    "properties": []
+   },
+   "effects": [],
+   "notes": "Sunbeam level=6 recharge=Long Rest cost=action; Once per Long Rest, when your hit points are reduced to 0, you regain 2d6 Healing; Allies within m=9 also regain 1d6 Healing; Sheds holy light in a m=6 ft=20 radius; In combat, fiends and undead standing in the light are Blinded if they fail a DC 14 Constitution throw",
+   "location": "Crèche Y'llek",
+   "source": "https://bg3.wiki/wiki/The_Blood_of_Lathander"
+  },
+  {
    "key": "bg3:the_joltshooter",
    "name": "The Joltshooter",
    "slot": "weapon",
@@ -5776,6 +6189,30 @@
    "source": "https://bg3.wiki/wiki/Titanstring_Bow"
   },
   {
+   "key": "bg3:trident_1",
+   "name": "Trident +1",
+   "slot": "weapon",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": false,
+   "weapon": {
+    "base": "Trident",
+    "kind": "melee",
+    "damage": "1d6",
+    "versatile_damage": "1d8",
+    "damage_type": "piercing",
+    "enhancement": 1,
+    "properties": [
+     "thrown",
+     "versatile"
+    ]
+   },
+   "effects": [],
+   "notes": "",
+   "location": "Sold by any trader using the magic melee table",
+   "source": "https://bg3.wiki/wiki/Trident_%2B1"
+  },
+  {
    "key": "bg3:twisting_branch",
    "name": "Twisting Branch",
    "slot": "weapon",
@@ -5881,47 +6318,6 @@
    "notes": "Blinded Blind targets that fail a DEX; Deals an additional 2d6 Piercing to certain creatures that sport multiple sets of eyes",
    "location": "Wilderness",
    "source": "https://bg3.wiki/wiki/Vision_of_the_Absolute"
-  },
-  {
-   "key": "bg3:voss_silver_sword",
-   "name": "Voss' Silver Sword",
-   "slot": "weapon",
-   "act": 1,
-   "rarity": "Very Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Longsword",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": "1d10",
-    "damage_type": "slashing",
-    "enhancement": 2,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "attack_dice",
-     "value": "1d4",
-     "applies_to": "self",
-     "condition": "This weapon grants a +1d4 bonus to damage and Attack Rolls against githyanki, aberrations, fiends, and elementals"
-    },
-    {
-     "kind": "damage_bonus",
-     "value": "1d4",
-     "applies_to": "self",
-     "condition": "This weapon grants a +1d4 bonus to damage and Attack Rolls against githyanki, aberrations, fiends, and elementals"
-    },
-    {
-     "kind": "extra_damage",
-     "value": "1d4 psychic",
-     "applies_to": "self"
-    }
-   ],
-   "notes": "Wrathful Smite level=1 recharge=Short Rest hit cost=bonus",
-   "location": "Campsite (Act One)",
-   "source": "https://bg3.wiki/wiki/Voss%27_Silver_Sword"
   },
   {
    "key": "bg3:war_pick_1",
@@ -6406,19 +6802,6 @@
    "source": "https://bg3.wiki/wiki/Moon_Devotion_Robe"
   },
   {
-   "key": "bg3:nightsong_s_armour",
-   "name": "Nightsong's Armour",
-   "slot": "armour",
-   "act": 2,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "You take 1 less Piercing damage",
-   "location": "Worn by Aylin",
-   "source": "https://bg3.wiki/wiki/Nightsong%27s_Armour"
-  },
-  {
    "key": "bg3:obsidian_laced_robe",
    "name": "Obsidian Laced Robe",
    "slot": "armour",
@@ -6749,19 +7132,6 @@
    "source": "https://bg3.wiki/wiki/Evasive_Shoes"
   },
   {
-   "key": "bg3:nightsong_boots",
-   "name": "Nightsong Boots",
-   "slot": "boots",
-   "act": 2,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Athletics +1",
-   "location": "Worn by Aylin",
-   "source": "https://bg3.wiki/wiki/Nightsong_Boots"
-  },
-  {
    "key": "bg3:cloak",
    "name": "Cloak",
    "slot": "cloak",
@@ -6825,6 +7195,19 @@
    "notes": "When you Poisoned Poison a foe, heal yourself for 1d4 Healing",
    "location": "Moonrise Towers",
    "source": "https://bg3.wiki/wiki/Derivation_Cloak"
+  },
+  {
+   "key": "bg3:fleshmelter_cloak",
+   "name": "Fleshmelter Cloak",
+   "slot": "cloak",
+   "act": 2,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Whenever a creature deals melee damage to the wearer, that creature takes 1d4 Acid Damage",
+   "location": "House of Healing Morgue",
+   "source": "https://bg3.wiki/wiki/Fleshmelter_Cloak"
   },
   {
    "key": "bg3:thunderskin_cloak",
@@ -6915,6 +7298,30 @@
    "notes": "Strength Saving Throws +1",
    "location": "Gauntlet of Shar",
    "source": "https://bg3.wiki/wiki/Dark_Justiciar_Gauntlets_%28Uncommon%29"
+  },
+  {
+   "key": "bg3:flawed_helldusk_gloves",
+   "name": "Flawed Helldusk Gloves",
+   "slot": "gloves",
+   "act": 2,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [
+    {
+     "kind": "extra_damage",
+     "value": "1d4 fire",
+     "applies_to": "weapon"
+    },
+    {
+     "kind": "extra_damage",
+     "value": "1d4 necrotic",
+     "applies_to": "unarmed"
+    }
+   ],
+   "notes": "Strength SavingThrows +1",
+   "location": "Last Light Inn",
+   "source": "https://bg3.wiki/wiki/Flawed_Helldusk_Gloves"
   },
   {
    "key": "bg3:gauntlets_of_surging_accuracy",
@@ -7090,42 +7497,6 @@
    "notes": "Strength Saving Throws +1; When the wearer deals Radiant damage, the target receives 2 turns of Radiating Orb",
    "location": "Ruined Battlefield",
    "source": "https://bg3.wiki/wiki/Luminous_Gloves"
-  },
-  {
-   "key": "bg3:netherstone_studded_gauntlet",
-   "name": "Netherstone-Studded Gauntlet",
-   "slot": "gloves",
-   "act": 2,
-   "rarity": "Very Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "1d4 force",
-     "applies_to": "unarmed"
-    },
-    {
-     "kind": "spell_dc",
-     "value": 1
-    }
-   ],
-   "notes": "Command level=3 recharge=Long Rest",
-   "location": "Carried by Enver Gortash during the quest Get Gortash's Netherstone",
-   "source": "https://bg3.wiki/wiki/Netherstone-Studded_Gauntlet"
-  },
-  {
-   "key": "bg3:nightsong_gloves",
-   "name": "Nightsong Gloves",
-   "slot": "gloves",
-   "act": 2,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Strength Saving Throws +1",
-   "location": "Worn by Aylin",
-   "source": "https://bg3.wiki/wiki/Nightsong_Gloves"
   },
   {
    "key": "bg3:poisoner_s_gloves",
@@ -7411,6 +7782,19 @@
    "source": "https://bg3.wiki/wiki/Hat_of_Storm_Scion%27s_Power"
   },
   {
+   "key": "bg3:hat_of_uninhibited_kushigo",
+   "name": "Hat of Uninhibited Kushigo",
+   "slot": "helmet",
+   "act": 2,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "After dealing damage with an unarmed attack, the wearer gains a +1 bonus to their spell save DC until the end of their turn",
+   "location": "Last Light Inn",
+   "source": "https://bg3.wiki/wiki/Hat_of_Uninhibited_Kushigo"
+  },
+  {
    "key": "bg3:helmet_of_arcane_acuity",
    "name": "Helmet of Arcane Acuity",
    "slot": "helmet",
@@ -7460,19 +7844,6 @@
    "notes": "",
    "location": "Moonrise Towers",
    "source": "https://bg3.wiki/wiki/Marksmanship_Hat"
-  },
-  {
-   "key": "bg3:nightsong_helmet",
-   "name": "Nightsong Helmet",
-   "slot": "helmet",
-   "act": 2,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Constitution Saving Throws +1",
-   "location": "Worn by Aylin",
-   "source": "https://bg3.wiki/wiki/Nightsong_Helmet"
   },
   {
    "key": "bg3:regal_helm",
@@ -7677,6 +8048,19 @@
    "source": "https://bg3.wiki/wiki/Ring_of_Shadows"
   },
   {
+   "key": "bg3:ring_of_spiteful_thunder",
+   "name": "Ring of Spiteful Thunder",
+   "slot": "ring",
+   "act": 2,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "When the wearer deals damage to a Reverberation Reverberating creature, it becomes Dazed unless it succeeds a Constitution",
+   "location": "Moonrise Towers",
+   "source": "https://bg3.wiki/wiki/Ring_of_Spiteful_Thunder"
+  },
+  {
    "key": "bg3:ring_of_twilight",
    "name": "Ring of Twilight",
    "slot": "ring",
@@ -7708,6 +8092,19 @@
    "source": "https://bg3.wiki/wiki/Risky_Ring"
   },
   {
+   "key": "bg3:shadow_blade_ring",
+   "name": "Shadow Blade Ring",
+   "slot": "ring",
+   "act": 2,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Shadow Blade level=2 recharge=Short rest cost=bonus",
+   "location": "Campsite (Act Two)",
+   "source": "https://bg3.wiki/wiki/Shadow_Blade_Ring"
+  },
+  {
    "key": "bg3:shadow_cloaked_ring",
    "name": "Shadow-Cloaked Ring",
    "slot": "ring",
@@ -7726,6 +8123,19 @@
    "notes": "",
    "location": "Ruined Battlefield",
    "source": "https://bg3.wiki/wiki/Shadow-Cloaked_Ring"
+  },
+  {
+   "key": "bg3:shapeshifter_s_boon_ring",
+   "name": "Shapeshifter's Boon Ring",
+   "slot": "ring",
+   "act": 2,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "While shapeshifting or disguising yourself, gain a +1d4 bonus to all Ability checks",
+   "location": "Emerald Grove",
+   "source": "https://bg3.wiki/wiki/Shapeshifter%27s_Boon_Ring"
   },
   {
    "key": "bg3:shifting_corpus_ring",
@@ -7858,6 +8268,29 @@
    "source": "https://bg3.wiki/wiki/Justiciar%27s_Greatshield"
   },
   {
+   "key": "bg3:ketheric_s_shield",
+   "name": "Ketheric's Shield",
+   "slot": "shield",
+   "act": 2,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [
+    {
+     "kind": "spell_dc",
+     "value": 1
+    },
+    {
+     "kind": "attack_bonus",
+     "value": 1,
+     "applies_to": "spell"
+    }
+   ],
+   "notes": "Advantage on Dexterity Saving Throws; When a foe hits you with a melee attack, you can use your reaction to knock it Prone unless they succeed a Dexterity",
+   "location": "Mind Flayer Colony",
+   "source": "https://bg3.wiki/wiki/Ketheric%27s_Shield"
+  },
+  {
    "key": "bg3:sentinel_shield",
    "name": "Sentinel Shield",
    "slot": "shield",
@@ -7928,7 +8361,7 @@
     ]
    },
    "effects": [],
-   "notes": "",
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Moonrise Towers",
    "source": "https://bg3.wiki/wiki/Argument_Solver"
   },
@@ -8103,27 +8536,6 @@
    "notes": "",
    "location": "House of Healing",
    "source": "https://bg3.wiki/wiki/Bonesaw_%28%2B1%29"
-  },
-  {
-   "key": "bg3:brewing_ladle",
-   "name": "Brewing Ladle",
-   "slot": "weapon",
-   "act": 2,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Mace",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": null,
-    "damage_type": "bludgeoning",
-    "enhancement": 0,
-    "properties": []
-   },
-   "effects": [],
-   "notes": "",
-   "location": "The Waning Moon",
-   "source": "https://bg3.wiki/wiki/Brewing_Ladle"
   },
   {
    "key": "bg3:broken_pike",
@@ -8313,6 +8725,31 @@
    "source": "https://bg3.wiki/wiki/Defender_Greataxe"
   },
   {
+   "key": "bg3:drakethroat_glaive",
+   "name": "Drakethroat Glaive",
+   "slot": "weapon",
+   "act": 2,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": {
+    "base": "Glaive",
+    "kind": "melee",
+    "damage": "1d10",
+    "versatile_damage": null,
+    "damage_type": "slashing",
+    "enhancement": 2,
+    "properties": [
+     "heavy",
+     "reach",
+     "two-handed"
+    ]
+   },
+   "effects": [],
+   "notes": "Draconic Elemental Weapon level=3 recharge=Long Rest; Enemies have Disadvantage on Saving Throws against your dragonborn breath weapon",
+   "location": "Moonrise Towers",
+   "source": "https://bg3.wiki/wiki/Drakethroat_Glaive"
+  },
+  {
    "key": "bg3:false_spear_of_the_night",
    "name": "False Spear of the Night",
    "slot": "weapon",
@@ -8353,7 +8790,7 @@
     "properties": []
    },
    "effects": [],
-   "notes": "",
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Carried by Ketheric Thorm, if he is disarmed during his initial encounter",
    "source": "https://bg3.wiki/wiki/Flail_of_Myrkul"
   },
@@ -8387,29 +8824,6 @@
    "notes": "Gain a +1 bonus to Initiative rolls and Advantage on Perception Ability Checks; When you make an Attack Roll as a Reaction, you make it with Advantage",
    "location": "Moonrise Towers",
    "source": "https://bg3.wiki/wiki/Halberd_of_Vigilance"
-  },
-  {
-   "key": "bg3:hand_crossbow_yurgir",
-   "name": "Hand Crossbow (Yurgir)",
-   "slot": "weapon",
-   "act": 2,
-   "rarity": "",
-   "unique": true,
-   "weapon": {
-    "base": "Hand Crossbow",
-    "kind": "ranged",
-    "damage": "2d10",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 0,
-    "properties": [
-     "light"
-    ]
-   },
-   "effects": [],
-   "notes": "Not usable by humanoids",
-   "location": "Carried by Yurgir",
-   "source": "https://bg3.wiki/wiki/Hand_Crossbow_%28Yurgir%29"
   },
   {
    "key": "bg3:handaxe_1",
@@ -8489,29 +8903,6 @@
    "notes": "",
    "location": "Shadow-Cursed Lands",
    "source": "https://bg3.wiki/wiki/Harper_Blade"
-  },
-  {
-   "key": "bg3:hellfire_hand_crossbow",
-   "name": "Hellfire Hand Crossbow",
-   "slot": "weapon",
-   "act": 2,
-   "rarity": "Very Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Hand Crossbow",
-    "kind": "ranged",
-    "damage": "1d6",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 2,
-    "properties": [
-     "light"
-    ]
-   },
-   "effects": [],
-   "notes": "Scorching Ray Scorching Ray Shot level=3 recharge=Short Rest cost=action; Possibly inflict Burning when hitting a creature with this weapon while Hiding or Invisible",
-   "location": "Gauntlet of Shar",
-   "source": "https://bg3.wiki/wiki/Hellfire_Hand_Crossbow"
   },
   {
    "key": "bg3:incandescent_staff",
@@ -8819,7 +9210,7 @@
      "applies_to": "self"
     }
    ],
-   "notes": "",
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Moonrise Towers",
    "source": "https://bg3.wiki/wiki/Myrkulite_Scourge"
   },
@@ -8845,6 +9236,29 @@
    "notes": "Magic Missile level=3 recharge=Short Rest cost=action",
    "location": "Moonrise Towers",
    "source": "https://bg3.wiki/wiki/Ne%27er_Misser"
+  },
+  {
+   "key": "bg3:punch_drunk_bastard",
+   "name": "Punch-Drunk Bastard",
+   "slot": "weapon",
+   "act": 2,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": {
+    "base": "Greatclub",
+    "kind": "melee",
+    "damage": "1d8",
+    "versatile_damage": null,
+    "damage_type": "bludgeoning",
+    "enhancement": 1,
+    "properties": [
+     "two-handed"
+    ]
+   },
+   "effects": [],
+   "notes": "While you are Drunk, you have advantage on attack rolls; You also create a blast with each melee hit landed, dealing 1d4 Thunder damage to all creatures and objects in a radius of m=3 ft=10, excluding yourself; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "location": "The Waning Moon",
+   "source": "https://bg3.wiki/wiki/Punch-Drunk_Bastard"
   },
   {
    "key": "bg3:rat_bat",
@@ -9040,6 +9454,30 @@
    "source": "https://bg3.wiki/wiki/Sel%C3%BBne%27s_Spear_of_Night"
   },
   {
+   "key": "bg3:shadow_lantern",
+   "name": "Shadow Lantern",
+   "slot": "weapon",
+   "act": 2,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": {
+    "base": "Club",
+    "kind": "melee",
+    "damage": "1d4",
+    "versatile_damage": "1d6",
+    "damage_type": "bludgeoning",
+    "enhancement": 0,
+    "properties": [
+     "light",
+     "versatile"
+    ]
+   },
+   "effects": [],
+   "notes": "Conjure Shadow Lantern Wraith level=6 recharge=Long Rest",
+   "location": "Moonrise Towers",
+   "source": "https://bg3.wiki/wiki/Shadow_Lantern"
+  },
+  {
    "key": "bg3:shar_s_spear_of_evening",
    "name": "Shar's Spear of Evening",
    "slot": "weapon",
@@ -9069,30 +9507,6 @@
    "notes": "Shar's Darkness level=2 recharge=Per turn; You gain Advantage on SavingThrows while Lightly or Heavily Obscured; The wearer cannot be Blinded",
    "location": "Shadowfell",
    "source": "https://bg3.wiki/wiki/Shar%27s_Spear_of_Evening"
-  },
-  {
-   "key": "bg3:shortsword_yurgir",
-   "name": "Shortsword (Yurgir)",
-   "slot": "weapon",
-   "act": 2,
-   "rarity": "",
-   "unique": true,
-   "weapon": {
-    "base": "Shortsword",
-    "kind": "melee",
-    "damage": "2d4",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 0,
-    "properties": [
-     "finesse",
-     "light"
-    ]
-   },
-   "effects": [],
-   "notes": "Not usable by humanoids",
-   "location": "Carried by Yurgir",
-   "source": "https://bg3.wiki/wiki/Shortsword_%28Yurgir%29"
   },
   {
    "key": "bg3:slicing_shortsword",
@@ -9389,7 +9803,7 @@
     "properties": []
    },
    "effects": [],
-   "notes": "When you roll 2 or less with this weapon's damage die, reroll it and take the new result",
+   "notes": "When you roll 2 or less with this weapon's damage die, reroll it and take the new result; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Reithwin Tollhouse",
    "source": "https://bg3.wiki/wiki/Twist_of_Fortune"
   },
@@ -9729,6 +10143,19 @@
    "source": "https://bg3.wiki/wiki/Spell_Savant_Amulet"
   },
   {
+   "key": "bg3:tarnished_charm",
+   "name": "Tarnished Charm",
+   "slot": "amulet",
+   "act": 3,
+   "rarity": "Uncommon",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Makes it easier for the wearer to succeed on death saving throws",
+   "location": "Riverside Teahouse",
+   "source": "https://bg3.wiki/wiki/Tarnished_Charm"
+  },
+  {
    "key": "bg3:tarnished_pendant",
    "name": "Tarnished Pendant",
    "slot": "amulet",
@@ -10014,6 +10441,19 @@
    "source": "https://bg3.wiki/wiki/Elven_Chain"
   },
   {
+   "key": "bg3:emblazoned_plate_of_the_marshal",
+   "name": "Emblazoned Plate of the Marshal",
+   "slot": "armour",
+   "act": 3,
+   "rarity": "Very Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Fire Shield level=4 recharge=Long Rest cost=action; All incoming damage is reduced by 2; You have Resistance to Fire damage and a +2 bonus to Saving Throws",
+   "location": "Wyrm's Rock Fortress",
+   "source": "https://bg3.wiki/wiki/Emblazoned_Plate_of_the_Marshal"
+  },
+  {
    "key": "bg3:flame_enamelled_armour",
    "name": "Flame Enamelled Armour",
    "slot": "armour",
@@ -10187,6 +10627,19 @@
    "source": "https://bg3.wiki/wiki/Splint_Armour_%2B2"
   },
   {
+   "key": "bg3:unwanted_masterwork_scalemail",
+   "name": "Unwanted Masterwork Scalemail",
+   "slot": "armour",
+   "act": 3,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Resistance to Fire damage; Add your full Dexterity Modifier to your Armour Class; Additionally, this armour does not impose Disadvantage on Stealth Ability Checks",
+   "location": "Forge of the Nine",
+   "source": "https://bg3.wiki/wiki/Unwanted_Masterwork_Scalemail"
+  },
+  {
    "key": "bg3:veil_of_the_morning",
    "name": "Veil of the Morning",
    "slot": "armour",
@@ -10263,6 +10716,19 @@
    "notes": "Brutal Leap; You have a +1 bonus to ArmourClass and Saving Throws as long as you are not wearing armour or holding a shield; Jump distance is increased by m=1.5 ft=5",
    "location": "Western Beach",
    "source": "https://bg3.wiki/wiki/Bonespike_Boots"
+  },
+  {
+   "key": "bg3:boots_of_persistence",
+   "name": "Boots of Persistence",
+   "slot": "boots",
+   "act": 3,
+   "rarity": "Very Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Dexterity Saving Throws +1; You gain Freedom of Movement and Longstrider",
+   "location": "Forge of the Nine",
+   "source": "https://bg3.wiki/wiki/Boots_of_Persistence"
   },
   {
    "key": "bg3:boots_of_psionic_movement",
@@ -10814,6 +11280,30 @@
    "source": "https://bg3.wiki/wiki/Knock_Knuckle_Gloves"
   },
   {
+   "key": "bg3:legacy_of_the_masters",
+   "name": "Legacy of the Masters",
+   "slot": "gloves",
+   "act": 3,
+   "rarity": "Very Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [
+    {
+     "kind": "attack_bonus",
+     "value": "2",
+     "applies_to": "all"
+    },
+    {
+     "kind": "damage_bonus",
+     "value": "2",
+     "applies_to": "all"
+    }
+   ],
+   "notes": "Strength Saving Throws +1",
+   "location": "Forge of the Nine",
+   "source": "https://bg3.wiki/wiki/Legacy_of_the_Masters"
+  },
+  {
    "key": "bg3:martial_exertion_gloves",
    "name": "Martial Exertion Gloves",
    "slot": "gloves",
@@ -11206,6 +11696,19 @@
    "notes": "Constitution Saving Throws +1",
    "location": "Cloister of Sombre Embrace",
    "source": "https://bg3.wiki/wiki/Formidable_Helmet"
+  },
+  {
+   "key": "bg3:gibus_of_the_worshipful_servant",
+   "name": "Gibus of the Worshipful Servant",
+   "slot": "helmet",
+   "act": 3,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "At the start of combat, the wearer gains Momentum equal to their Charisma Modifier; You gain Advantage on Concentration Icon.png Concentration Saving Throws",
+   "location": "Bhaal Temple",
+   "source": "https://bg3.wiki/wiki/Gibus_of_the_Worshipful_Servant"
   },
   {
    "key": "bg3:hat_of_eminent_giggles",
@@ -11691,6 +12194,19 @@
    "source": "https://bg3.wiki/wiki/Keepsake_Ring"
   },
   {
+   "key": "bg3:orphic_ring",
+   "name": "Orphic Ring",
+   "slot": "ring",
+   "act": 3,
+   "rarity": "Very Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Confusion level=5 recharge=Long Rest cost=action",
+   "location": "Astral Plane",
+   "source": "https://bg3.wiki/wiki/Orphic_Ring"
+  },
+  {
    "key": "bg3:ring_of_blink",
    "name": "Ring of Blink",
    "slot": "ring",
@@ -11733,6 +12249,19 @@
    "notes": "",
    "location": "Bhaal Temple",
    "source": "https://bg3.wiki/wiki/Ring_of_Murderous_Opportunity"
+  },
+  {
+   "key": "bg3:ring_of_regeneration",
+   "name": "Ring of Regeneration",
+   "slot": "ring",
+   "act": 3,
+   "rarity": "Very Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "At the beginning of your turn, the ring activates and heals you 1d4 Healing",
+   "location": "Act Three:\n** If Rolan is dead: Sold by Lorroakan's Projection in Sorcerous Sundries\n** If Rolan and Lorroakan are both ",
+   "source": "https://bg3.wiki/wiki/Ring_of_Regeneration"
   },
   {
    "key": "bg3:ring_of_truthfulness",
@@ -11798,6 +12327,19 @@
    "notes": "Beacon of Hope level=3 recharge=Long Rest cost=action",
    "location": "Lady Jannath's Estate",
    "source": "https://bg3.wiki/wiki/Till_Death_Do_Us_Part"
+  },
+  {
+   "key": "bg3:abdel_s_trusted_shield",
+   "name": "Abdel's Trusted Shield",
+   "slot": "shield",
+   "act": 3,
+   "rarity": "Very Rare",
+   "unique": true,
+   "weapon": null,
+   "effects": [],
+   "notes": "Protection from Missiles; When a foe hits you with a melee attack, you can use your reaction to knock it Prone unless they succeed a Dexterity",
+   "location": "Golbraith's Cellar",
+   "source": "https://bg3.wiki/wiki/Abdel%27s_Trusted_Shield"
   },
   {
    "key": "bg3:rusty_studded_shield",
@@ -12058,7 +12600,7 @@
      "value": 1
     }
    ],
-   "notes": "True Strike level=0 recharge=Short Rest action type=Bonus; Bound Weapon; ArmourClass +1 (Off-Hand Only); This effect can stack",
+   "notes": "True Strike level=0 recharge=Short Rest action type=Bonus; Bound Weapon; ArmourClass +1 (Off-Hand Only); This effect can stack; Creatures hit with this weapon receive Vulnerability to Piercing damage",
    "location": "Bhaal Temple",
    "source": "https://bg3.wiki/wiki/Bloodthirst"
   },
@@ -12282,7 +12824,7 @@
      "applies_to": "self"
     }
    ],
-   "notes": "",
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Western Beach",
    "source": "https://bg3.wiki/wiki/Corpsegrinder"
   },
@@ -12318,7 +12860,7 @@
      "applies_to": "self"
     }
    ],
-   "notes": "",
+   "notes": "When you make an attack with Advantage, the target takes an additional 7 Piercing drs=t damage",
    "location": "Bhaal Temple",
    "source": "https://bg3.wiki/wiki/Crimson_Mischief"
   },
@@ -12379,6 +12921,33 @@
    "notes": "",
    "location": "Ramazith's Tower",
    "source": "https://bg3.wiki/wiki/Despair_of_Athkatla"
+  },
+  {
+   "key": "bg3:devotee_s_mace",
+   "name": "Devotee's Mace",
+   "slot": "weapon",
+   "act": 3,
+   "rarity": "Legendary",
+   "unique": true,
+   "weapon": {
+    "base": "Mace",
+    "kind": "melee",
+    "damage": "1d6",
+    "versatile_damage": null,
+    "damage_type": "bludgeoning",
+    "enhancement": 3,
+    "properties": []
+   },
+   "effects": [
+    {
+     "kind": "extra_damage",
+     "value": "1d8 radiant",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "Main Hand Only; Healing Incense Aura",
+   "location": "Obtained from casting the Divine Intervention: Arm Thy Servant Arm Thy Servant variant of Divine Intervention. Once the ",
+   "source": "https://bg3.wiki/wiki/Devotee%27s_Mace"
   },
   {
    "key": "bg3:dolor_amarus",
@@ -12607,7 +13176,7 @@
     "properties": []
    },
    "effects": [],
-   "notes": "Elemental Age level=3 recharge=Long Rest; Depending on what kind of damage this weapon does, it also inflicts: Acid condition, Chilled condition, or Burning condition",
+   "notes": "Elemental Age level=3 recharge=Long Rest; Depending on what kind of damage this weapon does, it also inflicts: Acid condition, Chilled condition, or Burning condition; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Stormshore Armoury",
    "source": "https://bg3.wiki/wiki/Flail_of_Ages"
   },
@@ -12655,7 +13224,7 @@
     ]
    },
    "effects": [],
-   "notes": "This weapon ignores resistance to Bludgeoning damage",
+   "notes": "This weapon ignores resistance to Bludgeoning damage; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Sorcerous Vault",
    "source": "https://bg3.wiki/wiki/Foebreaker"
   },
@@ -12944,6 +13513,59 @@
    "notes": "Lightning Arrow level=4 recharge=Long Rest cost=action",
    "location": "Steel Watch Foundry",
    "source": "https://bg3.wiki/wiki/Hellfire_Engine_Crossbow"
+  },
+  {
+   "key": "bg3:hellfire_greataxe",
+   "name": "Hellfire Greataxe",
+   "slot": "weapon",
+   "act": 3,
+   "rarity": "Very Rare",
+   "unique": true,
+   "weapon": {
+    "base": "Greataxe",
+    "kind": "melee",
+    "damage": "1d12",
+    "versatile_damage": null,
+    "damage_type": "slashing",
+    "enhancement": 2,
+    "properties": [
+     "heavy",
+     "two-handed"
+    ]
+   },
+   "effects": [
+    {
+     "kind": "extra_damage",
+     "value": "1d6 fire",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "Whenever you deal damage with this weapon, you gain 2 turns of Heat",
+   "location": "Sorcerous Vault",
+   "source": "https://bg3.wiki/wiki/Hellfire_Greataxe"
+  },
+  {
+   "key": "bg3:hellfire_hand_crossbow",
+   "name": "Hellfire Hand Crossbow",
+   "slot": "weapon",
+   "act": 3,
+   "rarity": "Very Rare",
+   "unique": true,
+   "weapon": {
+    "base": "Hand Crossbow",
+    "kind": "ranged",
+    "damage": "1d6",
+    "versatile_damage": null,
+    "damage_type": "piercing",
+    "enhancement": 2,
+    "properties": [
+     "light"
+    ]
+   },
+   "effects": [],
+   "notes": "Scorching Ray Scorching Ray Shot level=3 recharge=Short Rest cost=action; Possibly inflict Burning when hitting a creature with this weapon while Hiding or Invisible",
+   "location": "Gauntlet of Shar",
+   "source": "https://bg3.wiki/wiki/Hellfire_Hand_Crossbow"
   },
   {
    "key": "bg3:hellrider_longbow",
@@ -13334,36 +13956,6 @@
    "source": "https://bg3.wiki/wiki/Murderous_Cut"
   },
   {
-   "key": "bg3:netherstone_pommelled_bloodthirst",
-   "name": "Netherstone-Pommelled Bloodthirst",
-   "slot": "weapon",
-   "act": 3,
-   "rarity": "Legendary",
-   "unique": true,
-   "weapon": {
-    "base": "Dagger",
-    "kind": "melee",
-    "damage": "1d4",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 2,
-    "properties": [
-     "finesse",
-     "light",
-     "thrown"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "crit_range",
-     "value": 1
-    }
-   ],
-   "notes": "True Strike level=0 recharge=Short Rest action type=Bonus; Bound Weapon; ArmourClass +1 (Off-Hand Only); This effect can stack",
-   "location": "Bhaal Temple",
-   "source": "https://bg3.wiki/wiki/Netherstone-Pommelled_Bloodthirst"
-  },
-  {
    "key": "bg3:nyrulna",
    "name": "Nyrulna",
    "slot": "weapon",
@@ -13526,9 +14118,40 @@
     "properties": []
    },
    "effects": [],
-   "notes": "Commander's Strike recharge=Short Rest cost=action, bonus",
+   "notes": "Commander's Strike recharge=Short Rest cost=action, bonus; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "The Counting House",
    "source": "https://bg3.wiki/wiki/Ravengard%27s_Scourger"
+  },
+  {
+   "key": "bg3:rhapsody",
+   "name": "Rhapsody",
+   "slot": "weapon",
+   "act": 3,
+   "rarity": "Very Rare",
+   "unique": true,
+   "weapon": {
+    "base": "Dagger",
+    "kind": "melee",
+    "damage": "1d4",
+    "versatile_damage": null,
+    "damage_type": "piercing",
+    "enhancement": 1,
+    "properties": [
+     "finesse",
+     "light",
+     "thrown"
+    ]
+   },
+   "effects": [
+    {
+     "kind": "attack_bonus",
+     "value": 1,
+     "applies_to": "spell"
+    }
+   ],
+   "notes": "At 3 stacks of Scarlet Remittance:; Scarlet Feast recharge=Long Rest; Possibly inflict Bleeding when hitting a creature with this weapon while Hiding or Invisible",
+   "location": "Cazador's Dungeon",
+   "source": "https://bg3.wiki/wiki/Rhapsody"
   },
   {
    "key": "bg3:rusty_glaive",
@@ -13597,7 +14220,7 @@
     ]
    },
    "effects": [],
-   "notes": "",
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "On a large pile of discarded weapons and armour near the Rivington gate at 10 -131",
    "source": "https://bg3.wiki/wiki/Rusty_Maul"
   },
@@ -13618,7 +14241,7 @@
     "properties": []
    },
    "effects": [],
-   "notes": "",
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "On a large pile of discarded weapons and armour near the Rivington gate at 10 -131",
    "source": "https://bg3.wiki/wiki/Rusty_Morningstar"
   },
@@ -13921,6 +14544,39 @@
    "source": "https://bg3.wiki/wiki/Staff_of_Interruption"
   },
   {
+   "key": "bg3:staff_of_spellpower",
+   "name": "Staff of Spellpower",
+   "slot": "weapon",
+   "act": 3,
+   "rarity": "Very Rare",
+   "unique": true,
+   "weapon": {
+    "base": "Quarterstaff",
+    "kind": "melee",
+    "damage": "1d6",
+    "versatile_damage": "1d8",
+    "damage_type": "bludgeoning",
+    "enhancement": 2,
+    "properties": [
+     "versatile"
+    ]
+   },
+   "effects": [
+    {
+     "kind": "spell_dc",
+     "value": 1
+    },
+    {
+     "kind": "attack_bonus",
+     "value": 1,
+     "applies_to": "spell"
+    }
+   ],
+   "notes": "Alleviate the arcane burden of spellcasting with the power of this staff; The next spell you cast doesn't cost a spell slot",
+   "location": "House of Hope",
+   "source": "https://bg3.wiki/wiki/Staff_of_Spellpower"
+  },
+  {
    "key": "bg3:staff_of_a_mumbling_wizard",
    "name": "Staff of a Mumbling Wizard",
    "slot": "weapon",
@@ -13942,6 +14598,39 @@
    "notes": "; Firebolt? w=40; : Cast as a cantrip at will, but has a 1/20 chance to cause a Fireball explosion",
    "location": "Circus of the Last Days",
    "source": "https://bg3.wiki/wiki/Staff_of_a_Mumbling_Wizard"
+  },
+  {
+   "key": "bg3:staff_of_the_emperor",
+   "name": "Staff of the Emperor",
+   "slot": "weapon",
+   "act": 3,
+   "rarity": "Rare",
+   "unique": true,
+   "weapon": {
+    "base": "Quarterstaff",
+    "kind": "melee",
+    "damage": "1d6",
+    "versatile_damage": "1d8",
+    "damage_type": "bludgeoning",
+    "enhancement": 2,
+    "properties": [
+     "versatile"
+    ]
+   },
+   "effects": [
+    {
+     "kind": "spell_dc",
+     "value": 1
+    },
+    {
+     "kind": "attack_bonus",
+     "value": 1,
+     "applies_to": "spell"
+    }
+   ],
+   "notes": "When the wielder succeeds a Saving Throw, the foe that caused the throw needs to make an Intelligence or be Stunned for 1 turn",
+   "location": "Astral Plane",
+   "source": "https://bg3.wiki/wiki/Staff_of_the_Emperor"
   },
   {
    "key": "bg3:staff_of_the_ram",
@@ -14143,6 +14832,35 @@
    "source": "https://bg3.wiki/wiki/The_Long_Arm_of_the_Gur"
   },
   {
+   "key": "bg3:the_sacred_star",
+   "name": "The Sacred Star",
+   "slot": "weapon",
+   "act": 3,
+   "rarity": "Very Rare",
+   "unique": true,
+   "weapon": {
+    "base": "Morningstar",
+    "kind": "melee",
+    "damage": "1d8",
+    "versatile_damage": "1d10",
+    "damage_type": "piercing",
+    "enhancement": 2,
+    "properties": [
+     "versatile"
+    ]
+   },
+   "effects": [
+    {
+     "kind": "extra_damage",
+     "value": "1d4 radiant",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "On a hit, inflict 1 turn of Radiating Orb upon the target; Undead creatures struck by this weapon are possibly Turned; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "location": "Stormshore Tabernacle",
+   "source": "https://bg3.wiki/wiki/The_Sacred_Star"
+  },
+  {
    "key": "bg3:the_undead_bane",
    "name": "The Undead Bane",
    "slot": "weapon",
@@ -14172,6 +14890,35 @@
    "notes": "",
    "location": "Gur Camp",
    "source": "https://bg3.wiki/wiki/The_Undead_Bane"
+  },
+  {
+   "key": "bg3:torch_of_revocation",
+   "name": "Torch of Revocation",
+   "slot": "weapon",
+   "act": 3,
+   "rarity": "Story",
+   "unique": true,
+   "weapon": {
+    "base": "Club",
+    "kind": "melee",
+    "damage": "1d4",
+    "versatile_damage": null,
+    "damage_type": "bludgeoning",
+    "enhancement": 1,
+    "properties": [
+     "light"
+    ]
+   },
+   "effects": [
+    {
+     "kind": "extra_damage",
+     "value": "1d4 necrotic",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "",
+   "location": "Philgrave's Mansion",
+   "source": "https://bg3.wiki/wiki/Torch_of_Revocation"
   },
   {
    "key": "bg3:trident_of_the_waves",
@@ -14258,6 +15005,47 @@
    "source": "https://bg3.wiki/wiki/Vicious_Shortbow"
   },
   {
+   "key": "bg3:voss_silver_sword",
+   "name": "Voss' Silver Sword",
+   "slot": "weapon",
+   "act": 3,
+   "rarity": "Very Rare",
+   "unique": true,
+   "weapon": {
+    "base": "Longsword",
+    "kind": "melee",
+    "damage": "1d8",
+    "versatile_damage": "1d10",
+    "damage_type": "slashing",
+    "enhancement": 2,
+    "properties": [
+     "versatile"
+    ]
+   },
+   "effects": [
+    {
+     "kind": "attack_dice",
+     "value": "1d4",
+     "applies_to": "self",
+     "condition": "This weapon grants a +1d4 bonus to damage and Attack Rolls against githyanki, aberrations, fiends, and elementals"
+    },
+    {
+     "kind": "damage_bonus",
+     "value": "1d4",
+     "applies_to": "self",
+     "condition": "This weapon grants a +1d4 bonus to damage and Attack Rolls against githyanki, aberrations, fiends, and elementals"
+    },
+    {
+     "kind": "extra_damage",
+     "value": "1d4 psychic",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "Wrathful Smite level=1 recharge=Short Rest hit cost=bonus",
+   "location": "Campsite (Act One)",
+   "source": "https://bg3.wiki/wiki/Voss%27_Silver_Sword"
+  },
+  {
    "key": "bg3:warhammer_2",
    "name": "Warhammer +2",
    "slot": "weapon",
@@ -14279,30 +15067,6 @@
    "notes": "",
    "location": "Carried by Edwynna Gauntlet Edwynna at South Span Checkpoint in Rivington at 0 30",
    "source": "https://bg3.wiki/wiki/Warhammer_%2B2"
-  },
-  {
-   "key": "bg3:watcher_greatsword",
-   "name": "Watcher Greatsword",
-   "slot": "weapon",
-   "act": 3,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Greatsword",
-    "kind": "melee",
-    "damage": "3d12",
-    "versatile_damage": null,
-    "damage_type": "slashing",
-    "enhancement": 0,
-    "properties": [
-     "heavy",
-     "two-handed"
-    ]
-   },
-   "effects": [],
-   "notes": "Can only be used by Steel Watchers",
-   "location": "Steel Watch Foundry",
-   "source": "https://bg3.wiki/wiki/Watcher_Greatsword"
   },
   {
    "key": "bg3:wavemother_s_sickle",
@@ -14380,19 +15144,6 @@
    "source": "https://bg3.wiki/wiki/Bronze_Necklace"
   },
   {
-   "key": "bg3:dauntless_amulet",
-   "name": "Dauntless Amulet",
-   "slot": "amulet",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Intelligence SavingThrows +1; You can't be Frightened or afflicted with other emotion-altering conditions",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Dauntless_Amulet"
-  },
-  {
    "key": "bg3:gold_necklace",
    "name": "Gold Necklace",
    "slot": "amulet",
@@ -14419,45 +15170,6 @@
    "source": "https://bg3.wiki/wiki/Gold_Pendant"
   },
   {
-   "key": "bg3:kruznabir_s_asylum_amulet",
-   "name": "Kruznabir's Asylum Amulet",
-   "slot": "amulet",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Crown of Madness level=2 recharge=Long Rest",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Kruznabir%27s_Asylum_Amulet"
-  },
-  {
-   "key": "bg3:lofty_sorcerer_s_amulet",
-   "name": "Lofty Sorcerer's Amulet",
-   "slot": "amulet",
-   "act": null,
-   "rarity": "Very Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Grants an additional sorcery point to the wearer, which is restored on long rest along with your normal sorcery points",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Lofty_Sorcerer%27s_Amulet"
-  },
-  {
-   "key": "bg3:scarab_of_protection",
-   "name": "Scarab of Protection",
-   "slot": "amulet",
-   "act": null,
-   "rarity": "Legendary",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "You have Advantage on Saving Throws against spells; When you fail a Saving Throw against necromancy spells or spells cast by undead foes, you can use your reaction to succeed instead",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Scarab_of_Protection"
-  },
-  {
    "key": "bg3:silver_necklace",
    "name": "Silver Necklace",
    "slot": "amulet",
@@ -14469,58 +15181,6 @@
    "notes": "",
    "location": "Throughout the game as set-dressing and random loot",
    "source": "https://bg3.wiki/wiki/Silver_Necklace"
-  },
-  {
-   "key": "bg3:synaptic_needle_amulet",
-   "name": "Synaptic Needle Amulet",
-   "slot": "amulet",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Mind Tax",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Synaptic_Needle_Amulet"
-  },
-  {
-   "key": "bg3:treacleflow_amulet",
-   "name": "Treacleflow Amulet",
-   "slot": "amulet",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Costs Force Conduit to remain active; All entities with or in this aura have their movement speed halved",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Treacleflow_Amulet"
-  },
-  {
-   "key": "bg3:wakeful_amulet",
-   "name": "Wakeful Amulet",
-   "slot": "amulet",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "You can't be unwillingly put to Sleeping Sleep",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Wakeful_Amulet"
-  },
-  {
-   "key": "bg3:damaged_scale_mail",
-   "name": "Damaged Scale Mail",
-   "slot": "armour",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Damaged_Scale_Mail"
   },
   {
    "key": "bg3:druidic_armour",
@@ -14536,19 +15196,6 @@
    "source": "https://bg3.wiki/wiki/Druidic_Armour"
   },
   {
-   "key": "bg3:githyanki_breastplate",
-   "name": "Githyanki Breastplate",
-   "slot": "armour",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Githyanki_Breastplate"
-  },
-  {
    "key": "bg3:half_plate_armour_1",
    "name": "Half Plate Armour +1",
    "slot": "armour",
@@ -14562,96 +15209,30 @@
    "source": "https://bg3.wiki/wiki/Half_Plate_Armour_%2B1"
   },
   {
-   "key": "bg3:ironwood_breastplate",
-   "name": "Ironwood Breastplate",
+   "key": "bg3:hide_armour",
+   "name": "Hide Armour",
    "slot": "armour",
    "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Advantage on Constitution Saving Throws; You take 1 less Slashing damage",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Ironwood_Breastplate"
-  },
-  {
-   "key": "bg3:nightsinger_s_half_plate",
-   "name": "Nightsinger's Half-Plate",
-   "slot": "armour",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "You take 2 less Piercing damage",
-   "location": "<!-- EQP_SHA_ShadowheartDummy makes it look like it's worn by Shadowheart in a cutscene after killing Aylin, specificall",
-   "source": "https://bg3.wiki/wiki/Nightsinger%27s_Half-Plate"
-  },
-  {
-   "key": "bg3:oathbreaker_knight_armour",
-   "name": "Oathbreaker Knight Armour",
-   "slot": "armour",
-   "act": null,
-   "rarity": "Uncommon",
+   "rarity": "Common",
    "unique": true,
    "weapon": null,
    "effects": [],
    "notes": "",
    "location": "",
-   "source": "https://bg3.wiki/wiki/Oathbreaker_Knight_Armour"
+   "source": "https://bg3.wiki/wiki/Hide_Armour"
   },
   {
-   "key": "bg3:robe_of_spell_resistance",
-   "name": "Robe of Spell Resistance",
+   "key": "bg3:robe",
+   "name": "Robe",
    "slot": "armour",
    "act": null,
-   "rarity": "Rare",
+   "rarity": "Common",
    "unique": true,
    "weapon": null,
    "effects": [],
-   "notes": "Saving Throws +2",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Robe_of_Spell_Resistance"
-  },
-  {
-   "key": "bg3:robust_chain_shirt",
-   "name": "Robust Chain Shirt",
-   "slot": "armour",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "1d4 piercing",
-     "applies_to": "all",
-     "condition": "When the wearer has 50% hit points or less and is damaged by a melee attack, they deal 1d4 Piercing to the attacker"
-    }
-   ],
    "notes": "",
    "location": "",
-   "source": "https://bg3.wiki/wiki/Robust_Chain_Shirt"
-  },
-  {
-   "key": "bg3:sarevok_s_wretched_armour",
-   "name": "Sarevok's Wretched Armour",
-   "slot": "armour",
-   "act": null,
-   "rarity": "Very Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "1d6 piercing",
-     "applies_to": "all",
-     "condition": "If a melee attack hits you while you still have temporary hit points, you deal 1d6 Piercing to all creatures within m=3 ft=10"
-    }
-   ],
-   "notes": "All incoming damage is reduced by 2; When you deal Necrotic damage, you gain 1d6",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Sarevok%27s_Wretched_Armour"
+   "source": "https://bg3.wiki/wiki/Robe"
   },
   {
    "key": "bg3:scale_mail_armour_1",
@@ -14665,32 +15246,6 @@
    "notes": "You take 1 less Slashing damage",
    "location": "",
    "source": "https://bg3.wiki/wiki/Scale_Mail_Armour_%2B1"
-  },
-  {
-   "key": "bg3:torment_drinker_armour",
-   "name": "Torment Drinker Armour",
-   "slot": "armour",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "When scoring a Critical Hit or killing a hostile creature, wearer gains 15",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Torment_Drinker_Armour"
-  },
-  {
-   "key": "bg3:briskwind_boots",
-   "name": "Briskwind Boots",
-   "slot": "boots",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "After scoring a Critical Hit or killing a hostile creature, movement speed is restored to maximum",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Briskwind_Boots"
   },
   {
    "key": "bg3:cleverly_cobbled_boots",
@@ -14730,19 +15285,6 @@
    "notes": "",
    "location": "",
    "source": "https://bg3.wiki/wiki/Firm-Soled_Boots"
-  },
-  {
-   "key": "bg3:gargoyle_boots",
-   "name": "Gargoyle Boots",
-   "slot": "boots",
-   "act": null,
-   "rarity": "Very Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Dexterity Saving Throws +2; Gargoyle's Countenance level=4 recharge=Short Rest",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Gargoyle_Boots"
   },
   {
    "key": "bg3:githyanki_boots",
@@ -14823,19 +15365,6 @@
    "source": "https://bg3.wiki/wiki/Karlach%27s_Boots"
   },
   {
-   "key": "bg3:oathbreaker_knight_boots",
-   "name": "Oathbreaker Knight Boots",
-   "slot": "boots",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Athletics +1",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Oathbreaker_Knight_Boots"
-  },
-  {
    "key": "bg3:plain_boots",
    "name": "Plain Boots",
    "slot": "boots",
@@ -14847,19 +15376,6 @@
    "notes": "",
    "location": "",
    "source": "https://bg3.wiki/wiki/Plain_Boots"
-  },
-  {
-   "key": "bg3:shadowstep_boots",
-   "name": "Shadowstep Boots",
-   "slot": "boots",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Shadow Teleportation",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Shadowstep_Boots"
   },
   {
    "key": "bg3:soft_and_comfortable_shoes",
@@ -14886,19 +15402,6 @@
    "notes": "",
    "location": "",
    "source": "https://bg3.wiki/wiki/Stiffly-Shod_Boots"
-  },
-  {
-   "key": "bg3:tenacious_boots",
-   "name": "Tenacious Boots",
-   "slot": "boots",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Stand Like Stone w=40: Spend 1 turn of Force Conduit to become a strong bulwark that cannot be moved unwillingly (Short Rest; Athletics +1",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Tenacious_Boots"
   },
   {
    "key": "bg3:thin_soled_shoes",
@@ -14940,97 +15443,6 @@
    "source": "https://bg3.wiki/wiki/Tough-Soled_Shoes"
   },
   {
-   "key": "bg3:wavemother_s_boots",
-   "name": "Wavemother's Boots",
-   "slot": "boots",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "If the wearer is standing in a Water surface at the start of their turn, they heal 1d4 Healing",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Wavemother%27s_Boots"
-  },
-  {
-   "key": "bg3:braindrain_cape",
-   "name": "Braindrain Cape",
-   "slot": "cloak",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "When the wearer succeeds a Saving Throw against any foe's spells or actions, that foe gains Mental Fatigue",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Braindrain_Cape"
-  },
-  {
-   "key": "bg3:cloak_of_avarice",
-   "name": "Cloak of Avarice",
-   "slot": "cloak",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Cloak_of_Avarice"
-  },
-  {
-   "key": "bg3:minsc_cloak",
-   "name": "Minsc Cloak",
-   "slot": "cloak",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Minsc_Cloak"
-  },
-  {
-   "key": "bg3:phasmid_cloak",
-   "name": "Phasmid Cloak",
-   "slot": "cloak",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Phasmid_Cloak"
-  },
-  {
-   "key": "bg3:the_deathstalker_mantle",
-   "name": "The Deathstalker Mantle",
-   "slot": "cloak",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Once per turn when you kill an enemy, shroud yourself in primeval darkness to become Invisible for 2 turns",
-   "location": "Campsite (Act One)",
-   "source": "https://bg3.wiki/wiki/The_Deathstalker_Mantle"
-  },
-  {
-   "key": "bg3:deadly_channeller_gloves",
-   "name": "Deadly Channeller Gloves",
-   "slot": "gloves",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Arcane Critical level=1",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Deadly_Channeller_Gloves"
-  },
-  {
    "key": "bg3:druidic_bracers",
    "name": "Druidic Bracers",
    "slot": "gloves",
@@ -15070,64 +15482,6 @@
    "source": "https://bg3.wiki/wiki/Leather_Gloves"
   },
   {
-   "key": "bg3:oathbreaker_knight_gloves",
-   "name": "Oathbreaker Knight Gloves",
-   "slot": "gloves",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Oathbreaker_Knight_Gloves"
-  },
-  {
-   "key": "bg3:pale_widow_gloves",
-   "name": "Pale Widow Gloves",
-   "slot": "gloves",
-   "act": null,
-   "rarity": "Very Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Ensnaring Strands level=1 recharge=Short Rest; Pulling Web level=0 recharge=Long Rest; Web level=1 recharge=Long Rest",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Pale_Widow_Gloves"
-  },
-  {
-   "key": "bg3:the_fork_lightning_fingers",
-   "name": "The Fork-Lightning Fingers",
-   "slot": "gloves",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "1d4 lightning",
-     "applies_to": "unarmed"
-    }
-   ],
-   "notes": "Lightning Bolt level=3 recharge=Long Rest",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/The_Fork-Lightning_Fingers"
-  },
-  {
-   "key": "bg3:vampiric_gloves",
-   "name": "Vampiric Gloves",
-   "slot": "gloves",
-   "act": null,
-   "rarity": "Very Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Vampiric Touch level=3 recharge=Long Rest",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Vampiric_Gloves"
-  },
-  {
    "key": "bg3:circlet",
    "name": "Circlet",
    "slot": "helmet",
@@ -15154,19 +15508,6 @@
    "source": "https://bg3.wiki/wiki/Embroidered_Bycocket"
   },
   {
-   "key": "bg3:enforcer_helmet",
-   "name": "Enforcer Helmet",
-   "slot": "helmet",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Constitution Saving Throws +1; Whenever the wearer knocks a creature unconscious, the wearer regains 1d6 Healing",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Enforcer_Helmet"
-  },
-  {
    "key": "bg3:frumpy_hat",
    "name": "Frumpy Hat",
    "slot": "helmet",
@@ -15178,51 +15519,6 @@
    "notes": "",
    "location": "",
    "source": "https://bg3.wiki/wiki/Frumpy_Hat"
-  },
-  {
-   "key": "bg3:hat_of_uproarious_laughter",
-   "name": "Hat Of Uproarious Laughter",
-   "slot": "helmet",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "When knocked Prone, a hostile creature with an Intelligence of 5 or more within m=9 ft=30 of user must succeed a Wisdom Saving Throw or become stricken with Hideous Laughter Laughter",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Hat_Of_Uproarious_Laughter"
-  },
-  {
-   "key": "bg3:headband_of_intellect",
-   "name": "Headband of Intellect",
-   "slot": "helmet",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [
-    {
-     "kind": "ability_min",
-     "stat": "intelligence",
-     "value": 19
-    }
-   ],
-   "notes": "The enchantment has no effect if their Intelligence score is higher without it",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Headband_of_Intellect"
-  },
-  {
-   "key": "bg3:helm_of_arcane_gate",
-   "name": "Helm of Arcane Gate",
-   "slot": "helmet",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Arcane Gate level=6 recharge=Long Rest",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Helm_of_Arcane_Gate"
   },
   {
    "key": "bg3:helmet",
@@ -15251,19 +15547,6 @@
    "source": "https://bg3.wiki/wiki/Ignoble_Hat"
   },
   {
-   "key": "bg3:oathbreaker_knight_helmet",
-   "name": "Oathbreaker Knight Helmet",
-   "slot": "helmet",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Constitution Saving Throws +1",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Oathbreaker_Knight_Helmet"
-  },
-  {
    "key": "bg3:old_floppy_hat",
    "name": "Old Floppy Hat",
    "slot": "helmet",
@@ -15290,19 +15573,6 @@
    "source": "https://bg3.wiki/wiki/Rufflesome_Blaggart_Hat"
   },
   {
-   "key": "bg3:tightening_orbit_helm",
-   "name": "Tightening Orbit Helm",
-   "slot": "helmet",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Constitution Saving Throws +1; Tightening Orbit",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Tightening_Orbit_Helm"
-  },
-  {
    "key": "bg3:wizard_hat",
    "name": "Wizard Hat",
    "slot": "helmet",
@@ -15314,32 +15584,6 @@
    "notes": "",
    "location": "Can be found by the fountain in Bloomridge Park in Baldur's Gate",
    "source": "https://bg3.wiki/wiki/Wizard_Hat"
-  },
-  {
-   "key": "bg3:a_sparking_promise",
-   "name": "A Sparking Promise",
-   "slot": "ring",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Ensnaring Shock",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/A_Sparking_Promise"
-  },
-  {
-   "key": "bg3:absolute_s_smite",
-   "name": "Absolute's Smite",
-   "slot": "ring",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Searing Smite level=1 recharge=Long Rest",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Absolute%27s_Smite"
   },
   {
    "key": "bg3:amethyst_ring",
@@ -15472,19 +15716,6 @@
    "source": "https://bg3.wiki/wiki/Gold_Ring"
   },
   {
-   "key": "bg3:hag_s_ring",
-   "name": "Hag's Ring",
-   "slot": "ring",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Vicious Mockery level=0",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Hag%27s_Ring"
-  },
-  {
    "key": "bg3:onyx_ring",
    "name": "Onyx Ring",
    "slot": "ring",
@@ -15524,32 +15755,6 @@
    "source": "https://bg3.wiki/wiki/Polished_Ring"
   },
   {
-   "key": "bg3:ring_of_beguiling",
-   "name": "Ring of Beguiling",
-   "slot": "ring",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Charm Person level=1 recharge=Long Rest",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Ring_of_Beguiling"
-  },
-  {
-   "key": "bg3:ring_of_crabsight",
-   "name": "Ring of Crabsight",
-   "slot": "ring",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Perception +2",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Ring_of_Crabsight"
-  },
-  {
    "key": "bg3:ring_of_restorative_gravity",
    "name": "Ring of Restorative Gravity",
    "slot": "ring",
@@ -15574,19 +15779,6 @@
    "notes": "",
    "location": "In chests and carried by characters throughout the game",
    "source": "https://bg3.wiki/wiki/Ruby_Ring"
-  },
-  {
-   "key": "bg3:sandthief_s_ring",
-   "name": "Sandthief's Ring",
-   "slot": "ring",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Invisibility (spell) level=1 recharge=Long Rest",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Sandthief%27s_Ring"
   },
   {
    "key": "bg3:silver_band",
@@ -15628,19 +15820,6 @@
    "source": "https://bg3.wiki/wiki/Verdelite_Ring"
   },
   {
-   "key": "bg3:enforcer_shield",
-   "name": "Enforcer Shield",
-   "slot": "shield",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "When a creature misses the wielder with an attack, they gain a +1d4 bonus to their next Attack Roll that deals non-lethal damage; This bonus is relinquished when the wielder deals lethal damage",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Enforcer_Shield"
-  },
-  {
    "key": "bg3:iron_banded_shield",
    "name": "Iron-Banded Shield",
    "slot": "shield",
@@ -15680,32 +15859,6 @@
    "source": "https://bg3.wiki/wiki/Shield_%28Hope%29"
   },
   {
-   "key": "bg3:shield_2",
-   "name": "Shield +2",
-   "slot": "shield",
-   "act": null,
-   "rarity": "Rare",
-   "unique": false,
-   "weapon": null,
-   "effects": [],
-   "notes": "No special properties, beyond the Armour Class enchantment",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Shield_%2B2"
-  },
-  {
-   "key": "bg3:shield_of_returning",
-   "name": "Shield of Returning",
-   "slot": "shield",
-   "act": null,
-   "rarity": "Very Rare",
-   "unique": true,
-   "weapon": null,
-   "effects": [],
-   "notes": "Bound Weapon",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Shield_of_Returning"
-  },
-  {
    "key": "bg3:wooden_shield",
    "name": "Wooden Shield",
    "slot": "shield",
@@ -15717,139 +15870,6 @@
    "notes": "",
    "location": "Starting equipment for Paladins",
    "source": "https://bg3.wiki/wiki/Wooden_Shield"
-  },
-  {
-   "key": "bg3:allandra_s_whelm",
-   "name": "Allandra's Whelm",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Trident",
-    "kind": "melee",
-    "damage": "1d6",
-    "versatile_damage": "1d8",
-    "damage_type": "piercing",
-    "enhancement": 2,
-    "properties": [
-     "thrown",
-     "versatile"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "1d4 cold",
-     "applies_to": "self"
-    }
-   ],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Allandra%27s_Whelm"
-  },
-  {
-   "key": "bg3:arcane_absorption_dagger",
-   "name": "Arcane Absorption Dagger",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Very Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Dagger",
-    "kind": "melee",
-    "damage": "1d4",
-    "versatile_damage": null,
-    "damage_type": "force",
-    "enhancement": 1,
-    "properties": [
-     "finesse",
-     "light",
-     "thrown"
-    ]
-   },
-   "effects": [],
-   "notes": "When you kill an enemy with a melee attack, regain one of your spent 1st Level spell slots",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Arcane_Absorption_Dagger"
-  },
-  {
-   "key": "bg3:arduous_flame_blade",
-   "name": "Arduous Flame Blade",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Longsword",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": "1d10",
-    "damage_type": "slashing",
-    "enhancement": 1,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Arduous_Flame_Blade"
-  },
-  {
-   "key": "bg3:blood_bound_blade",
-   "name": "Blood-Bound Blade",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Longsword",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": "1d10",
-    "damage_type": "slashing",
-    "enhancement": 1,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "attack_bonus",
-     "value": "1",
-     "applies_to": "self"
-    },
-    {
-     "kind": "damage_bonus",
-     "value": "1",
-     "applies_to": "self"
-    }
-   ],
-   "notes": "This blade's magical powers only function if it is bound to an Eldritch Knight or is a Warlock's Pact Weapon; This weapon deals additional damage equal to your Proficiency Bonus",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Blood-Bound_Blade"
-  },
-  {
-   "key": "bg3:chaos_flail",
-   "name": "Chaos Flail",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "",
-   "unique": true,
-   "weapon": {
-    "base": "Flail",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": null,
-    "damage_type": "bludgeoning",
-    "enhancement": 0,
-    "properties": []
-   },
-   "effects": [],
-   "notes": "This item can only be equipped by Gnolls",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Chaos_Flail"
   },
   {
    "key": "bg3:cleaver",
@@ -15873,29 +15893,6 @@
    "source": "https://bg3.wiki/wiki/Cleaver"
   },
   {
-   "key": "bg3:combination_axe",
-   "name": "Combination Axe",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Battleaxe",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": "1d10",
-    "damage_type": "slashing",
-    "enhancement": 1,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [],
-   "notes": "When you score a Critical Hit you can spend a bonus to make an additional attack",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Combination_Axe"
-  },
-  {
    "key": "bg3:cultist_brand",
    "name": "Cultist Brand",
    "slot": "weapon",
@@ -15917,192 +15914,6 @@
    "notes": "",
    "location": "",
    "source": "https://bg3.wiki/wiki/Cultist_Brand"
-  },
-  {
-   "key": "bg3:dagger_of_shar",
-   "name": "Dagger of Shar",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": {
-    "base": "Dagger",
-    "kind": "melee",
-    "damage": "1d4",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 0,
-    "properties": [
-     "finesse",
-     "light"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "1d6 necrotic",
-     "applies_to": "self"
-    }
-   ],
-   "notes": "Deals an additional 1d6 Necrotic damage if the target is not standing in sunlight",
-   "location": "Wielded by Shadowheart during her camp night confrontation with Lae'zel<!--it is in CAMP_Shadowheart_IVB_CFM_LaezelFight",
-   "source": "https://bg3.wiki/wiki/Dagger_of_Shar"
-  },
-  {
-   "key": "bg3:darkblade",
-   "name": "Darkblade",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Shortsword",
-    "kind": "melee",
-    "damage": "1d6",
-    "versatile_damage": null,
-    "damage_type": "slashing",
-    "enhancement": 0,
-    "properties": [
-     "finesse",
-     "light"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Darkblade"
-  },
-  {
-   "key": "bg3:dart_1",
-   "name": "Dart +1",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": false,
-   "weapon": {
-    "base": "Dart",
-    "kind": "ranged",
-    "damage": "1d4",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 1,
-    "properties": [
-     "finesse",
-     "two-handed"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Dart_%2B1"
-  },
-  {
-   "key": "bg3:dart_2",
-   "name": "Dart +2",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": false,
-   "weapon": {
-    "base": "Dart",
-    "kind": "ranged",
-    "damage": "1d4",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 2,
-    "properties": [
-     "finesse",
-     "two-handed"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Dart_%2B2"
-  },
-  {
-   "key": "bg3:deva_mace",
-   "name": "Deva Mace",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Mace",
-    "kind": "melee",
-    "damage": "1d6",
-    "versatile_damage": null,
-    "damage_type": "bludgeoning",
-    "enhancement": 0,
-    "properties": []
-   },
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "4d8 radiant",
-     "applies_to": "self"
-    }
-   ],
-   "notes": "",
-   "location": "Equipped by the Deva summoned from Planar Ally: Deva as well as other instances of Devas in game",
-   "source": "https://bg3.wiki/wiki/Deva_Mace"
-  },
-  {
-   "key": "bg3:devotee_s_mace",
-   "name": "Devotee's Mace",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Legendary",
-   "unique": true,
-   "weapon": {
-    "base": "Mace",
-    "kind": "melee",
-    "damage": "1d6",
-    "versatile_damage": null,
-    "damage_type": "bludgeoning",
-    "enhancement": 3,
-    "properties": []
-   },
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "1d8 radiant",
-     "applies_to": "self"
-    }
-   ],
-   "notes": "Main Hand Only; Healing Incense Aura",
-   "location": "Obtained from casting the Divine Intervention: Arm Thy Servant Arm Thy Servant variant of Divine Intervention. Once the ",
-   "source": "https://bg3.wiki/wiki/Devotee%27s_Mace"
-  },
-  {
-   "key": "bg3:djinni_scimitar",
-   "name": "Djinni Scimitar",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Scimitar",
-    "kind": "melee",
-    "damage": "1d6",
-    "versatile_damage": null,
-    "damage_type": "slashing",
-    "enhancement": 1,
-    "properties": [
-     "finesse",
-     "light"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "2d10 poison",
-     "applies_to": "self"
-    }
-   ],
-   "notes": "",
-   "location": "Carried by Djinni",
-   "source": "https://bg3.wiki/wiki/Djinni_Scimitar"
   },
   {
    "key": "bg3:doom_axe",
@@ -16129,53 +15940,6 @@
    "source": "https://bg3.wiki/wiki/Doom_Axe"
   },
   {
-   "key": "bg3:enforcer_club",
-   "name": "Enforcer Club",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": {
-    "base": "Club",
-    "kind": "melee",
-    "damage": "1d4",
-    "versatile_damage": null,
-    "damage_type": "bludgeoning",
-    "enhancement": 1,
-    "properties": [
-     "light"
-    ]
-   },
-   "effects": [],
-   "notes": "This weapon deals only Non-Lethal Damage",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Enforcer_Club"
-  },
-  {
-   "key": "bg3:executioner_sword",
-   "name": "Executioner Sword",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Shortsword",
-    "kind": "melee",
-    "damage": "1d6",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 1,
-    "properties": [
-     "finesse",
-     "light"
-    ]
-   },
-   "effects": [],
-   "notes": "When you kill a creature, you can cast a Level 1 spell without expending a spell slot",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Executioner_Sword"
-  },
-  {
    "key": "bg3:flail_2",
    "name": "Flail +2",
    "slot": "weapon",
@@ -16192,30 +15956,9 @@
     "properties": []
    },
    "effects": [],
-   "notes": "",
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Carried by the Blasphemous Acolyte in the final fight Atop the Netherbrain if a cleric is in the party",
    "source": "https://bg3.wiki/wiki/Flail_%2B2"
-  },
-  {
-   "key": "bg3:flail_of_dread_skulls",
-   "name": "Flail of Dread Skulls",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Flail",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": null,
-    "damage_type": "slashing",
-    "enhancement": 0,
-    "properties": []
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Flail_of_Dread_Skulls"
   },
   {
    "key": "bg3:flame_blade_weapon",
@@ -16239,36 +15982,6 @@
    "notes": "",
    "location": "Conjured by the Flame Blade spell",
    "source": "https://bg3.wiki/wiki/Flame_Blade_%28weapon%29"
-  },
-  {
-   "key": "bg3:githyanki_longsword_psionic",
-   "name": "Githyanki Longsword (Psionic)",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": {
-    "base": "Longsword",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": "1d10",
-    "damage_type": "slashing",
-    "enhancement": 1,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "1d4 psychic",
-     "applies_to": "self",
-     "condition": "When wielded by a githyanki this weapon deals an additional 1d4 Psychic damage"
-    }
-   ],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Githyanki_Longsword_%28Psionic%29"
   },
   {
    "key": "bg3:glaive_2",
@@ -16296,142 +16009,6 @@
    "source": "https://bg3.wiki/wiki/Glaive_%2B2"
   },
   {
-   "key": "bg3:goblinbane_dagger",
-   "name": "Goblinbane Dagger",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": {
-    "base": "Dagger",
-    "kind": "melee",
-    "damage": "1d4",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 0,
-    "properties": [
-     "finesse",
-     "light",
-     "thrown"
-    ]
-   },
-   "effects": [],
-   "notes": "Goblins have Disadvantage on Attack Rolls against the wielder",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Goblinbane_Dagger"
-  },
-  {
-   "key": "bg3:greatclub_2",
-   "name": "Greatclub +2",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": false,
-   "weapon": {
-    "base": "Greatclub",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": null,
-    "damage_type": "bludgeoning",
-    "enhancement": 2,
-    "properties": [
-     "two-handed"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Greatclub_%2B2"
-  },
-  {
-   "key": "bg3:infernal_longsword",
-   "name": "Infernal Longsword",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Longsword",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": "1d10",
-    "damage_type": "slashing",
-    "enhancement": 1,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "3 poison",
-     "applies_to": "self",
-     "condition": "On a hit, this weapon deals an additional 3 Poison damage and can possibly Poisoned Poison its target"
-    }
-   ],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Infernal_Longsword"
-  },
-  {
-   "key": "bg3:infernal_warhammer",
-   "name": "Infernal Warhammer",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Warhammer",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": "1d10",
-    "damage_type": "bludgeoning",
-    "enhancement": 1,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "3 poison",
-     "applies_to": "self",
-     "condition": "On a hit, this weapon deals an additional 3 Poison damage and can possibly Poisoned Poison its target"
-    },
-    {
-     "kind": "extra_damage",
-     "value": "3 poison",
-     "applies_to": "self"
-    }
-   ],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Infernal_Warhammer"
-  },
-  {
-   "key": "bg3:light_crossbow_of_speed",
-   "name": "Light Crossbow of Speed",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Light Crossbow",
-    "kind": "ranged",
-    "damage": "1d8",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 1,
-    "properties": [
-     "two-handed"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Light_Crossbow_of_Speed"
-  },
-  {
    "key": "bg3:longbow_2",
    "name": "Longbow +2",
    "slot": "weapon",
@@ -16453,83 +16030,6 @@
    "notes": "",
    "location": "Carried by The Darkening Hunt in the final fight Atop the Netherbrain if a ranger is in the party",
    "source": "https://bg3.wiki/wiki/Longbow_%2B2"
-  },
-  {
-   "key": "bg3:magical_hand_crossbow",
-   "name": "Magical Hand Crossbow",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Very Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Hand Crossbow",
-    "kind": "ranged",
-    "damage": "1d6",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 2,
-    "properties": [
-     "light"
-    ]
-   },
-   "effects": [],
-   "notes": "When you shoot a target at close range, you can make an additional melee attack against it as a reaction",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Magical_Hand_Crossbow"
-  },
-  {
-   "key": "bg3:mind_sundering_dagger",
-   "name": "Mind Sundering Dagger",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": {
-    "base": "Dagger",
-    "kind": "melee",
-    "damage": "1d4",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 1,
-    "properties": [
-     "finesse",
-     "light",
-     "thrown"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "1d4 psychic",
-     "applies_to": "self"
-    }
-   ],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Mind_Sundering_Dagger"
-  },
-  {
-   "key": "bg3:moonblade",
-   "name": "Moonblade",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": {
-    "base": "Longsword",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": "1d10",
-    "damage_type": "slashing",
-    "enhancement": 0,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [],
-   "notes": "Melee Attack +1",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Moonblade"
   },
   {
    "key": "bg3:pactbound_battleaxe",
@@ -16571,7 +16071,7 @@
     "properties": []
    },
    "effects": [],
-   "notes": "",
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Summoned by a Hexblade with Pact of the Blade: Flail",
    "source": "https://bg3.wiki/wiki/Pactbound_Flail"
   },
@@ -16644,7 +16144,7 @@
     ]
    },
    "effects": [],
-   "notes": "",
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Summoned by a Hexblade with Pact of the Blade: Maul",
    "source": "https://bg3.wiki/wiki/Pactbound_Maul"
   },
@@ -16787,71 +16287,6 @@
    "source": "https://bg3.wiki/wiki/Pitchfork"
   },
   {
-   "key": "bg3:planeslayer_flail",
-   "name": "Planeslayer Flail",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Flail",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": null,
-    "damage_type": "bludgeoning",
-    "enhancement": 2,
-    "properties": []
-   },
-   "effects": [
-    {
-     "kind": "attack_dice",
-     "value": "1d4",
-     "applies_to": "self",
-     "condition": "When wielded against fey, fiends, or undead foes, this weapon has a +1d4 bonus to Damage and Attack Rolls"
-    },
-    {
-     "kind": "damage_bonus",
-     "value": "1d4",
-     "applies_to": "self",
-     "condition": "When wielded against fey, fiends, or undead foes, this weapon has a +1d4 bonus to Damage and Attack Rolls"
-    }
-   ],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Planeslayer_Flail"
-  },
-  {
-   "key": "bg3:promise",
-   "name": "Promise",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": {
-    "base": "Dagger",
-    "kind": "melee",
-    "damage": "1d4",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 1,
-    "properties": [
-     "finesse",
-     "light",
-     "thrown"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "advantage",
-     "applies_to": "self",
-     "condition": "You have Advantage on Attack Rolls against Lightly or Heavily Obscured targets when using this blade"
-    }
-   ],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Promise"
-  },
-  {
    "key": "bg3:rapier_2",
    "name": "Rapier +2",
    "slot": "weapon",
@@ -16875,121 +16310,6 @@
    "source": "https://bg3.wiki/wiki/Rapier_%2B2"
   },
   {
-   "key": "bg3:rebound_battleaxe",
-   "name": "Rebound Battleaxe",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Battleaxe",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": "1d10",
-    "damage_type": "slashing",
-    "enhancement": 1,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "attack_bonus",
-     "value": "1",
-     "applies_to": "self"
-    },
-    {
-     "kind": "damage_bonus",
-     "value": "1",
-     "applies_to": "self"
-    },
-    {
-     "kind": "extra_damage",
-     "value": "1d4 thunder",
-     "applies_to": "thrown",
-     "condition": "This weapon has the Thrown property and deals an additional 1d4 Thunder damage when thrown"
-    }
-   ],
-   "notes": "This blade's magical powers only function if it's Bound to an Eldritch Knight or is a Warlocks's Pact Weapon",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Rebound_Battleaxe"
-  },
-  {
-   "key": "bg3:render_of_scrumptious_flesh",
-   "name": "Render of Scrumptious Flesh",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Longsword",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": "1d10",
-    "damage_type": "slashing",
-    "enhancement": 2,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "1d4 necrotic",
-     "applies_to": "self"
-    }
-   ],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Render_of_Scrumptious_Flesh"
-  },
-  {
-   "key": "bg3:rod_of_resurrection",
-   "name": "Rod of Resurrection",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Quarterstaff",
-    "kind": "melee",
-    "damage": "1d6",
-    "versatile_damage": "1d8",
-    "damage_type": "bludgeoning",
-    "enhancement": 0,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Rod_of_Resurrection"
-  },
-  {
-   "key": "bg3:rusty_battleaxe",
-   "name": "Rusty Battleaxe",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Battleaxe",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": "1d10",
-    "damage_type": "slashing",
-    "enhancement": 0,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Rusty_Battleaxe"
-  },
-  {
    "key": "bg3:rusty_flail",
    "name": "Rusty Flail",
    "slot": "weapon",
@@ -17006,56 +16326,9 @@
     "properties": []
    },
    "effects": [],
-   "notes": "",
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "",
    "source": "https://bg3.wiki/wiki/Rusty_Flail"
-  },
-  {
-   "key": "bg3:rusty_greataxe",
-   "name": "Rusty Greataxe",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Greataxe",
-    "kind": "melee",
-    "damage": "1d12",
-    "versatile_damage": null,
-    "damage_type": "slashing",
-    "enhancement": 0,
-    "properties": [
-     "heavy",
-     "two-handed"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Rusty_Greataxe"
-  },
-  {
-   "key": "bg3:rusty_hand_crossbow",
-   "name": "Rusty Hand Crossbow",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Hand Crossbow",
-    "kind": "ranged",
-    "damage": "1d6",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 0,
-    "properties": [
-     "light"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Rusty_Hand_Crossbow"
   },
   {
    "key": "bg3:rusty_handaxe",
@@ -17128,29 +16401,6 @@
    "source": "https://bg3.wiki/wiki/Rusty_Light_Crossbow"
   },
   {
-   "key": "bg3:rusty_rapier",
-   "name": "Rusty Rapier",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Rapier",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 0,
-    "properties": [
-     "finesse"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Rusty_Rapier"
-  },
-  {
    "key": "bg3:rusty_sickle",
    "name": "Rusty Sickle",
    "slot": "weapon",
@@ -17172,50 +16422,6 @@
    "notes": "",
    "location": "In the undercity ruins",
    "source": "https://bg3.wiki/wiki/Rusty_Sickle"
-  },
-  {
-   "key": "bg3:rusty_war_pick",
-   "name": "Rusty War Pick",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "War Pick",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 0,
-    "properties": []
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Rusty_War_Pick"
-  },
-  {
-   "key": "bg3:rusty_warhammer",
-   "name": "Rusty Warhammer",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "",
-   "unique": true,
-   "weapon": {
-    "base": "Warhammer",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": "1d10",
-    "damage_type": "bludgeoning",
-    "enhancement": 0,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Rusty_Warhammer"
   },
   {
    "key": "bg3:sahuagin_longbow",
@@ -17288,35 +16494,6 @@
    "source": "https://bg3.wiki/wiki/Salami"
   },
   {
-   "key": "bg3:sanguine_blade",
-   "name": "Sanguine Blade",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": {
-    "base": "Rapier",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 1,
-    "properties": [
-     "finesse"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "attack_bonus",
-     "value": 1,
-     "applies_to": "spell"
-    }
-   ],
-   "notes": "Scarlet Regeneration w=40: If you have a +3 bonus from Scarlet Remittance +3, consume it to recover 3d10 Healing (Long Rest)",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Sanguine_Blade"
-  },
-  {
    "key": "bg3:scimitar_2",
    "name": "Scimitar +2",
    "slot": "weapon",
@@ -17339,65 +16516,6 @@
    "notes": "",
    "location": "Sold by various traders depending on the main character's level",
    "source": "https://bg3.wiki/wiki/Scimitar_%2B2"
-  },
-  {
-   "key": "bg3:scythe_of_myrkul",
-   "name": "Scythe of Myrkul",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Glaive",
-    "kind": "melee",
-    "damage": "2d12",
-    "versatile_damage": null,
-    "damage_type": "slashing",
-    "enhancement": 0,
-    "properties": [
-     "reach",
-     "two-handed"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "3d6 necrotic",
-     "applies_to": "self"
-    }
-   ],
-   "notes": "Only useable by the Apostle of Myrkul",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Scythe_of_Myrkul"
-  },
-  {
-   "key": "bg3:shadow_battleaxe",
-   "name": "Shadow Battleaxe",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": {
-    "base": "Battleaxe",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": "1d10",
-    "damage_type": "slashing",
-    "enhancement": 1,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "1d4 necrotic",
-     "applies_to": "self"
-    }
-   ],
-   "notes": "Bound Weapon",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Shadow_Battleaxe"
   },
   {
    "key": "bg3:shadow_blade_weapon",
@@ -17430,176 +16548,27 @@
    "source": "https://bg3.wiki/wiki/Shadow_Blade_%28weapon%29"
   },
   {
-   "key": "bg3:shar_s_sting",
-   "name": "Shar's Sting",
+   "key": "bg3:sickle_redcap",
+   "name": "Sickle (Redcap)",
    "slot": "weapon",
    "act": null,
-   "rarity": "Uncommon",
+   "rarity": "",
    "unique": true,
    "weapon": {
-    "base": "Dagger",
+    "base": "Sickle",
     "kind": "melee",
-    "damage": "1d4",
+    "damage": "2d4",
     "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 1,
-    "properties": [
-     "finesse",
-     "light",
-     "thrown"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "1d4 necrotic",
-     "applies_to": "self"
-    }
-   ],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Shar%27s_Sting"
-  },
-  {
-   "key": "bg3:singing_sword",
-   "name": "Singing Sword",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": {
-    "base": "Longsword",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": "1d10",
     "damage_type": "slashing",
-    "enhancement": 1,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [],
-   "notes": "Phalar Aluve: Sing w=40; Phalar Aluve: Shriek w=40",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Singing_Sword"
-  },
-  {
-   "key": "bg3:spiderstep_staff",
-   "name": "Spiderstep Staff",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": {
-    "base": "Quarterstaff",
-    "kind": "melee",
-    "damage": "1d6",
-    "versatile_damage": "1d8",
-    "damage_type": "bludgeoning",
     "enhancement": 0,
     "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [],
-   "notes": "Immune to being Enwebbed; Your Movement Speed is not affected by Web surfaces",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Spiderstep_Staff"
-  },
-  {
-   "key": "bg3:staff_of_accretion",
-   "name": "Staff of Accretion",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Quarterstaff",
-    "kind": "melee",
-    "damage": "1d6",
-    "versatile_damage": "1d8",
-    "damage_type": "bludgeoning",
-    "enhancement": 1,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [],
-   "notes": "The wearer gains Arcane Charge when they deal damage with close-quarter-range spells or close-quarter-range cantrips",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Staff_of_Accretion"
-  },
-  {
-   "key": "bg3:steadfast_maul",
-   "name": "Steadfast Maul",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": {
-    "base": "Maul",
-    "kind": "melee",
-    "damage": "2d6",
-    "versatile_damage": null,
-    "damage_type": "bludgeoning",
-    "enhancement": 1,
-    "properties": [
-     "heavy",
-     "two-handed"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Steadfast_Maul"
-  },
-  {
-   "key": "bg3:the_clover",
-   "name": "The Clover",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Legendary",
-   "unique": true,
-   "weapon": {
-    "base": "Scimitar",
-    "kind": "melee",
-    "damage": "1d6",
-    "versatile_damage": null,
-    "damage_type": "slashing",
-    "enhancement": 2,
-    "properties": [
-     "finesse",
      "light"
     ]
    },
    "effects": [],
-   "notes": "Armour Class +1 (Off-Hand Only); True Strike level=0 recharge=Short Rest; Reduce the number you need to roll a Critical Hit while attacking by 1; This effect can stack; When you roll 2 damage or less, reroll the dice, taking the highest result",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/The_Clover"
-  },
-  {
-   "key": "bg3:the_impaler",
-   "name": "The Impaler",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Very Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Pike",
-    "kind": "melee",
-    "damage": "1d10",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 2,
-    "properties": [
-     "reach",
-     "two-handed"
-    ]
-   },
-   "effects": [],
-   "notes": "Deals an additional 1d10 Piercing to targets that still have all their hit points; Gain 2d10 temporary hit points when landing a killing blow on an enemy with this weapon",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/The_Impaler"
+   "notes": "",
+   "location": "Carried by Redcaps",
+   "source": "https://bg3.wiki/wiki/Sickle_%28Redcap%29"
   },
   {
    "key": "bg3:torch",
@@ -17631,27 +16600,6 @@
    "source": "https://bg3.wiki/wiki/Torch"
   },
   {
-   "key": "bg3:tough_sunrises",
-   "name": "Tough Sunrises",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": {
-    "base": "Morningstar",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 1,
-    "properties": []
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Tough_Sunrises"
-  },
-  {
    "key": "bg3:trident_2",
    "name": "Trident +2",
    "slot": "weapon",
@@ -17674,196 +16622,6 @@
    "notes": "",
    "location": "Carried by The Darkening Hunt in the final fight Atop the Netherbrain, if a ranger is in the party",
    "source": "https://bg3.wiki/wiki/Trident_%2B2"
-  },
-  {
-   "key": "bg3:trident_of_the_depths",
-   "name": "Trident of the Depths",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Trident",
-    "kind": "melee",
-    "damage": "1d6",
-    "versatile_damage": "1d8",
-    "damage_type": "piercing",
-    "enhancement": 3,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "extra_damage",
-     "value": "1d6 cold",
-     "applies_to": "self"
-    }
-   ],
-   "notes": "",
-   "location": "Carried by Water Myrmidons",
-   "source": "https://bg3.wiki/wiki/Trident_of_the_Depths"
-  },
-  {
-   "key": "bg3:twisted_oak_crook",
-   "name": "Twisted Oak Crook",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Quarterstaff",
-    "kind": "melee",
-    "damage": "1d6",
-    "versatile_damage": "3d6",
-    "damage_type": "bludgeoning",
-    "enhancement": 1,
-    "properties": [
-     "versatile"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "Carried by Dryads summoned by Conjure Woodland Being",
-   "source": "https://bg3.wiki/wiki/Twisted_Oak_Crook"
-  },
-  {
-   "key": "bg3:undead_slayer_crossbow",
-   "name": "Undead Slayer Crossbow",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Heavy Crossbow",
-    "kind": "ranged",
-    "damage": "1d10",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 2,
-    "properties": [
-     "two-handed"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "attack_dice",
-     "value": "1d4",
-     "applies_to": "self",
-     "condition": "When used against undead creatures this weapon has +1d4 bonus to Attack and Damage rolls"
-    },
-    {
-     "kind": "damage_bonus",
-     "value": "1d4",
-     "applies_to": "self",
-     "condition": "When used against undead creatures this weapon has +1d4 bonus to Attack and Damage rolls"
-    }
-   ],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Undead_Slayer_Crossbow"
-  },
-  {
-   "key": "bg3:vampiric_dagger",
-   "name": "Vampiric Dagger",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Dagger",
-    "kind": "melee",
-    "damage": "1d4",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 0,
-    "properties": [
-     "finesse",
-     "light",
-     "thrown"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Vampiric_Dagger"
-  },
-  {
-   "key": "bg3:verminsign",
-   "name": "Verminsign",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": true,
-   "weapon": {
-    "base": "Rapier",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 1,
-    "properties": [
-     "finesse"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Verminsign"
-  },
-  {
-   "key": "bg3:vicious_shortsword",
-   "name": "Vicious Shortsword",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Very Rare",
-   "unique": true,
-   "weapon": {
-    "base": "Shortsword",
-    "kind": "melee",
-    "damage": "1d6",
-    "versatile_damage": null,
-    "damage_type": "slashing",
-    "enhancement": 2,
-    "properties": [
-     "finesse",
-     "light"
-    ]
-   },
-   "effects": [
-    {
-     "kind": "damage_bonus",
-     "value": "7",
-     "applies_to": "unarmed",
-     "condition": "When you land a Critical Hit with a weapon or unarmed attack, it deals an additional 7 damage"
-    }
-   ],
-   "notes": "",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Vicious_Shortsword"
-  },
-  {
-   "key": "bg3:watcher_crossbow",
-   "name": "Watcher Crossbow",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Common",
-   "unique": true,
-   "weapon": {
-    "base": "Heavy Crossbow",
-    "kind": "ranged",
-    "damage": "3d10",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 0,
-    "properties": [
-     "two-handed"
-    ]
-   },
-   "effects": [],
-   "notes": "Can only be used by Steel Watchers",
-   "location": "Carried by Steel Watcher (creature) Steel Watchers",
-   "source": "https://bg3.wiki/wiki/Watcher_Crossbow"
   }
  ]
 }
