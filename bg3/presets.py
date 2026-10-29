@@ -1,6 +1,21 @@
 """ Example BG3 builds with gear for each act, from the Patch 8 item data.
     The default party shares a ring on purpose, so the conflict report has something to show """
 from bg3.build import Bg3Build
+from bg3.character import Bg3Character
+
+# Point buy spreads (27 points) by main ability
+STRENGTH = {"strength": 15, "dexterity": 13, "constitution": 15, "intelligence": 8, "wisdom": 12, "charisma": 8}
+DEXTERITY = {"strength": 8, "dexterity": 15, "constitution": 15, "intelligence": 8, "wisdom": 14, "charisma": 10}
+CHARISMA = {"strength": 8, "dexterity": 14, "constitution": 15, "intelligence": 8, "wisdom": 10, "charisma": 15}
+INTELLIGENCE = {"strength": 8, "dexterity": 15, "constitution": 15, "intelligence": 15, "wisdom": 8, "charisma": 8}
+# Tavern Brawler monks hit with Strength (added twice), unarmed strikes use the higher of Strength and Dexterity
+BRAWLER = {"strength": 15, "dexterity": 15, "constitution": 14, "intelligence": 8, "wisdom": 10, "charisma": 8}
+
+def custom(name, scores, bonus, classes, feats, routine, styles=(), race="Human", **kwargs):
+    """ A custom character (bg3.character) as a planner build """
+    character = Bg3Character(name=name, race=race, scores=scores, bonus=bonus, classes=classes, feats=feats, fighting_styles=list(styles),
+                             routine=routine, **kwargs)
+    return dict(character=character.to_dict())
 
 PRESETS = {b.name: b for b in [
     Bg3Build("Lae'zel (Champion, GWM)", "fighter_gwm", equipment={
@@ -39,6 +54,43 @@ PRESETS = {b.name: b for b in [
     Bg3Build("Warlock (Eldritch Blast)", "warlock_eb", equipment={
         "3": {"helmet": "bg3:hood_of_the_weave", "armour": "bg3:robe_of_the_weave"},
     }),
+    # Custom characters, including Patch 8 subclasses
+    Bg3Build("Swashbuckler Rogue (Patch 8)", "rogue_dual_wield", equipment={
+        "1": {"melee_main": "bg3:knife_of_the_undermountain_king"},
+        "2": {"melee_main": "bg3:sword_of_life_stealing", "helmet": "bg3:covert_cowl"},
+    }, **custom("Swashbuckler", DEXTERITY, {"dexterity": 2, "constitution": 1}, [["rogue", "Swashbuckler", 12]],
+                ["dexterity+2", "dexterity+1,constitution+1", "Savage Attacker", "constitution+2"], "one_handed", race="Wood Elf")),
+    Bg3Build("Path of Giants Barbarian (Patch 8)", "barbarian_berserker", equipment={
+        "1": {"melee_main": "bg3:very_heavy_greataxe"},
+        "2": {"gloves": "bg3:dark_justiciar_gauntlets_uncommon"},
+    }, **custom("Giant Barbarian", STRENGTH, {"strength": 2, "constitution": 1}, [["barbarian", "Giant", 12]],
+                ["Great Weapon Master", "strength+2", "Savage Attacker"], "two_handed", race="Half-Orc")),
+    Bg3Build("Arcane Archer Fighter (Patch 8)", "fighter_archer", equipment={
+        "1": {"gloves": "bg3:gloves_of_archery"},
+        "2": {"ranged_main": "bg3:darkfire_shortbow", "helmet": "bg3:marksmanship_hat"},
+    }, **custom("Arcane Archer", DEXTERITY, {"dexterity": 2, "constitution": 1}, [["fighter", "Arcane Archer", 12]],
+                ["Sharpshooter", "dexterity+2", "dexterity+1,constitution+1", "constitution+2"], "ranged", ["Archery"], race="Wood Elf")),
+    Bg3Build("Bladesinger Wizard (Patch 8)", "wizard_fireball", equipment={
+        "1": {"melee_main": "bg3:sword_of_screams"},
+    }, **custom("Bladesinger", INTELLIGENCE, {"intelligence": 2, "dexterity": 1}, [["wizard", "Bladesinging", 12]],
+                ["dexterity+2", "dexterity+1,intelligence+1", "intelligence+2"], "one_handed", race="High Elf")),
+    Bg3Build("Hexblade Warlock (Patch 8)", "warlock_hexblade", equipment={
+        "1": {"melee_main": "bg3:the_baneful"},
+    }, **custom("Hexblade", CHARISMA, {"charisma": 2, "constitution": 1}, [["warlock", "The Hexblade", 12]],
+                ["charisma+2", "Great Weapon Master", "charisma+1,constitution+1"], "two_handed", race="Githyanki")),
+    Bg3Build("Swarmkeeper Ranger (Patch 8)", "ranger_archer", equipment={
+        "1": {"gloves": "bg3:gloves_of_archery"},
+        "2": {"ranged_main": "bg3:darkfire_shortbow"},
+    }, **custom("Swarmkeeper", DEXTERITY, {"dexterity": 2, "wisdom": 1}, [["ranger", "Swarmkeeper", 12]],
+                ["Sharpshooter", "dexterity+2", "dexterity+1,constitution+1"], "ranged", ["Archery"], race="Wood Elf")),
+    Bg3Build("Drunken Master Monk (Patch 8)", "monk_open_hand", equipment={
+        "2": {"gloves": "bg3:gloves_of_crushing"},
+    }, **custom("Drunken Master", BRAWLER, {"strength": 2, "dexterity": 1}, [["monk", "Way of the Drunken Master", 12]],
+                ["Tavern Brawler", "strength+2", "dexterity+2"], "unarmed")),
+    Bg3Build("Sorlock (Warlock 2 / Sorcerer)", "sorlock", equipment={
+        "3": {"helmet": "bg3:hood_of_the_weave"},
+    }, **custom("Sorlock", CHARISMA, {"charisma": 2, "constitution": 1}, [["warlock", "The Fiend", 2], ["sorcerer", "Draconic Bloodline", 10]],
+                ["charisma+2", "charisma+1,constitution+1"], "cantrip", cantrip="Eldritch Blast")),
 ]}
 
 DEFAULT_PARTY = ["Lae'zel (Champion, GWM)", "Karlach (Berserker)", "Astarion (Assassin, dual wield)", "Gale (Evoker)"]

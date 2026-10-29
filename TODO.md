@@ -3,7 +3,7 @@
 Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user facing summary of each release.
 
 ## Active
-- [ ] Example custom characters for popular BG3 builds (Patch 8 subclasses: Swashbuckler, Path of Giants, Arcane Archer, Bladesinger, Hexblade...)
+- [ ] Open a PR with the BG3 planner work once you have looked at it
 
 ## Next
 - [ ] Builder: more subclass features (Eldritch Knight, Wildheart aspects, Circle of Stars, Death Domain Touch of Death, College of Glamour, Shadow Magic...), Battle Master and Arcane Archer as separate dice pools
@@ -33,4 +33,5 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - 2026-10-29: Patch 8 class, subclass, race and feat rules researched from bg3.wiki into bg3/data/rules.json (12 classes, 58 subclasses, 31 races, 41 feats, with sources; 9 values marked unverified)
 - 2026-10-29: BG3 rule fixes from that research: per die Savage Attacker (keeps the higher of each die), rage adds to unarmed attacks, BG3 Martial Arts die (d4/d6 at 3/d8 at 9) and ki (level + 1), no Sneak Attack on off-hand attacks
 - 2026-10-29: Character builder: race, point buy with +2/+1, up to three classes in order (multiclass feat levels and spell slots), subclasses, feats, fighting styles, attack routine (two-handed, duelling, dual wield, ranged, unarmed, cantrip) and toggles for build set ups. A Champion built with it matches the preset exactly. In the planner as "Custom character"
+- 2026-10-29: Eight example custom characters (Swashbuckler, Path of Giants, Arcane Archer, Bladesinger, Hexblade, Swarmkeeper, Tavern Brawler Drunken Master, Sorlock) with gear per act; one-handed builds use a Rapier when Dexterity is higher
 - 2026-10-29: Generic +1/+2/+3 trader gear gets an estimated act from its enchantment, items of unknown act are only suggested for Act 3

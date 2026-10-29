@@ -65,3 +65,14 @@ def test_custom_character_in_a_planner_build():
     assert act1.level == 5 and act1.attacks[0].name == "Everburn Blade" and "Human" in act1.description
     assert expected_damage_per_round(act1, ENEMY, 3) == pytest.approx(
         expected_damage_per_round(compile_build(Bg3Build("Tav", "fighter_gwm", equipment=build.equipment), 1), ENEMY, 3))
+
+def test_example_custom_characters_are_valid():
+    from bg3.build import compile_build
+    from bg3.presets import PRESETS
+    custom = [b for b in PRESETS.values() if b.character]
+    assert len(custom) >= 8
+    for build in custom:
+        character = Bg3Character.from_dict(build.character)
+        assert not point_buy_problems(character.scores, character.bonus), build.name
+        assert len(character.feats) >= len(feat_opportunities(character)) - 1, build.name
+        assert all(expected_damage_per_round(compile_build(build, act), ENEMY, 3) > 0 for act in "123"), build.name

@@ -219,6 +219,8 @@ def _attacks(character, c, levels, subs, feats, notes):
 
     name = DEFAULT_WEAPONS[routine]
     weapon_stat = "dexterity" if routine in ("ranged", "dual_wield") else "strength"
+    if routine == "one_handed" and c.dexterity > c.strength:
+        name, weapon_stat = "Rapier", "dexterity" # Finesse
     main = weapon_attack(name, ability_stat=stat_for(weapon_stat))
     attacks = [replace(main) for _ in range(count)]
     bonus_actions = 2 if levels.get("rogue", 0) >= 3 and subs.get("rogue") == "Thief" else 1 # Fast Hands
