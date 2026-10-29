@@ -155,6 +155,8 @@ C_LABEL_TO_DICT_MAP = {
     "First Round Hits Are Crits": "first_round_auto_crit",
     "Great Weapon Master": "GWM",
     "Savage Attacker": "savage_attacker",
+    "Savage Attacker Per Die (BG3)": "savage_attacker_per_die",
+    "Spell Save DC Bonus": "additional_spell_dc",
     "Sharpshooter": "sharpshooter",
     "Tavern Brawler": "tavern_brawler",
     "Great Weapon Fighting": "GWF",
@@ -162,6 +164,7 @@ C_LABEL_TO_DICT_MAP = {
     "Dueling": "dueling",
     "Two Weapon Fighting": "TWF",
     "Raging": "raging",
+    "Barbarian Level (0 = character level)": "barbarian_level",
     "Brutal Critical": "brutal_critical",
     "Divine Smite": "divine_smite",
     "Divine Smite Level": "divine_smite_level",
@@ -349,13 +352,15 @@ def generate_character_card(character_name, character=None, color="", index=1):
 
     # Bonuses, Feats and abilities tab, in collapsible sections (sections the character uses start expanded)
     bonus_sections = [
-        ("Roll Modifiers", ["crit_on", "advantage", "disadvantage", "attack_reroll_on", "bonus_attack_die_mod_list", "bonus_damage_die_mod_list"], [
+        ("Roll Modifiers", ["crit_on", "advantage", "disadvantage", "attack_reroll_on", "bonus_attack_die_mod_list", "bonus_damage_die_mod_list",
+                            "additional_spell_dc"], [
             number_row(C_LABELS["crit_on"], c.crit_on, 2, 20),
             check_row(C_LABELS["advantage"], c.advantage),
             check_row(C_LABELS["disadvantage"], c.disadvantage),
             number_row(C_LABELS["attack_reroll_on"], c.attack_reroll_on, 0, 19),
             text_row(C_LABELS["bonus_attack_die_mod_list"], to_str(c.bonus_attack_die_mod_list), "i.e. 1d4 (bless)"),
             text_row(C_LABELS["bonus_damage_die_mod_list"], to_str(c.bonus_damage_die_mod_list), "i.e. 1d6 (hex), 2"),
+            number_row(C_LABELS["additional_spell_dc"], c.additional_spell_dc, -5, 10),
         ]),
         ("Crit and Miss Damage", ["bonus_crit_die_mod_list", "bonus_miss_die_mod_list"], [
             text_row(C_LABELS["bonus_crit_die_mod_list"], to_str(c.bonus_crit_die_mod_list), DICE_PLACEHOLDER),
@@ -370,9 +375,10 @@ def generate_character_card(character_name, character=None, color="", index=1):
             check_row(C_LABELS["first_round_advantage"], c.first_round_advantage),
             check_row(C_LABELS["first_round_auto_crit"], c.first_round_auto_crit),
         ]),
-        ("Feats", ["GWM", "savage_attacker", "sharpshooter", "tavern_brawler"], [
+        ("Feats", ["GWM", "savage_attacker", "savage_attacker_per_die", "sharpshooter", "tavern_brawler"], [
             check_row(C_LABELS["GWM"], c.GWM),
             check_row(C_LABELS["savage_attacker"], c.savage_attacker),
+            check_row(C_LABELS["savage_attacker_per_die"], c.savage_attacker_per_die),
             check_row(C_LABELS["sharpshooter"], c.sharpshooter),
             check_row(C_LABELS["tavern_brawler"], c.tavern_brawler),
         ]),
@@ -382,10 +388,11 @@ def generate_character_card(character_name, character=None, color="", index=1):
             check_row(C_LABELS["dueling"], c.dueling),
             check_row(C_LABELS["TWF"], c.TWF),
         ]),
-        ("Class and Race Features", ["raging", "brutal_critical", "divine_smite", "divine_smite_level", "improved_divine_smite", "empowered_evocation",
+        ("Class and Race Features", ["raging", "barbarian_level", "brutal_critical", "divine_smite", "divine_smite_level", "improved_divine_smite", "empowered_evocation",
                                      "agonizing_blast", "lifedrinker", "elemental_affinity", "savage_attacks_half_orc"], [
             section("Barbarian"),
             check_row(C_LABELS["raging"], c.raging),
+            number_row(C_LABELS["barbarian_level"], c.barbarian_level, 0, 20),
             check_row(C_LABELS["brutal_critical"], c.brutal_critical),
             section("Paladin"),
             check_row(C_LABELS["divine_smite"], c.divine_smite),
@@ -444,7 +451,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
     xs=12, md=6, xl=3, id={"type": "character card", "index": index}, class_name="mb-2")
 
 # Fields that must be numbers, everything else can be blank
-NUMERIC_CHARACTER_FIELDS = ["level", "strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma", "crit_on", "attack_reroll_on", "divine_smite_level"]
+NUMERIC_CHARACTER_FIELDS = ["barbarian_level", "additional_spell_dc", "level", "strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma", "crit_on", "attack_reroll_on", "divine_smite_level"]
 NUMERIC_ATTACK_FIELDS = ["crit_on", "weapon_enhancement", "saving_throw_success_multiplier", "damage_reroll_on"]
 
 def _dice_problems(values, label):

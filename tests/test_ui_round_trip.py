@@ -120,3 +120,12 @@ def test_typed_extra_damage_round_trip_and_validation():
     assert round_trip(character) == character
     assert validation_errors({}, [{"name": "x", "extra_damage_list": ["1d4 fyre"]}])
     assert not validation_errors({}, [{"name": "x", "extra_damage_list": ["1d4 fire", "2"]}])
+
+def test_planner_characters_survive_the_cards():
+    """ Characters the BG3 planner sends to the simulator keep everything the cards can't lose, i.e. BG3 Savage Attacker and rage level """
+    from bg3.build import compile_build
+    from bg3.presets import PRESETS
+    for build in PRESETS.values():
+        for act in "123":
+            character = compile_build(build, act)
+            assert round_trip(character) == character, (build.name, act)
