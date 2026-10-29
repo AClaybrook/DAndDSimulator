@@ -108,6 +108,8 @@ class Attack:
     bonus_miss_die_mod_list: list[str | int] = field(default_factory=list) # Format is ['1d6', 2]
     # Extra damage on a hit with its own damage type, so resistances apply to it separately, i.e. ['1d4 fire', '2 acid'] (BG3 items)
     extra_damage_list: list[str] = field(default_factory=list)
+    # Reroll damage dice at or below this, for this attack only (i.e. BG3 weapons like Twist of Fortune), like Great Weapon Fighting
+    damage_reroll_on: int = 0
 
     def __post_init__(self):
         if self.heavy is None:
@@ -421,7 +423,7 @@ def calculate_attack_and_damage_context(character, enemy):
         damage_modifier = 0
         damage_adv = False
         damage_dis = False
-        damage_reroll_on = character.damage_reroll_on
+        damage_reroll_on = max(character.damage_reroll_on, attack.damage_reroll_on or 0)
 
         # Attack Specific
         attack_num_die, attack_die_sizes, bonus_attack_mod = multiple_die_and_mod_from_list(attack.bonus_attack_die_mod_list)

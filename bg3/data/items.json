@@ -4434,12 +4434,17 @@
      "value": 1
     },
     {
+     "kind": "damage_reroll",
+     "value": 2,
+     "applies_to": "self"
+    },
+    {
      "kind": "advantage",
      "applies_to": "self",
      "condition": "You have Advantage on Attack Rolls against Lightly or Heavily Obscured targets when using this blade"
     }
    ],
-   "notes": "This effect can stack; When you roll 2 damage or less, reroll the dice, taking the highest result",
+   "notes": "This effect can stack",
    "location": "Crèche Y'llek",
    "source": "https://bg3.wiki/wiki/Knife_of_the_Undermountain_King"
   },
@@ -9968,8 +9973,14 @@
     "enhancement": 1,
     "properties": []
    },
-   "effects": [],
-   "notes": "When you roll 2 or less with this weapon's damage die, reroll it and take the new result; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "damage_reroll",
+     "value": 2,
+     "applies_to": "self"
+    }
+   ],
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Reithwin Tollhouse",
    "source": "https://bg3.wiki/wiki/Twist_of_Fortune"
   },

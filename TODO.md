@@ -8,7 +8,6 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 ## Next
 - [ ] Elixir of Bloodlust (extra action on a kill) and kill based effects in general
 - [ ] Arcane Acuity, Lightning Charges, Momentum and other stacking effects
-- [ ] Per weapon rerolls (Twist of Fortune, Knife of the Undermountain King) and per item Great Weapon Fighting style effects
 - [ ] Story exclusive items (one path or the other) in the conflict report
 - [ ] Review the parsed Act 3 item effects by hand
 - [ ] Smaller page: send item options once instead of in every gear dropdown (the layout is about 1.5MB)
@@ -25,4 +24,5 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - 2026-10-29: Gear advice: what each equipped item adds, best items for a slot at an act (with who else uses them), and each character's gain from a shared item in the conflict report
 - 2026-10-29: Elixirs from bg3.wiki as buffs (Hill Giant and Cloud Giant Strength, Viciousness, Heroism, Colossus, Battlemage's Power), with a warning when more than one elixir that replaces the others is selected
 - 2026-10-29: Concentration checks: two of a character's own concentration spells (Hex and Divine Favour), and party buffs that need more concentrating casters than the party has free (Bless covers 3, Haste 1)
+- 2026-10-29: Per weapon damage rerolls (Twist of Fortune, Knife of the Undermountain King), the same as Great Weapon Fighting on that weapon, also editable on attack cards
 - 2026-10-29: Generic +1/+2/+3 trader gear gets an estimated act from its enchantment, items of unknown act are only suggested for Act 3

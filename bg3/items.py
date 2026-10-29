@@ -45,7 +45,8 @@ class Effect:
         kind: ability_min (stat becomes at least value), ability_bonus (+value, up to max_value), attack_bonus, attack_dice,
               damage_bonus (same type as the attack), damage_bonus_ability (the stat's modifier, or the attack's own stat for 'spellcasting'),
               extra_damage (typed, i.e. '1d4 fire'), crit_damage (extra damage on a crit), crit_range (crit on value lower),
-              advantage, spell_dc, extra_attack (Haste), flag (turns on a Character option, i.e. savage_attacker)
+              advantage, damage_reroll (reroll damage dice at or below value), spell_dc, extra_attack (Haste),
+              flag (turns on a Character option, i.e. savage_attacker)
         applies_to: a key of APPLIES_TO, or 'self' for the attacks made with the item's own weapon
         condition: when set, the effect only counts while the condition is toggled on, i.e. 'while raging' """
     kind: str
@@ -151,6 +152,8 @@ def apply_effect(character, effect, own_attacks=()):
                 a.crit_on = max(2, min(a.crit_on, character.crit_on) - int(value))
             elif kind == "advantage":
                 a.advantage = True
+            elif kind == "damage_reroll":
+                a.damage_reroll_on = max(a.damage_reroll_on, int(value))
 
 def equip_weapon(attack, item):
     """ The attack made with a weapon item instead of the preset's weapon (dice, type, enhancement, properties) """

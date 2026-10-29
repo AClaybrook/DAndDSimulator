@@ -65,6 +65,7 @@ A_LABEL_TO_VAL = {
     "Bonus Crit Damage": "bonus_crit_die_mod_list",
     "Bonus Miss Damage": "bonus_miss_die_mod_list",
     "Extra Typed Damage": "extra_damage_list",
+    "Reroll Damage Dice At or Below": "damage_reroll_on",
 }
 A_LABELS = {v: k for k, v in A_LABEL_TO_VAL.items()}
 DIE_MOD_LISTS = ["bonus_attack_die_mod_list", "bonus_damage_die_mod_list", "bonus_crit_die_mod_list", "bonus_miss_die_mod_list", "once_per_turn_die_mod_list"]
@@ -266,6 +267,7 @@ def set_attack_from_values(avals, i, index, num_attacks=1):
             check_row(A_LABELS["offhand"], a["offhand"]),
             check_row(A_LABELS["two_handed"], a["two_handed"]),
             check_row(A_LABELS["heavy"], a["heavy"]),
+            number_row(A_LABELS["damage_reroll_on"], a["damage_reroll_on"], 0, 11),
         ]),
         ("Spell Saving Throw", [
             check_row(A_LABELS["saving_throw"], a["saving_throw"]),
@@ -288,7 +290,7 @@ def set_attack_from_values(avals, i, index, num_attacks=1):
     ]
     open_sections = changed_sections(a, defaults, {
         "Roll Modifiers": ["crit_on", "proficient", "advantage", "disadvantage", "always_hit", "always_crit"],
-        "Weapon": ["weapon_enhancement", "offhand", "two_handed", "heavy"] if a["type"] != "spell" else [],
+        "Weapon": ["weapon_enhancement", "offhand", "two_handed", "heavy", "damage_reroll_on"] if a["type"] != "spell" else [],
         "Spell Saving Throw": ["saving_throw"],
         "Extra Dice": [*DIE_MOD_LISTS[:4], "extra_damage_list"],
         "Limits Per Fight": ["once_per_turn_eligible", "uses_per_fight", "fallback_for"],
@@ -443,7 +445,7 @@ def generate_character_card(character_name, character=None, color="", index=1):
 
 # Fields that must be numbers, everything else can be blank
 NUMERIC_CHARACTER_FIELDS = ["level", "strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma", "crit_on", "attack_reroll_on", "divine_smite_level"]
-NUMERIC_ATTACK_FIELDS = ["crit_on", "weapon_enhancement", "saving_throw_success_multiplier"]
+NUMERIC_ATTACK_FIELDS = ["crit_on", "weapon_enhancement", "saving_throw_success_multiplier", "damage_reroll_on"]
 
 def _dice_problems(values, label):
     try:

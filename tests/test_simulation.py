@@ -217,3 +217,11 @@ def test_typed_extra_damage_resistance_is_separate():
     resistant = expected_damage_per_round(character, Enemy(armor_class=10, resistances=["fire"]))
     assert resistant == pytest.approx(plain + fire / 2)
     assert simulated_mean(character, Enemy(armor_class=10, resistances=["fire"])) == pytest.approx(resistant, abs=0.35) # fire rounds down
+
+def test_per_attack_damage_reroll_matches_great_weapon_fighting():
+    """ A weapon that rerolls 1s and 2s (BG3 items) is the same as Great Weapon Fighting on that weapon """
+    gwf = Character(strength=16, GWF=True, attacks=[greatsword()])
+    item = Character(strength=16, attacks=[greatsword(damage_reroll_on=2)])
+    enemy = Enemy(armor_class=12)
+    assert expected_damage_per_round(item, enemy) == pytest.approx(expected_damage_per_round(gwf, enemy))
+    assert simulated_mean(item, enemy) == pytest.approx(expected_damage_per_round(item, enemy), abs=0.1)

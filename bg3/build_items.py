@@ -173,6 +173,8 @@ def _parse_sentence(sentence, own_weapon):
     if re.search(r"(?<![Dd]is)Advantage on (?:melee )?Attack Rolls|has Advantage on Attack Rolls|Attack Rolls against .+ have Advantage|"
                  r"have Advantage against", sentence):
         return [{"kind": "advantage", "applies_to": scope, **conditional}]
+    if m := re.search(r"When you roll (\d) (?:damage )?or less(?: with this weapon's damage die)?, reroll", sentence, re.I):
+        return [{"kind": "damage_reroll", "value": int(m.group(1)), "applies_to": "self" if own_weapon else scope}]
     if re.search(r"critical hit when rolling a 19", sentence, re.I):
         return [{"kind": "crit_range", "value": 1, "applies_to": scope}]
     if m := re.search(r"(?:additional|extra) damage equal to your (\w+) Modifier", sentence, re.I):
