@@ -57,3 +57,11 @@ def test_cantrip_casters():
 def test_round_trip():
     character = champion()
     assert Bg3Character.from_dict(character.to_dict()) == character
+
+def test_custom_character_in_a_planner_build():
+    from bg3.build import Bg3Build, compile_build
+    build = Bg3Build("Tav", "fighter_gwm", character=champion().to_dict(), equipment={"1": {"melee_main": "bg3:everburn_blade"}})
+    act1 = compile_build(build, 1)
+    assert act1.level == 5 and act1.attacks[0].name == "Everburn Blade" and "Human" in act1.description
+    assert expected_damage_per_round(act1, ENEMY, 3) == pytest.approx(
+        expected_damage_per_round(compile_build(Bg3Build("Tav", "fighter_gwm", equipment=build.equipment), 1), ENEMY, 3))

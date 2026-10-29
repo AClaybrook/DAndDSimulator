@@ -34,7 +34,7 @@ Live here: https://d-and-d-damage-simulator-745953dd5908.herokuapp.com/
 See [CHANGELOG.md](CHANGELOG.md) for what changed in 2.0.
 
 ## Using the Dashboard
-0. **BG3 Party Planner** (top of the page): up to four characters, each a class preset with gear and buffs for each act checkpoint (End of Act 1 at level 5, Act 2 at 8, Act 3 at 12, editable per character). An empty gear cell keeps the item from the act before. The planner shows the exact expected damage per round of every character at every act, lists equipment conflicts (a unique item wanted by more than one character in the same act, a unique item in two slots, a two-handed weapon with an off hand, items found in a later act) and highlights the conflicting cells. "Add to simulator" adds the party at an act, or one character at every act, as cards for the full simulation.
+0. **BG3 Party Planner** (top of the page): up to four characters, each a class preset or a custom character (race, point buy, classes in order, subclasses, feats, fighting styles), with gear and buffs for each act checkpoint (End of Act 1 at level 5, Act 2 at 8, Act 3 at 12, editable per character). An empty gear cell keeps the item from the act before. The planner shows the exact expected damage per round of every character at every act, lists equipment conflicts (a unique item wanted by more than one character in the same act, a unique item in two slots, a two-handed weapon with an off hand, items found in a later act) and highlights the conflicting cells. "Add to simulator" adds the party at an act, or one character at every act, as cards for the full simulation.
 1. **Characters**: add presets (Preset, Level, +), which level up like the real class, or blank characters, then tweak them. Each card shows its exact expected damage per round against the current enemy, updated as you edit. Card sections expand when the character uses them, attacks are edited by clicking one, changing it and pressing Save.
 2. **Enemy**: load a monster or a CR baseline, or type in armor class, hit points, saves and resistances.
 3. **Simulate**: pick what you want to know (each graph type says what it answers) and press Simulate, the floating button works from anywhere. Results start with a one line summary.
@@ -67,6 +67,7 @@ Sessions: every simulation saves the session in your browser, after a reload you
     * `party.py`: equipment conflicts in a party
     * `scrape_wiki.py`, `scrape_sheet.py`, `build_items.py`: export the Patch 8 item pages from bg3.wiki and the community checklist sheet, and build `data/items.json` (hand checked fixes in `data/effect_overrides.json`)
     * `presets.py`: example builds with gear per act
+    * `character.py`, `abilities.py`: the character builder (race, point buy, classes, subclasses, feats) compiled to a Character from the Patch 8 rules in `data/rules.json`
 * `components/`: Dash layout and callbacks
 * `tests/`, `benchmarks/`
 

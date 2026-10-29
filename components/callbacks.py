@@ -27,8 +27,10 @@ from components.enemy_card import extract_enemy_ui_values, generate_enemy_card_b
 from components.variants import make_variant
 from components.sweeps import SWEEP_PARAMETERS, run_sweep
 from components.session import SETTINGS_IDS, describe_session, make_session, parse_session
-from components.bg3_planner import (DEFAULT_PARTY, MAX_PARTY_SIZE, conditional_options, conflicts_list, dpr_table, gear_highlights,
-                                    inherited_placeholders, item_values_table, suggestions_table)
+from components.bg3_planner import (DEFAULT_PARTY, MAX_PARTY_SIZE, CUSTOM, conditional_options, conflicts_list, dpr_table, gear_highlights,
+                                    inherited_placeholders, item_values_table, suggestions_table, fields_from_character, character_from_fields,
+                                    subclass_options, builder_summary)
+from bg3.character import Bg3Character
 from bg3.analysis import item_values, shared_item_gains, slot_suggestions
 from bg3.build import ACT_KEYS, Bg3Build, compile_build
 from bg3.checkpoints import ACTS, act_level
@@ -797,6 +799,11 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         Output("bg3-conditions", "value"),
         Output("bg3-conflicts", "children"),
         Output("bg3-dpr", "children"),
+        Output({"type": "bg3-cb", "field": ALL}, "value"),
+        Output({"type": "bg3-cb-sub", "row": ALL}, "options"),
+        Output({"type": "bg3-cb-sub", "row": ALL}, "value"),
+        Output("bg3-custom", "is_open"),
+        Output("bg3-cb-summary", "children"),
         Input("bg3-member-tabs", "active_tab"),
         Input("bg3-add-member", "n_clicks"),
         Input("bg3-remove-member", "n_clicks"),
@@ -809,10 +816,13 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         Input("bg3-conditions", "value"),
         Input("enemy-values", "data"),
         Input("rounds-per-fight", "value"),
+        Input({"type": "bg3-cb", "field": ALL}, "value"),
+        Input({"type": "bg3-cb-sub", "row": ALL}, "value"),
         State("bg3-party", "data"),
         State("bg3-load-preset", "value"),
     )
-    def sync_planner(active_tab, _add, _remove, _load, name, preset, levels, gear, buffs, conditions, enemy_dict, rounds_per_fight, party, example):
+    def sync_planner(active_tab, _add, _remove, _load, name, preset, levels, gear, buffs, conditions, enemy_dict, rounds_per_fight, cb_values, cb_subs,
+                     party, example): # pylint: disable=too-many-locals
         """ Keeps the party store and the member editor in sync. Editing updates the selected member, switching members loads them """
         party = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)] or [Bg3Build.from_dict(DEFAULT_PARTY[0])]
         selected = min(int(active_tab or 0), len(party) - 1)
@@ -820,7 +830,10 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         level_ids = [i["id"] for i in ctx.inputs_list[6]]
         gear_ids = [i["id"] for i in ctx.inputs_list[7]]
         buff_ids = [i["id"] for i in ctx.inputs_list[8]]
-        editor_changed = triggered in ("bg3-name", "bg3-preset", "bg3-conditions") or (isinstance(triggered, dict) and triggered.get("type") in ("bg3-level", "bg3-gear", "bg3-buffs"))
+        cb_ids = [i["id"] for i in ctx.inputs_list[12]]
+        trigger_type = triggered.get("type") if isinstance(triggered, dict) else None
+        builder_changed = trigger_type in ("bg3-cb", "bg3-cb-sub")
+        editor_changed = triggered in ("bg3-name", "bg3-preset", "bg3-conditions") or trigger_type in ("bg3-level", "bg3-gear", "bg3-buffs") or builder_changed
 
         if triggered == "bg3-add-member" and len(party) < MAX_PARTY_SIZE:
             party.append(Bg3Build(f"Character {len(party) + 1}", "fighter_gwm"))
@@ -834,7 +847,20 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             # Save the editor into the selected member
             member = party[selected]
             member.name = name or f"Character {selected + 1}"
-            member.preset = preset if preset in BUILDS else member.preset
+            if preset == CUSTOM:
+                # Switching to a custom character starts from the defaults, then the builder fields edit it
+                if builder_changed and member.character:
+                    # A subclass that doesn't belong to its row's class (the class just changed) falls back to the class's first subclass
+                    row_classes = {fid["field"]: v for fid, v in zip(cb_ids, cb_values)}
+                    subs_ok = [sub if sub in {o["value"] for o in subclass_options(row_classes.get(f"class:{row}"))}
+                               else next((o["value"] for o in subclass_options(row_classes.get(f"class:{row}"))), "")
+                               for row, sub in enumerate(cb_subs)]
+                    member.character = character_from_fields(cb_ids, cb_values, subs_ok, member.name).to_dict()
+                elif not member.character:
+                    member.character = Bg3Character(name=member.name).to_dict()
+            else:
+                member.character = None
+                member.preset = preset if preset in BUILDS else member.preset
             member.levels = {gid["act"]: int(v) for gid, v in zip(level_ids, levels) if v and int(v) != ACTS[int(gid["act"])][1]}
             member.equipment = {}
             for gid, value in zip(gear_ids, gear):
@@ -850,12 +876,23 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         gains = {(c.act, c.item): shared_item_gains(party, c, enemy, rounds) for c in conflicts if c.kind == "shared"}
         tabs = [dbc.Tab(label=b.name, tab_id=str(ii)) for ii, b in enumerate(party)]
         outputs_from_member = not editor_changed
+        # Builder fields: loaded when switching members or to a custom character, left alone while they are being edited
+        custom = Bg3Character.from_dict(member.character) if member.character else None
+        load_builder = custom is not None and not builder_changed
+        cb_out = fields_from_character(custom, cb_ids) if load_builder else [no_update] * len(cb_ids)
+        classes_now = [r[0] for r in custom.classes] + ["", "", ""] if custom else ["", "", ""]
+        sub_options = [subclass_options(classes_now[row]) for row in range(3)]
+        if load_builder:
+            sub_values = [custom.classes[row][1] if row < len(custom.classes) else None for row in range(3)]
+        else:
+            sub_values = [v if v in {o["value"] for o in opts} else (opts[0]["value"] if opts else None) for v, opts in zip(cb_subs, sub_options)]
+        levels_now = [act_level(a, member.levels) for a in ACT_KEYS]
         return (
             [b.to_dict() for b in party],
             tabs,
             str(selected),
             member.name if outputs_from_member else no_update,
-            member.preset if outputs_from_member else no_update,
+            (CUSTOM if member.character else member.preset) if outputs_from_member else no_update,
             [act_level(gid["act"], member.levels) for gid in level_ids] if outputs_from_member else [no_update] * len(level_ids),
             [member.equipment.get(gid["act"], {}).get(gid["slot"]) for gid in gear_ids] if outputs_from_member else [no_update] * len(gear_ids),
             gear_highlights(member, conflicts, gear_ids),
@@ -865,6 +902,11 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             [c for c in member.conditions if c in {o["value"] for o in conditional_options(member)}] if outputs_from_member else no_update,
             conflicts_list(conflicts, gains),
             dpr_table(party, enemy, rounds),
+            cb_out,
+            sub_options,
+            sub_values,
+            custom is not None,
+            builder_summary(custom, levels_now) if custom else None,
         )
 
     @app.callback(

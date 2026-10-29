@@ -4,6 +4,7 @@ from copy import deepcopy
 from dataclasses import asdict, dataclass, field, fields, replace
 
 from bg3.buffs import BUFFS
+from bg3.character import Bg3Character, compile_character
 from bg3.checkpoints import ACTS, act_level
 from bg3.items import SLOT_LABELS, SLOTS, active_effects, apply_effect, catalog, equip_weapon
 from game_data.classes import BUILDS, build_character
@@ -19,6 +20,8 @@ class Bg3Build:
     buffs: dict[str, list[str]] = field(default_factory=dict) # Act: buff keys
     conditions: list[str] = field(default_factory=list) # Conditional effects that are toggled on
     levels: dict[str, int] = field(default_factory=dict) # Act: level, overrides the default checkpoints
+    # A custom character (bg3.character.Bg3Character as a dict) used instead of the class preset
+    character: dict | None = None
 
     def to_dict(self):
         return asdict(self)
@@ -52,7 +55,10 @@ def compile_build(build, act, items=None):
     """ The build's Character at an act checkpoint, with gear, buffs and toggled conditions applied """
     items = items or catalog()
     level = act_level(act, build.levels)
-    character = build_character(build.preset, level, "bg3")
+    if build.character:
+        character, _ = compile_character(Bg3Character.from_dict(build.character), level)
+    else:
+        character = build_character(build.preset, level, "bg3")
     gear = {slot: items[key] for slot, key in equipment_at(build, act).items() if key in items and items[key].fits(slot)}
 
     # Weapons replace the preset's weapon for the attacks made with them
@@ -89,7 +95,8 @@ def compile_build(build, act, items=None):
     label = ACTS[int(act)][0]
     character.name = f"{build.name} ({label})" if build.name else label
     worn = ", ".join(f"{SLOT_LABELS[slot]}: {item.name}" for slot, item in gear.items())
-    character.description = f"{BUILDS[build.preset].label}, level {level}. {worn or 'No equipment'}" + \
+    base = character.description if build.character else f"{BUILDS[build.preset].label}, level {level}"
+    character.description = f"{base}. {worn or 'No equipment'}" + \
         (f". Buffs: {', '.join(b.name for b in buffs_at(build, act))}" if buffs_at(build, act) else "")
     # Gear is part of the build, so level sweeps should not rebuild the preset without it
     character.preset = ""

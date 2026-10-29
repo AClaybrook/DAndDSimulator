@@ -8,6 +8,10 @@ from bg3.checkpoints import ACTS, act_level
 from bg3.items import SLOT_LABELS, SLOTS, catalog, condition_id
 from bg3.party import MAX_PARTY_SIZE, build_conflicts, party_conflicts
 from bg3.presets import DEFAULT_PARTY as PRESET_PARTY, PRESETS
+from bg3.abilities import point_buy_cost, point_buy_problems
+from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, RACES, ROUTINES, SUBCLASSES, TOGGLES, Bg3Character, class_levels, class_order,
+                           compile_character, feat_opportunities)
+from computations.models import STATS
 from computations.analytic import expected_damage_per_round
 from game_data.classes import BUILDS
 
@@ -88,7 +92,7 @@ def buff_options(act):
 
 def planner():
     """ The planner section """
-    presets = [{"label": b.label, "value": key} for key, b in BUILDS.items()]
+    presets = [{"label": "Custom character (race, classes, feats)", "value": CUSTOM}] + [{"label": b.label, "value": key} for key, b in BUILDS.items()]
     member_editor = dbc.Row([
         dbc.Col([
             dbc.InputGroup([
@@ -97,6 +101,7 @@ def planner():
             ], size="sm", class_name="mb-2"),
             dbc.InputGroup([dbc.InputGroupText("Name"), dbc.Input(id="bg3-name", type="text")], size="sm", class_name="mb-2"),
             dbc.InputGroup([dbc.InputGroupText("Class"), dbc.Select(options=presets, id="bg3-preset")], size="sm", class_name="mb-2"),
+            dbc.Collapse(custom_builder(), id="bg3-custom", is_open=False),
             html.Small("Level at each checkpoint", className="text-muted"),
             dbc.Row([dbc.Col(dbc.InputGroup([dbc.InputGroupText(f"Act {a}"), dbc.Input(type="number", min=1, max=12, step=1,
                                                                                          id={"type": "bg3-level", "act": a})], size="sm"))
@@ -169,6 +174,110 @@ def dpr_table(builds, enemy, rounds_per_fight):
     levels = {a: sorted({act_level(a, b.levels) for b in builds}) for a in ACT_KEYS}
     header = html.Thead(html.Tr([html.Th("Character")] + [html.Th(f"Act {a} (L{'/'.join(map(str, levels[a]))})") for a in ACT_KEYS]))
     return dbc.Table([header, html.Tbody(rows)], size="sm", bordered=False, hover=True, class_name="mb-0")
+
+CUSTOM = "custom"
+STAT_SHORT = {s: s[:3].title() for s in STATS}
+
+def cb(field):
+    """ Id of a custom builder field """
+    return {"type": "bg3-cb", "field": field}
+
+def improvement_options():
+    """ Feat level choices: an ability score improvement or a feat """
+    asi = [{"label": f"+2 {STAT_SHORT[s]}", "value": f"{s}+2"} for s in STATS]
+    pairs = [{"label": f"+1 {STAT_SHORT[a]} / +1 {STAT_SHORT[b]}", "value": f"{a}+1,{b}+1"} for i, a in enumerate(STATS) for b in STATS[i + 1:]]
+    feats = [{"label": f, "value": f} for f in FEATS if f != "Ability Improvement"]
+    return asi + feats + pairs
+
+def custom_builder():
+    """ Race, point buy, class levels in order, feats and fighting styles for a custom character """
+    select = {"size": "sm"}
+    stat_options = [{"label": s.title(), "value": s} for s in STATS]
+    return html.Div([
+        dbc.InputGroup([dbc.InputGroupText("Race"), dbc.Select(options=[{"label": r, "value": r} for r in RACES], id=cb("race"))], size="sm", class_name="mb-1"),
+        html.Small("Point buy (27 points, 8-15) and the +2/+1", className="text-muted"),
+        dbc.Row([dbc.Col(dbc.InputGroup([dbc.InputGroupText(STAT_SHORT[s]), dbc.Input(type="number", min=8, max=15, step=1, id=cb(f"score:{s}"))],
+                                        size="sm"), width=4, class_name="mb-1") for s in STATS], class_name="g-1"),
+        dbc.Row([
+            dbc.Col(dbc.InputGroup([dbc.InputGroupText("+2"), dbc.Select(options=stat_options, id=cb("plus2"))], size="sm")),
+            dbc.Col(dbc.InputGroup([dbc.InputGroupText("+1"), dbc.Select(options=stat_options, id=cb("plus1"))], size="sm")),
+        ], class_name="g-1 mb-1"),
+        html.Small("Classes in the order levels are taken (up to 12 levels)", className="text-muted"),
+        *[dbc.Row([
+            dbc.Col(dbc.Select(options=[{"label": "-", "value": ""}] + [{"label": c.title(), "value": c} for c in CLASSES], id=cb(f"class:{row}"), **select), width=4),
+            dbc.Col(dbc.Select(options=[], id={"type": "bg3-cb-sub", "row": row}, placeholder="Subclass", **select), width=5),
+            dbc.Col(dbc.Input(type="number", min=0, max=12, step=1, id=cb(f"levels:{row}"), size="sm", placeholder="Levels"), width=3),
+        ], class_name="g-1 mb-1") for row in range(3)],
+        dbc.Row([
+            dbc.Col(dbc.Select(options=[{"label": label, "value": key} for key, label in ROUTINES.items()], id=cb("routine"), **select)),
+            dbc.Col(dbc.Select(options=[{"label": c, "value": c} for c in CANTRIPS], id=cb("cantrip"), **select)),
+        ], class_name="g-1 mb-1"),
+        html.Small("Feat levels in order (an improvement or a feat)", className="text-muted"),
+        dbc.Row([dbc.Col(dbc.Select(options=improvement_options(), id=cb(f"feat:{n}"), placeholder=f"Feat {n + 1}", **select), width=6, class_name="mb-1")
+                 for n in range(6)], class_name="g-1"),
+        dbc.Row([dbc.Col(dbc.Select(options=[{"label": "-", "value": ""}] + [{"label": f, "value": f} for f in FIGHTING_STYLES], id=cb(f"style:{n}"),
+                                    placeholder=f"Fighting style {n + 1}", **select)) for n in range(2)], class_name="g-1 mb-1"),
+        dbc.Checklist(options=[{"label": label, "value": key} for key, label in TOGGLES.items()], id=cb("toggles"), class_name="small"),
+        html.Div(id="bg3-cb-summary", className="small mt-1"),
+    ], className="bg3-custom mb-2 p-2")
+
+def fields_from_character(character, field_ids):
+    """ Builder field values (in the order of field_ids) from a Bg3Character """
+    values = {"race": character.race, "routine": character.routine, "cantrip": character.cantrip,
+              "toggles": [k for k in TOGGLES if character.toggle(k)]}
+    plus = sorted(character.bonus.items(), key=lambda kv: -kv[1])
+    values["plus2"] = plus[0][0] if plus else None
+    values["plus1"] = plus[1][0] if len(plus) > 1 else None
+    for stat in STATS:
+        values[f"score:{stat}"] = character.scores.get(stat, 8)
+    for row in range(3):
+        cls, _, levels = character.classes[row] if row < len(character.classes) else ("", "", None)
+        values[f"class:{row}"], values[f"levels:{row}"] = cls, levels
+    for n in range(6):
+        values[f"feat:{n}"] = character.feats[n] if n < len(character.feats) else None
+    for n in range(2):
+        values[f"style:{n}"] = character.fighting_styles[n] if n < len(character.fighting_styles) else ""
+    return [values.get(fid["field"]) for fid in field_ids]
+
+def character_from_fields(field_ids, values, subclasses, name):
+    """ A Bg3Character from the builder fields """
+    v = {fid["field"]: value for fid, value in zip(field_ids, values)}
+    bonus = {}
+    if v.get("plus2"):
+        bonus[v["plus2"]] = 2
+    if v.get("plus1") and v.get("plus1") != v.get("plus2"):
+        bonus[v["plus1"]] = 1
+    classes = [[v[f"class:{row}"], subclasses[row] or "", int(v.get(f"levels:{row}") or 0)] for row in range(3)
+               if v.get(f"class:{row}") and int(v.get(f"levels:{row}") or 0) > 0]
+    toggles = {k: k in (v.get("toggles") or []) for k in TOGGLES}
+    return Bg3Character(name=name, race=v.get("race") or "Human", scores={s: int(v.get(f"score:{s}") or 8) for s in STATS}, bonus=bonus,
+                        classes=classes or [["fighter", "Champion", 12]], feats=[v[f"feat:{n}"] for n in range(6) if v.get(f"feat:{n}")],
+                        fighting_styles=[v[f"style:{n}"] for n in range(2) if v.get(f"style:{n}")], routine=v.get("routine") or "two_handed",
+                        cantrip=v.get("cantrip") or "Eldritch Blast", toggles=toggles)
+
+def subclass_options(cls):
+    return [{"label": s, "value": s} for s in SUBCLASSES.get(cls, [])]
+
+def builder_summary(character, levels):
+    """ Point buy, the class split at each act, feat levels and anything not modelled """
+    problems = point_buy_problems(character.scores, character.bonus)
+    total = len(class_order(character))
+    if total < max(levels):
+        problems.append(f"{total} class levels, the last act checkpoint needs {max(levels)}")
+    feat_levels = [lv for lv, _ in feat_opportunities(character)]
+    parts = [html.Div(f"Point buy: {point_buy_cost_safe(character.scores)} of 27 points. Feats at levels {', '.join(map(str, feat_levels)) or 'none'}")]
+    for act, level in zip(ACT_KEYS, levels):
+        split = " / ".join(f"{cls.title()} {n}" for cls, n in class_levels(character, level).items())
+        parts.append(html.Div(f"Act {act} (level {level}): {split}"))
+    _, notes = compile_character(character, max(levels))
+    parts += [html.Div(p, className="text-warning") for p in problems] + [html.Div(n, className="text-muted") for n in notes]
+    return parts
+
+def point_buy_cost_safe(scores):
+    try:
+        return point_buy_cost(scores)
+    except ValueError:
+        return "?"
 
 def gear_advice():
     """ What the selected character's gear is worth, and the best items for a slot """
@@ -245,4 +354,5 @@ def gear_highlights(build, conflicts, gear_ids):
     return ["bg3-gear bg3-conflict" if (gid["act"], gear_by_act[gid["act"]].get(gid["slot"])) in flagged else "bg3-gear" for gid in gear_ids]
 
 __all__ = ["planner", "DEFAULT_PARTY", "MAX_PARTY_SIZE", "party_conflicts", "build_conflicts", "conditional_options", "dpr_table",
-           "conflicts_list", "gear_highlights", "inherited_placeholders", "item_values_table", "suggestions_table"]
+           "conflicts_list", "gear_highlights", "inherited_placeholders", "item_values_table", "suggestions_table", "CUSTOM", "fields_from_character",
+           "character_from_fields", "subclass_options", "builder_summary"]
