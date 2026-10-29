@@ -17,6 +17,7 @@ Baldur's Gate 3 first. The original simulator and analytics are unchanged, BG3 b
 - **Refreshing the data:** `python -m bg3.scrape_wiki` (pages, passive features, act categories), `python -m bg3.scrape_sheet` (checklist sheet), then `python -m bg3.build_items`.
 - **Gear advice:** for the selected character at an act, what each equipped item adds to damage per round, and the best items for any slot (found by that act) with who else in the party uses them. Shared item conflicts show each character's gain and who it is best on. Instant, from the exact expected damage.
 - **Elixirs:** damage elixirs from bg3.wiki are buffs per act (Hill Giant and Cloud Giant Strength, Viciousness, Heroism, Colossus, Battlemage's Power). Most elixirs replace each other, so picking two of those is reported as a conflict.
+- **Concentration:** the conflict report flags a character concentrating on two of their own spells (Hex and Divine Favour), and party buffs that need more concentrating casters than the party has free (one Bless covers three characters, Haste one).
 - New effect kinds: damage from an ability modifier (Titanstring Bow), extra damage on a crit, and thrown attacks as their own target.
 
 ## 2.6.1 (2026-10-12)

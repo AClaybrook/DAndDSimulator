@@ -11,7 +11,7 @@ MAX_PARTY_SIZE = 4
 @dataclass
 class Conflict:
     act: str
-    kind: str # shared (several characters), duplicate (one character, two slots), two_handed, wrong_slot, too_early, unknown, elixirs
+    kind: str # shared (several characters), duplicate (one character, two slots), two_handed, wrong_slot, too_early, unknown, elixirs, concentration
     item: str # Item key
     members: list[str]
     message: str
@@ -38,6 +38,10 @@ def build_conflicts(build, act, items=None):
         if len(slots) > 1:
             conflicts.append(Conflict(act, "duplicate", key, [build.name],
                                       f"{build.name}: {items[key].name} is unique but equipped in {' and '.join(SLOT_LABELS[s] for s in slots)}"))
+    own_concentration = [b.name for b in buffs_at(build, act) if b.concentration and b.self_cast]
+    if len(own_concentration) > 1:
+        conflicts.append(Conflict(act, "concentration", "", [build.name],
+                                  f"{build.name}: can only concentrate on one of {', '.join(own_concentration)}"))
     exclusive = [b.name for b in buffs_at(build, act) if b.exclusive]
     if len(exclusive) > 1:
         conflicts.append(Conflict(act, "elixirs", "", [build.name],
@@ -60,10 +64,30 @@ def party_conflicts(builds, items=None, acts=None):
             for key in set(equipment_at(build, act).values()):
                 if key in items and items[key].unique:
                     users[key].append(build.name)
+        conflicts += concentration_conflicts(builds, act)
         for key, members in users.items():
             if len(members) > 1:
                 conflicts.append(Conflict(str(act), "shared", key, members, f"{items[key].name} is wanted by {', '.join(members)}"))
     return conflicts
+
+def concentration_conflicts(builds, act):
+    """ Each party member can concentrate on one spell. Buffs cast by others need a concentrating caster per cast
+        (Bless covers up to 3 targets), and characters concentrating on their own spell (i.e. Hex) can't also cast them """
+    act = str(act)
+    casts, busy = {}, 0
+    for build in builds:
+        buffs = buffs_at(build, act)
+        busy += any(b.concentration and b.self_cast for b in buffs)
+        for b in buffs:
+            if b.concentration and not b.self_cast:
+                casts.setdefault(b.name, [0, b.targets])[0] += 1
+    needed = sum(-(-count // targets) for count, targets in casts.values())
+    if needed + busy > len(builds):
+        wanted = ", ".join(f"{name} on {count}" for name, (count, _) in casts.items())
+        return [Conflict(act, "concentration", "", [b.name for b in builds],
+                         f"{wanted} need {needed} concentrating caster{'s' if needed != 1 else ''}, but only {len(builds) - busy} "
+                         f"party member{'s are' if len(builds) - busy != 1 else ' is'} free to concentrate")]
+    return []
 
 def conflicting_items(conflicts, act=None):
     """ Item keys involved in shared conflicts (optionally at one act), used to highlight them """

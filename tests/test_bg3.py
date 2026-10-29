@@ -172,3 +172,17 @@ def test_elixirs():
     assert all(a.crit_on == 18 for a in compile_build(fighter(buffs={"1": [vicious.key]}), 1, ITEMS).attacks) # Champion 19, then one lower
     both = fighter(buffs={"1": [giant.key, vicious.key]})
     assert [c.kind for c in build_conflicts(both, 1, ITEMS)] == ["elixirs"]
+
+def test_concentration():
+    from bg3.party import concentration_conflicts
+    def member(name, *buffs):
+        return Bg3Build(name=name, preset="fighter_gwm", buffs={"1": list(buffs)})
+    # One Bless covers three characters, Haste needs a caster each
+    assert not concentration_conflicts([member("A", "bless"), member("B", "bless"), member("C", "bless"), member("D")], 1)
+    assert not concentration_conflicts([member("A", "haste"), member("B", "haste"), member("C"), member("D")], 1)
+    # Four Hastes and a Bless need five casters
+    assert concentration_conflicts([member(n, "haste", "bless") for n in "ABCD"], 1)
+    # A warlock keeping Hex up can't also cast Haste, B is free to cast Haste on themselves but not also Bless
+    assert not concentration_conflicts([member("A", "hex"), member("B", "haste")], 1)
+    assert concentration_conflicts([member("A", "hex"), member("B", "haste", "bless")], 1)
+    assert [c.kind for c in build_conflicts(member("A", "hex", "divine_favour"), 1, ITEMS)] == ["concentration"]
