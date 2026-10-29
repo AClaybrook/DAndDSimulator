@@ -41,8 +41,16 @@ def roll_dice(num_rolls, num_die, die_size, reroll_on=0, rng=RNG):
             total += roll(num_rolls, die_size=ds, reroll_on=reroll_on, rng=rng)
     return total
 
-def roll_damage_dice(num_rolls, num_die, die_size, advantage=False, disadvantage=False, reroll_on=0, rng=RNG):
-    """ Roll a set of damage dice, optionally rolling the whole set twice and keeping the higher (savage attacker) or lower total """
+def roll_damage_dice(num_rolls, num_die, die_size, advantage=False, disadvantage=False, reroll_on=0, rng=RNG, per_die=False):
+    """ Roll a set of damage dice, optionally rolling the whole set twice and keeping the higher (savage attacker) or lower total.
+        With per_die, each die keeps the higher (or lower) of its own two rolls (BG3 Savage Attacker) """
+    if per_die and advantage != disadvantage:
+        keep = np.maximum if advantage else np.minimum
+        total = np.zeros(num_rolls, dtype='int32')
+        for nd, ds in zip(num_die, die_size):
+            for _ in range(nd):
+                total += keep(roll(num_rolls, die_size=ds, reroll_on=reroll_on, rng=rng), roll(num_rolls, die_size=ds, reroll_on=reroll_on, rng=rng))
+        return total
     total = roll_dice(num_rolls, num_die, die_size, reroll_on=reroll_on, rng=rng)
     if advantage != disadvantage:
         second = roll_dice(num_rolls, num_die, die_size, reroll_on=reroll_on, rng=rng)
@@ -80,12 +88,12 @@ def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multi
                 miss_num_die=None, miss_damage_die=None, miss_damage_modifier=0, save_success_multiplier=0,
                 crit_num_die=None, crit_damage_die=None, crit_damage_modifier=0,
                 once_num_die=None, once_die_size=None, once_modifier=0, once_mask=None,
-                rider_num_die=None, rider_die_size=None, rider_modifier=None, rider_multiplier=None, rng=RNG, **_):
+                rider_num_die=None, rider_die_size=None, rider_modifier=None, rider_multiplier=None, per_die_advantage=False, rng=RNG, **_):
     """ Roll damage for each hit, crit and miss.
         Resistances/vulnerabilities and damage reduction are applied to the total damage of the attack (rounded down)"""
     num_die = num_die or []
     die_size = die_size or []
-    dice_kwargs = {"advantage": advantage, "disadvantage": disadvantage, "reroll_on": reroll_on, "rng": rng}
+    dice_kwargs = {"advantage": advantage, "disadvantage": disadvantage, "reroll_on": reroll_on, "rng": rng, "per_die": per_die_advantage}
 
     num_rolls = len(hit)
     miss = ~hit

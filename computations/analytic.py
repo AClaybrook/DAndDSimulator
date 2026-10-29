@@ -35,18 +35,22 @@ def adv_dis_pmf(pmf, advantage=False, disadvantage=False):
         new_cdf = 1 - (1 - cdf)**2
     return np.diff(np.concatenate([[0], new_cdf]))
 
-def dice_sum_pmf(num_die, die_size, reroll_on=0):
-    """ Probability mass function of a sum of dice, index i is a total of i """
+def dice_sum_pmf(num_die, die_size, reroll_on=0, advantage=False, disadvantage=False):
+    """ Probability mass function of a sum of dice, index i is a total of i. Advantage/disadvantage here is per die """
     pmf = np.array([1.0])
     for nd, ds in zip(num_die, die_size):
-        single = np.concatenate([[0], die_pmf(ds, reroll_on)])
+        single = np.concatenate([[0], adv_dis_pmf(die_pmf(ds, reroll_on), advantage, disadvantage)])
         for _ in range(nd):
             pmf = np.convolve(pmf, single)
     return pmf
 
-def expected_dice(num_die, die_size, reroll_on=0, advantage=False, disadvantage=False):
-    """ Expected total of a set of dice, optionally rolling the whole set twice and keeping the higher/lower total """
-    pmf = adv_dis_pmf(dice_sum_pmf(num_die, die_size, reroll_on), advantage, disadvantage)
+def expected_dice(num_die, die_size, reroll_on=0, advantage=False, disadvantage=False, per_die=False):
+    """ Expected total of a set of dice, optionally rolling the whole set twice and keeping the higher/lower total,
+        or with per_die, keeping the higher/lower of two rolls for each die """
+    if per_die:
+        pmf = dice_sum_pmf(num_die, die_size, reroll_on, advantage, disadvantage)
+    else:
+        pmf = adv_dis_pmf(dice_sum_pmf(num_die, die_size, reroll_on), advantage, disadvantage)
     return float(np.dot(np.arange(len(pmf)), pmf))
 
 def hit_and_crit_chance(num_die=(), die_size=(), modifier=0, difficulty_class=15, crit_on=20, advantage=False, disadvantage=False,
@@ -87,8 +91,9 @@ def expected_attack_damage(attack_context, damage_context, p_first_hit=None, aut
         p_crit = p_hit
     p_miss = 1 - p_hit
 
-    base = expected_dice(d["num_die"], d["die_size"], d["reroll_on"], d["advantage"], d["disadvantage"]) + d["modifier"]
-    crit_extra = expected_dice(d["num_die"], d["die_size"], d["reroll_on"], d["advantage"], d["disadvantage"]) \
+    per_die = d.get("per_die_advantage", False)
+    base = expected_dice(d["num_die"], d["die_size"], d["reroll_on"], d["advantage"], d["disadvantage"], per_die) + d["modifier"]
+    crit_extra = expected_dice(d["num_die"], d["die_size"], d["reroll_on"], d["advantage"], d["disadvantage"], per_die) \
         + expected_dice(d["crit_num_die"], d["crit_damage_die"], d["reroll_on"]) + d["crit_damage_modifier"]
     miss = expected_dice(d["miss_num_die"], d["miss_damage_die"]) + d["miss_damage_modifier"] + d["save_success_multiplier"] * base
 

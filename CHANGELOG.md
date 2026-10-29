@@ -20,6 +20,7 @@ Baldur's Gate 3 first. The original simulator and analytics are unchanged, BG3 b
 - **Concentration:** the conflict report flags a character concentrating on two of their own spells (Hex and Divine Favour), and party buffs that need more concentrating casters than the party has free (one Bless covers three characters, Haste one).
 - **Per weapon damage rerolls:** attacks can reroll their own damage dice at or below a number (Twist of Fortune, Knife of the Undermountain King), the same as Great Weapon Fighting for that weapon. Editable on attack cards under Weapon.
 - **More item effects:** crit-only damage (Craterflesh Gloves, Dolor Amarus), extra Sneak Attack damage (Stalker Gloves), and Tenacity, the Strength modifier as damage on a missed melee attack, which about 35 weapons have. Creature type conditions ("against Gnomes or Dwarves") are toggles. 319 items now have modelled effects.
+- **BG3 rules checked against the wiki:** Patch 8 class, subclass, race and feat rules are in `bg3/data/rules.json` with sources. Fixes from them: Savage Attacker in BG3 keeps the higher of two rolls for each die (higher than the 5e version), rage also adds to unarmed attacks, the BG3 Martial Arts die (d4, d6 from 3, d8 from 9) and ki (level + 1) for the monk preset, and Sneak Attack never applies to off-hand attacks. The 5e ruleset keeps the 5e rules.
 - New effect kinds: damage from an ability modifier (Titanstring Bow), extra damage on a crit, and thrown attacks as their own target.
 
 ## 2.6.1 (2026-10-12)

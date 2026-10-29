@@ -196,12 +196,16 @@ def ranger_hunter_archer(level, ruleset):
 def monk_open_hand(level, ruleset):
     c = Character(level=level, dexterity=STARTING_PRIMARY, wisdom=STARTING_SECONDARY + 2)
     taken = apply_asi_plan(c, "monk", level, ruleset, ["dexterity", "dexterity", "wisdom"])
-    martial_arts = 4 + 2 * ((level >= 5) + (level >= 11) + (level >= 17))
+    if ruleset == "bg3":
+        # BG3 Martial Arts die: d4, d6 from level 3, d8 from level 9. Ki is the monk level + 1
+        martial_arts, ki = 4 + 2 * ((level >= 3) + (level >= 9)), level + 1
+    else:
+        martial_arts, ki = 4 + 2 * ((level >= 5) + (level >= 11) + (level >= 17)), level
     strike = Attack(name="Unarmed Strike", type="unarmed", ability_stat="dexterity", damage=f"1d{martial_arts}", damage_type="bludgeoning")
-    # Attack action plus the Martial Arts bonus action strike, Flurry of Blows (from level 2) adds a strike for 1 ki, ki is the monk level per short rest
+    # Attack action plus the Martial Arts bonus action strike, Flurry of Blows (from level 2) adds a strike for 1 ki per short rest
     c.attacks = [replace(strike) for _ in range(extra_attacks(level, "monk", ruleset) + 1)]
     if level >= 2:
-        c.attacks.append(replace(strike, name="Flurry of Blows", uses_per_fight=per_fight(per_short_rest=level)))
+        c.attacks.append(replace(strike, name="Flurry of Blows", uses_per_fight=per_fight(per_short_rest=ki)))
     return _named(c, "Open Hand Monk (Flurry)", level, taken)
 
 def warlock_eldritch_blast(level, ruleset):
@@ -355,7 +359,18 @@ def build_character(key, level, ruleset="bg3"):
     character.name = f"{BUILDS[key].label} L{level}"
     character.description = character.description.replace(base_label, BUILDS[key].label, 1)
     character.preset = f"{key}:{ruleset}"
+    if ruleset == "bg3":
+        apply_bg3_rules(character, sneak_attack="rogue" in key)
     return character
+
+def apply_bg3_rules(character, sneak_attack=False):
+    """ Where BG3 differs from 5e for the prebuilt characters (Patch 8, see bg3.wiki):
+        Savage Attacker keeps the higher of two rolls for each damage die, and Sneak Attack never applies to off-hand attacks """
+    character.savage_attacker_per_die = character.savage_attacker
+    if sneak_attack:
+        for attack in character.attacks:
+            if attack.offhand:
+                attack.once_per_turn_eligible = False
 
 # Fields decided by leveling up, edits to these on a preset character are not carried to other levels
 LEVEL_UP_FIELDS = {"name", "level", "preset", "description", "attacks"}

@@ -27,4 +27,6 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - 2026-10-29: Per weapon damage rerolls (Twist of Fortune, Knife of the Undermountain King), the same as Great Weapon Fighting on that weapon, also editable on attack cards
 - 2026-10-29: Item parser fixes from an Act 3 review: crit-only damage (Craterflesh Gloves, Dolor Amarus), extra Sneak Attack damage (Stalker Gloves), Tenacity's Strength damage on a miss (about 35 weapons), creature type conditions become toggles, weapon-only bonuses, editor comments removed from text (319 items with modelled effects)
 - 2026-10-29: Gear item lists are sent once per slot group and filtered by act in the browser (page 1.5MB -> 1.0MB); off hands no longer offer two-handed weapons; unknown act items sort last
+- 2026-10-29: Patch 8 class, subclass, race and feat rules researched from bg3.wiki into bg3/data/rules.json (12 classes, 58 subclasses, 31 races, 41 feats, with sources; 9 values marked unverified)
+- 2026-10-29: BG3 rule fixes from that research: per die Savage Attacker (keeps the higher of each die), rage adds to unarmed attacks, BG3 Martial Arts die (d4/d6 at 3/d8 at 9) and ki (level + 1), no Sneak Attack on off-hand attacks
 - 2026-10-29: Generic +1/+2/+3 trader gear gets an estimated act from its enchantment, items of unknown act are only suggested for Act 3

@@ -30,6 +30,8 @@ CASES = {
     "sneak_attack_ranged_only": Character(level=5, dexterity=18, once_per_turn_die_mod_list=["3d6"],
                                           attacks=[Attack(ability_stat="dexterity", once_per_turn_eligible=False), Attack(type="weapon (ranged)", ability_stat="dexterity", damage="1d8")]),
     "disadvantage": Character(strength=16, disadvantage=True, bonus_crit_die_mod_list=["1d8"], attacks=[greatsword()]),
+    "bg3_savage_attacker_per_die": Character(level=5, strength=18, savage_attacker=True, savage_attacker_per_die=True, GWF=True, attacks=[greatsword()] * 2),
+    "raging_monk_unarmed": Character(level=5, strength=16, raging=True, tavern_brawler=True, attacks=[Attack(type="unarmed", damage="1d6", damage_type="bludgeoning")] * 3),
     "typed_extra_damage": Character(level=5, strength=18, advantage=True, attacks=[greatsword(extra_damage_list=["1d4 fire", "2 acid"])] * 2),
     "typed_extra_vs_immune_and_vulnerable": Character(level=5, strength=18, attacks=[greatsword(extra_damage_list=["1d6 poison", "1d4 radiant"])] * 2),
 }
@@ -225,3 +227,9 @@ def test_per_attack_damage_reroll_matches_great_weapon_fighting():
     enemy = Enemy(armor_class=12)
     assert expected_damage_per_round(item, enemy) == pytest.approx(expected_damage_per_round(gwf, enemy))
     assert simulated_mean(item, enemy) == pytest.approx(expected_damage_per_round(item, enemy), abs=0.1)
+
+def test_per_die_savage_attacker_beats_whole_set():
+    """ Keeping the higher of each die is better than the higher total of the set (2d6: 8.94 vs 8.37) """
+    from computations.analytic import expected_dice
+    assert expected_dice([2], [6], advantage=True, per_die=True) == pytest.approx(2 * 161 / 36)
+    assert expected_dice([2], [6], advantage=True, per_die=True) > expected_dice([2], [6], advantage=True)

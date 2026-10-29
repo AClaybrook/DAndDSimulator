@@ -230,6 +230,7 @@ class Character(Creature):
     name: str = 'Character'
     # Feats/Abilities
     savage_attacker: bool = False # roll weapon damage dice twice and take the higher total
+    savage_attacker_per_die: bool = False # BG3 Savage Attacker: keep the higher of two rolls for each die separately
     tavern_brawler: bool = False # strength modifier added to attack and damage rolls
     GWM: bool = False # -5 to hit, +10 to damage, TODO: bonus action attack on crit or kill
     sharpshooter: bool = False # -5 to hit, +10 to damage with ranged weapons
@@ -367,6 +368,7 @@ class DamageContext:
     damage_reduction: int = 0
     advantage: bool = False # roll the damage dice twice and keep the higher total
     disadvantage: bool = False
+    per_die_advantage: bool = False # with advantage, keep the higher of two rolls for each die rather than the higher total
     reroll_on: int = 0
     # Bonus Crit Damage, beyond the standard 2x die rolls
     crit_num_die: list[int] = field(default_factory=list)
@@ -422,6 +424,7 @@ def calculate_attack_and_damage_context(character, enemy):
         # Damage
         damage_modifier = 0
         damage_adv = False
+        per_die_advantage = False
         damage_dis = False
         damage_reroll_on = max(character.damage_reroll_on, attack.damage_reroll_on or 0)
 
@@ -467,6 +470,7 @@ def calculate_attack_and_damage_context(character, enemy):
                 damage_modifier += 10
             if character.savage_attacker:
                 damage_adv = True
+                per_die_advantage = character.savage_attacker_per_die
             if character.dueling and not attack.two_handed and not attack.offhand:
                 damage_modifier += 2
             if character.GWF and attack.two_handed:
@@ -502,6 +506,8 @@ def calculate_attack_and_damage_context(character, enemy):
             if character.tavern_brawler:
                 attack_modifier += character.strength_ability_modifier
                 damage_modifier += character.strength_ability_modifier
+            if character.raging:
+                damage_modifier += character.rage_damage
         elif attack.type == 'thrown': # TODO: Implement improvised thrown weapons
             if character.tavern_brawler:
                 attack_modifier += character.strength_ability_modifier
@@ -558,6 +564,7 @@ def calculate_attack_and_damage_context(character, enemy):
             damage_multiplier=damage_multiplier,
             damage_reduction=enemy.damage_reduction,
             advantage=damage_adv,
+            per_die_advantage=per_die_advantage,
             disadvantage=damage_dis,
             reroll_on=damage_reroll_on,
             save_success_multiplier=save_success_multiplier,
