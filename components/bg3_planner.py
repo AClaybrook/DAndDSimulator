@@ -5,7 +5,7 @@ from dash import dcc, html
 from bg3.build import ACT_KEYS, compile_build, equipment_at
 from bg3.buffs import BUFFS
 from bg3.checkpoints import ACTS, act_level
-from bg3.items import SLOTS, catalog, condition_id
+from bg3.items import SLOT_LABELS, SLOTS, catalog, condition_id
 from bg3.party import MAX_PARTY_SIZE, build_conflicts, party_conflicts
 from bg3.presets import DEFAULT_PARTY as PRESET_PARTY, PRESETS
 from computations.analytic import expected_damage_per_round
@@ -115,7 +115,8 @@ def planner():
         dbc.Row([
             dbc.Col([html.H6("Expected damage per round", className="text-info"), html.Div(id="bg3-dpr")], xs=12, lg=6),
             dbc.Col([html.H6("Equipment conflicts", className="text-info"), html.Div(id="bg3-conflicts")], xs=12, lg=6),
-        ]),
+        ], class_name="mb-3"),
+        gear_advice(),
         dcc.Store(id="bg3-party", storage_type="local", data=DEFAULT_PARTY),
     ], className="panel mb-4")
 
@@ -147,14 +148,62 @@ def dpr_table(builds, enemy, rounds_per_fight):
     header = html.Thead(html.Tr([html.Th("Character")] + [html.Th(f"Act {a} (L{'/'.join(map(str, levels[a]))})") for a in ACT_KEYS]))
     return dbc.Table([header, html.Tbody(rows)], size="sm", bordered=False, hover=True, class_name="mb-0")
 
-def conflicts_list(conflicts):
+def gear_advice():
+    """ What the selected character's gear is worth, and the best items for a slot """
+    slot_options = [{"label": label, "value": key} for key, label, _ in SLOTS if key != "ring_2"]
+    return dbc.Row([
+        dbc.Col(dbc.InputGroup([
+            dbc.InputGroupText("Gear advice for the selected character at"),
+            dbc.Select(options=[{"label": ACTS[int(a)][0], "value": a} for a in ACT_KEYS], value="1", id="bg3-advice-act"),
+        ], size="sm"), xs=12, class_name="mb-2"),
+        dbc.Col([html.H6("What each item adds", className="text-info"), html.Div(id="bg3-item-values")], xs=12, lg=5),
+        dbc.Col([
+            dbc.InputGroup([dbc.InputGroupText("Best items for"), dbc.Select(options=slot_options, value="melee_main", id="bg3-advice-slot")],
+                           size="sm", class_name="mb-1"),
+            html.Div(id="bg3-suggestions"),
+        ], xs=12, lg=7),
+    ], class_name="bg3-advice")
+
+def gain_text(gain):
+    return f"{gain:+.1f}"
+
+def item_values_table(values):
+    if not values:
+        return html.Div("Nothing equipped at this act. Empty weapon slots use the class preset's base weapon.", className="small text-muted")
+    rows = [html.Tr([html.Td(SLOT_LABELS[slot], className="text-muted"), html.Td(item.name, title=item_summary(item)), html.Td(gain_text(gain))])
+            for slot, item, gain in values]
+    return dbc.Table([html.Thead(html.Tr([html.Th("Slot"), html.Th("Item"), html.Th("Damage per round")])), html.Tbody(rows)],
+                     size="sm", hover=True, class_name="mb-0 small")
+
+def suggestions_table(suggestions):
+    if not suggestions:
+        return html.Div("No item in this slot adds damage for this character yet.", className="small text-muted")
+    rows = [html.Tr([html.Td(item.name, title=item_summary(item)), html.Td(gain_text(gain)), html.Td(f"Act {item.act}" if item.act else "Act ?"),
+                     html.Td(", ".join(users), className="text-warning" if users else "")])
+            for item, gain, users in suggestions]
+    return html.Div([
+        dbc.Table([html.Thead(html.Tr([html.Th("Item"), html.Th("Damage per round"), html.Th("Found"), html.Th("Also used by")])), html.Tbody(rows)],
+                  size="sm", hover=True, class_name="mb-0 small"),
+        html.Div("Compared to an empty slot (weapons: the class preset's base weapon). Conditional effects count when toggled on.",
+                 className="small text-muted"),
+    ])
+
+def conflicts_list(conflicts, gains=None):
+    """ Conflicts by act, shared items show what each character gains from the item """
+    gains = gains or {}
+    def message(c):
+        if c.kind == "shared" and (c.act, c.item) in gains:
+            g = gains[(c.act, c.item)]
+            best = max(g, key=g.get)
+            return f"{c.message.split(' is wanted')[0]}: " + ", ".join(f"{name} {gain_text(v)}" for name, v in g.items()) + f". Best on {best}"
+        return c.message
     if not conflicts:
         return html.Div([html.I(className="fa-solid fa-check me-1 text-success"), "No equipment conflicts"], className="small")
     by_act = {}
     for c in conflicts:
         by_act.setdefault(c.act, []).append(c)
     return html.Div([html.Div([html.B(f"Act {act}", className="small"),
-                               html.Ul([html.Li(c.message, className="small text-warning" if c.kind == "shared" else "small") for c in items_],
+                               html.Ul([html.Li(message(c), className="small text-warning" if c.kind == "shared" else "small") for c in items_],
                                        className="mb-1")])
                      for act, items_ in sorted(by_act.items())])
 
@@ -174,4 +223,4 @@ def gear_highlights(build, conflicts, gear_ids):
     return ["bg3-gear bg3-conflict" if (gid["act"], gear_by_act[gid["act"]].get(gid["slot"])) in flagged else "bg3-gear" for gid in gear_ids]
 
 __all__ = ["planner", "DEFAULT_PARTY", "MAX_PARTY_SIZE", "party_conflicts", "build_conflicts", "conditional_options", "dpr_table",
-           "conflicts_list", "gear_highlights", "inherited_placeholders"]
+           "conflicts_list", "gear_highlights", "inherited_placeholders", "item_values_table", "suggestions_table"]

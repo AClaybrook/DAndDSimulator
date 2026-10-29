@@ -28,7 +28,8 @@ from components.variants import make_variant
 from components.sweeps import SWEEP_PARAMETERS, run_sweep
 from components.session import SETTINGS_IDS, describe_session, make_session, parse_session
 from components.bg3_planner import (DEFAULT_PARTY, MAX_PARTY_SIZE, conditional_options, conflicts_list, dpr_table, gear_highlights,
-                                    inherited_placeholders)
+                                    inherited_placeholders, item_values_table, suggestions_table)
+from bg3.analysis import item_values, shared_item_gains, slot_suggestions
 from bg3.build import ACT_KEYS, Bg3Build, compile_build
 from bg3.checkpoints import ACTS, act_level
 from bg3.party import party_conflicts
@@ -839,6 +840,8 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         member = party[selected]
         conflicts = party_conflicts(party)
         enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
+        rounds = max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)
+        gains = {(c.act, c.item): shared_item_gains(party, c, enemy, rounds) for c in conflicts if c.kind == "shared"}
         tabs = [dbc.Tab(label=b.name, tab_id=str(ii)) for ii, b in enumerate(party)]
         outputs_from_member = not editor_changed
         return (
@@ -854,9 +857,31 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             [member.buffs.get(bid["act"], []) for bid in buff_ids] if outputs_from_member else [no_update] * len(buff_ids),
             conditional_options(member),
             [c for c in member.conditions if c in {o["value"] for o in conditional_options(member)}] if outputs_from_member else no_update,
-            conflicts_list(conflicts),
-            dpr_table(party, enemy, max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)),
+            conflicts_list(conflicts, gains),
+            dpr_table(party, enemy, rounds),
         )
+
+    @app.callback(
+        Output("bg3-item-values", "children"),
+        Output("bg3-suggestions", "children"),
+        Input("bg3-party", "data"),
+        Input("bg3-member-tabs", "active_tab"),
+        Input("bg3-advice-act", "value"),
+        Input("bg3-advice-slot", "value"),
+        Input("enemy-values", "data"),
+        Input("rounds-per-fight", "value"),
+    )
+    def gear_advice(party, active_tab, act, slot, enemy_dict, rounds_per_fight):
+        """ What the selected character's items add at an act, and the best items for a slot """
+        if not party:
+            raise PreventUpdate
+        builds = [Bg3Build.from_dict(b) for b in party]
+        member = builds[min(int(active_tab or 0), len(builds) - 1)]
+        enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
+        rounds = max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)
+        act = act or "1"
+        return (item_values_table(item_values(member, act, enemy, rounds)),
+                suggestions_table(slot_suggestions(member, act, slot or "melee_main", enemy, rounds, party=builds)))
 
     @app.callback(
         Output("character_row", "children", allow_duplicate=True),

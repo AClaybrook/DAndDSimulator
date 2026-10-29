@@ -721,6 +721,19 @@
    "source": "https://bg3.wiki/wiki/Half_Plate_Armour"
   },
   {
+   "key": "bg3:half_plate_armour_1",
+   "name": "Half Plate Armour +1",
+   "slot": "armour",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": false,
+   "weapon": null,
+   "effects": [],
+   "notes": "You take 1 less Piercing damage",
+   "location": "",
+   "source": "https://bg3.wiki/wiki/Half_Plate_Armour_%2B1"
+  },
+  {
    "key": "bg3:hedge_wanderer_armour",
    "name": "Hedge Wanderer Armour",
    "slot": "armour",
@@ -973,6 +986,19 @@
    "notes": "You take 1 less Slashing damage",
    "location": "Sold by traders using the levelled magic armour table if the player is between levels 4 and 6",
    "source": "https://bg3.wiki/wiki/Scale_Mail_%2B1"
+  },
+  {
+   "key": "bg3:scale_mail_armour_1",
+   "name": "Scale Mail Armour +1",
+   "slot": "armour",
+   "act": 1,
+   "rarity": "Uncommon",
+   "unique": false,
+   "weapon": null,
+   "effects": [],
+   "notes": "You take 1 less Slashing damage",
+   "location": "",
+   "source": "https://bg3.wiki/wiki/Scale_Mail_Armour_%2B1"
   },
   {
    "key": "bg3:scale_mail_of_devotion",
@@ -8774,6 +8800,27 @@
    "source": "https://bg3.wiki/wiki/False_Spear_of_the_Night"
   },
   {
+   "key": "bg3:flail_2",
+   "name": "Flail +2",
+   "slot": "weapon",
+   "act": 2,
+   "rarity": "Rare",
+   "unique": false,
+   "weapon": {
+    "base": "Flail",
+    "kind": "melee",
+    "damage": "1d8",
+    "versatile_damage": null,
+    "damage_type": "bludgeoning",
+    "enhancement": 2,
+    "properties": []
+   },
+   "effects": [],
+   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "location": "Carried by the Blasphemous Acolyte in the final fight Atop the Netherbrain if a cleric is in the party",
+   "source": "https://bg3.wiki/wiki/Flail_%2B2"
+  },
+  {
    "key": "bg3:flail_of_myrkul",
    "name": "Flail of Myrkul",
    "slot": "weapon",
@@ -8793,6 +8840,31 @@
    "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "Carried by Ketheric Thorm, if he is disarmed during his initial encounter",
    "source": "https://bg3.wiki/wiki/Flail_of_Myrkul"
+  },
+  {
+   "key": "bg3:glaive_2",
+   "name": "Glaive +2",
+   "slot": "weapon",
+   "act": 2,
+   "rarity": "Rare",
+   "unique": false,
+   "weapon": {
+    "base": "Glaive",
+    "kind": "melee",
+    "damage": "1d10",
+    "versatile_damage": null,
+    "damage_type": "slashing",
+    "enhancement": 2,
+    "properties": [
+     "heavy",
+     "reach",
+     "two-handed"
+    ]
+   },
+   "effects": [],
+   "notes": "",
+   "location": "Wielded by the Champion of Mahkloompah",
+   "source": "https://bg3.wiki/wiki/Glaive_%2B2"
   },
   {
    "key": "bg3:halberd_of_vigilance",
@@ -9133,6 +9205,29 @@
    "source": "https://bg3.wiki/wiki/Lightning_Jabber"
   },
   {
+   "key": "bg3:longbow_2",
+   "name": "Longbow +2",
+   "slot": "weapon",
+   "act": 2,
+   "rarity": "Rare",
+   "unique": false,
+   "weapon": {
+    "base": "Longbow",
+    "kind": "ranged",
+    "damage": "1d8",
+    "versatile_damage": null,
+    "damage_type": "piercing",
+    "enhancement": 2,
+    "properties": [
+     "two-handed"
+    ]
+   },
+   "effects": [],
+   "notes": "",
+   "location": "Carried by The Darkening Hunt in the final fight Atop the Netherbrain if a ranger is in the party",
+   "source": "https://bg3.wiki/wiki/Longbow_%2B2"
+  },
+  {
    "key": "bg3:moonlantern",
    "name": "Moonlantern",
    "slot": "weapon",
@@ -9259,6 +9354,29 @@
    "notes": "While you are Drunk, you have advantage on attack rolls; You also create a blast with each melee hit landed, dealing 1d4 Thunder damage to all creatures and objects in a radius of m=3 ft=10, excluding yourself; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
    "location": "The Waning Moon",
    "source": "https://bg3.wiki/wiki/Punch-Drunk_Bastard"
+  },
+  {
+   "key": "bg3:rapier_2",
+   "name": "Rapier +2",
+   "slot": "weapon",
+   "act": 2,
+   "rarity": "Rare",
+   "unique": false,
+   "weapon": {
+    "base": "Rapier",
+    "kind": "melee",
+    "damage": "1d8",
+    "versatile_damage": null,
+    "damage_type": "piercing",
+    "enhancement": 2,
+    "properties": [
+     "finesse"
+    ]
+   },
+   "effects": [],
+   "notes": "",
+   "location": "Sold by various traders depending on the party's level",
+   "source": "https://bg3.wiki/wiki/Rapier_%2B2"
   },
   {
    "key": "bg3:rat_bat",
@@ -9428,6 +9546,30 @@
    "notes": "",
    "location": "House of Healing",
    "source": "https://bg3.wiki/wiki/Scalpel"
+  },
+  {
+   "key": "bg3:scimitar_2",
+   "name": "Scimitar +2",
+   "slot": "weapon",
+   "act": 2,
+   "rarity": "Rare",
+   "unique": false,
+   "weapon": {
+    "base": "Scimitar",
+    "kind": "melee",
+    "damage": "1d6",
+    "versatile_damage": null,
+    "damage_type": "slashing",
+    "enhancement": 2,
+    "properties": [
+     "finesse",
+     "light"
+    ]
+   },
+   "effects": [],
+   "notes": "",
+   "location": "Sold by various traders depending on the main character's level",
+   "source": "https://bg3.wiki/wiki/Scimitar_%2B2"
   },
   {
    "key": "bg3:selune_s_spear_of_night",
@@ -9785,6 +9927,30 @@
    "notes": "",
    "location": "House of Healing",
    "source": "https://bg3.wiki/wiki/Trepan_%28%2B1%29"
+  },
+  {
+   "key": "bg3:trident_2",
+   "name": "Trident +2",
+   "slot": "weapon",
+   "act": 2,
+   "rarity": "Rare",
+   "unique": false,
+   "weapon": {
+    "base": "Trident",
+    "kind": "melee",
+    "damage": "1d6",
+    "versatile_damage": "1d8",
+    "damage_type": "piercing",
+    "enhancement": 2,
+    "properties": [
+     "thrown",
+     "versatile"
+    ]
+   },
+   "effects": [],
+   "notes": "",
+   "location": "Carried by The Darkening Hunt in the final fight Atop the Netherbrain, if a ranger is in the party",
+   "source": "https://bg3.wiki/wiki/Trident_%2B2"
   },
   {
    "key": "bg3:twist_of_fortune",
@@ -15196,19 +15362,6 @@
    "source": "https://bg3.wiki/wiki/Druidic_Armour"
   },
   {
-   "key": "bg3:half_plate_armour_1",
-   "name": "Half Plate Armour +1",
-   "slot": "armour",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": false,
-   "weapon": null,
-   "effects": [],
-   "notes": "You take 1 less Piercing damage",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Half_Plate_Armour_%2B1"
-  },
-  {
    "key": "bg3:hide_armour",
    "name": "Hide Armour",
    "slot": "armour",
@@ -15233,19 +15386,6 @@
    "notes": "",
    "location": "",
    "source": "https://bg3.wiki/wiki/Robe"
-  },
-  {
-   "key": "bg3:scale_mail_armour_1",
-   "name": "Scale Mail Armour +1",
-   "slot": "armour",
-   "act": null,
-   "rarity": "Uncommon",
-   "unique": false,
-   "weapon": null,
-   "effects": [],
-   "notes": "You take 1 less Slashing damage",
-   "location": "",
-   "source": "https://bg3.wiki/wiki/Scale_Mail_Armour_%2B1"
   },
   {
    "key": "bg3:cleverly_cobbled_boots",
@@ -15940,27 +16080,6 @@
    "source": "https://bg3.wiki/wiki/Doom_Axe"
   },
   {
-   "key": "bg3:flail_2",
-   "name": "Flail +2",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": false,
-   "weapon": {
-    "base": "Flail",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": null,
-    "damage_type": "bludgeoning",
-    "enhancement": 2,
-    "properties": []
-   },
-   "effects": [],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
-   "location": "Carried by the Blasphemous Acolyte in the final fight Atop the Netherbrain if a cleric is in the party",
-   "source": "https://bg3.wiki/wiki/Flail_%2B2"
-  },
-  {
    "key": "bg3:flame_blade_weapon",
    "name": "Flame Blade (weapon)",
    "slot": "weapon",
@@ -15982,54 +16101,6 @@
    "notes": "",
    "location": "Conjured by the Flame Blade spell",
    "source": "https://bg3.wiki/wiki/Flame_Blade_%28weapon%29"
-  },
-  {
-   "key": "bg3:glaive_2",
-   "name": "Glaive +2",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": false,
-   "weapon": {
-    "base": "Glaive",
-    "kind": "melee",
-    "damage": "1d10",
-    "versatile_damage": null,
-    "damage_type": "slashing",
-    "enhancement": 2,
-    "properties": [
-     "heavy",
-     "reach",
-     "two-handed"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "Wielded by the Champion of Mahkloompah",
-   "source": "https://bg3.wiki/wiki/Glaive_%2B2"
-  },
-  {
-   "key": "bg3:longbow_2",
-   "name": "Longbow +2",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": false,
-   "weapon": {
-    "base": "Longbow",
-    "kind": "ranged",
-    "damage": "1d8",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 2,
-    "properties": [
-     "two-handed"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "Carried by The Darkening Hunt in the final fight Atop the Netherbrain if a ranger is in the party",
-   "source": "https://bg3.wiki/wiki/Longbow_%2B2"
   },
   {
    "key": "bg3:pactbound_battleaxe",
@@ -16287,29 +16358,6 @@
    "source": "https://bg3.wiki/wiki/Pitchfork"
   },
   {
-   "key": "bg3:rapier_2",
-   "name": "Rapier +2",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": false,
-   "weapon": {
-    "base": "Rapier",
-    "kind": "melee",
-    "damage": "1d8",
-    "versatile_damage": null,
-    "damage_type": "piercing",
-    "enhancement": 2,
-    "properties": [
-     "finesse"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "Sold by various traders depending on the party's level",
-   "source": "https://bg3.wiki/wiki/Rapier_%2B2"
-  },
-  {
    "key": "bg3:rusty_flail",
    "name": "Rusty Flail",
    "slot": "weapon",
@@ -16494,30 +16542,6 @@
    "source": "https://bg3.wiki/wiki/Salami"
   },
   {
-   "key": "bg3:scimitar_2",
-   "name": "Scimitar +2",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": false,
-   "weapon": {
-    "base": "Scimitar",
-    "kind": "melee",
-    "damage": "1d6",
-    "versatile_damage": null,
-    "damage_type": "slashing",
-    "enhancement": 2,
-    "properties": [
-     "finesse",
-     "light"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "Sold by various traders depending on the main character's level",
-   "source": "https://bg3.wiki/wiki/Scimitar_%2B2"
-  },
-  {
    "key": "bg3:shadow_blade_weapon",
    "name": "Shadow Blade (weapon)",
    "slot": "weapon",
@@ -16598,30 +16622,6 @@
    "notes": "",
    "location": "Throughout the game",
    "source": "https://bg3.wiki/wiki/Torch"
-  },
-  {
-   "key": "bg3:trident_2",
-   "name": "Trident +2",
-   "slot": "weapon",
-   "act": null,
-   "rarity": "Rare",
-   "unique": false,
-   "weapon": {
-    "base": "Trident",
-    "kind": "melee",
-    "damage": "1d6",
-    "versatile_damage": "1d8",
-    "damage_type": "piercing",
-    "enhancement": 2,
-    "properties": [
-     "thrown",
-     "versatile"
-    ]
-   },
-   "effects": [],
-   "notes": "",
-   "location": "Carried by The Darkening Hunt in the final fight Atop the Netherbrain, if a ranger is in the party",
-   "source": "https://bg3.wiki/wiki/Trident_%2B2"
   }
  ]
 }

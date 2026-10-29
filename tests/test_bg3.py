@@ -143,3 +143,22 @@ def test_presets_use_real_items_in_the_right_slots():
         assert all(key in items for gear in build.equipment.values() for key in gear.values())
     # The default party shares Caustic Band, to show the conflict report
     assert any(c.kind == "shared" and c.item == "bg3:caustic_band" for c in party_conflicts([PRESETS[n] for n in DEFAULT_PARTY]))
+
+def test_gear_advice():
+    from bg3.analysis import item_values, shared_item_gains, slot_suggestions
+    build = fighter(equipment={"1": {"melee_main": "test:flame_sword", "ring_1": "test:acid_ring"}})
+    values = {item.key: gain for _, item, gain in item_values(build, 1, ENEMY, 3, ITEMS)}
+    # Each item's value is the damage lost without it
+    full = expected_damage_per_round(compile_build(build, 1, ITEMS), ENEMY, 3)
+    without_ring = expected_damage_per_round(compile_build(fighter(equipment={"1": {"melee_main": "test:flame_sword"}}), 1, ITEMS), ENEMY, 3)
+    assert values["test:acid_ring"] == pytest.approx(full - without_ring) and values["test:acid_ring"] > 0
+    # Suggestions only use items found by the act, best first, and say who else uses them
+    other = Bg3Build(name="Karlach", preset="barbarian_berserker", equipment={"1": {"ring_1": "test:acid_ring"}})
+    rings = slot_suggestions(fighter(), 1, "ring_1", ENEMY, 3, ITEMS, party=[fighter(), other])
+    acid = next(r for r in rings if r[0].key == "test:acid_ring")
+    assert acid[2] == ["Karlach"] and acid[1] == pytest.approx(rings[0][1]) # Ties with Caustic Band, the real ring it copies
+    gains = [g for _, g, _ in rings]
+    assert gains == sorted(gains, reverse=True)
+    assert not [i for i, _, _ in slot_suggestions(fighter(), 1, "helmet", ENEMY, 3, ITEMS) if i.key == "test:keen_helm"] # Act 3 item
+    conflict = next(c for c in party_conflicts([build, other], ITEMS) if c.kind == "shared" and c.act == "1")
+    assert set(shared_item_gains([build, other], conflict, ENEMY, 3, ITEMS)) == {"Lae'zel", "Karlach"}

@@ -277,11 +277,14 @@ def build():
             m = re.fullmatch(DAMAGE, params["extra damage"].strip())
             if m:
                 effects.append({"kind": "extra_damage", "value": f"{m.group(1).replace(' ', '')} {m.group(2).lower()}", "applies_to": "self"})
+        act = item_act(pages[title], params, locations, characters)
+        if act is None and (plus := re.fullmatch(r".+ \+(\d)", title)):
+            act = min(int(plus.group(1)), 3) # Generic +1/+2/+3 gear from traders, estimated by its enchantment
         item = {
             "key": key_for(title),
             "name": title,
             "slot": "weapon" if is_weapon else SLOT_BY_TYPE[item_type],
-            "act": item_act(pages[title], params, locations, characters),
+            "act": act,
             "rarity": (params.get("rarity") or "").title(),
             "unique": not generic,
             "weapon": weapon_stats(params) if is_weapon else None,
