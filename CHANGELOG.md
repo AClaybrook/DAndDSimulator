@@ -11,7 +11,10 @@ Baldur's Gate 3 first. The original simulator and analytics are unchanged, BG3 b
   - The party is saved in the browser.
 - **Typed extra damage:** attacks take extra damage like "1d4 fire" or "2 acid" on a hit. Each part uses its own resistance, vulnerability or immunity and is rounded down separately, so a fire resistant enemy only halves the fire. Dice double on a crit. Validated against the exact math, and the simulation speed is unchanged.
 - **Item model:** items have a slot, act, rarity, uniqueness, weapon stats and modelled effects (ability scores, attack and damage bonuses, typed extra damage, crit range, advantage, spell DC, feature flags), each optionally conditional. Base weapons are included and are not unique.
-- **bg3.wiki export:** `python -m bg3.scrape_wiki fetch` then `parse` exports the item pages through the MediaWiki API for the Patch 8 item database.
+- **Patch 8 item database:** 971 equippable items exported from bg3.wiki (CC BY-NC-SA 4.0), each linking to its page. Slot, rarity, uniqueness, weapon dice, enchantment and properties come straight from the wiki. The act comes from where the item is found (location, trader, or levelled trader tables): 334 in Act 1, 188 in Act 2, 262 in Act 3, 187 unknown (shown in every act). 333 items have modelled effects, parsed from their special text and passive features with conservative patterns (damage dealt back to attackers is skipped, conditional effects become toggles). Act 1 and Act 2 damage items were checked by hand, with corrections in `bg3/data/effect_overrides.json`. Effects that aren't modelled (i.e. Arcane Acuity, Lightning Charges) are shown when hovering an item.
+- **Example builds:** eight builds with gear for each act (Lae'zel GWM, Karlach Berserker, Astarion dual wield Assassin, Gale Evoker, Gloom Stalker archer, smite Paladin, Open Hand Monk, Eldritch Blast Warlock). The default party is the first four, and it shares Caustic Band, so the conflict report has something to show. Any character can be replaced with an example build.
+- **Refreshing the data:** `python -m bg3.scrape_wiki fetch`, `python -m bg3.scrape_wiki parse`, then `python -m bg3.build_items`.
+- New effect kinds: damage from an ability modifier (Titanstring Bow), extra damage on a crit, and thrown attacks as their own target.
 
 ## 2.6.1 (2026-10-12)
 

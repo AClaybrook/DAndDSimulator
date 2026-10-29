@@ -34,6 +34,7 @@ APPLIES_TO = {
     "weapon": lambda a: a.is_weapon,
     "melee_weapon": lambda a: a.type == "weapon (melee)",
     "ranged_weapon": lambda a: a.type in ("weapon (ranged)", "thrown"),
+    "thrown": lambda a: a.type == "thrown",
     "unarmed": lambda a: a.type == "unarmed",
     "spell": lambda a: a.type == "spell",
 }
@@ -42,8 +43,9 @@ APPLIES_TO = {
 class Effect:
     """ One modelled effect of an item or buff.
         kind: ability_min (stat becomes at least value), ability_bonus (+value, up to max_value), attack_bonus, attack_dice,
-              damage_bonus (same type as the attack), extra_damage (typed, i.e. '1d4 fire'), crit_range (crit on value lower),
-              advantage, spell_dc, flag (turns on a Character option, i.e. savage_attacker)
+              damage_bonus (same type as the attack), damage_bonus_ability (the stat's modifier, or the attack's own stat for 'spellcasting'),
+              extra_damage (typed, i.e. '1d4 fire'), crit_damage (extra damage on a crit), crit_range (crit on value lower),
+              advantage, spell_dc, extra_attack (Haste), flag (turns on a Character option, i.e. savage_attacker)
         applies_to: a key of APPLIES_TO, or 'self' for the attacks made with the item's own weapon
         condition: when set, the effect only counts while the condition is toggled on, i.e. 'while raging' """
     kind: str
@@ -67,6 +69,7 @@ class Item:
     notes: str = "" # Effects that are not modelled, shown in the UI
     location: str = ""
     source: str = ""
+    reviewed: bool = False # Effects checked by hand, others are parsed from the item text
 
     @property
     def two_handed(self):
@@ -137,6 +140,11 @@ def apply_effect(character, effect, own_attacks=()):
                 a.bonus_attack_die_mod_list = [*a.bonus_attack_die_mod_list, str(value)]
             elif kind == "damage_bonus":
                 a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(value)]
+            elif kind == "damage_bonus_ability":
+                stat = a.ability_stat if effect.stat in ("", "spellcasting") else effect.stat
+                a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(character.ability_modifier(stat))]
+            elif kind == "crit_damage":
+                a.bonus_crit_die_mod_list = [*a.bonus_crit_die_mod_list, str(value)]
             elif kind == "extra_damage":
                 a.extra_damage_list = [*a.extra_damage_list, str(value)]
             elif kind == "crit_range":

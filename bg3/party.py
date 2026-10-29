@@ -58,7 +58,7 @@ def party_conflicts(builds, items=None, acts=None):
                     users[key].append(build.name)
         for key, members in users.items():
             if len(members) > 1:
-                conflicts.append(Conflict(str(act), "shared", key, members, f"Act {act}: {items[key].name} is wanted by {', '.join(members)}"))
+                conflicts.append(Conflict(str(act), "shared", key, members, f"{items[key].name} is wanted by {', '.join(members)}"))
     return conflicts
 
 def conflicting_items(conflicts, act=None):

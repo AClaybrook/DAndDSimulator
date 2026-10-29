@@ -65,7 +65,8 @@ Sessions: every simulation saves the session in your browser, after a reload you
     * `buffs.py`: buffs during fights (Bless, Haste, Hex, Divine Favour)
     * `build.py`: a build (class preset + gear, buffs and conditions per act) and compiling it at an act
     * `party.py`: equipment conflicts in a party
-    * `scrape_wiki.py`: exports Patch 8 item pages from bg3.wiki
+    * `scrape_wiki.py`, `build_items.py`: export the Patch 8 item pages from bg3.wiki and build `data/items.json` (hand checked fixes in `data/effect_overrides.json`)
+    * `presets.py`: example builds with gear per act
 * `components/`: Dash layout and callbacks
 * `tests/`, `benchmarks/`
 
@@ -127,9 +128,10 @@ Rough priority order, the first items have the most impact for the least work.
 * BG3 Party Planner: act checkpoints, gear and buffs per act, equipment conflicts, expected damage per act, send to the simulator
 * Typed extra damage on hits (i.e. 1d4 fire on a slashing weapon), resisted separately
 
+* Patch 8 item database from bg3.wiki (971 items, 333 with modelled effects), example builds with gear per act
+
 ### Next (BG3)
-* Patch 8 item database from bg3.wiki, with modelled effects for damage items, focused on Act 1 and Act 2
-* Presets with gear per act, built from the item database
+* Arcane Acuity, Lightning Charges and other stacking item effects, per-weapon rerolls (Twist of Fortune)
 * Data driven character builder: race, class levels and subclasses (including the Patch 8 subclasses), point buy, feats
 * Elixirs and camp buffs, party buffs from one caster's concentration
 * Story-exclusive items (one path or the other) in the conflict report

@@ -99,3 +99,47 @@ def test_wiki_template_parsing():
     params = template_params(text, "WeaponPage")
     assert params["name"] == "Test Blade" and params["rarity"] == "Rare"
     assert plain_text(params["special"]) == "Deals 1d4 Fire on hits"
+
+# Patch 8 item data exported from bg3.wiki
+def test_item_data_has_key_items():
+    items = catalog()
+    everburn, caustic = items["bg3:everburn_blade"], items["bg3:caustic_band"]
+    assert everburn.act == 1 and everburn.weapon["damage"] == "2d6" and "two-handed" in everburn.weapon["properties"]
+    assert [e.value for e in everburn.effects if e.kind == "extra_damage"] == ["1d4 fire"]
+    assert caustic.slot == "ring" and caustic.unique and [(e.kind, e.value, e.applies_to) for e in caustic.effects] == [("extra_damage", "2 acid", "weapon")]
+    gauntlets = items["bg3:gauntlets_of_hill_giant_strength"]
+    assert gauntlets.act == 3 and [(e.kind, e.stat, e.value) for e in gauntlets.effects] == [("ability_min", "strength", 23)]
+    assert [(e.kind, e.stat) for e in items["bg3:titanstring_bow"].effects] == [("damage_bonus_ability", "strength")]
+    assert items["bg3:selune_s_spear_of_night"].act == 2
+    assert all(i.source.startswith("https://bg3.wiki/") for i in items.values() if i.key.startswith("bg3:"))
+
+def test_effect_parsing():
+    from bg3.build_items import parse_effects
+    effects, _ = parse_effects(["Your weapon attacks also deal 2 Acid damage."])
+    assert effects == [{"kind": "extra_damage", "value": "2 acid", "applies_to": "weapon"}]
+    effects, _ = parse_effects(["When Concentrating on a spell, the wearer's weapon attacks deal an additional 1d4 Psychic damage."])
+    assert effects[0]["kind"] == "extra_damage" and effects[0]["condition"]
+    # Damage dealt back to attackers doesn't count
+    effects, notes = parse_effects(["Undead creatures that hit the wearer receive 1d6 Radiant damage."])
+    assert not effects and notes
+    effects, _ = parse_effects(["This weapon deals additional damage equal to your Strength Modifier."], own_weapon=True)
+    assert effects == [{"kind": "damage_bonus_ability", "stat": "strength", "applies_to": "self"}]
+    effects, _ = parse_effects(["You gain Advantage on Attack Rolls and receive Disadvantage on SavingThrows."])
+    assert effects == [{"kind": "advantage", "applies_to": "all"}]
+
+def test_real_build_damage_goes_up_with_gear():
+    plain = compile_build(fighter(), 1)
+    geared = compile_build(fighter(equipment={"1": {"melee_main": "bg3:everburn_blade", "ring_1": "bg3:caustic_band"}}), 1)
+    assert expected_damage_per_round(geared, ENEMY) > expected_damage_per_round(plain, ENEMY)
+    giant = compile_build(fighter(equipment={"3": {"gloves": "bg3:gauntlets_of_hill_giant_strength"}}), 3)
+    assert giant.strength == 23
+
+def test_presets_use_real_items_in_the_right_slots():
+    from bg3.presets import DEFAULT_PARTY, PRESETS
+    items = catalog()
+    for build in PRESETS.values():
+        for act in ("1", "2", "3"):
+            assert not [c for c in build_conflicts(build, act) if c.kind != "shared"], build.name
+        assert all(key in items for gear in build.equipment.values() for key in gear.values())
+    # The default party shares Caustic Band, to show the conflict report
+    assert any(c.kind == "shared" and c.item == "bg3:caustic_band" for c in party_conflicts([PRESETS[n] for n in DEFAULT_PARTY]))

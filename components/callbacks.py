@@ -1,6 +1,7 @@
 """ Callbacks for the app, which are registered in app.py. Clientside callbacks are located in assets/callbacks.js"""
 import json
 import base64
+from copy import deepcopy
 import pandas as pd
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
@@ -31,6 +32,7 @@ from components.bg3_planner import (DEFAULT_PARTY, MAX_PARTY_SIZE, conditional_o
 from bg3.build import ACT_KEYS, Bg3Build, compile_build
 from bg3.checkpoints import ACTS, act_level
 from bg3.party import party_conflicts
+from bg3.presets import PRESETS
 from game_data.classes import BUILDS
 
 MAX_CHARACTERS = min(8, len(COLORS)) # There are 10 colors and 4 characters fit per row, so 8 is a good max
@@ -791,6 +793,7 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         Input("bg3-member-tabs", "active_tab"),
         Input("bg3-add-member", "n_clicks"),
         Input("bg3-remove-member", "n_clicks"),
+        Input("bg3-load", "n_clicks"),
         Input("bg3-name", "value"),
         Input("bg3-preset", "value"),
         Input({"type": "bg3-level", "act": ALL}, "value"),
@@ -800,20 +803,23 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         Input("enemy-values", "data"),
         Input("rounds-per-fight", "value"),
         State("bg3-party", "data"),
+        State("bg3-load-preset", "value"),
     )
-    def sync_planner(active_tab, _add, _remove, name, preset, levels, gear, buffs, conditions, enemy_dict, rounds_per_fight, party):
+    def sync_planner(active_tab, _add, _remove, _load, name, preset, levels, gear, buffs, conditions, enemy_dict, rounds_per_fight, party, example):
         """ Keeps the party store and the member editor in sync. Editing updates the selected member, switching members loads them """
         party = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)] or [Bg3Build.from_dict(DEFAULT_PARTY[0])]
         selected = min(int(active_tab or 0), len(party) - 1)
         triggered = ctx.triggered_id
-        level_ids = [i["id"] for i in ctx.inputs_list[5]]
-        gear_ids = [i["id"] for i in ctx.inputs_list[6]]
-        buff_ids = [i["id"] for i in ctx.inputs_list[7]]
+        level_ids = [i["id"] for i in ctx.inputs_list[6]]
+        gear_ids = [i["id"] for i in ctx.inputs_list[7]]
+        buff_ids = [i["id"] for i in ctx.inputs_list[8]]
         editor_changed = triggered in ("bg3-name", "bg3-preset", "bg3-conditions") or (isinstance(triggered, dict) and triggered.get("type") in ("bg3-level", "bg3-gear", "bg3-buffs"))
 
         if triggered == "bg3-add-member" and len(party) < MAX_PARTY_SIZE:
             party.append(Bg3Build(f"Character {len(party) + 1}", "fighter_gwm"))
             selected = len(party) - 1
+        elif triggered == "bg3-load" and example in PRESETS:
+            party[selected] = deepcopy(PRESETS[example])
         elif triggered == "bg3-remove-member" and len(party) > 1:
             del party[selected]
             selected = min(selected, len(party) - 1)

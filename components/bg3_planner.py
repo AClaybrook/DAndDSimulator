@@ -2,32 +2,53 @@
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 
-from bg3.build import ACT_KEYS, Bg3Build, compile_build, equipment_at
+from bg3.build import ACT_KEYS, compile_build, equipment_at
 from bg3.buffs import BUFFS
 from bg3.checkpoints import ACTS, act_level
 from bg3.items import SLOTS, catalog, condition_id
-from bg3.party import MAX_PARTY_SIZE, build_conflicts, conflicting_items, party_conflicts
+from bg3.party import MAX_PARTY_SIZE, build_conflicts, party_conflicts
+from bg3.presets import DEFAULT_PARTY as PRESET_PARTY, PRESETS
 from computations.analytic import expected_damage_per_round
 from game_data.classes import BUILDS
 
-DEFAULT_PARTY = [
-    Bg3Build("Lae'zel", "fighter_gwm").to_dict(),
-    Bg3Build("Karlach", "barbarian_berserker").to_dict(),
-    Bg3Build("Astarion", "rogue_assassin").to_dict(),
-    Bg3Build("Gale", "wizard_fireball").to_dict(),
-]
+DEFAULT_PARTY = [PRESETS[name].to_dict() for name in PRESET_PARTY]
+
+def effect_text(effect):
+    target = "" if effect.applies_to in ("all", "self") else f" ({effect.applies_to.replace('_', ' ')})"
+    what = {"ability_min": f"{effect.stat.title()} {effect.value}", "ability_bonus": f"{effect.stat.title()} +{effect.value}",
+            "attack_bonus": f"+{effect.value} to hit", "attack_dice": f"+{effect.value} to hit", "damage_bonus": f"+{effect.value} damage",
+            "damage_bonus_ability": f"+{effect.stat.title()} modifier to damage", "extra_damage": f"+{effect.value} damage",
+            "crit_damage": f"+{effect.value} on a crit", "crit_range": f"crit range +{effect.value}", "advantage": "advantage",
+            "spell_dc": f"+{effect.value} spell DC", "extra_attack": "extra attack", "flag": str(effect.value)}.get(effect.kind, effect.kind)
+    return what + target + (f" [toggle: {effect.condition}]" if effect.condition else "")
+
+def item_summary(item):
+    """ Hover text: modelled effects, other effects, where it's found """
+    parts = []
+    if item.weapon:
+        w = item.weapon
+        parts.append(f"{w['damage']} {w['damage_type']}" + (f" +{w['enhancement']}" if w.get("enhancement") else "") +
+                     (f", {', '.join(w['properties'])}" if w.get("properties") else ""))
+    parts += [effect_text(e) for e in item.effects]
+    if item.notes:
+        parts.append(f"Not modelled: {item.notes}")
+    if item.location:
+        parts.append(f"Found: {item.location}")
+    return "\n".join(parts)
 
 def item_label(item):
     if not item.unique:
-        return f"{item.name} (base weapon)"
-    details = " · ".join(x for x in [item.rarity, f"Act {item.act}" if item.act else ""] if x)
-    return f"{item.name} · {details}" if details else item.name
+        return f"{item.name} (common)"
+    details = " · ".join(x for x in [item.rarity, f"Act {item.act}" if item.act else "Act ?"] if x)
+    # Marks items whose effects change damage in the simulator
+    marker = " ✦" if item.effects or (item.weapon and item.weapon.get("enhancement")) else ""
+    return f"{item.name}{marker} · {details}"
 
 def item_options(slot, act):
     """ Items that fit a slot and are found by an act, named items first """
     items = [i for i in catalog().values() if i.fits(slot) and (i.act is None or i.act <= int(act))]
     items.sort(key=lambda i: (not i.unique, i.act or 0, i.name))
-    return [{"label": item_label(i), "value": i.key} for i in items]
+    return [{"label": item_label(i), "value": i.key, "title": item_summary(i)} for i in items]
 
 def gear_table():
     """ Slots down, acts across. An empty cell keeps the item from the act before """
@@ -48,6 +69,10 @@ def planner():
     presets = [{"label": b.label, "value": key} for key, b in BUILDS.items()]
     member_editor = dbc.Row([
         dbc.Col([
+            dbc.InputGroup([
+                dbc.Select(options=[{"label": name, "value": name} for name in PRESETS], placeholder="Start from an example build...", id="bg3-load-preset"),
+                dbc.Button("Load", id="bg3-load", color="secondary", title="Replace this character with the example build, gear included"),
+            ], size="sm", class_name="mb-2"),
             dbc.InputGroup([dbc.InputGroupText("Name"), dbc.Input(id="bg3-name", type="text")], size="sm", class_name="mb-2"),
             dbc.InputGroup([dbc.InputGroupText("Class"), dbc.Select(options=presets, id="bg3-preset")], size="sm", class_name="mb-2"),
             html.Small("Level at each checkpoint", className="text-muted"),
@@ -75,7 +100,9 @@ def planner():
         ], align="center", class_name="mb-1"),
         html.P(["Plan up to four characters with gear and buffs for each act. Checkpoints: ",
                 ", ".join(f"{label} at level {level}" for label, level in ACTS.values()),
-                ". An empty gear cell keeps the item from the act before. Unique items wanted by more than one character are highlighted."],
+                ". An empty gear cell keeps the item from the act before. Unique items wanted by more than one character are highlighted. "
+                "✦ marks items whose effects the simulator models, hover an item for its effects. Item data: Patch 8, from ",
+                html.A("bg3.wiki", href="https://bg3.wiki", target="_blank"), "."],
                className="small text-muted mb-2"),
         dbc.Row([
             dbc.Col(dbc.Tabs(id="bg3-member-tabs", active_tab="0"), class_name="mb-2"),
@@ -141,15 +168,10 @@ def inherited_placeholders(build, gear_ids):
     return placeholders
 
 def gear_highlights(build, conflicts, gear_ids):
-    """ CSS classes for each gear cell: shared items and the character's own gear problems are highlighted """
-    own = {(c.act, c.item) for c in conflicts if build.name in c.members and c.kind != "shared"}
-    classes = []
-    for gid in gear_ids:
-        key = build.equipment.get(gid["act"], {}).get(gid["slot"])
-        flagged = key and (key in conflicting_items(conflicts, gid["act"]) and any(c.item == key and build.name in c.members for c in conflicts)
-                           or (gid["act"], key) in own)
-        classes.append("bg3-gear bg3-conflict" if flagged else "bg3-gear")
-    return classes
+    """ CSS classes for each gear cell: items this character shares with others, and its own gear problems, including carried over items """
+    flagged = {(c.act, c.item) for c in conflicts if build.name in c.members}
+    gear_by_act = {act: equipment_at(build, act) for act in ACT_KEYS}
+    return ["bg3-gear bg3-conflict" if (gid["act"], gear_by_act[gid["act"]].get(gid["slot"])) in flagged else "bg3-gear" for gid in gear_ids]
 
 __all__ = ["planner", "DEFAULT_PARTY", "MAX_PARTY_SIZE", "party_conflicts", "build_conflicts", "conditional_options", "dpr_table",
            "conflicts_list", "gear_highlights", "inherited_placeholders"]

@@ -17,7 +17,7 @@ API = "https://bg3.wiki/w/api.php"
 RAW = Path(__file__).parent / "data" / "raw"
 USER_AGENT = "DAndDSimulator item export (https://github.com/AClaybrook/DAndDSimulator)"
 # Item pages are built from these templates, every page that uses one is exported
-TEMPLATES = ["Template:WeaponPage", "Template:EquipmentPage", "Template:ArmourPage", "Template:ClothingPage"]
+TEMPLATES = ["Template:Weapon page", "Template:Equipment page"]
 BATCH = 50
 
 def api(**params):
@@ -100,6 +100,7 @@ def plain_text(value):
     while re.search(r"\{\{[^{}]*\}\}", value):
         # Innermost templates first: keep the arguments, drop the template name
         value = re.sub(r"\{\{([^{}]*)\}\}", lambda m: " ".join(a.strip() for a in m.group(1).split("|")[1:]) or m.group(1).strip(), value)
+    value = re.sub(r"\s*see (?:bugs|notes)\b", "", value) # Footnote markers
     return re.sub(r"'{2,}", "", value).strip()
 
 def parse():
@@ -107,10 +108,13 @@ def parse():
     with open(RAW / "pages.jsonl", encoding="utf-8") as f:
         for line in f:
             page = json.loads(line)
-            params = template_params(page["wikitext"], page["template"].split(":", 1)[1])
+            # Pages use the template's short names, i.e. {{WeaponPage for Template:Weapon page
+            name = page["template"].split(":", 1)[1]
+            params = template_params(page["wikitext"], name.replace(" page", "Page")) or template_params(page["wikitext"], name)
             parsed.append({"title": page["title"], "template": page["template"], "timestamp": page["timestamp"],
                            "source": f"https://bg3.wiki/wiki/{urllib.parse.quote(page['title'].replace(' ', '_'))}",
-                           "params": {k: plain_text(v) for k, v in params.items()}})
+                           "params": {k: plain_text(v) for k, v in params.items()},
+                           "categories": re.findall(r"\[\[Category:([^\]|]+)", page["wikitext"])})
     with open(RAW / "parsed.json", "w", encoding="utf-8") as f:
         json.dump(parsed, f, indent=1)
     keys = {}
