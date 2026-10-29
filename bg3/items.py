@@ -45,7 +45,8 @@ class Effect:
         kind: ability_min (stat becomes at least value), ability_bonus (+value, up to max_value), attack_bonus, attack_dice,
               damage_bonus (same type as the attack), damage_bonus_ability (the stat's modifier, or the attack's own stat for 'spellcasting'),
               extra_damage (typed, i.e. '1d4 fire'), crit_damage (extra damage on a crit), crit_range (crit on value lower),
-              advantage, damage_reroll (reroll damage dice at or below value), spell_dc, extra_attack (Haste),
+              advantage, damage_reroll (reroll damage dice at or below value), miss_damage_ability (the stat's modifier on a miss, Tenacity),
+              once_per_turn_bonus (more Sneak Attack damage), spell_dc, extra_attack (Haste),
               flag (turns on a Character option, i.e. savage_attacker)
         applies_to: a key of APPLIES_TO, or 'self' for the attacks made with the item's own weapon
         condition: when set, the effect only counts while the condition is toggled on, i.e. 'while raging' """
@@ -135,6 +136,10 @@ def apply_effect(character, effect, own_attacks=()):
         character.additional_spell_dc += int(value)
     elif kind == "flag":
         setattr(character, str(value), True)
+    elif kind == "once_per_turn_bonus":
+        # Only adds to once per turn damage the character already has, i.e. Sneak Attack
+        if character.once_per_turn_die_mod_list:
+            character.once_per_turn_die_mod_list = [*character.once_per_turn_die_mod_list, str(value)]
     else:
         for a in _attacks_for(character, effect, own_attacks):
             if kind in ("attack_bonus", "attack_dice"):
@@ -152,6 +157,8 @@ def apply_effect(character, effect, own_attacks=()):
                 a.crit_on = max(2, min(a.crit_on, character.crit_on) - int(value))
             elif kind == "advantage":
                 a.advantage = True
+            elif kind == "miss_damage_ability":
+                a.bonus_miss_die_mod_list = [*a.bonus_miss_die_mod_list, str(max(1, character.ability_modifier(effect.stat or a.ability_stat)))]
             elif kind == "damage_reroll":
                 a.damage_reroll_on = max(a.damage_reroll_on, int(value))
 

@@ -30,13 +30,15 @@ LOCATION_CATEGORIES = {"Category:Prologue Locations": 1, "Category:Act One Locat
                        "Category:Act Three Locations": 3}
 CHARACTER_CATEGORIES = {"Category:Characters in Act One": 1, "Category:Characters in Act Two": 2, "Category:Characters in Act Three": 3}
 CONDITION_WORDS = re.compile(r"\b(if|when|whenever|while|against|after|once per|critical|burning|illuminated|obscured|raging|until|"
-                             r"haven't|full health|frightened|on a hit|each turn|first)\b", re.I)
+                             r"haven't|full health|frightened|on a hit|each turn|first|attacking (?:gnomes|dwarves|goblins|undead|fiends)|"
+                             r"gnomes|dwarves|goblins|undead|fiends|githyanki|aberrations|beasts|monstrosit\w*|humanoids)\b", re.I)
 DAMAGE = r"(\d+d\d+(?:\s*\+\s*\d+)?|\d+)\s+(" + "|".join(t.title() for t in DAMAGE_TYPES) + r")"
 DICE = r"(\d*d\d+|\d+)"
 SCOPES = [("weapon and unarmed attacks", "all"), ("unarmed and melee attacks", "melee_weapon"), ("ranged weapon attacks", "ranged_weapon"),
           ("melee weapon attack", "melee_weapon"), ("ranged attack rolls", "ranged_weapon"), ("melee attack rolls", "melee_weapon"),
-          ("unarmed attack", "unarmed"), ("throw attack", "thrown"), ("throw damage", "thrown"), ("thrown", "thrown"), ("weapon attacks", "weapon"),
-          ("this weapon", "self"), ("this blade", "self"), ("with this dagger", "self"), ("cantrip", "spell"), ("spell", "spell")]
+          ("unarmed attack", "unarmed"), ("throw attack", "thrown"), ("throw damage", "thrown"), ("when throwing", "thrown"), ("thrown", "thrown"), ("weapon attacks", "weapon"),
+          ("this weapon", "self"), ("this blade", "self"), ("with this dagger", "self"), ("with weapons", "weapon"), ("cantrip", "spell"),
+          ("spell", "spell")]
 # Damage dealt back to attackers, and other effects that don't add to the wearer's damage
 REACTIVE = re.compile(r"attackers that hit|that hit the wearer|hit (?:you|the wearer) with|who miss|when you are hit|you are hit|"
                       r"when you take|deals damage to the wearer|When a foe hits|foe that caused|incoming|Jumps?\b|items and world objects|"
@@ -173,6 +175,20 @@ def _parse_sentence(sentence, own_weapon):
     if re.search(r"(?<![Dd]is)Advantage on (?:melee )?Attack Rolls|has Advantage on Attack Rolls|Attack Rolls against .+ have Advantage|"
                  r"have Advantage against", sentence):
         return [{"kind": "advantage", "applies_to": scope, **conditional}]
+    # Damage on a critical hit only, i.e. "Whenever you score a Critical Hit, deal an additional 1d6 Force damage"
+    if re.search(r"(?:score|land) a Critical Hit", sentence, re.I) and (m := re.search(r"additional " + DICE + r"\b", sentence)):
+        crit_scope = "all" if re.search(r"weapon or unarmed", sentence) else scope
+        return [{"kind": "crit_damage", "value": m.group(1), "applies_to": crit_scope}]
+    # Extra Sneak Attack damage counts once per turn, with the sneak attack
+    if re.search(r"Your Sneak Attack deals an additional", sentence) and (m := re.search(r"additional " + DICE, sentence)):
+        return [{"kind": "once_per_turn_bonus", "value": m.group(1)}]
+    # Tenacity: damage equal to the Strength modifier on a missed melee attack
+    if m := re.search(r"When you miss a melee attack, you deal (\w+) Modifier", sentence):
+        stat = m.group(1).lower()
+        if stat in STATS:
+            return [{"kind": "miss_damage_ability", "stat": stat, "applies_to": "self" if own_weapon else "melee_weapon"}]
+    if m := re.search(r"the target takes an additional (\d+)", sentence):
+        return [{"kind": "damage_bonus", "value": int(m.group(1)), "applies_to": scope, **conditional}]
     if m := re.search(r"When you roll (\d) (?:damage )?or less(?: with this weapon's damage die)?, reroll", sentence, re.I):
         return [{"kind": "damage_reroll", "value": int(m.group(1)), "applies_to": "self" if own_weapon else scope}]
     if re.search(r"critical hit when rolling a 19", sentence, re.I):

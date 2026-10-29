@@ -756,7 +756,7 @@
    "weapon": null,
    "effects": [],
    "notes": "Gain a +1 bonus to Dexterity Saving Throws and Ability Checks",
-   "location": "<!-- Describe where and how to obtain the weapon, if it's a special one. -->\nSold by traders using the levelled magic ar",
+   "location": "Sold by traders using the levelled magic armour table if the player character is between levels 2 and 4",
    "source": "https://bg3.wiki/wiki/Hide_Armour_%2B1"
   },
   {
@@ -3388,8 +3388,14 @@
     "enhancement": 1,
     "properties": []
    },
-   "effects": [],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "",
    "location": "Ebonlake Grotto",
    "source": "https://bg3.wiki/wiki/Corrosive_Flail"
   },
@@ -3522,8 +3528,14 @@
     "enhancement": 1,
     "properties": []
    },
-   "effects": [],
-   "notes": "ArmourClass +1; Reduce incoming Bludgeoning, Piercing, and Slashing damage by 1; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "ArmourClass +1; Reduce incoming Bludgeoning, Piercing, and Slashing damage by 1",
    "location": "Crèche Y'llek",
    "source": "https://bg3.wiki/wiki/Defender_Flail"
   },
@@ -3546,8 +3558,14 @@
      "two-handed"
     ]
    },
-   "effects": [],
-   "notes": "Each strike fills the target with a chilling dread that prevents it from regaining hit points; Undead creatures also get Disadvantage on Attack Rolls; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "Each strike fills the target with a chilling dread that prevents it from regaining hit points; Undead creatures also get Disadvantage on Attack Rolls",
    "location": "Goblin Camp",
    "source": "https://bg3.wiki/wiki/Doom_Hammer"
   },
@@ -3715,8 +3733,14 @@
     "enhancement": 1,
     "properties": []
    },
-   "effects": [],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "",
    "location": "Sold by any trader using the magic melee table",
    "source": "https://bg3.wiki/wiki/Flail_%2B1"
   },
@@ -4091,8 +4115,14 @@
      "two-handed"
     ]
    },
-   "effects": [],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "",
    "location": "Sold by any trader using the magic melee table\n* Goblin Camp: Sold by Grat -99 424\n* Last Light Inn: Carried by Marcus F",
    "source": "https://bg3.wiki/wiki/Greatclub_%2B1"
   },
@@ -4164,8 +4194,14 @@
      "two-handed"
     ]
    },
-   "effects": [],
-   "notes": "When the wearer Jump Jumps, they deal 1d4 Thunder damage in a m=3 radius upon landing; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "When the wearer Jump Jumps, they deal 1d4 Thunder damage in a m=3 radius upon landing",
    "location": "Waukeen's Rest",
    "source": "https://bg3.wiki/wiki/Hamarhraft"
   },
@@ -4688,8 +4724,14 @@
      "two-handed"
     ]
    },
-   "effects": [],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "",
    "location": "Sold by any trader using the magic melee table",
    "source": "https://bg3.wiki/wiki/Maul_%2B1"
   },
@@ -4800,8 +4842,14 @@
     "enhancement": 1,
     "properties": []
    },
-   "effects": [],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "",
    "location": "Sold by any trader using the magic melee table",
    "source": "https://bg3.wiki/wiki/Morningstar_%2B1"
   },
@@ -5715,7 +5763,7 @@
    },
    "effects": [],
    "notes": "",
-   "location": "Carried by Dream Guardian Dream Guardians<!--verified accessible via command drop and lootable, can be used after either",
+   "location": "Carried by Dream Guardian Dream Guardians or Breaker of War in the final fight scenario",
    "source": "https://bg3.wiki/wiki/Spear_%2B2"
   },
   {
@@ -8391,8 +8439,14 @@
      "two-handed"
     ]
    },
-   "effects": [],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "",
    "location": "Moonrise Towers",
    "source": "https://bg3.wiki/wiki/Argument_Solver"
   },
@@ -8820,8 +8874,14 @@
     "enhancement": 2,
     "properties": []
    },
-   "effects": [],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "",
    "location": "Carried by the Blasphemous Acolyte in the final fight Atop the Netherbrain if a cleric is in the party",
    "source": "https://bg3.wiki/wiki/Flail_%2B2"
   },
@@ -8841,8 +8901,14 @@
     "enhancement": 0,
     "properties": []
    },
-   "effects": [],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "",
    "location": "Carried by Ketheric Thorm, if he is disarmed during his initial encounter",
    "source": "https://bg3.wiki/wiki/Flail_of_Myrkul"
   },
@@ -9305,12 +9371,17 @@
    },
    "effects": [
     {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    },
+    {
      "kind": "extra_damage",
      "value": "1d6 necrotic",
      "applies_to": "self"
     }
    ],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "notes": "",
    "location": "Moonrise Towers",
    "source": "https://bg3.wiki/wiki/Myrkulite_Scourge"
   },
@@ -9355,8 +9426,14 @@
      "two-handed"
     ]
    },
-   "effects": [],
-   "notes": "While you are Drunk, you have advantage on attack rolls; You also create a blast with each melee hit landed, dealing 1d4 Thunder damage to all creatures and objects in a radius of m=3 ft=10, excluding yourself; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "While you are Drunk, you have advantage on attack rolls; You also create a blast with each melee hit landed, dealing 1d4 Thunder damage to all creatures and objects in a radius of m=3 ft=10, excluding yourself",
    "location": "The Waning Moon",
    "source": "https://bg3.wiki/wiki/Punch-Drunk_Bastard"
   },
@@ -9978,9 +10055,14 @@
      "kind": "damage_reroll",
      "value": 2,
      "applies_to": "self"
+    },
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
     }
    ],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "notes": "",
    "location": "Reithwin Tollhouse",
    "source": "https://bg3.wiki/wiki/Twist_of_Fortune"
   },
@@ -11291,10 +11373,9 @@
    "weapon": null,
    "effects": [
     {
-     "kind": "extra_damage",
-     "value": "1d6 force",
-     "applies_to": "all",
-     "condition": "Whenever you score a Critical Hit, deal an additional 1d6 Force drs=t damage"
+     "kind": "crit_damage",
+     "value": "1d6",
+     "applies_to": "all"
     }
    ],
    "notes": "Strength Saving Throws +1",
@@ -11313,8 +11394,8 @@
     {
      "kind": "attack_bonus",
      "value": 1,
-     "applies_to": "all",
-     "condition": "You gain a +1 bonus to Attack Rolls when throwing, and <!--the tooltip says \"may swap\" but the language was modified for clarity since the swap always occurs on a failed save--> swap positions with the target if they fail a Dexterity 13"
+     "applies_to": "thrown",
+     "condition": "You gain a +1 bonus to Attack Rolls when throwing, and  swap positions with the target if they fail a Dexterity 13"
     }
    ],
    "notes": "Sleight of Hand +1",
@@ -11468,12 +11549,12 @@
     {
      "kind": "attack_bonus",
      "value": "2",
-     "applies_to": "all"
+     "applies_to": "weapon"
     },
     {
      "kind": "damage_bonus",
      "value": "2",
-     "applies_to": "all"
+     "applies_to": "weapon"
     }
    ],
    "notes": "Strength Saving Throws +1",
@@ -11619,9 +11700,8 @@
    "weapon": null,
    "effects": [
     {
-     "kind": "extra_damage",
-     "value": "1d4 force",
-     "applies_to": "all"
+     "kind": "once_per_turn_bonus",
+     "value": "1d4"
     }
    ],
    "notes": "You gain a +1 bonus to Initiative rolls",
@@ -12739,12 +12819,14 @@
     {
      "kind": "attack_dice",
      "value": "1d4",
-     "applies_to": "self"
+     "applies_to": "self",
+     "condition": "Attacking Gnomes or Dwarves with this weapon receives a 1d4 bonus to Attack and Damage rolls"
     },
     {
      "kind": "damage_bonus",
      "value": "1d4",
-     "applies_to": "self"
+     "applies_to": "self",
+     "condition": "Attacking Gnomes or Dwarves with this weapon receives a 1d4 bonus to Attack and Damage rolls"
     }
    ],
    "notes": "When this weapon lands a Critical Hit, it also Slowed Slows the target creature",
@@ -12996,12 +13078,17 @@
    },
    "effects": [
     {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    },
+    {
      "kind": "extra_damage",
      "value": "1d4 thunder",
      "applies_to": "self"
     }
    ],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "notes": "",
    "location": "Western Beach",
    "source": "https://bg3.wiki/wiki/Corpsegrinder"
   },
@@ -13032,12 +13119,18 @@
      "condition": "This weapon deals an additional 1d4 Piercing damage against targets with 50% of their hit points or fewer"
     },
     {
+     "kind": "damage_bonus",
+     "value": 7,
+     "applies_to": "self",
+     "condition": "When you make an attack with Advantage, the target takes an additional 7 Piercing damage"
+    },
+    {
      "kind": "extra_damage",
      "value": "1d4 necrotic",
      "applies_to": "self"
     }
    ],
-   "notes": "When you make an attack with Advantage, the target takes an additional 7 Piercing drs=t damage",
+   "notes": "",
    "location": "Bhaal Temple",
    "source": "https://bg3.wiki/wiki/Crimson_Mischief"
   },
@@ -13148,10 +13241,9 @@
    },
    "effects": [
     {
-     "kind": "damage_bonus",
+     "kind": "crit_damage",
      "value": "7",
-     "applies_to": "unarmed",
-     "condition": "When you land a Critical Hit with a weapon or unarmed attack, it deals an additional 7 damage"
+     "applies_to": "all"
     }
    ],
    "notes": "",
@@ -13306,10 +13398,10 @@
      "kind": "extra_damage",
      "value": "1d8 bludgeoning",
      "applies_to": "self",
-     "condition": "While race is normally capitalised, it is not here for this reason.-->  throws this warhammer, it deals an extra 1d8 Bludgeoning damage, or an extra 2d8 Bludgeoning damage if the target is a Large, Huge, or Gargantuan creature"
+     "condition": "When a dwarf   throws this warhammer, it deals an extra 1d8 Bludgeoning damage, or an extra 2d8 Bludgeoning damage if the target is a Large, Huge, or Gargantuan creature"
     }
    ],
-   "notes": "This weapon will return to its owner when thrown; When a dwarf <!--Descriptions here should almost always exactly match in-game tool tips",
+   "notes": "This weapon will return to its owner when thrown",
    "location": "Rivington",
    "source": "https://bg3.wiki/wiki/Dwarven_Thrower"
   },
@@ -13352,8 +13444,14 @@
     "enhancement": 1,
     "properties": []
    },
-   "effects": [],
-   "notes": "Elemental Age level=3 recharge=Long Rest; Depending on what kind of damage this weapon does, it also inflicts: Acid condition, Chilled condition, or Burning condition; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "Elemental Age level=3 recharge=Long Rest; Depending on what kind of damage this weapon does, it also inflicts: Acid condition, Chilled condition, or Burning condition",
    "location": "Stormshore Armoury",
    "source": "https://bg3.wiki/wiki/Flail_of_Ages"
   },
@@ -13400,8 +13498,14 @@
      "two-handed"
     ]
    },
-   "effects": [],
-   "notes": "This weapon ignores resistance to Bludgeoning damage; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "This weapon ignores resistance to Bludgeoning damage",
    "location": "Sorcerous Vault",
    "source": "https://bg3.wiki/wiki/Foebreaker"
   },
@@ -14294,8 +14398,14 @@
     "enhancement": 2,
     "properties": []
    },
-   "effects": [],
-   "notes": "Commander's Strike recharge=Short Rest cost=action, bonus; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "Commander's Strike recharge=Short Rest cost=action, bonus",
    "location": "The Counting House",
    "source": "https://bg3.wiki/wiki/Ravengard%27s_Scourger"
   },
@@ -14396,8 +14506,14 @@
      "two-handed"
     ]
    },
-   "effects": [],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "",
    "location": "On a large pile of discarded weapons and armour near the Rivington gate at 10 -131",
    "source": "https://bg3.wiki/wiki/Rusty_Maul"
   },
@@ -14417,8 +14533,14 @@
     "enhancement": 0,
     "properties": []
    },
-   "effects": [],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "",
    "location": "On a large pile of discarded weapons and armour near the Rivington gate at 10 -131",
    "source": "https://bg3.wiki/wiki/Rusty_Morningstar"
   },
@@ -15028,12 +15150,17 @@
    },
    "effects": [
     {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    },
+    {
      "kind": "extra_damage",
      "value": "1d4 radiant",
      "applies_to": "self"
     }
    ],
-   "notes": "On a hit, inflict 1 turn of Radiating Orb upon the target; Undead creatures struck by this weapon are possibly Turned; When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "notes": "On a hit, inflict 1 turn of Radiating Orb upon the target; Undead creatures struck by this weapon are possibly Turned",
    "location": "Stormshore Tabernacle",
    "source": "https://bg3.wiki/wiki/The_Sacred_Star"
   },
@@ -15141,10 +15268,9 @@
    },
    "effects": [
     {
-     "kind": "damage_bonus",
+     "kind": "crit_damage",
      "value": "7",
-     "applies_to": "unarmed",
-     "condition": "When you land a Critical Hit with a weapon or unarmed attack, it deals an additional 7 damage"
+     "applies_to": "all"
     }
    ],
    "notes": "",
@@ -15171,10 +15297,9 @@
    },
    "effects": [
     {
-     "kind": "damage_bonus",
+     "kind": "crit_damage",
      "value": "7",
-     "applies_to": "unarmed",
-     "condition": "When you land a Critical Hit with a weapon or unarmed attack, it deals an additional 7 damage"
+     "applies_to": "all"
     }
    ],
    "notes": "",
@@ -16152,8 +16277,14 @@
     "enhancement": 0,
     "properties": []
    },
-   "effects": [],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "",
    "location": "Summoned by a Hexblade with Pact of the Blade: Flail",
    "source": "https://bg3.wiki/wiki/Pactbound_Flail"
   },
@@ -16225,8 +16356,14 @@
      "two-handed"
     ]
    },
-   "effects": [],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "",
    "location": "Summoned by a Hexblade with Pact of the Blade: Maul",
    "source": "https://bg3.wiki/wiki/Pactbound_Maul"
   },
@@ -16384,8 +16521,14 @@
     "enhancement": 0,
     "properties": []
    },
-   "effects": [],
-   "notes": "When you miss a melee attack, you deal Strength Modifier Bludgeoning damage (minimum of 1) anyway",
+   "effects": [
+    {
+     "kind": "miss_damage_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    }
+   ],
+   "notes": "",
    "location": "",
    "source": "https://bg3.wiki/wiki/Rusty_Flail"
   },

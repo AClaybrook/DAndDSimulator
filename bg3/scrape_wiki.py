@@ -106,6 +106,8 @@ def plain_text(value):
         # Innermost templates first: keep the arguments, drop the template name
         value = re.sub(r"\{\{([^{}]*)\}\}", lambda m: " ".join(a.strip() for a in m.group(1).split("|")[1:]) or m.group(1).strip(), value)
     value = re.sub(r"\s*see (?:bugs|notes)\b", "", value) # Footnote markers
+    value = re.sub(r"<!--.*?-->", "", value, flags=re.S) # Editor comments
+    value = re.sub(r"\s*drs=t\b", "", value) # Damage template option
     return re.sub(r"'{2,}", "", value).strip()
 
 def parse():

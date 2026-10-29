@@ -186,3 +186,15 @@ def test_concentration():
     assert not concentration_conflicts([member("A", "hex"), member("B", "haste")], 1)
     assert concentration_conflicts([member("A", "hex"), member("B", "haste", "bless")], 1)
     assert [c.kind for c in build_conflicts(member("A", "hex", "divine_favour"), 1, ITEMS)] == ["concentration"]
+
+def test_tenacity_crit_and_sneak_attack_item_effects():
+    items = catalog()
+    assert [(e.kind, e.stat) for e in items["bg3:defender_flail"].effects] == [("miss_damage_ability", "strength")]
+    assert [(e.kind, e.value) for e in items["bg3:craterflesh_gloves"].effects] == [("crit_damage", "1d6")]
+    tenacity = compile_build(fighter(equipment={"1": {"melee_main": "bg3:doom_hammer"}}), 1)
+    assert all(a.bonus_miss_die_mod_list == ["3"] for a in tenacity.attacks) # Strength 17 at level 5 -> +3 on a miss
+    # Stalker Gloves only add to Sneak Attack, so a fighter gains nothing and a rogue gains on the first hit
+    gloves = {"1": {"gloves": "bg3:stalker_gloves"}}
+    assert not compile_build(fighter(equipment=gloves), 1).once_per_turn_die_mod_list
+    rogue = compile_build(Bg3Build("Astarion", "rogue_assassin", equipment=gloves), 1)
+    assert rogue.once_per_turn_die_mod_list[-1] == "1d4"

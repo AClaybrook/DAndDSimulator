@@ -19,6 +19,7 @@ Baldur's Gate 3 first. The original simulator and analytics are unchanged, BG3 b
 - **Elixirs:** damage elixirs from bg3.wiki are buffs per act (Hill Giant and Cloud Giant Strength, Viciousness, Heroism, Colossus, Battlemage's Power). Most elixirs replace each other, so picking two of those is reported as a conflict.
 - **Concentration:** the conflict report flags a character concentrating on two of their own spells (Hex and Divine Favour), and party buffs that need more concentrating casters than the party has free (one Bless covers three characters, Haste one).
 - **Per weapon damage rerolls:** attacks can reroll their own damage dice at or below a number (Twist of Fortune, Knife of the Undermountain King), the same as Great Weapon Fighting for that weapon. Editable on attack cards under Weapon.
+- **More item effects:** crit-only damage (Craterflesh Gloves, Dolor Amarus), extra Sneak Attack damage (Stalker Gloves), and Tenacity, the Strength modifier as damage on a missed melee attack, which about 35 weapons have. Creature type conditions ("against Gnomes or Dwarves") are toggles. 319 items now have modelled effects.
 - New effect kinds: damage from an ability modifier (Titanstring Bow), extra damage on a crit, and thrown attacks as their own target.
 
 ## 2.6.1 (2026-10-12)
