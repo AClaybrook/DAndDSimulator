@@ -202,9 +202,9 @@ def monk_open_hand(level, ruleset):
     else:
         martial_arts, ki = 4 + 2 * ((level >= 5) + (level >= 11) + (level >= 17)), level
     strike = Attack(name="Unarmed Strike", type="unarmed", ability_stat="dexterity", damage=f"1d{martial_arts}", damage_type="bludgeoning")
-    # Attack action plus the Martial Arts bonus action strike, Flurry of Blows (from level 2) adds a strike for 1 ki per short rest
+    # Attack action plus the Martial Arts bonus action strike, Flurry of Blows adds a strike for 1 ki per short rest (from level 1 in BG3, 2 in 5e)
     c.attacks = [replace(strike) for _ in range(extra_attacks(level, "monk", ruleset) + 1)]
-    if level >= 2:
+    if level >= (1 if ruleset == "bg3" else 2):
         c.attacks.append(replace(strike, name="Flurry of Blows", uses_per_fight=per_fight(per_short_rest=ki)))
     return _named(c, "Open Hand Monk (Flurry)", level, taken)
 
@@ -234,8 +234,8 @@ def sorlock(level, ruleset):
     taken = apply_asi_plan(c, "sorcerer", sorcerer_level, ruleset, ["charisma", "charisma", "constitution"])
     blasts = spell_attacks("Eldritch Blast", ability_stat="charisma", character_level=level, ruleset=ruleset, bonus_damage=["1d6"]) # Hex
     c.attacks = [replace(a, name=f"Eldritch Blast Beam {ii + 1}") for ii, a in enumerate(blasts)]
-    # Metamagic at sorcerer level 2 in BG3 (3 in 5e), Quickened Spell costs 3 sorcery points in BG3 (2 in 5e), sorcery points = sorcerer level per long rest
-    metamagic_level, quicken_cost = (2, 3) if ruleset == "bg3" else (3, 2)
+    # Quickened Spell from sorcerer level 3, it costs 3 sorcery points in BG3 (2 in 5e), sorcery points = sorcerer level per long rest
+    metamagic_level, quicken_cost = (3, 3) if ruleset == "bg3" else (3, 2)
     if sorcerer_level >= metamagic_level:
         uses = per_fight(per_long_rest=sorcerer_level // quicken_cost)
         c.attacks += [replace(a, name=f"Quickened Eldritch Blast Beam {ii + 1}", uses_per_fight=uses) for ii, a in enumerate(blasts)]

@@ -245,6 +245,7 @@ class Character(Creature):
     TWF: bool = False
     # Barbarian
     raging: bool = False
+    barbarian_level: int = 0 # For multiclass characters, rage damage follows the barbarian level (0 uses the character level)
     brutal_critical: bool = False
     #Paladin
     divine_smite: bool = False # 2d8+1d8 per spell level above 1st, max 5d8, applied to every melee hit
@@ -262,9 +263,10 @@ class Character(Creature):
 
     @property
     def rage_damage(self):
-        if self.level >= 16:
+        barbarian_level = self.barbarian_level or self.level
+        if barbarian_level >= 16:
             return 4
-        if self.level >= 9:
+        if barbarian_level >= 9:
             return 3
         return 2
 
