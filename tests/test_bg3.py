@@ -92,3 +92,10 @@ def test_build_conflicts_flag_items_from_later_acts():
 def test_build_round_trip():
     build = fighter(equipment={"1": {"ring_1": "test:acid_ring"}}, buffs={"1": ["bless"]}, conditions=["x#0"], levels={"1": 4})
     assert Bg3Build.from_dict(build.to_dict()) == build
+
+def test_wiki_template_parsing():
+    from bg3.scrape_wiki import plain_text, template_params
+    text = "Intro {{WeaponPage\n| name = Test Blade\n| damage = 1d8\n| special = Deals {{DamageText|1d4|Fire}} on [[hit|hits]] |rarity=Rare}} outro"
+    params = template_params(text, "WeaponPage")
+    assert params["name"] == "Test Blade" and params["rarity"] == "Rare"
+    assert plain_text(params["special"]) == "Deals 1d4 Fire on hits"
