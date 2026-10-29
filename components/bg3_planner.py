@@ -45,11 +45,28 @@ def item_label(item):
     marker = " ✦" if item.effects or (item.weapon and item.weapon.get("enhancement")) else ""
     return f"{item.name}{marker} · {details}"
 
-def item_options(slot, act):
+def item_options(slot, act, include_unknown=True):
     """ Items that fit a slot and are found by an act, named items first """
-    items = [i for i in catalog().values() if i.fits(slot) and (i.act is None or i.act <= int(act))]
-    items.sort(key=lambda i: (not i.unique, i.act or 0, i.name))
+    items = [i for i in catalog().values() if i.fits(slot) and ((i.act is None and include_unknown) or (i.act or 9) <= int(act))]
+    items.sort(key=lambda i: (not i.unique, i.act or 9, i.name))
     return [{"label": item_label(i), "value": i.key, "title": item_summary(i)} for i in items]
+
+# Slots that share an item list, the browser fills each dropdown from its group, filtered by act (see assets/callbacks.js)
+# The off hand takes melee weapons and shields, so its list is both groups
+OPTION_GROUPS = {"melee_main": "melee", "melee_off": "melee+shield", "ranged_main": "ranged", "ranged_off": "ranged", "ring_1": "ring", "ring_2": "ring"}
+
+def option_group(slot):
+    return OPTION_GROUPS.get(slot, slot)
+
+def grouped_item_options():
+    """ {group: options} with every item's act, sent to the browser once instead of in every dropdown """
+    groups = {}
+    for slot, _, _ in SLOTS:
+        group = option_group(slot)
+        if "+" not in group and group not in groups:
+            groups[group] = [{**o, "act": catalog()[o["value"]].act} for o in item_options(slot, 3, include_unknown=True)]
+    groups["shield"] = [{**o, "act": catalog()[o["value"]].act} for o in item_options("melee_off", 3) if catalog()[o["value"]].slot == "shield"]
+    return groups
 
 def gear_table():
     """ Slots down, acts across. An empty cell keeps the item from the act before """
@@ -57,10 +74,10 @@ def gear_table():
     rows = [header]
     for slot, label, _ in SLOTS:
         rows.append(dbc.Row([dbc.Col(html.Small(label), width=3, class_name="d-flex align-items-center")] + [
-            dbc.Col(dcc.Dropdown(options=item_options(slot, act), id={"type": "bg3-gear", "slot": slot, "act": act},
+            dbc.Col(dcc.Dropdown(options=[], id={"type": "bg3-gear", "slot": slot, "act": act, "group": option_group(slot)},
                                  className="bg3-gear", clearable=True, optionHeight=28), width=3)
             for act in ACT_KEYS], class_name="g-1 mb-1"))
-    return html.Div(rows, className="bg3-gear-table")
+    return html.Div([*rows, dcc.Store(id="bg3-item-options", data=grouped_item_options())], className="bg3-gear-table")
 
 def buff_options(act):
     """ Spells, then elixirs, available by an act. Hover for what isn't modelled """

@@ -85,6 +85,8 @@ class Item:
             return self.slot == fits
         if self.slot != "weapon" or not self.weapon:
             return False
+        if slot.endswith("_off") and self.two_handed:
+            return False # Two-handed weapons can't go in the off hand
         return (self.weapon.get("kind") == "ranged") == slot.startswith("ranged")
 
     @classmethod

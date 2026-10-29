@@ -10,7 +10,7 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - [ ] Arcane Acuity, Lightning Charges, Momentum and other stacking effects
 - [ ] Story exclusive items (one path or the other) in the conflict report
 - [ ] Finish the hand review of parsed Act 3 item effects (first pass done: crit-only damage, Sneak Attack bonuses, Tenacity, creature type conditions)
-- [ ] Smaller page: send item options once instead of in every gear dropdown (the layout is about 1.5MB)
+- [ ] Smaller first load: the example DPR histogram is about 0.4MB of the 1MB page
 - [ ] Illithid powers
 
 ## Done
@@ -26,4 +26,5 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - 2026-10-29: Concentration checks: two of a character's own concentration spells (Hex and Divine Favour), and party buffs that need more concentrating casters than the party has free (Bless covers 3, Haste 1)
 - 2026-10-29: Per weapon damage rerolls (Twist of Fortune, Knife of the Undermountain King), the same as Great Weapon Fighting on that weapon, also editable on attack cards
 - 2026-10-29: Item parser fixes from an Act 3 review: crit-only damage (Craterflesh Gloves, Dolor Amarus), extra Sneak Attack damage (Stalker Gloves), Tenacity's Strength damage on a miss (about 35 weapons), creature type conditions become toggles, weapon-only bonuses, editor comments removed from text (319 items with modelled effects)
+- 2026-10-29: Gear item lists are sent once per slot group and filtered by act in the browser (page 1.5MB -> 1.0MB); off hands no longer offer two-handed weapons; unknown act items sort last
 - 2026-10-29: Generic +1/+2/+3 trader gear gets an estimated act from its enchantment, items of unknown act are only suggested for Act 3

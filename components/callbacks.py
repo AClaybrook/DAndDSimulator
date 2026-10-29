@@ -776,6 +776,12 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
 
     ## BG3 Party Planner
 
+    clientside_callback(
+        ClientsideFunction(namespace="clientside", function_name="gear_options"),
+        Output({"type": "bg3-gear", "slot": ALL, "act": ALL, "group": ALL}, "options"),
+        Input("bg3-item-options", "data"),
+    )
+
     @app.callback(
         Output("bg3-party", "data"),
         Output("bg3-member-tabs", "children"),
@@ -783,9 +789,9 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         Output("bg3-name", "value"),
         Output("bg3-preset", "value"),
         Output({"type": "bg3-level", "act": ALL}, "value"),
-        Output({"type": "bg3-gear", "slot": ALL, "act": ALL}, "value"),
-        Output({"type": "bg3-gear", "slot": ALL, "act": ALL}, "className"),
-        Output({"type": "bg3-gear", "slot": ALL, "act": ALL}, "placeholder"),
+        Output({"type": "bg3-gear", "slot": ALL, "act": ALL, "group": ALL}, "value"),
+        Output({"type": "bg3-gear", "slot": ALL, "act": ALL, "group": ALL}, "className"),
+        Output({"type": "bg3-gear", "slot": ALL, "act": ALL, "group": ALL}, "placeholder"),
         Output({"type": "bg3-buffs", "act": ALL}, "value"),
         Output("bg3-conditions", "options"),
         Output("bg3-conditions", "value"),
@@ -798,7 +804,7 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         Input("bg3-name", "value"),
         Input("bg3-preset", "value"),
         Input({"type": "bg3-level", "act": ALL}, "value"),
-        Input({"type": "bg3-gear", "slot": ALL, "act": ALL}, "value"),
+        Input({"type": "bg3-gear", "slot": ALL, "act": ALL, "group": ALL}, "value"),
         Input({"type": "bg3-buffs", "act": ALL}, "value"),
         Input("bg3-conditions", "value"),
         Input("enemy-values", "data"),
