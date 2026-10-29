@@ -5,7 +5,7 @@ import pytest
 
 from components.character_card import generate_character_card, extract_character_ui_values, characters_from_ui, character_dict_from_labels
 from components.enemy_card import generate_enemy_card, extract_enemy_ui_values, enemy_dict_from_labels
-from computations.models import Character, Enemy
+from computations.models import Attack, Character, Enemy
 from game_data import enemy_from_monster
 from game_data.classes import BUILDS, build_character
 
@@ -113,3 +113,10 @@ def test_large_histograms_are_sampled():
     assert plot_sample(df.head(10), 4) is not None and len(plot_sample(df.head(10), 4)) == 10
     fig = generate_plot_data([Character(name="A")], [df], title="DPR")
     assert "sample" in fig.layout.title.text
+
+def test_typed_extra_damage_round_trip_and_validation():
+    from components.character_card import validation_errors
+    character = Character(name="Flame", attacks=[Attack(name="Flaming Sword", extra_damage_list=["1d4 fire", "2 acid"])])
+    assert round_trip(character) == character
+    assert validation_errors({}, [{"name": "x", "extra_damage_list": ["1d4 fyre"]}])
+    assert not validation_errors({}, [{"name": "x", "extra_damage_list": ["1d4 fire", "2"]}])

@@ -98,7 +98,12 @@ def expected_attack_damage(attack_context, damage_context, p_first_hit=None, aut
         once = expected_dice(d["once_num_die"], d["once_die_size"], d["reroll_on"])
         # Given that this is the first trigger, the chance it was a crit is p_crit/p_trigger
         expected += p_first_hit * (once + d["once_modifier"] + p_crit / p_trigger * once)
-    return expected * d["damage_multiplier"]
+    expected *= d["damage_multiplier"]
+    # Extra damage of other types on a hit, dice doubled on a crit
+    for n, s, m, mult in zip(d.get("rider_num_die") or [], d.get("rider_die_size") or [], d.get("rider_modifier") or [], d.get("rider_multiplier") or []):
+        dice = expected_dice(n, s)
+        expected += (p_hit * (dice + m) + p_crit * dice) * mult
+    return expected
 
 def _uses_realizations(averages):
     """ Every combination of integer uses for average uses per fight (None = unlimited), with its probability.

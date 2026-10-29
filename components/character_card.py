@@ -63,7 +63,8 @@ A_LABEL_TO_VAL = {
     "Bonus Attack Mod": "bonus_attack_die_mod_list",
     "Bonus Damage Mod": "bonus_damage_die_mod_list",
     "Bonus Crit Damage": "bonus_crit_die_mod_list",
-    "Bonus Miss Damage": "bonus_miss_die_mod_list"
+    "Bonus Miss Damage": "bonus_miss_die_mod_list",
+    "Extra Typed Damage": "extra_damage_list",
 }
 A_LABELS = {v: k for k, v in A_LABEL_TO_VAL.items()}
 DIE_MOD_LISTS = ["bonus_attack_die_mod_list", "bonus_damage_die_mod_list", "bonus_crit_die_mod_list", "bonus_miss_die_mod_list", "once_per_turn_die_mod_list"]
@@ -119,7 +120,7 @@ def extract_attack_ui_values(attack_ui_list):
     # Replace labels with internal dictionary keys and extract num attacks
     num_attacks = attack_ui_values.pop(COPIES_LABEL, 1) or 1
     attack_ui_values = {A_LABEL_TO_VAL[k]: v for k, v in attack_ui_values.items() if k in A_LABEL_TO_VAL}
-    for key in DIE_MOD_LISTS:
+    for key in [*DIE_MOD_LISTS, "extra_damage_list"]:
         if key in attack_ui_values:
             attack_ui_values[key] = to_list(attack_ui_values[key])
 
@@ -276,6 +277,8 @@ def set_attack_from_values(avals, i, index, num_attacks=1):
             text_row(A_LABELS["bonus_damage_die_mod_list"], to_str(a["bonus_damage_die_mod_list"]), DICE_PLACEHOLDER),
             text_row(A_LABELS["bonus_crit_die_mod_list"], to_str(a["bonus_crit_die_mod_list"]), DICE_PLACEHOLDER),
             text_row(A_LABELS["bonus_miss_die_mod_list"], to_str(a["bonus_miss_die_mod_list"]), DICE_PLACEHOLDER),
+            # Resisted separately, i.e. an item adding fire damage to a slashing weapon
+            text_row(A_LABELS["extra_damage_list"], to_str(a["extra_damage_list"]), "i.e. 1d4 fire, 2 acid"),
         ]),
         ("Limits Per Fight", [
             check_row(A_LABELS["once_per_turn_eligible"], a["once_per_turn_eligible"]),
@@ -287,7 +290,7 @@ def set_attack_from_values(avals, i, index, num_attacks=1):
         "Roll Modifiers": ["crit_on", "proficient", "advantage", "disadvantage", "always_hit", "always_crit"],
         "Weapon": ["weapon_enhancement", "offhand", "two_handed", "heavy"] if a["type"] != "spell" else [],
         "Spell Saving Throw": ["saving_throw"],
-        "Extra Dice": DIE_MOD_LISTS[:4],
+        "Extra Dice": [*DIE_MOD_LISTS[:4], "extra_damage_list"],
         "Limits Per Fight": ["once_per_turn_eligible", "uses_per_fight", "fallback_for"],
     })
     return [
@@ -449,6 +452,18 @@ def _dice_problems(values, label):
     except (ValueError, AttributeError):
         return [f"{label} '{to_str(values)}' should be dice or numbers like 1d6, 2"]
 
+def _typed_damage_problems(values):
+    """ Each entry needs dice and/or a number, optionally followed by a damage type, i.e. '1d4 fire' """
+    problems = []
+    for v in values or []:
+        parts = str(v).strip().lower().split()
+        dice = parts[:-1] if len(parts) > 1 else parts
+        if len(parts) > 1 and parts[-1] not in DAMAGE_TYPES:
+            problems.append(f"{A_LABELS['extra_damage_list']}: unknown damage type '{parts[-1]}'")
+        else:
+            problems += _dice_problems(["".join(dice)], A_LABELS["extra_damage_list"])
+    return problems
+
 def validation_errors(character_dict, attacks):
     """ Readable problems with a character's values, i.e. "Strength is empty", empty if everything can be simulated """
     problems = [f"{C_LABELS[f]} is empty" for f in NUMERIC_CHARACTER_FIELDS if f in character_dict and character_dict[f] is None]
@@ -461,4 +476,5 @@ def validation_errors(character_dict, attacks):
         problems += [f"attack '{name}': {A_LABELS[f]} is empty" for f in NUMERIC_ATTACK_FIELDS if f in a and a[f] is None]
         problems += [f"attack '{name}': {p}" for key in DIE_MOD_LISTS[:4] for p in _dice_problems(a.get(key), A_LABELS[key])]
         problems += [f"attack '{name}': {p}" for p in _dice_problems([a.get("damage") or ""], A_LABELS["damage"])]
+        problems += [f"attack '{name}': {p}" for p in _typed_damage_problems(a.get("extra_damage_list"))]
     return problems

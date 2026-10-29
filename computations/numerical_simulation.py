@@ -79,7 +79,8 @@ def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multi
                 advantage=False, disadvantage=False, reroll_on=0,
                 miss_num_die=None, miss_damage_die=None, miss_damage_modifier=0, save_success_multiplier=0,
                 crit_num_die=None, crit_damage_die=None, crit_damage_modifier=0,
-                once_num_die=None, once_die_size=None, once_modifier=0, once_mask=None, rng=RNG, **_):
+                once_num_die=None, once_die_size=None, once_modifier=0, once_mask=None,
+                rider_num_die=None, rider_die_size=None, rider_modifier=None, rider_multiplier=None, rng=RNG, **_):
     """ Roll damage for each hit, crit and miss.
         Resistances/vulnerabilities and damage reduction are applied to the total damage of the attack (rounded down)"""
     num_die = num_die or []
@@ -125,12 +126,28 @@ def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multi
         np.maximum(total_damage, 0, out=total_damage)
     if damage_multiplier != 1:
         total_damage = np.floor(total_damage * damage_multiplier).astype('int32')
-    if damage_reduction:
-        total_damage = np.maximum(total_damage - damage_reduction, 0)
     if damage_multiplier != 1:
         hit_damage = np.floor(hit_damage * damage_multiplier).astype('int32')
         crit_damage = np.floor(crit_damage * damage_multiplier).astype('int32')
         miss_damage = np.floor(miss_damage * damage_multiplier).astype('int32')
+
+    # Extra damage of other types on a hit, each rounded down with its own resistance multiplier
+    for r_num_die, r_die_size, r_modifier, r_multiplier in zip(rider_num_die or [], rider_die_size or [], rider_modifier or [], rider_multiplier or []):
+        r_hit = np.zeros(num_rolls, dtype='int32')
+        r_hit[hit] = np.maximum(roll_dice(num_hits, r_num_die, r_die_size, rng=rng) + r_modifier, 0)
+        r_crit = np.zeros(num_rolls, dtype='int32')
+        r_crit[crit] = roll_dice(num_crits, r_num_die, r_die_size, rng=rng)
+        r_total = r_hit + r_crit
+        if r_multiplier != 1:
+            r_total = np.floor(r_total * r_multiplier).astype('int32')
+            r_hit = np.floor(r_hit * r_multiplier).astype('int32')
+            r_crit = r_total - r_hit
+        total_damage = total_damage + r_total
+        hit_damage = hit_damage + r_hit
+        crit_damage = crit_damage + r_crit
+
+    if damage_reduction:
+        total_damage = np.maximum(total_damage - damage_reduction, 0)
     return total_damage, hit_damage, crit_damage, miss_damage
 
 def attack(num_rolls, attack_context, damage_context, rng=RNG, once_mask=None):

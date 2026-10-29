@@ -30,12 +30,17 @@ CASES = {
     "sneak_attack_ranged_only": Character(level=5, dexterity=18, once_per_turn_die_mod_list=["3d6"],
                                           attacks=[Attack(ability_stat="dexterity", once_per_turn_eligible=False), Attack(type="weapon (ranged)", ability_stat="dexterity", damage="1d8")]),
     "disadvantage": Character(strength=16, disadvantage=True, bonus_crit_die_mod_list=["1d8"], attacks=[greatsword()]),
+    "typed_extra_damage": Character(level=5, strength=18, advantage=True, attacks=[greatsword(extra_damage_list=["1d4 fire", "2 acid"])] * 2),
+    "typed_extra_vs_immune_and_vulnerable": Character(level=5, strength=18, attacks=[greatsword(extra_damage_list=["1d6 poison", "1d4 radiant"])] * 2),
 }
+
+# Poison immune and radiant vulnerable, the main slashing damage is unaffected
+RIDER_ENEMY = {"immunities": ["poison"], "vulnerabilities": ["radiant"]}
 
 @pytest.mark.parametrize("name", CASES)
 def test_simulation_matches_analytic(name):
     character = CASES[name]
-    enemy = Enemy(armor_class=16, dexterity_save=2)
+    enemy = Enemy(armor_class=16, dexterity_save=2, **(RIDER_ENEMY if name == "typed_extra_vs_immune_and_vulnerable" else {}))
     expected = expected_damage_per_round(character, enemy)
     # Half damage on a save rounds down in the simulation
     tolerance = 0.02 * expected + (0.3 if name == "fireball" else 0.05)
@@ -203,3 +208,12 @@ def test_first_round_conditions_front_load():
     rounds_per_fight, character = FALLBACK_CASES["assassin"]
     by_round = fight_damage(character, Enemy(armor_class=15), 20_000, rounds_per_fight, rng=set_seed(2)).mean(axis=1)
     assert by_round[0] > 1.5 * by_round[1]
+
+def test_typed_extra_damage_resistance_is_separate():
+    """ Fire resistance halves only the fire part of a flaming greatsword """
+    character = Character(strength=16, attacks=[greatsword(extra_damage_list=["1d6 fire"])])
+    plain = expected_damage_per_round(Character(strength=16, attacks=[greatsword()]), Enemy(armor_class=10))
+    fire = expected_damage_per_round(character, Enemy(armor_class=10)) - plain
+    resistant = expected_damage_per_round(character, Enemy(armor_class=10, resistances=["fire"]))
+    assert resistant == pytest.approx(plain + fire / 2)
+    assert simulated_mean(character, Enemy(armor_class=10, resistances=["fire"])) == pytest.approx(resistant, abs=0.35) # fire rounds down

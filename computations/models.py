@@ -59,6 +59,15 @@ def from_dict(cls, data):
     data = {RENAMED_FIELDS.get(k, k): v for k, v in data.items()}
     return cls(**{k: v for k, v in data.items() if k in names})
 
+def typed_damage_from_str(damage_str):
+    """ '1d4 fire' -> ([1], [4], 0, 'fire'), '2d6+1 cold' -> ([2], [6], 1, 'cold'), '2 acid' -> ([], [], 2, 'acid').
+        Without a damage type the type is '' (the attack's own type) """
+    parts = str(damage_str).strip().lower().split()
+    damage_type = parts[-1] if len(parts) > 1 and parts[-1] in DAMAGE_TYPES else ""
+    dice = "".join(parts[:-1] if damage_type else parts)
+    num_die, die_sizes, modifier = multiple_die_and_mod_from_list([dice])
+    return num_die, die_sizes, modifier, damage_type
+
 ### Classes ###
 
 @dataclass
@@ -97,6 +106,8 @@ class Attack:
     # Extra damage dice on a crit (i.e. brutal critical) and damage on a miss/successful save (i.e. graze)
     bonus_crit_die_mod_list: list[str | int] = field(default_factory=list) # Format is ['1d6', 2]
     bonus_miss_die_mod_list: list[str | int] = field(default_factory=list) # Format is ['1d6', 2]
+    # Extra damage on a hit with its own damage type, so resistances apply to it separately, i.e. ['1d4 fire', '2 acid'] (BG3 items)
+    extra_damage_list: list[str] = field(default_factory=list)
 
     def __post_init__(self):
         if self.heavy is None:
@@ -300,15 +311,16 @@ class Enemy(Creature):
             return explicit
         return self.ability_modifier(stat) + (self.proficiency_bonus if self.saving_throw_proficient else 0)
 
-    def damage_multiplier(self, attack: Attack):
-        """ Multiplier from resistances, vulnerabilities and immunities for a given attack """
+    def damage_multiplier(self, attack: Attack, damage_type=None):
+        """ Multiplier from resistances, vulnerabilities and immunities for a given attack, or for extra damage of another type """
+        damage_type = damage_type or attack.damage_type
         def matches(entries):
             for entry in entries:
                 entry = entry.strip().lower()
                 if entry.endswith(NONMAGICAL_SUFFIX):
-                    if attack.is_weapon and not attack.is_magical and entry[:-len(NONMAGICAL_SUFFIX)] == attack.damage_type:
+                    if attack.is_weapon and not attack.is_magical and entry[:-len(NONMAGICAL_SUFFIX)] == damage_type:
                         return True
-                elif entry == attack.damage_type:
+                elif entry == damage_type:
                     return True
             return False
 
@@ -378,6 +390,11 @@ class DamageContext:
     # First round of a fight (attack rolls only)
     first_round_advantage: bool = False
     first_round_auto_crit: bool = False
+    # Extra damage of other types on a hit (dice doubled on a crit), each with its own resistance multiplier
+    rider_num_die: list[list[int]] = field(default_factory=list)
+    rider_die_size: list[list[int]] = field(default_factory=list)
+    rider_modifier: list[int] = field(default_factory=list)
+    rider_multiplier: list[float] = field(default_factory=list)
 
 def calculate_attack_and_damage_context(character, enemy):
     """ Extracts the attack and damage contexts for a given character and enemy """
@@ -499,6 +516,8 @@ def calculate_attack_and_damage_context(character, enemy):
 
         # Enemy Specific
         damage_multiplier = enemy.damage_multiplier(attack) if isinstance(enemy, Enemy) else 1
+        riders = [typed_damage_from_str(r) for r in attack.extra_damage_list or []]
+        riders = [(n, d, m, enemy.damage_multiplier(attack, t) if isinstance(enemy, Enemy) else 1) for n, d, m, t in riders if n or m]
 
         # Difficulty Class
         difficulty_class = enemy.armor_class
@@ -556,6 +575,10 @@ def calculate_attack_and_damage_context(character, enemy):
             fallback_index=attack_names.index(attack.fallback_for) if attack.fallback_for in attack_names and attack.fallback_for != attack.name else -1,
             first_round_advantage=character.first_round_advantage and not saving_throw,
             first_round_auto_crit=character.first_round_auto_crit and not saving_throw and not attack.always_hit,
+            rider_num_die=[r[0] for r in riders],
+            rider_die_size=[r[1] for r in riders],
+            rider_modifier=[r[2] for r in riders],
+            rider_multiplier=[r[3] for r in riders],
         )
 
         attack_contexts.append(attack_context)

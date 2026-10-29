@@ -111,3 +111,10 @@ def test_renamed_fields_still_load():
     character = Character.from_dict({"name": "Old", "attacks": [{"name": "Old", "proficent": False}]})
     enemy = Enemy.from_dict({"saving_throw_proficent": True})
     assert not character.attacks[0].proficient and enemy.saving_throw_proficient
+
+def test_typed_damage_from_str():
+    from computations.models import typed_damage_from_str
+    assert typed_damage_from_str("1d4 fire") == ([1], [4], 0, "fire")
+    assert typed_damage_from_str("2d6+1 Cold") == ([2], [6], 1, "cold")
+    assert typed_damage_from_str("2 acid") == ([], [], 2, "acid")
+    assert typed_damage_from_str("1d4") == ([1], [4], 0, "")
