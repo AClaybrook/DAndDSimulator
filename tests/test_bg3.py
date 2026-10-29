@@ -198,3 +198,16 @@ def test_tenacity_crit_and_sneak_attack_item_effects():
     assert not compile_build(fighter(equipment=gloves), 1).once_per_turn_die_mod_list
     rogue = compile_build(Bg3Build("Astarion", "rogue_assassin", equipment=gloves), 1)
     assert rogue.once_per_turn_die_mod_list[-1] == "1d4"
+
+def test_point_buy():
+    from bg3.abilities import apply_improvement, point_buy_cost, point_buy_problems, starting_scores
+    scores = {"strength": 15, "dexterity": 14, "constitution": 15, "intelligence": 8, "wisdom": 10, "charisma": 8}
+    assert point_buy_cost(scores) == 27 and not point_buy_problems(scores, {"strength": 2, "constitution": 1})
+    assert point_buy_problems({**scores, "wisdom": 12}, {}) # 29 points
+    assert point_buy_problems({**scores, "strength": 16}, {})
+    assert point_buy_problems(scores, {"strength": 2, "dexterity": 2})
+    start = starting_scores(scores, {"strength": 2, "constitution": 1})
+    assert start["strength"] == 17 and start["constitution"] == 16
+    assert apply_improvement(start, "strength+2")["strength"] == 19
+    assert apply_improvement({**start, "strength": 19}, "strength+2")["strength"] == 20
+    assert apply_improvement(start, "strength+1,constitution+1")["constitution"] == 17
