@@ -235,3 +235,16 @@ def test_point_buy():
     assert apply_improvement(start, "strength+2")["strength"] == 19
     assert apply_improvement({**start, "strength": 19}, "strength+2")["strength"] == 20
     assert apply_improvement(start, "strength+1,constitution+1")["constitution"] == 17
+
+def test_lightning_charges():
+    rogue = Bg3Build("Astarion", "rogue_dual_wield", equipment={"1": {"melee_main": "bg3:the_sparky_points"}})
+    character = compile_build(rogue, 1)
+    assert all(a.extra_damage_list.count("1 lightning") == 1 and "1" in a.bonus_attack_die_mod_list for a in character.attacks)
+    # A second source doesn't stack, and the Spellsparkler needs spells to gain charges
+    both = replace(rogue, equipment={"1": {**rogue.equipment["1"], "melee_off": "bg3:the_sparky_points", "gloves": "bg3:the_sparkle_hands"}})
+    assert all(a.extra_damage_list.count("1 lightning") == 1 for a in compile_build(both, 1).attacks)
+    fighter_ = Bg3Build("Lae'zel", "fighter_gwm", equipment={"1": {"melee_main": "bg3:the_spellsparkler"}})
+    assert not any("1 lightning" in a.extra_damage_list for a in compile_build(fighter_, 1).attacks)
+    wizard = Bg3Build("Gale", "wizard_fireball", equipment={"1": {"melee_main": "bg3:the_spellsparkler"}})
+    assert all("1 lightning" in a.extra_damage_list for a in compile_build(wizard, 1).attacks if a.type == "spell")
+    assert expected_damage_per_round(character, ENEMY, 3) > expected_damage_per_round(compile_build(replace(rogue, equipment={}), 1), ENEMY, 3)

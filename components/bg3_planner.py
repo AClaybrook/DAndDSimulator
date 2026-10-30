@@ -25,7 +25,8 @@ def effect_text(effect):
             "damage_bonus_ability": f"+{effect.stat.title()} modifier to damage", "extra_damage": f"+{effect.value} damage",
             "crit_damage": f"+{effect.value} on a crit", "crit_range": f"crit range +{effect.value}", "advantage": "advantage",
             "spell_dc": f"+{effect.value} spell DC", "damage_reroll": f"reroll damage dice of {effect.value} or less",
-            "miss_damage_ability": f"{effect.stat.title()} modifier damage on a miss", "once_per_turn_bonus": f"+{effect.value} Sneak Attack damage", "extra_attack": "extra attack", "flag": str(effect.value)}.get(effect.kind, effect.kind)
+            "miss_damage_ability": f"{effect.stat.title()} modifier damage on a miss", "once_per_turn_bonus": f"+{effect.value} Sneak Attack damage", "extra_attack": "extra attack", "flag": str(effect.value),
+            "lightning_charges": f"{effect.value} Lightning Charges on a hit: +1 to hit and 1 lightning damage on every attack"}.get(effect.kind, effect.kind)
     return what + target + (f" [toggle: {effect.condition}]" if effect.condition else "")
 
 def item_summary(item):

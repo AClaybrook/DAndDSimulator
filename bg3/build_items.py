@@ -139,6 +139,10 @@ def _parse_sentence(sentence, own_weapon):
     sentence = re.sub(r"\bd\d+ (?:Physical|Piercing|Slashing|Bludgeoning|Weapon)\s*(\+?-?\d+d\d+)", r"\1", sentence)
     if REACTIVE.search(sentence):
         return []
+    if m := re.search(r"gains? (\d+) Lightning Charges", sentence):
+        # Charges from hits with this weapon, spells or unarmed attacks. Dashing or electrified water aren't damage, so they are skipped
+        source = "self" if "this weapon" in sentence else "spell" if "spell" in sentence else "unarmed" if "unarmed" in sentence else ""
+        return [{"kind": "lightning_charges", "value": int(m.group(1)), "applies_to": source}] if source else []
     condition = sentence if CONDITION_WORDS.search(sentence) else ""
     scope = scope_of(sentence)
     if scope == "all" and own_weapon:

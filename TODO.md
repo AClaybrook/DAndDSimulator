@@ -9,7 +9,7 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - [ ] Builder: more subclass features: Wildheart aspects (bleeding/poisoned targets), Beast Master and summons (need a companion model), Eldritch Knight War Magic and Shadow Strike (both trade Extra Attack for less damage, so low priority), Druid with a Scimitar or Shillelagh instead of a Longsword
 - [ ] Builder: Smites as spells (Searing, Branding, Wrathful), Wild Shape, Enraged Throw's Strength based damage
 - [ ] Elixir of Bloodlust (extra action on a kill) and kill based effects in general
-- [ ] Arcane Acuity, Lightning Charges, Momentum and other stacking effects
+- [ ] Arcane Acuity, Arcane Synergy, Radiating Orb, Reverberation and the 1d8 burst at 5 Lightning Charges (stacking effects that build up over a fight)
 - [ ] More story choices in bg3/data/story_choices.json (Act 3 companion endings, Grove raid), each checked against its bg3.wiki quest page
 - [ ] Finish the hand review of parsed Act 3 item effects (first pass done: crit-only damage, Sneak Attack bonuses, Tenacity, creature type conditions)
 - [ ] Smaller first load: the BG3 item lists (0.22MB) could load when the planner is first opened
@@ -43,3 +43,4 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - 2026-10-30: Builder: Circle of Stars (Starry Form: Archer's Luminous Arrow each turn, Star Map Guiding Bolts before the cantrip), Circle of Spores (Symbiotic Entity 1d6 necrotic), Storm Sorcery (Heart of the Storm on lightning and thunder spells, hit or miss); Circle of Stars Druid example; the builder only lists the toggles for its classes
 - 2026-10-30: Story choice conflicts: items from different outcomes of the same quest (sparing or killing the Nightsong, Glut or Spaw, Florrick's and Thrinn's one-of rewards) in the conflict report, highlighted, and named in gear suggestions. The Lae'zel example had one (Moonlight Glaive with the Rare Dark Justiciar Gauntlets) and now wears Flawed Helldusk Gloves in Act 2
 - 2026-10-30: Distribution plots are binned on the server (bar heights and box statistics only), so every round is plotted instead of a 400,000 value sample; first page load 1.06MB -> 0.59MB, and simulation responses shrink the same way
+- 2026-10-30: Lightning Charges (Florrick's Sparky Points, Joltshooter and Spellsparkler, Sparkle Hands): +1 to hit and 1 lightning damage on every attack once the build can gain charges, not stacked across items

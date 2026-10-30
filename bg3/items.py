@@ -46,7 +46,7 @@ class Effect:
               damage_bonus (same type as the attack), damage_bonus_ability (the stat's modifier, or the attack's own stat for 'spellcasting'),
               extra_damage (typed, i.e. '1d4 fire'), crit_damage (extra damage on a crit), crit_range (crit on value lower),
               advantage, damage_reroll (reroll damage dice at or below value), miss_damage_ability (the stat's modifier on a miss, Tenacity),
-              once_per_turn_bonus (more Sneak Attack damage), spell_dc, extra_attack (Haste),
+              once_per_turn_bonus (more Sneak Attack damage), spell_dc, extra_attack (Haste), lightning_charges (gained on hits of applies_to),
               flag (turns on a Character option, i.e. savage_attacker)
         applies_to: a key of APPLIES_TO, or 'self' for the attacks made with the item's own weapon
         condition: when set, the effect only counts while the condition is toggled on, i.e. 'while raging' """
@@ -163,6 +163,16 @@ def apply_effect(character, effect, own_attacks=()):
                 a.bonus_miss_die_mod_list = [*a.bonus_miss_die_mod_list, str(max(1, character.ability_modifier(effect.stat or a.ability_stat)))]
             elif kind == "damage_reroll":
                 a.damage_reroll_on = max(a.damage_reroll_on, int(value))
+
+def apply_lightning_charges(character, sources):
+    """ Lightning Charges (bg3.wiki): +1 to attack rolls and 1 extra lightning damage while you have any. Hits that gain charges keep at
+        least one most of the fight, so they count on every attack once any attack can gain them. sources are (effect, own attacks) pairs.
+        The 1d8 lightning when 5 charges are consumed isn't modelled """
+    if not any(_attacks_for(character, effect, own) for effect, own in sources):
+        return
+    for a in character.attacks:
+        a.bonus_attack_die_mod_list = [*a.bonus_attack_die_mod_list, "1"]
+        a.extra_damage_list = [*a.extra_damage_list, "1 lightning"]
 
 def equip_weapon(attack, item):
     """ The attack made with a weapon item instead of the preset's weapon (dice, type, enhancement, properties) """

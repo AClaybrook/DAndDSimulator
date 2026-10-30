@@ -1906,8 +1906,14 @@
    "rarity": "Rare",
    "unique": true,
    "weapon": null,
-   "effects": [],
-   "notes": "On a hit with an unarmed attack, the wearer gains 2 Lightning Charges; While imbued with Lightning Charges, attacks against metal constructs and foes wearing metal armour gain Advantage",
+   "effects": [
+    {
+     "kind": "lightning_charges",
+     "value": 2,
+     "applies_to": "unarmed"
+    }
+   ],
+   "notes": "While imbued with Lightning Charges, attacks against metal constructs and foes wearing metal armour gain Advantage",
    "location": "Decrepit Sanctuary",
    "source": "https://bg3.wiki/wiki/The_Sparkle_Hands"
   },
@@ -6136,8 +6142,14 @@
      "two-handed"
     ]
    },
-   "effects": [],
-   "notes": "When the wielder deals damage using this weapon, they gain 2 Lightning Charges",
+   "effects": [
+    {
+     "kind": "lightning_charges",
+     "value": 2,
+     "applies_to": "self"
+    }
+   ],
+   "notes": "",
    "location": "Waukeen's Rest",
    "source": "https://bg3.wiki/wiki/The_Joltshooter"
   },
@@ -6185,8 +6197,14 @@
      "versatile"
     ]
    },
-   "effects": [],
-   "notes": "When the wielder deals damage using this weapon, they gain 2 Lightning Charges",
+   "effects": [
+    {
+     "kind": "lightning_charges",
+     "value": 2,
+     "applies_to": "self"
+    }
+   ],
+   "notes": "",
    "location": "Waukeen's Rest",
    "source": "https://bg3.wiki/wiki/The_Sparky_Points"
   },
@@ -6208,8 +6226,14 @@
      "versatile"
     ]
    },
-   "effects": [],
-   "notes": "When the wielder deals damage with a spell or cantrip, they gain 2 Lightning Charges",
+   "effects": [
+    {
+     "kind": "lightning_charges",
+     "value": 2,
+     "applies_to": "spell"
+    }
+   ],
+   "notes": "",
    "location": "Waukeen's Rest",
    "source": "https://bg3.wiki/wiki/The_Spellsparkler"
   },
