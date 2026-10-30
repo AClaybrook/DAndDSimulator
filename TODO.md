@@ -8,7 +8,7 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 ## Next
 - [ ] Builder: more subclass features: Wildheart aspects (bleeding/poisoned targets), Beast Master and summons (need a companion model), Eldritch Knight War Magic and Shadow Strike (both trade Extra Attack for less damage, so low priority), Druid with a Scimitar or Shillelagh instead of a Longsword
 - [ ] Builder: Smites as spells (Searing, Branding, Wrathful), Wild Shape, Enraged Throw's Strength based damage
-- [ ] Elixir of Bloodlust (extra action on a kill) and kill based effects in general
+- [ ] Elixir of Bloodlust (extra action on a kill) and kill based effects in general: needs a fight against several enemies (kill chance per round from Rounds to Kill), the single target model gives them nothing
 - [ ] Arcane Acuity, Arcane Synergy, Radiating Orb, Reverberation and the 1d8 burst at 5 Lightning Charges (stacking effects that build up over a fight)
 - [ ] More story choices in bg3/data/story_choices.json (Act 3 companion endings, Grove raid), each checked against its bg3.wiki quest page
 - [ ] Finish the hand review of parsed Act 3 item effects (first pass done: crit-only damage, Sneak Attack bonuses, Tenacity, creature type conditions)
