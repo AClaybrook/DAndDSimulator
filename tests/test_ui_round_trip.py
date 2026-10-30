@@ -104,15 +104,23 @@ def test_tagged_enemy_fields_match_card_values():
     expected = extract_enemy_ui_values(body)
     assert {k: v for k, v in from_fields.items() if k != "name"} == {k: v for k, v in expected.items() if k != "name"}
 
-def test_large_histograms_are_sampled():
+def test_histograms_are_binned():
+    """ Every round is plotted, but only bar heights and box statistics are sent to the browser """
+    import numpy as np
     import pandas as pd
-    from components.plots import MAX_PLOT_POINTS, generate_plot_data, plot_sample
-    df = pd.DataFrame({"Damage": range(10 * MAX_PLOT_POINTS)})
-    sample = plot_sample(df, 4)
-    assert len(sample) == MAX_PLOT_POINTS // 4 and sample["Damage"].iloc[0] == 0 and sample["Damage"].iloc[-1] == len(df) - 1
-    assert plot_sample(df.head(10), 4) is not None and len(plot_sample(df.head(10), 4)) == 10
-    fig = generate_plot_data([Character(name="A")], [df], title="DPR")
-    assert "sample" in fig.layout.title.text
+    from components.plots import MAX_BINS, generate_damage_per_attack_histogram, generate_plot_data
+    rng = np.random.default_rng(1)
+    small, large = rng.integers(0, 30, 1_000_000), rng.integers(0, 1000, 1_000_000)
+    fig = generate_plot_data([Character(name="A"), Character(name="B")], [pd.DataFrame({"Damage": small}), pd.DataFrame({"Damage": large})], title="DPR")
+    bars = {t.name: t for t in fig.data if t.type == "bar"}
+    boxes = {t.name: t for t in fig.data if t.type == "box"}
+    assert sum(bars["A"].y) == pytest.approx(100) and sum(bars["B"].y) == pytest.approx(100)
+    assert bars["A"].width == bars["B"].width == 5 and len(bars["B"].x) <= MAX_BINS # 1000 damage values in bins of 5
+    assert boxes["A"].median[0] == np.median(small) and boxes["B"].mean[0] == pytest.approx(large.mean())
+    assert len(fig.to_json()) < 60_000
+    df = pd.DataFrame({"Damage": small, "Attack": np.where(small % 2, "Slash", "Stab")})
+    fig = generate_damage_per_attack_histogram([Character(name="A")], [df])
+    assert {t.name for t in fig.data} == {"A-Slash", "A-Stab"} and len({t.marker.color for t in fig.data}) == 1
 
 def test_typed_extra_damage_round_trip_and_validation():
     from components.character_card import validation_errors
