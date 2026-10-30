@@ -241,7 +241,7 @@ def parse_build(number, title, body, index, items):
     if not classes:
         notes.append("No class split found")
     primary = None
-    ability_line = field(body, "Starting Ability Scores", "Ability Scores", "Abilities")
+    ability_line = field(body, "Abilities", "Final abilities", "Starting Ability Scores", "Ability Scores")
     final = parse_scores(ability_line.split("|")[0])
     scores = bonus = None
     if final and "|" in ability_line:
