@@ -5,7 +5,7 @@
 Baldur's Gate 3 first. The original simulator and analytics are unchanged, BG3 builds compile to the same Characters.
 
 - **BG3 Party Planner:** a new page section for up to four characters. Each has a class preset, a level for each act checkpoint (End of Act 1 at level 5, Act 2 at 8, Act 3 at 12 by default) and, for each act, gear in twelve slots, buffs and toggles for conditional item effects. An empty gear cell keeps the item from the act before and shows it as a hint.
-  - Exact expected damage per round for every character at every act, against the current enemy.
+  - Exact expected damage per round for every character at every act, against the current enemy, as a table and a line chart across the acts.
   - Equipment conflicts per act: unique items wanted by more than one character, a unique item in two slots, a two-handed weapon with an off hand, items found in a later act, and items in the wrong slot. Conflicting cells are highlighted.
   - "Add to simulator" adds the party at an act, or the selected character at every act, as cards.
   - The party is saved in the browser.

@@ -141,7 +141,8 @@ def planner():
         ], align="center"),
         member_editor,
         dbc.Row([
-            dbc.Col([html.H6("Expected damage per round", className="text-info"), html.Div(id="bg3-dpr")], xs=12, lg=6),
+            dbc.Col([html.H6("Expected damage per round", className="text-info"), html.Div(id="bg3-dpr"),
+                     dcc.Graph(id="bg3-dpr-chart", config={"displayModeBar": False}, style={"height": "280px"})], xs=12, lg=6),
             dbc.Col([html.H6("Equipment conflicts", className="text-info"), html.Div(id="bg3-conflicts")], xs=12, lg=6),
         ], class_name="mb-3"),
         gear_advice(),
@@ -159,6 +160,38 @@ def conditional_options(build):
             seen.add(key)
             options += [{"label": f"{item.name}: {e.condition}", "value": condition_id(key, ii)} for ii, e in enumerate(item.effects) if e.condition]
     return options
+
+# Party line colors in fixed order, the app's series colors with the green stepped darker to pass the palette checks on the dark surface
+PARTY_COLORS = ["#636EFA", "#EF553B", "#00A87C", "#AB63FA"]
+SURFACE = "#303030"
+
+def dpr_chart(builds, enemy, rounds_per_fight):
+    """ Expected damage per round of each character across the act checkpoints """
+    import plotly.graph_objects as go
+    fig = go.Figure()
+    ends = []
+    for ii, b in enumerate(builds):
+        acts = [f"Act {a} (L{act_level(a, b.levels)})" for a in ACT_KEYS]
+        values = [expected_damage_per_round(compile_build(b, a), enemy, rounds_per_fight) for a in ACT_KEYS]
+        color = PARTY_COLORS[ii % len(PARTY_COLORS)]
+        fig.add_trace(go.Scatter(
+            x=[f"Act {a}" for a in ACT_KEYS], y=values, name=b.name, mode="lines+markers", customdata=acts,
+            line={"color": color, "width": 2}, marker={"size": 9, "color": color, "line": {"color": SURFACE, "width": 2}},
+            hovertemplate="%{fullData.name}<br>%{customdata}: %{y:.1f} damage per round<extra></extra>"))
+        ends.append([values[-1], b.name.split(" (")[0]])
+    # End labels, nudged apart so close finishes don't overlap
+    top = max([v for v, _ in ends] + [1])
+    ends.sort()
+    for jj in range(1, len(ends)):
+        ends[jj][0] = max(ends[jj][0], ends[jj - 1][0] + 0.08 * top)
+    for y, name in ends:
+        fig.add_annotation(x="Act 3", y=y, text=name, showarrow=False, xanchor="left", xshift=10, font={"color": "#cfcfcf", "size": 11})
+    fig.update_layout(
+        template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", height=280,
+        margin={"l": 40, "r": 100, "t": 10, "b": 30}, legend={"orientation": "h", "y": 1.12, "x": 0, "font": {"size": 11}},
+        yaxis={"title": None, "gridcolor": "#444", "gridwidth": 1, "zeroline": False, "rangemode": "tozero"},
+        xaxis={"title": None, "showgrid": False}, hoverlabel={"bgcolor": "#222"})
+    return fig
 
 def dpr_table(builds, enemy, rounds_per_fight):
     """ Exact expected damage per round for each character at each act """
@@ -357,5 +390,5 @@ def gear_highlights(build, conflicts, gear_ids):
     return ["bg3-gear bg3-conflict" if (gid["act"], gear_by_act[gid["act"]].get(gid["slot"])) in flagged else "bg3-gear" for gid in gear_ids]
 
 __all__ = ["planner", "DEFAULT_PARTY", "MAX_PARTY_SIZE", "party_conflicts", "build_conflicts", "conditional_options", "dpr_table",
-           "conflicts_list", "gear_highlights", "inherited_placeholders", "item_values_table", "suggestions_table", "CUSTOM", "fields_from_character",
+           "conflicts_list", "dpr_chart", "gear_highlights", "inherited_placeholders", "item_values_table", "suggestions_table", "CUSTOM", "fields_from_character",
            "character_from_fields", "subclass_options", "builder_summary"]

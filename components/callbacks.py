@@ -27,7 +27,7 @@ from components.enemy_card import extract_enemy_ui_values, generate_enemy_card_b
 from components.variants import make_variant
 from components.sweeps import SWEEP_PARAMETERS, run_sweep
 from components.session import SETTINGS_IDS, describe_session, make_session, parse_session
-from components.bg3_planner import (DEFAULT_PARTY, MAX_PARTY_SIZE, CUSTOM, conditional_options, conflicts_list, dpr_table, gear_highlights,
+from components.bg3_planner import (DEFAULT_PARTY, MAX_PARTY_SIZE, CUSTOM, conditional_options, conflicts_list, dpr_chart, dpr_table, gear_highlights,
                                     inherited_placeholders, item_values_table, suggestions_table, fields_from_character, character_from_fields,
                                     subclass_options, builder_summary)
 from bg3.character import Bg3Character
@@ -912,6 +912,18 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             custom is not None,
             builder_summary(custom, levels_now) if custom else None,
         )
+
+    @app.callback(
+        Output("bg3-dpr-chart", "figure"),
+        Input("bg3-party", "data"),
+        Input("enemy-values", "data"),
+        Input("rounds-per-fight", "value"),
+    )
+    def party_chart(party, enemy_dict, rounds_per_fight):
+        """ Expected damage per round of the party across the act checkpoints """
+        builds = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)]
+        enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
+        return dpr_chart(builds, enemy, max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1))
 
     @app.callback(
         Output("bg3-item-values", "children"),

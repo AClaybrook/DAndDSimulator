@@ -39,3 +39,4 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - 2026-10-30: Builder: Battle Master manoeuvres, Arcane Shots, Blade Flourish and Death Domain Touch of Death are limited riders on one attack per round with their own uses (they stack with Smite and Sneak Attack), Potent Spellcasting (Light, Knowledge) and Aura of Hate (Oathbreaker); attack fallbacks survive weapon swaps from gear
 - 2026-10-30: Session export/import includes the BG3 planner party, so builds can be saved and shared as one file
 - 2026-10-29: Generic +1/+2/+3 trader gear gets an estimated act from its enchantment, items of unknown act are only suggested for Act 3
+- 2026-10-30: Party damage chart: expected damage per round of each character across the act checkpoints, under the table
