@@ -6,7 +6,7 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - [ ] Open a PR with the BG3 planner work once you have looked at it
 
 ## Next
-- [ ] Builder: more subclass features (Eldritch Knight, Wildheart aspects, Circle of Stars, Death Domain Touch of Death, College of Glamour, Shadow Magic...), Battle Master and Arcane Archer as separate dice pools
+- [ ] Builder: more subclass features (Eldritch Knight War Magic, Wildheart aspects, Circle of Stars, Way of Shadow Shadow Strike, Storm Sorcery, Beast Master companions)
 - [ ] Builder: Smites as spells (Searing, Branding, Wrathful), Wild Shape, Enraged Throw's Strength based damage
 - [ ] Elixir of Bloodlust (extra action on a kill) and kill based effects in general
 - [ ] Arcane Acuity, Lightning Charges, Momentum and other stacking effects
@@ -36,4 +36,5 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - 2026-10-29: Planner characters keep everything when sent to the simulator cards: new card fields for BG3 Savage Attacker per die, barbarian level for rage, and the spell save DC bonus from items (tested for every example at every act)
 - 2026-10-30: Weapon proficiencies for custom characters from bg3.wiki: first class, multiclass, subclass (Hexblade, War/Tempest/Death clerics, Valour, Bladesinging) and race proficiencies; weapons without proficiency lose the bonus to hit and are flagged in the conflict report
 - 2026-10-30: Builder: thrown weapon routine (Tavern Brawler twice, Giant's Rage doubled on throws, Berserker Enraged Throw), levelled damage spells cast with every slot high enough before the cantrip (pact slots too), Toll the Dead added; Throwzerker and Evocation Wizard examples (the wizard matches the Gale preset exactly)
+- 2026-10-30: Builder: Battle Master manoeuvres, Arcane Shots, Blade Flourish and Death Domain Touch of Death are limited riders on one attack per round with their own uses (they stack with Smite and Sneak Attack), Potent Spellcasting (Light, Knowledge) and Aura of Hate (Oathbreaker); attack fallbacks survive weapon swaps from gear
 - 2026-10-29: Generic +1/+2/+3 trader gear gets an estimated act from its enchantment, items of unknown act are only suggested for Act 3

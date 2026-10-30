@@ -65,18 +65,24 @@ def compile_build(build, act, items=None):
     # aren't proficient with (presets are assumed proficient)
     profs = weapon_proficiencies(Bg3Character.from_dict(build.character), level) if build.character else None
     own_attacks = {slot: [] for slot in gear}
+    names = {} # Old: new attack names, so fallbacks still point at their limited attack
     attacks = []
     for attack in character.attacks:
         slot = _weapon_slot(attack)
         item = gear.get(slot)
         if item is not None and item.weapon:
-            attack = equip_weapon(attack, item)
+            renamed = equip_weapon(attack, item)
+            names[attack.name] = renamed.name
+            attack = renamed
             if profs is not None:
                 attack.proficient = is_proficient(item.weapon.get("base"), profs)
             own_attacks[slot].append(attack)
         else:
             attack = deepcopy(attack)
         attacks.append(attack)
+    for attack in attacks:
+        if attack.fallback_for in names:
+            attack.fallback_for = names[attack.fallback_for]
     character.attacks = attacks
 
     # Ability scores first, so later effects see the final stats

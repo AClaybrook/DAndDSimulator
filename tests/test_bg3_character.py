@@ -107,3 +107,15 @@ def test_thrown_and_levelled_spells():
     assert character.attacks[0].name == "Fireball" and character.attacks[0].uses_per_fight == 0.5 and character.attacks[1].fallback_for == "Fireball"
     _, notes = compile_character(wizard, 4)
     assert any("No spell slots" in n for n in notes)
+
+def test_limited_riders_keep_their_fallback_with_gear():
+    from bg3.build import Bg3Build, compile_build
+    bm = Bg3Character(scores=STR, classes=[["fighter", "Battle Master", 12]], fighting_styles=["Great Weapon Fighting"])
+    character, _ = compile_character(bm, 5)
+    assert character.attacks[0].name == "Greatsword (Trip Attack)" and character.attacks[1].fallback_for == "Greatsword (Trip Attack)"
+    geared = compile_build(Bg3Build("BM", "fighter_gwm", character=bm.to_dict(), equipment={"1": {"melee_main": "bg3:everburn_blade"}}), 1)
+    assert geared.attacks[0].name == "Everburn Blade (Trip Attack)" and geared.attacks[1].fallback_for == "Everburn Blade (Trip Attack)"
+    # Superiority dice no longer use the once per turn pool, so they stack with Sneak Attack
+    fighter_rogue = Bg3Character(scores=STR, classes=[["fighter", "Battle Master", 3], ["rogue", "Thief", 9]], routine="dual_wield")
+    character, _ = compile_character(fighter_rogue, 12)
+    assert character.once_per_turn_die_mod_list == ["5d6"] and any("Trip Attack" in a.name for a in character.attacks)

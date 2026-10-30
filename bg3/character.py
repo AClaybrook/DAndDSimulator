@@ -317,6 +317,19 @@ def _attacks(character, c, levels, subs, feats, notes):
         attacks.append(replace(main, name=f"{main.name} (Dread Ambusher)", uses_per_fight=1, bonus_damage_die_mod_list=["1d8"]))
     return attacks
 
+def _limited_rider(c, label, uses, bonus=None, extra=None):
+    """ A limited use rider on one attack each round (manoeuvres, Arcane Shots, Blade Flourish), until its uses per fight run out:
+        the first plain weapon attack becomes a limited attack with the rider, with the plain attack as its fallback """
+    main = next((a for a in c.attacks if a.is_weapon or a.type == "unarmed"), None)
+    if main is None or not uses or main.uses_per_fight or main.fallback_for:
+        return
+    name = f"{main.name.split(' (')[0]} ({label})"
+    rider = replace(main, name=name, uses_per_fight=uses,
+                    bonus_damage_die_mod_list=[*main.bonus_damage_die_mod_list, *([bonus] if bonus else [])],
+                    extra_damage_list=[*main.extra_damage_list, *([extra] if extra else [])])
+    main.fallback_for = name
+    c.attacks.insert(c.attacks.index(main), rider)
+
 def _once_per_turn(c, dice, uses=0, crit_only=False):
     """ Adds once per turn damage. The engine has one pool, so a second source adds its dice to the first """
     c.once_per_turn_die_mod_list = [*c.once_per_turn_die_mod_list, dice]
@@ -334,10 +347,10 @@ def _class_features(character, c, levels, subs, notes):
         c.crit_on = 19
     if fighter >= 3 and subs.get("fighter") == "Battle Master" and weapon:
         dice = 4 + (fighter >= 7)
-        _once_per_turn(c, "1d10" if fighter >= 10 else "1d8", per_fight(per_short_rest=dice))
+        _limited_rider(c, "Trip Attack", per_fight(per_short_rest=dice), bonus="1d10" if fighter >= 10 else "1d8")
     if fighter >= 3 and subs.get("fighter") == "Arcane Archer" and character.routine == "ranged":
         arrows = 4 + 3 * (fighter >= 7) + 3 * (fighter >= 10)
-        _once_per_turn(c, "2d6", per_fight(per_short_rest=arrows)) # Bursting/Beguiling Arrow
+        _limited_rider(c, "Arcane Shot", per_fight(per_short_rest=arrows), extra="2d6 psychic") # Beguiling Arrow
     # Barbarian
     if barbarian and character.toggle("rage"):
         c.raging, c.barbarian_level = True, barbarian
@@ -410,12 +423,26 @@ def _class_features(character, c, levels, subs, notes):
         _once_per_turn(c, "1d8") # Divine Strike
     if bard >= 3 and subs.get("bard") == "College of Swords" and weapon:
         inspirations = 3 + (bard >= 5) + (bard >= 10)
-        _once_per_turn(c, "1d10" if bard >= 10 else "1d8" if bard >= 5 else "1d6", per_fight(per_short_rest=inspirations)) # Blade Flourish
+        _limited_rider(c, "Blade Flourish", per_fight(per_short_rest=inspirations), bonus="1d10" if bard >= 10 else "1d8" if bard >= 5 else "1d6")
+    if cleric >= 2 and subs.get("cleric") == "Death Domain" and character.routine in ("two_handed", "one_handed", "dual_wield", "unarmed"):
+        # Touch of Death: Channel Divinity (1 charge, 2 from level 6, short rest) on a melee hit
+        _limited_rider(c, "Touch of Death", per_fight(per_short_rest=1 + (cleric >= 6)), extra=f"{5 + 2 * cleric} necrotic")
+    if cleric >= 8 and subs.get("cleric") in ("Light Domain", "Knowledge Domain") and character.routine == "cantrip":
+        # Potent Spellcasting: Wisdom to cleric cantrip damage
+        for a in c.attacks:
+            if a.type == "spell" and a.name.split(" (")[0].rstrip(" 0123456789") in ("Sacred Flame", "Toll the Dead", "Produce Flame"):
+                a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(max(c.wisdom_ability_modifier, 0))]
+    if paladin >= 7 and subs.get("paladin") == "Oathbreaker":
+        # Aura of Hate: Charisma to melee weapon damage
+        for a in c.attacks:
+            if a.type == "weapon (melee)":
+                a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(max(c.charisma_ability_modifier, 0))]
     for sub in subs.values():
         if sub and sub not in MODELLED_SUBCLASSES:
             notes.append(f"{sub}: no damage features modelled yet")
 
 MODELLED_SUBCLASSES = {"Champion", "Battle Master", "Arcane Archer", "Berserker", "Giant", "Wild Magic", "Wildheart", "Oath of Vengeance", "Oath of Devotion",
+                       "Oathbreaker", "Light Domain", "Knowledge Domain",
                        "Oath of the Crown", "Hunter", "Swarmkeeper", "Gloom Stalker", "Assassin", "Thief", "Swashbuckler", "Way of the Open Hand",
                        "Way of the Drunken Master", "The Hexblade", "Draconic Bloodline", "Evocation School", "Bladesinging", "War Domain",
                        "Tempest Domain", "Death Domain", "Life Domain", "Nature Domain", "Trickery Domain", "College of Swords", "College of Valour"}
