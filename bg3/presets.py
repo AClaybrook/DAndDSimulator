@@ -21,7 +21,7 @@ def custom(name, scores, bonus, classes, feats, routine, styles=(), race="Human"
 PRESETS = {b.name: b for b in [
     Bg3Build("Lae'zel (Champion, GWM)", "fighter_gwm", equipment={
         "1": {"melee_main": "bg3:everburn_blade", "ring_1": "bg3:caustic_band"},
-        "2": {"melee_main": "bg3:moonlight_glaive", "gloves": "bg3:dark_justiciar_gauntlets_rare", "ring_2": "bg3:callous_glow_ring"},
+        "2": {"melee_main": "bg3:moonlight_glaive", "gloves": "bg3:flawed_helldusk_gloves", "ring_2": "bg3:callous_glow_ring"},
         "3": {"gloves": "bg3:gauntlets_of_hill_giant_strength", "helmet": "bg3:sarevok_s_horned_helmet"},
     }),
     Bg3Build("Karlach (Berserker)", "barbarian_berserker", equipment={

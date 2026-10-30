@@ -1,0 +1,12 @@
+[
+  {"key": "nightsong", "act": 2, "quest": "The Chosen of Shar", "source": "https://bg3.wiki/wiki/The_Chosen_of_Shar",
+   "paths": {"Shadowheart spares the Nightsong": ["bg3:moonlight_glaive", "bg3:selune_s_spear_of_night"],
+             "Shadowheart kills the Nightsong": ["bg3:dark_justiciar_boots", "bg3:dark_justiciar_gauntlets_rare", "bg3:dark_justiciar_half_plate_very_rare",
+                                                 "bg3:shar_s_spear_of_evening"]}},
+  {"key": "neres_head", "act": 1, "quest": "Deliver Nere's Head", "source": "https://bg3.wiki/wiki/Deliver_Nere%27s_Head",
+   "paths": {"Glut is Sovereign": ["bg3:champion_s_chain"], "Spaw is Sovereign": ["bg3:envoy_s_amulet"]}},
+  {"key": "florrick", "act": 1, "quest": "Rescue the Grand Duke (Florrick's reward, one of three)", "source": "https://bg3.wiki/wiki/Rescue_the_Grand_Duke",
+   "paths": {"The Joltshooter": ["bg3:the_joltshooter"], "The Sparky Points": ["bg3:the_sparky_points"], "The Spellsparkler": ["bg3:the_spellsparkler"]}},
+  {"key": "thrinn", "act": 1, "quest": "Find the Missing Boots (Thrinn's reward, one of two)", "source": "https://bg3.wiki/wiki/Find_the_Missing_Boots",
+   "paths": {"Bracing Band": ["bg3:bracing_band"], "Armour of Uninhibited Kushigo": ["bg3:armour_of_uninhibited_kushigo"]}}
+]

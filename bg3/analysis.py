@@ -4,6 +4,7 @@ from copy import deepcopy
 
 from bg3.build import compile_build, equipment_at
 from bg3.items import catalog
+from bg3.party import story_rivals
 from computations.analytic import expected_damage_per_round
 
 def damage(build, act, enemy, rounds_per_fight=None, items=None):
@@ -31,20 +32,24 @@ def item_values(build, act, enemy, rounds_per_fight=None, items=None):
     return sorted(values, key=lambda v: -v[2])
 
 def slot_suggestions(build, act, slot, enemy, rounds_per_fight=None, items=None, party=(), top=10):
-    """ The items that add the most damage in a slot at an act: (item, damage gained, other characters using it at that act).
-        Only items found by that act are considered, items of unknown act only for Act 3 """
+    """ The items that add the most damage in a slot at an act: (item, damage gained, other characters using it at that act, and items
+        the party uses from another outcome of the item's story choice). Only items found by that act are considered, items of unknown act only for Act 3 """
     items = items or catalog()
     base = damage(with_slot(build, act, slot, ""), act, enemy, rounds_per_fight, items)
-    users = {}
-    for other in party:
-        if other.name != build.name:
-            for key in equipment_at(other, act).values():
+    users, held = {}, {}
+    for other in party if any(o.name == build.name for o in party) else [build, *party]:
+        for gear_slot, key in equipment_at(other, act).items():
+            if other.name != build.name:
                 users.setdefault(key, []).append(other.name)
+            if other.name != build.name or gear_slot != slot:
+                held.setdefault(key, []).append(other.name)
     candidates = [i for i in items.values() if i.fits(slot) and (i.act or 3) <= int(act) and (i.effects or i.weapon)]
     ranked = [(i, item_gain(build, act, slot, i.key, enemy, rounds_per_fight, items, base)) for i in candidates]
     ranked = [(i, gain) for i, gain in ranked if gain > 0.005]
     ranked.sort(key=lambda r: -r[1])
-    return [(i, gain, users.get(i.key, []) if i.unique else []) for i, gain in ranked[:top]]
+    def rivals(key):
+        return [f"{items[k].name} on {', '.join(held[k])} (other story outcome)" for k in story_rivals(key, held)]
+    return [(i, gain, (users.get(i.key, []) if i.unique else []) + rivals(i.key)) for i, gain in ranked[:top]]
 
 def shared_item_gains(builds, conflict, enemy, rounds_per_fight=None, items=None):
     """ For a shared item conflict: {character: damage gained from the item} at the conflict's act """

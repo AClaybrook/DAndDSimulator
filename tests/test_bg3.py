@@ -141,8 +141,32 @@ def test_presets_use_real_items_in_the_right_slots():
         for act in ("1", "2", "3"):
             assert not [c for c in build_conflicts(build, act) if c.kind != "shared"], build.name
         assert all(key in items for gear in build.equipment.values() for key in gear.values())
-    # The default party shares Caustic Band, to show the conflict report
-    assert any(c.kind == "shared" and c.item == "bg3:caustic_band" for c in party_conflicts([PRESETS[n] for n in DEFAULT_PARTY]))
+    # The default party shares Caustic Band, to show the conflict report, and makes no conflicting story choices
+    conflicts = party_conflicts([PRESETS[n] for n in DEFAULT_PARTY])
+    assert any(c.kind == "shared" and c.item == "bg3:caustic_band" for c in conflicts)
+    assert not [c for c in conflicts if c.kind == "story"]
+    assert not [c for c in party_conflicts(list(PRESETS.values())) if c.kind == "story"]
+
+def test_story_choices():
+    from bg3.analysis import slot_suggestions
+    from bg3.party import story_choices
+    items = catalog()
+    assert all(k in items for choice in story_choices() for keys in choice["paths"].values() for k in keys)
+    spared = Bg3Build("Lae'zel", "fighter_gwm", equipment={"2": {"melee_main": "bg3:moonlight_glaive"}})
+    killed = Bg3Build("Shadowheart", "fighter_gwm", equipment={"2": {"gloves": "bg3:dark_justiciar_gauntlets_rare"}})
+    conflicts = [c for c in party_conflicts([spared, killed]) if c.kind == "story"]
+    assert [c.act for c in conflicts] == ["2", "3"] and conflicts[0].members == ["Lae'zel", "Shadowheart"]
+    assert set(conflicts[0].items) == {"bg3:moonlight_glaive", "bg3:dark_justiciar_gauntlets_rare"}
+    assert "Moonlight Glaive on Lae'zel" in conflicts[0].message
+    assert conflicting_items(conflicts, act=2) == {"bg3:moonlight_glaive", "bg3:dark_justiciar_gauntlets_rare"}
+    # Items from the same outcome are fine, and one character can make the conflict alone
+    assert not [c for c in party_conflicts([spared, replace(killed, equipment={"2": {"melee_main": "bg3:selune_s_spear_of_night"}})]) if c.kind == "story"]
+    alone = replace(spared, equipment={"2": {**spared.equipment["2"], "gloves": "bg3:dark_justiciar_gauntlets_rare"}})
+    assert [c.act for c in party_conflicts([alone]) if c.kind == "story"] == ["2", "3"]
+    # Gear suggestions name the clash
+    gloves = {i.key: users for i, _, users in slot_suggestions(spared, 2, "gloves", ENEMY, 3, party=[spared])}
+    assert gloves["bg3:dark_justiciar_gauntlets_rare"] == ["Moonlight Glaive on Lae'zel (other story outcome)"]
+    assert gloves["bg3:dark_justiciar_gauntlets_uncommon"] == []
 
 def test_gear_advice():
     from bg3.analysis import item_values, shared_item_gains, slot_suggestions

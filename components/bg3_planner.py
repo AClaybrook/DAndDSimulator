@@ -353,7 +353,7 @@ def suggestions_table(suggestions):
                      html.Td(", ".join(users), className="text-warning" if users else "")])
             for item, gain, users in suggestions]
     return html.Div([
-        dbc.Table([html.Thead(html.Tr([html.Th("Item"), html.Th("Damage per round"), html.Th("Found"), html.Th("Also used by")])), html.Tbody(rows)],
+        dbc.Table([html.Thead(html.Tr([html.Th("Item"), html.Th("Damage per round"), html.Th("Found"), html.Th("Used by or clashes with")])), html.Tbody(rows)],
                   size="sm", hover=True, class_name="mb-0 small"),
         html.Div("Compared to an empty slot (weapons: the class preset's base weapon). Conditional effects count when toggled on.",
                  className="small text-muted"),
@@ -374,7 +374,7 @@ def conflicts_list(conflicts, gains=None):
     for c in conflicts:
         by_act.setdefault(c.act, []).append(c)
     return html.Div([html.Div([html.B(f"Act {act}", className="small"),
-                               html.Ul([html.Li(message(c), className="small text-warning" if c.kind == "shared" else "small") for c in items_],
+                               html.Ul([html.Li(message(c), className="small text-warning" if c.kind in ("shared", "story") else "small") for c in items_],
                                        className="mb-1")])
                      for act, items_ in sorted(by_act.items())])
 
@@ -389,7 +389,7 @@ def inherited_placeholders(build, gear_ids):
 
 def gear_highlights(build, conflicts, gear_ids):
     """ CSS classes for each gear cell: items this character shares with others, and its own gear problems, including carried over items """
-    flagged = {(c.act, c.item) for c in conflicts if build.name in c.members}
+    flagged = {(c.act, k) for c in conflicts if build.name in c.members for k in (c.items or [c.item])}
     gear_by_act = {act: equipment_at(build, act) for act in ACT_KEYS}
     return ["bg3-gear bg3-conflict" if (gid["act"], gear_by_act[gid["act"]].get(gid["slot"])) in flagged else "bg3-gear" for gid in gear_ids]
 
