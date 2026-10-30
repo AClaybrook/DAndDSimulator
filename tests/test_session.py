@@ -30,3 +30,9 @@ def test_bad_sessions():
     # A session without an enemy keeps the current enemy
     characters, enemy, _, error = parse_session({"characters": [{"name": "Ok"}], "enemy": None})
     assert [c.name for c in characters] == ["Ok"] and enemy is None and error is None
+
+def test_session_keeps_the_bg3_party():
+    from components.bg3_planner import DEFAULT_PARTY
+    session = make_session([], None, {}, DEFAULT_PARTY)
+    assert session["bg3_party"] == DEFAULT_PARTY
+    assert "bg3_party" not in make_session([], None, {})

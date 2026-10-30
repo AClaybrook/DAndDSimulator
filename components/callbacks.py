@@ -479,12 +479,13 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             State("character_row", "children"),
             State({"type": "attack_store", "index": ALL}, "data"),
             State("enemy-card-body", "children"),
+            State("bg3-party", "data"),
             *SETTINGS_STATES,
             prevent_initial_call=True
     )
     @timeit
-    def export_session(clicked, characters_ui, attack_stores, enemy_card_body, *settings):
-        """ Exports the characters, enemy and simulator settings to a json file that Import loads back """
+    def export_session(clicked, characters_ui, attack_stores, enemy_card_body, bg3_party, *settings):
+        """ Exports the characters, enemy, simulator settings and the BG3 planner party to a json file that Import loads back """
         if not clicked:
             raise PreventUpdate
 
@@ -493,12 +494,13 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             c_dict = extract_character_ui_values(c)
             c_dict["attacks"] = json.loads(attack_stores[ii])
             c_dicts.append(c_dict)
-        session = make_session(c_dicts, extract_enemy_ui_values(enemy_card_body), dict(zip(SETTINGS_IDS, settings)))
+        session = make_session(c_dicts, extract_enemy_ui_values(enemy_card_body), dict(zip(SETTINGS_IDS, settings)), bg3_party)
         return dict(content=json.dumps(session, indent=4), filename="dnd_session.json")
 
     @app.callback(
             *SESSION_OUTPUTS,
             Output('character-alerts', 'children'),
+            Output("bg3-party", "data", allow_duplicate=True),
             Input('upload-button', 'contents'),
             State("active_ids", "data"),
             prevent_initial_call=True
@@ -511,23 +513,25 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
 
         content_type, content_string = contents.split(',')
         if 'json' not in content_type:
-            return *NO_SESSION_CHANGE, alert("Import Failed. Only json files are supported")
+            return *NO_SESSION_CHANGE, alert("Import Failed. Only json files are supported"), no_update
         try:
             data = json.loads(base64.b64decode(content_string).decode('utf-8'))
         except Exception as e:
             print(e)
-            return *NO_SESSION_CHANGE, alert("Import Failed. Cannot parse json file")
+            return *NO_SESSION_CHANGE, alert("Import Failed. Cannot parse json file"), no_update
 
         characters, enemy, settings, error = parse_session(data)
+        # The BG3 planner party, when the session has one
+        party = data.get("bg3_party") if isinstance(data, dict) and isinstance(data.get("bg3_party"), list) else no_update
         if isinstance(data, dict) and "characters" in data:
             if not characters:
-                return *NO_SESSION_CHANGE, alert(error or "Import Failed. The session has no characters")
+                return *NO_SESSION_CHANGE, alert(error or "Import Failed. The session has no characters"), party
             message = alert(error, color="warning") if error else alert(f"Loaded session: {describe_session(data)}", color="success")
-            return *session_outputs(characters, enemy, settings), message
+            return *session_outputs(characters, enemy, settings), message, party
 
         # Older exports are a list of characters, which are added to the current ones
         patched_children, active_ids, warning = append_cards(characters, active_ids_json)
-        return patched_children, active_ids, *NO_SESSION_CHANGE[2:], (alert(error) if error else warning)
+        return patched_children, active_ids, *NO_SESSION_CHANGE[2:], (alert(error) if error else warning), no_update
 
     @app.callback(
         Output("restore-banner", "is_open"),
@@ -818,7 +822,7 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         Input("rounds-per-fight", "value"),
         Input({"type": "bg3-cb", "field": ALL}, "value"),
         Input({"type": "bg3-cb-sub", "row": ALL}, "value"),
-        State("bg3-party", "data"),
+        Input("bg3-party", "data"), # Imported sessions replace the party
         State("bg3-load-preset", "value"),
     )
     def sync_planner(active_tab, _add, _remove, _load, name, preset, levels, gear, buffs, conditions, enemy_dict, rounds_per_fight, cb_values, cb_subs,
