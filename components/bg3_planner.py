@@ -7,7 +7,7 @@ from bg3.buffs import BUFFS
 from bg3.checkpoints import ACTS, act_level
 from bg3.items import SLOT_LABELS, SLOTS, catalog, condition_id
 from bg3.party import MAX_PARTY_SIZE, build_conflicts, party_conflicts
-from bg3.presets import DEFAULT_PARTY as PRESET_PARTY, PRESETS
+from bg3.presets import DEFAULT_PARTY as PRESET_PARTY, PRESETS, examples
 from bg3.abilities import point_buy_cost, point_buy_problems
 from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_SPELLS, RACES, ROUTINES, SUBCLASSES, TOGGLES, Bg3Character, relevant_toggles, class_levels,
                            class_order,
@@ -98,7 +98,9 @@ def planner():
     member_editor = dbc.Row([
         dbc.Col([
             dbc.InputGroup([
-                dbc.Select(options=[{"label": name, "value": name} for name in PRESETS], placeholder="Start from an example build...", id="bg3-load-preset"),
+                dbc.Select(options=[{"label": name, "value": name} for name in PRESETS] +
+                           [{"label": f"Doc: {name}", "value": name} for name in examples() if name not in PRESETS],
+                           placeholder="Start from an example build...", id="bg3-load-preset"),
                 dbc.Button("Load", id="bg3-load", color="secondary", title="Replace this character with the example build, gear included"),
             ], size="sm", class_name="mb-2"),
             dbc.InputGroup([dbc.InputGroupText("Name"), dbc.Input(id="bg3-name", type="text")], size="sm", class_name="mb-2"),

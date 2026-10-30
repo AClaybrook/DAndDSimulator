@@ -111,3 +111,9 @@ PRESETS = {b.name: b for b in [
 ]}
 
 DEFAULT_PARTY = ["Lae'zel (Champion, GWM)", "Karlach (Berserker)", "Astarion (Assassin, dual wield)", "Gale (Evoker)"]
+
+
+def examples():
+    """ The examples above plus builds imported from a build reference document (bg3.doc_import), by name """
+    from bg3.doc_import import load # pylint: disable=import-outside-toplevel
+    return {**PRESETS, **{d["build"]["name"]: Bg3Build.from_dict(d["build"]) for d in load()}}

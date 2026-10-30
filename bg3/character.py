@@ -88,8 +88,9 @@ def is_proficient(base, profs):
 # How the character attacks each turn. Weapons are the default ones for the style until gear replaces them
 ROUTINES = {
     "two_handed": "Two-handed weapon", "one_handed": "One-handed weapon (Duelling)", "dual_wield": "Two weapons", "ranged": "Ranged weapon",
-    "unarmed": "Unarmed strikes", "thrown": "Thrown weapon", "cantrip": "Attack cantrip",
+    "unarmed": "Unarmed strikes", "thrown": "Thrown weapon", "cantrip": "Attack cantrip", "shadow_blade": "Shadow Blade (and an off-hand weapon)",
 }
+SHADOW_BLADE = "Shadow Blade"
 DEFAULT_WEAPONS = {"two_handed": "Greatsword", "one_handed": "Longsword", "dual_wield": "Shortsword", "ranged": "Longbow", "thrown": "Handaxe"}
 # Damage spells cast with spell slots before falling back to the attack cantrip
 LEVELLED_SPELLS = ["Magic Missile", "Guiding Bolt", "Inflict Wounds", "Burning Hands", "Thunderwave", "Scorching Ray", "Shatter", "Fireball",
@@ -103,16 +104,21 @@ TOGGLES = {
     "manifestation": "Manifestation of Body (Open Hand)", "damaged_target": "Target is already damaged (Colossus Slayer)",
     "starry_form": "Starry Form: Archer (Circle of Stars)", "symbiotic": "Symbiotic Entity (Circle of Spores)",
     "storm_close": "Enemies within 6 m when casting (Heart of the Storm)",
+    "booming_blade": "Booming Blade on the first melee attack each turn",
 }
 # The class (and subclass) each toggle is for, so the builder only offers the ones that matter
 TOGGLE_FOR = {"rage": ("barbarian", ""), "reckless": ("barbarian", ""), "smite": ("paladin", ""), "vow": ("paladin", ""),
               "curse": ("warlock", "The Hexblade"), "surprise": ("rogue", "Assassin"), "manifestation": ("monk", "Way of the Open Hand"),
               "damaged_target": ("ranger", "Hunter"), "starry_form": ("druid", "Circle of Stars"), "symbiotic": ("druid", "Circle of Spores"),
-              "storm_close": ("sorcerer", "Storm Sorcery")}
+              "storm_close": ("sorcerer", "Storm Sorcery"),
+              "booming_blade": [("wizard", ""), ("sorcerer", ""), ("warlock", ""), ("fighter", "Eldritch Knight"), ("rogue", "Arcane Trickster")]}
 
 def relevant_toggles(classes):
     """ Toggles for a [class, subclass, levels] list """
-    return [k for k, (cls, sub) in TOGGLE_FOR.items() if any(c == cls and (not sub or s == sub) for c, s, *_ in classes)]
+    def matches(owners):
+        owners = owners if isinstance(owners, list) else [owners]
+        return any(c == cls and (not sub or s == sub) for cls, sub in owners for c, s, *_ in classes)
+    return [k for k, owners in TOGGLE_FOR.items() if matches(owners)]
 
 @dataclass
 class Bg3Character:
@@ -229,6 +235,8 @@ def compile_character(character, level=MAX_LEVEL):
             a.proficient = False
             notes.append(f"Not proficient with {weapon_base(a.name)}s")
     c.attacks = attacks
+    if character.toggle("booming_blade") and "booming_blade" in relevant_toggles(character.classes):
+        _booming_blade(c, character)
     _class_features(character, c, levels, subs, notes)
     split = " / ".join(f"{cls.title()} {n}" + (f" ({subs[cls]})" if subs.get(cls) else "") for cls, n in levels.items())
     c.description = f"{character.race}, {split}. Feats: {', '.join(feats) or 'none'}"
@@ -303,6 +311,8 @@ def _attacks(character, c, levels, subs, feats, notes):
             attacks.append(replace(strike, name="Flurry of Blows", uses_per_fight=per_fight(per_short_rest=ki)))
         return attacks
 
+    if routine == "shadow_blade":
+        return _shadow_blade_attacks(c, levels, subs, count, stat_for, notes)
     name = DEFAULT_WEAPONS[routine]
     weapon_stat = "dexterity" if routine in ("ranged", "dual_wield") else "strength"
     if routine == "one_handed" and c.dexterity > c.strength:
@@ -335,6 +345,33 @@ def _attacks(character, c, levels, subs, feats, notes):
     if levels.get("ranger", 0) >= 3 and subs.get("ranger") == "Gloom Stalker":
         attacks.append(replace(main, name=f"{main.name} (Dread Ambusher)", uses_per_fight=1, bonus_damage_die_mod_list=["1d8"]))
     return attacks
+
+def shadow_blade_dice(levels, subs):
+    """ Shadow Blade's dice from the highest spell slot: 2d8, 3d8 from a level 3 slot, 4d8 from a level 5 slot (even levels add nothing). 0 without a level 2 slot """
+    slots = spell_slots(caster_level(levels, subs))
+    highest = max(len(slots), warlock_pact_slots(levels.get("warlock", 0))[1])
+    return 0 if highest < 2 else 4 if highest >= 5 else 3 if highest >= 3 else 2
+
+def _shadow_blade_attacks(c, levels, subs, count, stat_for, notes):
+    """ Shadow Blade in the main hand (cast before the fight, concentration), a dagger in the off hand with the bonus action """
+    dice = shadow_blade_dice(levels, subs)
+    stat = stat_for("dexterity" if c.dexterity >= c.strength else "strength") # Finesse
+    if not dice:
+        notes.append("Shadow Blade needs a level 2 spell slot, using a Rapier until then")
+        main = weapon_attack("Rapier", ability_stat=stat)
+    else:
+        main = Attack(name=SHADOW_BLADE, type="weapon (melee)", ability_stat=stat, damage=f"{dice}d8", damage_type="psychic", weapon_enhancement=0)
+    offhand = weapon_attack("Dagger", ability_stat=stat, offhand=True)
+    return [replace(main) for _ in range(count)] + [offhand]
+
+def _booming_blade(c, character):
+    """ Booming Blade replaces the first melee weapon attack each turn: +1d8 thunder on a hit from level 5, 2d8 from level 11 (moving damage isn't modelled) """
+    if c.level < 5 or character.routine not in ("two_handed", "one_handed", "dual_wield", "shadow_blade"):
+        return
+    first = next((a for a in c.attacks if a.type == "weapon (melee)" and not a.offhand and not a.uses_per_fight and not a.fallback_for), None)
+    if first is not None:
+        first.name = f"{first.name.split(' (')[0]} (Booming Blade)"
+        first.extra_damage_list = [*first.extra_damage_list, f"{1 + (c.level >= 11)}d8 thunder"]
 
 def _limited_rider(c, label, uses, bonus=None, extra=None):
     """ A limited use rider on one attack each round (manoeuvres, Arcane Shots, Blade Flourish), until its uses per fight run out:
@@ -485,4 +522,4 @@ MODELLED_SUBCLASSES = {"Champion", "Battle Master", "Arcane Archer", "Berserker"
 
 __all__ = ["Bg3Character", "compile_character", "weapon_proficiencies", "is_proficient", "class_levels", "feat_opportunities", "caster_level", "CLASSES", "SUBCLASSES", "FEATS", "RACES",
            "ROUTINES", "CANTRIPS", "LEVELLED_SPELLS", "TOGGLES", "TOGGLE_FOR",
-           "relevant_toggles", "STATS"]
+           "relevant_toggles", "shadow_blade_dice", "SHADOW_BLADE", "STATS"]

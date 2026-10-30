@@ -42,7 +42,9 @@ def buffs_at(build, act):
     return [BUFFS[b] for b in build.buffs.get(str(act), []) if b in BUFFS]
 
 def _weapon_slot(attack):
-    """ The equipment slot an attack is made with, None for unarmed attacks and spells """
+    """ The equipment slot an attack is made with, None for unarmed attacks, spells and conjured weapons (Shadow Blade) """
+    if attack.name.startswith("Shadow Blade"):
+        return None
     if attack.type == "weapon (melee)":
         return "melee_off" if attack.offhand else "melee_main"
     if attack.type in ("weapon (ranged)", "thrown"):

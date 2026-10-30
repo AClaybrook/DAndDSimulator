@@ -155,5 +155,24 @@ def replace_toggle(character, key):
 
 def test_builder_only_offers_toggles_for_its_classes():
     assert relevant_toggles([["fighter", "Champion", 12]]) == []
-    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse"]
-    assert relevant_toggles([["warlock", "The Fiend", 12]]) == []
+    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse", "booming_blade"]
+    assert relevant_toggles([["warlock", "The Fiend", 12]]) == ["booming_blade"]
+
+
+def test_shadow_blade_and_booming_blade():
+    from bg3.character import shadow_blade_dice
+    blade = Bg3Character("Godblade", scores={"strength": 8, "dexterity": 15, "constitution": 14, "intelligence": 15, "wisdom": 10, "charisma": 8},
+                         bonus={"dexterity": 2, "intelligence": 1}, classes=[["wizard", "Bladesinging", 10], ["paladin", "Oath of the Crown", 2]],
+                         routine="shadow_blade")
+    # Upcasting only helps with odd slot levels: 2d8, 3d8 from level 3 slots, 4d8 from level 5 slots
+    assert [shadow_blade_dice({"wizard": n}, {}) for n in (2, 3, 5, 8, 9)] == [0, 2, 3, 3, 4]
+    assert shadow_blade_dice({"warlock": 9}, {}) == 4
+    attacks = {a.name: a for a in compile_character(blade, 5)[0].attacks}
+    assert attacks["Shadow Blade (Booming Blade)"].damage == "3d8" and attacks["Shadow Blade (Booming Blade)"].damage_type == "psychic"
+    assert attacks["Shadow Blade (Booming Blade)"].extra_damage_list == ["1d8 thunder"] and attacks["Dagger (Offhand)"].offhand
+    assert compile_character(blade, 12)[0].attacks[0].extra_damage_list == ["2d8 thunder"]
+    # Before a level 2 slot: a Rapier, no Booming Blade damage before level 5
+    early, notes = compile_character(blade, 2)
+    assert early.attacks[0].name == "Rapier" and notes
+    blade.toggles["booming_blade"] = False
+    assert not compile_character(blade, 5)[0].attacks[0].extra_damage_list
