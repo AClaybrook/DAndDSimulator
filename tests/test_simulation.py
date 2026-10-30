@@ -1,4 +1,5 @@
 """ Validates the numerical simulation against exact analytic expectations """
+from bg3.character import Bg3Character, compile_character
 import numpy as np
 import pytest
 
@@ -134,6 +135,10 @@ FIGHT_CASES = {
     "limited_fireball_and_sneak": (5, Character(level=5, dexterity=18, intelligence=18, once_per_turn_die_mod_list=["3d6"], once_per_turn_uses_per_fight=2,
                                                 attacks=[Attack(ability_stat="dexterity"), Attack(type="spell", ability_stat="intelligence", damage="8d6", saving_throw=True,
                                                                                                     saving_throw_success_multiplier=0.5, uses_per_fight=1)])),
+    # BG3 builder: Heart of the Storm damage on hits and misses, Star Map Guiding Bolts falling back to a cantrip plus Luminous Arrow
+    "storm_sorcerer_lightning_bolt": (4, compile_character(Bg3Character(classes=[["sorcerer", "Storm Sorcery", 12]], routine="cantrip",
+                                                                         cantrip="Shocking Grasp", spell="Lightning Bolt"), 8)[0]),
+    "circle_of_stars": (4, compile_character(Bg3Character(classes=[["druid", "Circle of Stars", 12]], routine="cantrip", cantrip="Produce Flame"), 5)[0]),
 }
 
 @pytest.mark.parametrize("name", FIGHT_CASES)
@@ -142,7 +147,7 @@ def test_fight_simulation_matches_analytic(name):
     enemy = Enemy(armor_class=16, dexterity_save=2)
     expected = expected_damage_per_round(character, enemy, rounds_per_fight)
     _, df_by_rounds, _ = simulate_rounds_from_characters([character], enemy, num_rounds=FIGHT_ROUNDS, rng=set_seed(11), rounds_per_fight=rounds_per_fight)
-    tolerance = 0.02 * expected + (0.3 if "fireball" in name else 0.05)
+    tolerance = 0.02 * expected + (0.3 if "fireball" in name or "lightning_bolt" in name else 0.05)
     assert df_by_rounds[0]["Damage"].mean() == pytest.approx(expected, abs=tolerance)
     # Limits only lower damage compared to unlimited resources
     assert expected <= expected_damage_per_round(character, enemy) + 1e-9
@@ -189,7 +194,7 @@ def test_fallback_and_first_round_match_analytic(name):
     enemy = Enemy(armor_class=15, dexterity_save=2)
     expected = expected_damage_per_round(character, enemy, rounds_per_fight)
     _, df_by_rounds, _ = simulate_rounds_from_characters([character], enemy, num_rounds=FIGHT_ROUNDS, rng=set_seed(5), rounds_per_fight=rounds_per_fight)
-    tolerance = 0.02 * expected + (0.3 if "fireball" in name else 0.05)
+    tolerance = 0.02 * expected + (0.3 if "fireball" in name or "lightning_bolt" in name else 0.05)
     assert df_by_rounds[0]["Damage"].mean() == pytest.approx(expected, abs=tolerance)
 
 def test_fallback_attacks():

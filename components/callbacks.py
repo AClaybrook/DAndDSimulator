@@ -29,7 +29,7 @@ from components.sweeps import SWEEP_PARAMETERS, run_sweep
 from components.session import SETTINGS_IDS, describe_session, make_session, parse_session
 from components.bg3_planner import (DEFAULT_PARTY, MAX_PARTY_SIZE, CUSTOM, conditional_options, conflicts_list, dpr_chart, dpr_table, gear_highlights,
                                     inherited_placeholders, item_values_table, suggestions_table, fields_from_character, character_from_fields,
-                                    subclass_options, builder_summary)
+                                    subclass_options, builder_summary, toggle_options)
 from bg3.character import Bg3Character
 from bg3.analysis import item_values, shared_item_gains, slot_suggestions
 from bg3.build import ACT_KEYS, Bg3Build, compile_build
@@ -808,6 +808,7 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         Output({"type": "bg3-cb-sub", "row": ALL}, "value"),
         Output("bg3-custom", "is_open"),
         Output("bg3-cb-summary", "children"),
+        Output({"type": "bg3-cb", "field": "toggles"}, "options"),
         Input("bg3-member-tabs", "active_tab"),
         Input("bg3-add-member", "n_clicks"),
         Input("bg3-remove-member", "n_clicks"),
@@ -911,6 +912,7 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             sub_values,
             custom is not None,
             builder_summary(custom, levels_now) if custom else None,
+            toggle_options(custom.classes) if custom else [],
         )
 
     @app.callback(

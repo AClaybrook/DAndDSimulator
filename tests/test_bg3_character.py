@@ -2,7 +2,7 @@
 import pytest
 
 from bg3.abilities import point_buy_problems
-from bg3.character import Bg3Character, caster_level, class_levels, compile_character, feat_opportunities
+from bg3.character import Bg3Character, caster_level, class_levels, compile_character, feat_opportunities, relevant_toggles
 from computations.analytic import expected_damage_per_round
 from computations.models import Enemy
 from game_data.classes import build_character
@@ -119,3 +119,41 @@ def test_limited_riders_keep_their_fallback_with_gear():
     fighter_rogue = Bg3Character(scores=STR, classes=[["fighter", "Battle Master", 3], ["rogue", "Thief", 9]], routine="dual_wield")
     character, _ = compile_character(fighter_rogue, 12)
     assert character.once_per_turn_die_mod_list == ["5d6"] and any("Trip Attack" in a.name for a in character.attacks)
+
+WIS = {"strength": 8, "dexterity": 14, "constitution": 15, "intelligence": 8, "wisdom": 15, "charisma": 10}
+
+def test_circle_of_stars_and_spores():
+    stars = Bg3Character("Stars", scores=WIS, bonus={"wisdom": 2, "constitution": 1}, classes=[["druid", "Circle of Stars", 12]],
+                         feats=["wisdom+2"], routine="cantrip", cantrip="Produce Flame")
+    character, notes = compile_character(stars, 5)
+    names = {a.name: a for a in character.attacks}
+    # Star Map Guiding Bolts (3 per long rest at level 5) before the cantrip, Luminous Arrow every round
+    assert names["Guiding Bolt"].uses_per_fight == 0.75 and names["Produce Flame"].fallback_for == "Guiding Bolt"
+    assert names["Luminous Arrow"].damage == "1d8+4" and not names["Luminous Arrow"].uses_per_fight and not notes
+    assert compile_character(stars, 10)[0].attacks[-1].damage == "2d8+4"
+    stars.toggles["starry_form"] = False
+    assert "Luminous Arrow" not in {a.name for a in compile_character(stars, 5)[0].attacks}
+
+    spores = Bg3Character("Spores", classes=[["druid", "Circle of Spores", 12]], routine="unarmed")
+    assert compile_character(spores, 2)[0].attacks[0].extra_damage_list == ["1d6 necrotic"]
+
+def test_heart_of_the_storm_hits_or_misses():
+    storm = Bg3Character("Storm", classes=[["sorcerer", "Storm Sorcery", 12]], routine="cantrip", cantrip="Shocking Grasp")
+    before, _ = compile_character(storm, 5)
+    after, _ = compile_character(storm, 6)
+    grasp = next(a for a in after.attacks if a.name == "Shocking Grasp")
+    assert grasp.extra_damage_list == ["3 lightning"] and grasp.bonus_miss_die_mod_list == [3]
+    assert not next(a for a in before.attacks if a.name == "Shocking Grasp").extra_damage_list
+    # Three damage on every cast, hit or miss (Shocking Grasp's dice and Quickened casts aside)
+    gain = expected_damage_per_round(after, ENEMY, 4) - expected_damage_per_round(replace_toggle(storm, "storm_close"), ENEMY, 4)
+    casts = sum(1 if not a.uses_per_fight else a.uses_per_fight / 4 for a in after.attacks)
+    assert gain == pytest.approx(3 * casts)
+
+def replace_toggle(character, key):
+    off = Bg3Character.from_dict({**character.to_dict(), "toggles": {key: False}})
+    return compile_character(off, 6)[0]
+
+def test_builder_only_offers_toggles_for_its_classes():
+    assert relevant_toggles([["fighter", "Champion", 12]]) == []
+    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse"]
+    assert relevant_toggles([["warlock", "The Fiend", 12]]) == []

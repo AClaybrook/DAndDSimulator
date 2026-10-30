@@ -6,7 +6,7 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - [ ] Open a PR with the BG3 planner work once you have looked at it
 
 ## Next
-- [ ] Builder: more subclass features (Eldritch Knight War Magic, Wildheart aspects, Circle of Stars, Way of Shadow Shadow Strike, Storm Sorcery, Beast Master companions)
+- [ ] Builder: more subclass features: Wildheart aspects (bleeding/poisoned targets), Beast Master and summons (need a companion model), Eldritch Knight War Magic and Shadow Strike (both trade Extra Attack for less damage, so low priority), Druid with a Scimitar or Shillelagh instead of a Longsword
 - [ ] Builder: Smites as spells (Searing, Branding, Wrathful), Wild Shape, Enraged Throw's Strength based damage
 - [ ] Elixir of Bloodlust (extra action on a kill) and kill based effects in general
 - [ ] Arcane Acuity, Lightning Charges, Momentum and other stacking effects
@@ -40,3 +40,4 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - 2026-10-30: Session export/import includes the BG3 planner party, so builds can be saved and shared as one file
 - 2026-10-29: Generic +1/+2/+3 trader gear gets an estimated act from its enchantment, items of unknown act are only suggested for Act 3
 - 2026-10-30: Party damage chart: expected damage per round of each character across the act checkpoints, under the table
+- 2026-10-30: Builder: Circle of Stars (Starry Form: Archer's Luminous Arrow each turn, Star Map Guiding Bolts before the cantrip), Circle of Spores (Symbiotic Entity 1d6 necrotic), Storm Sorcery (Heart of the Storm on lightning and thunder spells, hit or miss); Circle of Stars Druid example; the builder only lists the toggles for its classes

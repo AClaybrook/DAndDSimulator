@@ -9,7 +9,7 @@ from bg3.items import SLOT_LABELS, SLOTS, catalog, condition_id
 from bg3.party import MAX_PARTY_SIZE, build_conflicts, party_conflicts
 from bg3.presets import DEFAULT_PARTY as PRESET_PARTY, PRESETS
 from bg3.abilities import point_buy_cost, point_buy_problems
-from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_SPELLS, RACES, ROUTINES, SUBCLASSES, TOGGLES, Bg3Character, class_levels,
+from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_SPELLS, RACES, ROUTINES, SUBCLASSES, TOGGLES, Bg3Character, relevant_toggles, class_levels,
                            class_order,
                            compile_character, feat_opportunities)
 from computations.models import STATS
@@ -253,7 +253,7 @@ def custom_builder():
                  for n in range(6)], class_name="g-1"),
         dbc.Row([dbc.Col(dbc.Select(options=[{"label": "-", "value": ""}] + [{"label": f, "value": f} for f in FIGHTING_STYLES], id=cb(f"style:{n}"),
                                     placeholder=f"Fighting style {n + 1}", **select)) for n in range(2)], class_name="g-1 mb-1"),
-        dbc.Checklist(options=[{"label": label, "value": key} for key, label in TOGGLES.items()], id=cb("toggles"), class_name="small"),
+        dbc.Checklist(options=[], id=cb("toggles"), class_name="small"),
         html.Div(id="bg3-cb-summary", className="small mt-1"),
     ], className="bg3-custom mb-2 p-2")
 
@@ -290,6 +290,10 @@ def character_from_fields(field_ids, values, subclasses, name):
                         classes=classes or [["fighter", "Champion", 12]], feats=[v[f"feat:{n}"] for n in range(6) if v.get(f"feat:{n}")],
                         fighting_styles=[v[f"style:{n}"] for n in range(2) if v.get(f"style:{n}")], routine=v.get("routine") or "two_handed",
                         cantrip=v.get("cantrip") or "Eldritch Blast", spell=v.get("spell") or "", toggles=toggles)
+
+def toggle_options(classes):
+    """ Toggles for the build's classes. Hidden ones keep their value """
+    return [{"label": TOGGLES[k], "value": k} for k in relevant_toggles(classes)]
 
 def subclass_options(cls):
     return [{"label": s, "value": s} for s in SUBCLASSES.get(cls, [])]

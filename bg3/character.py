@@ -101,7 +101,18 @@ TOGGLES = {
     "rage": "Rage every fight", "reckless": "Reckless Attack (advantage)", "smite": "Smite with spell slots", "vow": "Oath: Vow of Enmity, "
     "Sacred Weapon or Righteous Clarity", "curse": "Hexblade's Curse on the target", "surprise": "Enemies are surprised (Assassin)",
     "manifestation": "Manifestation of Body (Open Hand)", "damaged_target": "Target is already damaged (Colossus Slayer)",
+    "starry_form": "Starry Form: Archer (Circle of Stars)", "symbiotic": "Symbiotic Entity (Circle of Spores)",
+    "storm_close": "Enemies within 6 m when casting (Heart of the Storm)",
 }
+# The class (and subclass) each toggle is for, so the builder only offers the ones that matter
+TOGGLE_FOR = {"rage": ("barbarian", ""), "reckless": ("barbarian", ""), "smite": ("paladin", ""), "vow": ("paladin", ""),
+              "curse": ("warlock", "The Hexblade"), "surprise": ("rogue", "Assassin"), "manifestation": ("monk", "Way of the Open Hand"),
+              "damaged_target": ("ranger", "Hunter"), "starry_form": ("druid", "Circle of Stars"), "symbiotic": ("druid", "Circle of Spores"),
+              "storm_close": ("sorcerer", "Storm Sorcery")}
+
+def relevant_toggles(classes):
+    """ Toggles for a [class, subclass, levels] list """
+    return [k for k, (cls, sub) in TOGGLE_FOR.items() if any(c == cls and (not sub or s == sub) for c, s, *_ in classes)]
 
 @dataclass
 class Bg3Character:
@@ -250,7 +261,15 @@ def _attacks(character, c, levels, subs, feats, notes):
             notes.append("Eldritch Blast needs a warlock level (or Spell Sniper)")
         beams = spell_attacks(character.cantrip, ability_stat=stat, character_level=c.level, ruleset="bg3")
         cantrip = [replace(a, name=f"{a.name} {ii + 1}" if len(beams) > 1 else a.name) for ii, a in enumerate(beams)]
+        druid = levels.get("druid", 0)
         if not character.spell:
+            if druid >= 2 and subs.get("druid") == "Circle of Stars":
+                # Star Map: Guiding Bolt without a spell slot (2, 3 at 5, 4 at 9 per long rest)
+                bolts = [replace(a, uses_per_fight=per_fight(per_long_rest=2 + (druid >= 5) + (druid >= 9)))
+                         for a in spell_attacks("Guiding Bolt", ability_stat=stat, slot_level=1, ruleset="bg3")]
+                for a in cantrip:
+                    a.fallback_for = bolts[0].name
+                return bolts + cantrip
             return cantrip
         spell_level = spells()[character.spell]["level"]
         slots = spell_slots(caster_level(levels, subs))
@@ -341,6 +360,7 @@ def _class_features(character, c, levels, subs, notes):
     weapon = character.routine not in ("cantrip",)
     fighter, barbarian, paladin, ranger, rogue = (levels.get(k, 0) for k in ("fighter", "barbarian", "paladin", "ranger", "rogue"))
     monk, warlock, sorcerer, wizard, cleric, bard = (levels.get(k, 0) for k in ("monk", "warlock", "sorcerer", "wizard", "cleric", "bard"))
+    druid = levels.get("druid", 0)
 
     # Fighter
     if fighter >= 3 and subs.get("fighter") == "Champion":
@@ -437,6 +457,21 @@ def _class_features(character, c, levels, subs, notes):
         for a in c.attacks:
             if a.type == "weapon (melee)":
                 a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(max(c.charisma_ability_modifier, 0))]
+    # Druid
+    if druid >= 2 and subs.get("druid") == "Circle of Stars" and character.toggle("starry_form") and character.routine != "dual_wield":
+        # Starry Form: Archer lasts until a long rest, Luminous Arrow is a bonus action each turn
+        c.attacks.append(Attack(name="Luminous Arrow", type="spell", ability_stat="wisdom", damage_type="radiant",
+                                damage=f"{1 + (druid >= 10)}d8+{max(c.wisdom_ability_modifier, 0)}"))
+    if druid >= 2 and subs.get("druid") == "Circle of Spores" and character.toggle("symbiotic"):
+        for a in c.attacks:
+            if a.is_weapon or a.type == "unarmed":
+                a.extra_damage_list = [*a.extra_damage_list, "1d6 necrotic"]
+    if sorcerer >= 6 and subs.get("sorcerer") == "Storm Sorcery" and character.toggle("storm_close"):
+        # Heart of the Storm: lightning or thunder spells (cantrips too, a bug) deal half the sorcerer level to enemies within 6 m, hit or miss
+        for a in c.attacks:
+            if a.type == "spell" and a.damage_type in ("lightning", "thunder"):
+                a.extra_damage_list = [*a.extra_damage_list, f"{sorcerer // 2} {a.damage_type}"]
+                a.bonus_miss_die_mod_list = [*a.bonus_miss_die_mod_list, sorcerer // 2]
     for sub in subs.values():
         if sub and sub not in MODELLED_SUBCLASSES:
             notes.append(f"{sub}: no damage features modelled yet")
@@ -445,7 +480,9 @@ MODELLED_SUBCLASSES = {"Champion", "Battle Master", "Arcane Archer", "Berserker"
                        "Oathbreaker", "Light Domain", "Knowledge Domain",
                        "Oath of the Crown", "Hunter", "Swarmkeeper", "Gloom Stalker", "Assassin", "Thief", "Swashbuckler", "Way of the Open Hand",
                        "Way of the Drunken Master", "The Hexblade", "Draconic Bloodline", "Evocation School", "Bladesinging", "War Domain",
-                       "Tempest Domain", "Death Domain", "Life Domain", "Nature Domain", "Trickery Domain", "College of Swords", "College of Valour"}
+                       "Tempest Domain", "Death Domain", "Life Domain", "Nature Domain", "Trickery Domain", "College of Swords", "College of Valour",
+                       "Circle of Stars", "Circle of Spores", "Storm Sorcery"}
 
 __all__ = ["Bg3Character", "compile_character", "weapon_proficiencies", "is_proficient", "class_levels", "feat_opportunities", "caster_level", "CLASSES", "SUBCLASSES", "FEATS", "RACES",
-           "ROUTINES", "CANTRIPS", "LEVELLED_SPELLS", "TOGGLES", "STATS"]
+           "ROUTINES", "CANTRIPS", "LEVELLED_SPELLS", "TOGGLES", "TOGGLE_FOR",
+           "relevant_toggles", "STATS"]

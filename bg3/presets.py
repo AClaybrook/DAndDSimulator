@@ -7,6 +7,7 @@ from bg3.character import Bg3Character
 STRENGTH = {"strength": 15, "dexterity": 13, "constitution": 15, "intelligence": 8, "wisdom": 12, "charisma": 8}
 DEXTERITY = {"strength": 8, "dexterity": 15, "constitution": 15, "intelligence": 8, "wisdom": 14, "charisma": 10}
 CHARISMA = {"strength": 8, "dexterity": 14, "constitution": 15, "intelligence": 8, "wisdom": 10, "charisma": 15}
+WISDOM = {"strength": 8, "dexterity": 14, "constitution": 15, "intelligence": 8, "wisdom": 15, "charisma": 10}
 INTELLIGENCE = {"strength": 8, "dexterity": 15, "constitution": 15, "intelligence": 15, "wisdom": 8, "charisma": 8}
 # Tavern Brawler monks hit with Strength (added twice), unarmed strikes use the higher of Strength and Dexterity
 BRAWLER = {"strength": 15, "dexterity": 15, "constitution": 14, "intelligence": 8, "wisdom": 10, "charisma": 8}
@@ -98,6 +99,11 @@ PRESETS = {b.name: b for b in [
         "3": {"helmet": "bg3:hood_of_the_weave", "cloak": "bg3:cloak_of_the_weave", "armour": "bg3:robe_of_the_weave"},
     }, **custom("Evoker", INTELLIGENCE, {"intelligence": 2, "constitution": 1}, [["wizard", "Evocation School", 12]],
                 ["intelligence+2", "intelligence+1,constitution+1", "constitution+2"], "cantrip", race="High Elf", cantrip="Fire Bolt", spell="Fireball")),
+    Bg3Build("Circle of Stars Druid (Patch 8)", "wizard_fireball", equipment={
+        "1": {"melee_main": "bg3:melf_s_first_staff", "gloves": "bg3:daredevil_gloves"},
+        "2": {"ring_1": "bg3:callous_glow_ring"},
+    }, **custom("Star Druid", WISDOM, {"wisdom": 2, "constitution": 1}, [["druid", "Circle of Stars", 12]],
+                ["wisdom+2", "wisdom+1,constitution+1", "constitution+2"], "cantrip", race="Wood Elf", cantrip="Produce Flame")),
     Bg3Build("Sorlock (Warlock 2 / Sorcerer)", "sorlock", equipment={
         "3": {"helmet": "bg3:hood_of_the_weave"},
     }, **custom("Sorlock", CHARISMA, {"charisma": 2, "constitution": 1}, [["warlock", "The Fiend", 2], ["sorcerer", "Draconic Bloodline", 10]],
