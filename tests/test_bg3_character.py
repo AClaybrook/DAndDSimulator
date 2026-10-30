@@ -94,3 +94,16 @@ def test_weapon_proficiencies():
     build = Bg3Build("Gale", "wizard_fireball", character=wizard.to_dict(), equipment={"1": {"melee_main": "bg3:everburn_blade"}})
     assert not compile_build(build, 1).attacks[0].proficient
     assert [c.kind for c in build_conflicts(build, 1)] == ["proficiency"]
+
+def test_thrown_and_levelled_spells():
+    giant = Bg3Character(scores=STR, bonus={"strength": 2, "constitution": 1}, classes=[["barbarian", "Giant", 12]], feats=["Tavern Brawler"], routine="thrown")
+    character, _ = compile_character(giant, 5)
+    assert all(a.type == "thrown" and a.bonus_damage_die_mod_list == ["2"] for a in character.attacks) # Giant's Rage doubled on throws
+    berserker, _ = compile_character(Bg3Character(classes=[["barbarian", "Berserker", 12]], routine="thrown"), 5)
+    assert berserker.attacks[-1].name == "Handaxe (Enraged Throw)"
+    wizard = Bg3Character(scores={**STR, "intelligence": 15, "strength": 8}, classes=[["wizard", "Evocation School", 12]], routine="cantrip",
+                          cantrip="Fire Bolt", spell="Fireball")
+    character, _ = compile_character(wizard, 5)
+    assert character.attacks[0].name == "Fireball" and character.attacks[0].uses_per_fight == 0.5 and character.attacks[1].fallback_for == "Fireball"
+    _, notes = compile_character(wizard, 4)
+    assert any("No spell slots" in n for n in notes)

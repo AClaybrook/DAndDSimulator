@@ -87,6 +87,17 @@ PRESETS = {b.name: b for b in [
         "2": {"gloves": "bg3:gloves_of_crushing"},
     }, **custom("Drunken Master", BRAWLER, {"strength": 2, "dexterity": 1}, [["monk", "Way of the Drunken Master", 12]],
                 ["Tavern Brawler", "strength+2", "dexterity+2"], "unarmed")),
+    Bg3Build("Throwzerker (Giant, Tavern Brawler)", "barbarian_berserker", equipment={
+        "1": {"melee_main": "bg3:returning_pike", "ring_1": "bg3:ring_of_flinging", "gloves": "bg3:gloves_of_uninhibited_kushigo"},
+        "3": {"gloves": "bg3:gauntlets_of_hill_giant_strength"},
+    }, **custom("Throwzerker", STRENGTH, {"strength": 2, "constitution": 1}, [["barbarian", "Giant", 12]],
+                ["Tavern Brawler", "strength+2", "Savage Attacker"], "thrown", race="Half-Orc")),
+    Bg3Build("Evocation Wizard (Fireball, then Fire Bolt)", "wizard_fireball", equipment={
+        "1": {"melee_main": "bg3:melf_s_first_staff"},
+        "2": {"armour": "bg3:robe_of_exquisite_focus"},
+        "3": {"helmet": "bg3:hood_of_the_weave", "cloak": "bg3:cloak_of_the_weave", "armour": "bg3:robe_of_the_weave"},
+    }, **custom("Evoker", INTELLIGENCE, {"intelligence": 2, "constitution": 1}, [["wizard", "Evocation School", 12]],
+                ["intelligence+2", "intelligence+1,constitution+1", "constitution+2"], "cantrip", race="High Elf", cantrip="Fire Bolt", spell="Fireball")),
     Bg3Build("Sorlock (Warlock 2 / Sorcerer)", "sorlock", equipment={
         "3": {"helmet": "bg3:hood_of_the_weave"},
     }, **custom("Sorlock", CHARISMA, {"charisma": 2, "constitution": 1}, [["warlock", "The Fiend", 2], ["sorcerer", "Draconic Bloodline", 10]],

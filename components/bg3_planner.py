@@ -9,7 +9,8 @@ from bg3.items import SLOT_LABELS, SLOTS, catalog, condition_id
 from bg3.party import MAX_PARTY_SIZE, build_conflicts, party_conflicts
 from bg3.presets import DEFAULT_PARTY as PRESET_PARTY, PRESETS
 from bg3.abilities import point_buy_cost, point_buy_problems
-from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, RACES, ROUTINES, SUBCLASSES, TOGGLES, Bg3Character, class_levels, class_order,
+from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_SPELLS, RACES, ROUTINES, SUBCLASSES, TOGGLES, Bg3Character, class_levels,
+                           class_order,
                            compile_character, feat_opportunities)
 from computations.models import STATS
 from computations.analytic import expected_damage_per_round
@@ -211,6 +212,8 @@ def custom_builder():
         dbc.Row([
             dbc.Col(dbc.Select(options=[{"label": label, "value": key} for key, label in ROUTINES.items()], id=cb("routine"), **select)),
             dbc.Col(dbc.Select(options=[{"label": c, "value": c} for c in CANTRIPS], id=cb("cantrip"), **select)),
+            dbc.Col(dbc.Select(options=[{"label": "No levelled spell", "value": ""}] + [{"label": f"{sp}, then cantrip", "value": sp} for sp in LEVELLED_SPELLS],
+                               id=cb("spell"), **select)),
         ], class_name="g-1 mb-1"),
         html.Small("Feat levels in order (an improvement or a feat)", className="text-muted"),
         dbc.Row([dbc.Col(dbc.Select(options=improvement_options(), id=cb(f"feat:{n}"), placeholder=f"Feat {n + 1}", **select), width=6, class_name="mb-1")
@@ -223,7 +226,7 @@ def custom_builder():
 
 def fields_from_character(character, field_ids):
     """ Builder field values (in the order of field_ids) from a Bg3Character """
-    values = {"race": character.race, "routine": character.routine, "cantrip": character.cantrip,
+    values = {"race": character.race, "routine": character.routine, "cantrip": character.cantrip, "spell": character.spell,
               "toggles": [k for k in TOGGLES if character.toggle(k)]}
     plus = sorted(character.bonus.items(), key=lambda kv: -kv[1])
     values["plus2"] = plus[0][0] if plus else None
@@ -253,7 +256,7 @@ def character_from_fields(field_ids, values, subclasses, name):
     return Bg3Character(name=name, race=v.get("race") or "Human", scores={s: int(v.get(f"score:{s}") or 8) for s in STATS}, bonus=bonus,
                         classes=classes or [["fighter", "Champion", 12]], feats=[v[f"feat:{n}"] for n in range(6) if v.get(f"feat:{n}")],
                         fighting_styles=[v[f"style:{n}"] for n in range(2) if v.get(f"style:{n}")], routine=v.get("routine") or "two_handed",
-                        cantrip=v.get("cantrip") or "Eldritch Blast", toggles=toggles)
+                        cantrip=v.get("cantrip") or "Eldritch Blast", spell=v.get("spell") or "", toggles=toggles)
 
 def subclass_options(cls):
     return [{"label": s, "value": s} for s in SUBCLASSES.get(cls, [])]

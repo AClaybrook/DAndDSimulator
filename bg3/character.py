@@ -8,7 +8,7 @@ from math import ceil
 
 from bg3.abilities import apply_improvement, starting_scores
 from computations.models import STATS, Attack, Character
-from game_data import spell_attacks, weapon_attack, weapons
+from game_data import spell_attacks, spells, weapon_attack, weapons
 from game_data.classes import action_surge, per_fight, spell_slots
 
 MAX_LEVEL = 12
@@ -88,9 +88,12 @@ def is_proficient(base, profs):
 # How the character attacks each turn. Weapons are the default ones for the style until gear replaces them
 ROUTINES = {
     "two_handed": "Two-handed weapon", "one_handed": "One-handed weapon (Duelling)", "dual_wield": "Two weapons", "ranged": "Ranged weapon",
-    "unarmed": "Unarmed strikes", "cantrip": "Attack cantrip",
+    "unarmed": "Unarmed strikes", "thrown": "Thrown weapon", "cantrip": "Attack cantrip",
 }
-DEFAULT_WEAPONS = {"two_handed": "Greatsword", "one_handed": "Longsword", "dual_wield": "Shortsword", "ranged": "Longbow"}
+DEFAULT_WEAPONS = {"two_handed": "Greatsword", "one_handed": "Longsword", "dual_wield": "Shortsword", "ranged": "Longbow", "thrown": "Handaxe"}
+# Damage spells cast with spell slots before falling back to the attack cantrip
+LEVELLED_SPELLS = ["Magic Missile", "Guiding Bolt", "Inflict Wounds", "Burning Hands", "Thunderwave", "Scorching Ray", "Shatter", "Fireball",
+                   "Lightning Bolt", "Blight", "Cone of Cold", "Chain Lightning", "Disintegrate"]
 POLEARMS = {"Glaive", "Halberd", "Pike", "Quarterstaff", "Spear"}
 CANTRIPS = ["Eldritch Blast", "Fire Bolt", "Ray of Frost", "Sacred Flame", "Toll the Dead", "Chill Touch", "Shocking Grasp", "Produce Flame"]
 # Options that need the build to set something up, all on by default
@@ -111,6 +114,7 @@ class Bg3Character:
     fighting_styles: list[str] = field(default_factory=list) # In the order they are gained
     routine: str = "two_handed"
     cantrip: str = "Eldritch Blast"
+    spell: str = "" # A levelled damage spell cast with every slot high enough, before the cantrip (cantrip routine)
     toggles: dict = field(default_factory=dict) # TOGGLES (all on by default), and "ancestry" for Draconic Bloodline (default fire)
 
     def to_dict(self):
@@ -245,7 +249,22 @@ def _attacks(character, c, levels, subs, feats, notes):
         if character.cantrip == "Eldritch Blast" and not levels.get("warlock"):
             notes.append("Eldritch Blast needs a warlock level (or Spell Sniper)")
         beams = spell_attacks(character.cantrip, ability_stat=stat, character_level=c.level, ruleset="bg3")
-        return [replace(a, name=f"{a.name} {ii + 1}" if len(beams) > 1 else a.name) for ii, a in enumerate(beams)]
+        cantrip = [replace(a, name=f"{a.name} {ii + 1}" if len(beams) > 1 else a.name) for ii, a in enumerate(beams)]
+        if not character.spell:
+            return cantrip
+        spell_level = spells()[character.spell]["level"]
+        slots = spell_slots(caster_level(levels, subs))
+        pact, pact_level = warlock_pact_slots(levels.get("warlock", 0))
+        casts = per_fight(per_long_rest=sum(slots[spell_level - 1:]), per_short_rest=pact if pact_level >= spell_level else 0)
+        if not casts:
+            notes.append(f"No spell slots of level {spell_level} or higher for {character.spell} yet")
+            return cantrip
+        levelled = spell_attacks(character.spell, ability_stat=stat, slot_level=spell_level, ruleset="bg3")
+        for a in levelled:
+            a.uses_per_fight = casts
+        for a in cantrip:
+            a.fallback_for = character.spell # Cast once the slots run out
+        return levelled + cantrip
 
     hexblade = subs.get("warlock") == "The Hexblade" or levels.get("warlock", 0) >= 3 # Hex Warrior or Pact of the Blade use charisma
     def stat_for(weapon_stat):
@@ -270,6 +289,8 @@ def _attacks(character, c, levels, subs, feats, notes):
     if routine == "one_handed" and c.dexterity > c.strength:
         name, weapon_stat = "Rapier", "dexterity" # Finesse
     main = weapon_attack(name, ability_stat=stat_for(weapon_stat))
+    if routine == "thrown":
+        main = replace(main, type="thrown", name=f"{name} (Thrown)")
     attacks = [replace(main) for _ in range(count)]
     bonus_actions = 2 if levels.get("rogue", 0) >= 3 and subs.get("rogue") == "Thief" else 1 # Fast Hands
     if routine == "dual_wield":
@@ -278,7 +299,8 @@ def _attacks(character, c, levels, subs, feats, notes):
         bonus_actions = 0
     # Bonus action attacks: Frenzy, Polearm Master butt end, Swashbuckler Dirty Tricks, War Priest
     if bonus_actions and levels.get("barbarian", 0) >= 3 and subs.get("barbarian") == "Berserker" and character.toggle("rage"):
-        attacks.append(replace(main, name=f"{main.name} (Frenzy)"))
+        # Frenzied Strike, or Enraged Throw for throwing builds
+        attacks.append(replace(main, name=f"{weapon_base(main.name)} ({'Enraged Throw' if routine == 'thrown' else 'Frenzy'})"))
         bonus_actions -= 1
     if bonus_actions and "Polearm Master" in feats and name in POLEARMS:
         attacks.append(Attack(name="Polearm Butt End", ability_stat=stat_for("strength"), damage="1d4", damage_type="bludgeoning"))
@@ -319,6 +341,11 @@ def _class_features(character, c, levels, subs, notes):
     # Barbarian
     if barbarian and character.toggle("rage"):
         c.raging, c.barbarian_level = True, barbarian
+        if subs.get("barbarian") == "Giant" and barbarian >= 3:
+            # Giant's Rage: the rage damage bonus is doubled for throws
+            for a in c.attacks:
+                if a.type == "thrown":
+                    a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(c.rage_damage)]
         if barbarian >= 6 and subs.get("barbarian") == "Giant" and weapon:
             for a in c.attacks:
                 if a.is_weapon:
@@ -394,4 +421,4 @@ MODELLED_SUBCLASSES = {"Champion", "Battle Master", "Arcane Archer", "Berserker"
                        "Tempest Domain", "Death Domain", "Life Domain", "Nature Domain", "Trickery Domain", "College of Swords", "College of Valour"}
 
 __all__ = ["Bg3Character", "compile_character", "weapon_proficiencies", "is_proficient", "class_levels", "feat_opportunities", "caster_level", "CLASSES", "SUBCLASSES", "FEATS", "RACES",
-           "ROUTINES", "CANTRIPS", "TOGGLES", "STATS"]
+           "ROUTINES", "CANTRIPS", "LEVELLED_SPELLS", "TOGGLES", "STATS"]
