@@ -57,7 +57,7 @@ def roll_damage_dice(num_rolls, num_die, die_size, advantage=False, disadvantage
         total = np.maximum(total, second) if advantage else np.minimum(total, second)
     return total
 
-def attack_roll(num_rolls, num_die=None, die_size=None, modifier=0, difficulty_class=15, crit_on=20, always_hit=False, always_crit=False,
+def attack_roll(num_rolls, num_die=None, die_size=None, modifier=0, difficulty_class=15, crit_on=20, always_hit=False, always_crit=False, hits_crit=False,
                 saving_throw=False, advantage=False, disadvantage=False, reroll_on=0, rng=RNG):
     """ Roll an attack roll with num_rolls dice, adding attack_modifier to each roll, tracking hits and crits"""
     # Special cases
@@ -81,6 +81,8 @@ def attack_roll(num_rolls, num_die=None, die_size=None, modifier=0, difficulty_c
     # Crit on crit_on or higher and crits automatically hit
     crit = np.logical_and(rolls >= crit_on, rolls != 1)
     hit[crit] = True
+    if hits_crit:
+        crit = hit.copy()
     return attack_rolls, rolls, hit, crit
 
 def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multiplier=1, damage_reduction=0,

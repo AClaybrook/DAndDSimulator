@@ -306,7 +306,7 @@ def parse_build(number, title, body, index, items):
     roles = [r for r in ROLES if re.search(rf"\b{r}", field(body, "Roles", "Assigned Companion / Role", "Role").lower())]
     buffs = {act: parse_buffs(line) for act, line in re.findall(r"^Act ([123]) Buffs:\s*(.+)$", body, re.M)}
     build = Bg3Build(name=f"{number}. {character.name}", preset="fighter_gwm", equipment=trimmed, character=character.to_dict(),
-                     buffs={a: b for a, b in buffs.items() if b})
+                     buffs={a: b for a, b in buffs.items() if b}, carried=sorted(carried), roles=roles)
     return {"number": number, "title": title, "source": field(body, "Source", "Source / Creator"), "build": build.to_dict(),
             "carried": sorted(carried), "roles": roles, "unmatched": unmatched, "notes": notes,
             "companion": field(body, "Recommended Character/Race", "Assigned Companion / Role", "Companion"),

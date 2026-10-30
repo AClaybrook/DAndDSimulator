@@ -29,7 +29,8 @@ from components.sweeps import SWEEP_PARAMETERS, run_sweep
 from components.session import SETTINGS_IDS, describe_session, make_session, parse_session
 from components.bg3_planner import (DEFAULT_PARTY, MAX_PARTY_SIZE, CUSTOM, conditional_options, conflicts_list, dpr_chart, dpr_table, gear_highlights,
                                     inherited_placeholders, item_values_table, suggestions_table, fields_from_character, character_from_fields,
-                                    subclass_options, builder_summary, toggle_options)
+                                    subclass_options, builder_summary, toggle_options, roles_table,
+                                    synergy_table, party_fight_summary, fight_chart)
 from bg3.character import Bg3Character
 from bg3.analysis import item_values, shared_item_gains, slot_suggestions
 from bg3.build import ACT_KEYS, Bg3Build, compile_build
@@ -914,6 +915,39 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             builder_summary(custom, levels_now) if custom else None,
             toggle_options(custom.classes) if custom else [],
         )
+
+    @app.callback(
+        Output("bg3-synergies", "options"),
+        Output("bg3-synergies", "value"),
+        Output("bg3-roles", "children"),
+        Output("bg3-synergy-dpr", "children"),
+        Output("bg3-fight", "children"),
+        Output("bg3-fight-chart", "figure"),
+        Input("bg3-party", "data"),
+        Input("bg3-party-act", "value"),
+        Input("bg3-synergies", "value"),
+        Input("enemy-values", "data"),
+        Input("rounds-per-fight", "value"),
+        Input("bg3-fight-hp", "value"),
+    )
+    def party_combat(party, act, active, enemy_dict, rounds_per_fight, hit_points):
+        """ Roles, synergies and a simulated fight for the whole party at one act """
+        from bg3 import synergy # pylint: disable=import-outside-toplevel
+        from bg3.roles import party_roles # pylint: disable=import-outside-toplevel
+        builds = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)]
+        act = act or "2"
+        enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
+        if hit_points:
+            enemy.hit_points = max(int(hit_points), 1)
+        rounds = max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)
+        descriptions = synergy.describe(builds, act)
+        options = [{"label": text, "value": key} for key, text in descriptions.items()]
+        if active is None or ctx.triggered_id != "bg3-synergies" and not set(active) & set(descriptions):
+            active = synergy.default_active(builds, act)
+        active = [k for k in active if k in descriptions]
+        result = synergy.simulate_party_fight(builds, act, enemy, rounds, active)
+        return (options, active, roles_table(*party_roles(builds, act)), synergy_table(synergy.party_damage(builds, act, enemy, rounds, active)),
+                party_fight_summary(result), fight_chart(result))
 
     @app.callback(
         Output("bg3-dpr-chart", "figure"),

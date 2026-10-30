@@ -87,6 +87,7 @@ class Attack:
     disadvantage: bool = False
     always_hit: bool = False
     always_crit: bool = False
+    hits_crit: bool = False # Every hit is a crit, i.e. melee attacks against paralysed targets
     crit_on: int = 20
     # Weapon Specific
     weapon_enhancement: int = 0
@@ -358,6 +359,7 @@ class AttackContext:
     # Special cases
     always_hit: bool = False
     always_crit: bool = False
+    hits_crit: bool = False
 
 @dataclass
 class DamageContext:
@@ -558,6 +560,7 @@ def calculate_attack_and_damage_context(character, enemy):
             saving_throw=saving_throw,
             always_hit=attack.always_hit,
             always_crit=attack.always_crit,
+            hits_crit=attack.hits_crit and not saving_throw,
         )
         damage_context = DamageContext(
             num_die=damage_num_die,

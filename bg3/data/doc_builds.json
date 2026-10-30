@@ -70,7 +70,11 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [
+    "Resonance Stone"
+   ],
+   "roles": []
   },
   "carried": [
    "Resonance Stone"
@@ -78,7 +82,11 @@
   "roles": [],
   "unmatched": [],
   "notes": [],
-  "companion": "Custom (Wood Elf, Wood Half-Elf, Half-Orc, or Duergar) or Gale."
+  "companion": "Custom (Wood Elf, Wood Half-Elf, Half-Orc, or Duergar) or Gale.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 2,
@@ -148,7 +156,11 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [
+    "Resonance Stone"
+   ],
+   "roles": []
   },
   "carried": [
    "Resonance Stone"
@@ -156,7 +168,11 @@
   "roles": [],
   "unmatched": [],
   "notes": [],
-  "companion": "Wyll or Custom Party Face (Wood Half-Elf, Half-Orc, or Githyanki)."
+  "companion": "Wyll or Custom Party Face (Wood Half-Elf, Half-Orc, or Githyanki).",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 3,
@@ -227,13 +243,19 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
   "unmatched": [],
   "notes": [],
-  "companion": "Wyll or Astarion."
+  "companion": "Wyll or Astarion.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 4,
@@ -320,7 +342,9 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
@@ -328,7 +352,11 @@
    "Hand Crossbows"
   ],
   "notes": [],
-  "companion": "Shadowheart or Wood Half-Elf."
+  "companion": "Shadowheart or Wood Half-Elf.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 5,
@@ -392,13 +420,19 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
   "unmatched": [],
   "notes": [],
-  "companion": "Astarion or Lae'zel."
+  "companion": "Astarion or Lae'zel.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 6,
@@ -461,7 +495,9 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
@@ -469,7 +505,11 @@
   "notes": [
    "No ability scores found"
   ],
-  "companion": ""
+  "companion": "",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 7,
@@ -531,7 +571,9 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
@@ -539,7 +581,11 @@
   "notes": [
    "No ability scores found"
   ],
-  "companion": ""
+  "companion": "",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 8,
@@ -608,7 +654,9 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
@@ -616,7 +664,11 @@
   "notes": [
    "No ability scores found"
   ],
-  "companion": ""
+  "companion": "",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 9,
@@ -677,7 +729,9 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
@@ -685,7 +739,11 @@
   "notes": [
    "No ability scores found"
   ],
-  "companion": ""
+  "companion": "",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 10,
@@ -748,7 +806,9 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
@@ -756,7 +816,11 @@
   "notes": [
    "No ability scores found"
   ],
-  "companion": ""
+  "companion": "",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 11,
@@ -817,7 +881,9 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
@@ -825,7 +891,11 @@
   "notes": [
    "No ability scores found"
   ],
-  "companion": ""
+  "companion": "",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 12,
@@ -871,7 +941,9 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
@@ -880,7 +952,11 @@
    "No class split found",
    "No ability scores found"
   ],
-  "companion": ""
+  "companion": "",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 13,
@@ -950,7 +1026,13 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": [
+    "striker",
+    "face",
+    "summoner"
+   ]
   },
   "carried": [],
   "roles": [
@@ -960,7 +1042,11 @@
   ],
   "unmatched": [],
   "notes": [],
-  "companion": "Tav / Dark Urge (Party Face) or Minthara — Heavy Armor 2H Great Weapon Master Striker & Summoner."
+  "companion": "Tav / Dark Urge (Party Face) or Minthara — Heavy Armor 2H Great Weapon Master Striker & Summoner.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 14,
@@ -1028,13 +1114,19 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
   "unmatched": [],
   "notes": [],
-  "companion": "Shadowheart (Dark Justiciar path) — Teleporting Darkness & Necrotic Spirit Guardians Skirmisher."
+  "companion": "Shadowheart (Dark Justiciar path) — Teleporting Darkness & Necrotic Spirit Guardians Skirmisher.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 15,
@@ -1104,7 +1196,9 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
@@ -1112,7 +1206,11 @@
   "notes": [
    "Ability scores aren't a 27 point buy with +2/+1, using the defaults"
   ],
-  "companion": "Lae'zel, Gale, or Tav — Multi-Attack War Magic + Booming Blade Melee/Caster Hybrid."
+  "companion": "Lae'zel, Gale, or Tav — Multi-Attack War Magic + Booming Blade Melee/Caster Hybrid.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 16,
@@ -1175,7 +1273,11 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": [
+    "summoner"
+   ]
   },
   "carried": [],
   "roles": [
@@ -1183,7 +1285,11 @@
   ],
   "unmatched": [],
   "notes": [],
-  "companion": "Gale or Shadowheart — Undead Summoner & Level 6 Necrotic Nuker."
+  "companion": "Gale or Shadowheart — Undead Summoner & Level 6 Necrotic Nuker.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 17,
@@ -1252,7 +1358,12 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": [
+    "striker",
+    "control"
+   ]
   },
   "carried": [],
   "roles": [
@@ -1261,7 +1372,11 @@
   ],
   "unmatched": [],
   "notes": [],
-  "companion": "Jaheira, Halsin, Shadowheart, or Karlach — Radiant/Force Unarmed Striker & Cosmic Omen Dice Controller."
+  "companion": "Jaheira, Halsin, Shadowheart, or Karlach — Radiant/Force Unarmed Striker & Cosmic Omen Dice Controller.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 18,
@@ -1330,7 +1445,11 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": [
+    "control"
+   ]
   },
   "carried": [],
   "roles": [
@@ -1338,7 +1457,11 @@
   ],
   "unmatched": [],
   "notes": [],
-  "companion": "Karlach — Thunder/Lightning All-Weapon Thrower & Enemy Suplex Controller."
+  "companion": "Karlach — Thunder/Lightning All-Weapon Thrower & Enemy Suplex Controller.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 19,
@@ -1405,7 +1528,12 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": [
+    "striker",
+    "face"
+   ]
   },
   "carried": [],
   "roles": [
@@ -1414,7 +1542,11 @@
   ],
   "unmatched": [],
   "notes": [],
-  "companion": "Astarion or Tav (Party Face & Sleight of Hand Skill Monkey) — Dual-Wielding Piercing Crit Striker."
+  "companion": "Astarion or Tav (Party Face & Sleight of Hand Skill Monkey) — Dual-Wielding Piercing Crit Striker.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 20,
@@ -1459,7 +1591,9 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
@@ -1468,7 +1602,11 @@
    "No class split found",
    "No ability scores found"
   ],
-  "companion": ""
+  "companion": "",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 21,
@@ -1532,7 +1670,12 @@
     "cantrip": "Fire Bolt",
     "spell": "Scorching Ray",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": [
+    "control",
+    "face"
+   ]
   },
   "carried": [],
   "roles": [
@@ -1541,7 +1684,11 @@
   ],
   "unmatched": [],
   "notes": [],
-  "companion": "Tav / Dark Urge (Party Face) or Gale — Quadratic AoE Nuker, Single-Target Boss Melter & 6-Target Command Controller."
+  "companion": "Tav / Dark Urge (Party Face) or Gale — Quadratic AoE Nuker, Single-Target Boss Melter & 6-Target Command Controller.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 22,
@@ -1604,7 +1751,11 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": [
+    "control"
+   ]
   },
   "carried": [],
   "roles": [
@@ -1614,7 +1765,11 @@
   "notes": [
    "No ability scores found"
   ],
-  "companion": "Tav / Dark Urge, Minthara, or Astarion — AoE Auto-Crit Edge of Darkness Divine Smiter & Unresistable Crowd Controller."
+  "companion": "Tav / Dark Urge, Minthara, or Astarion — AoE Auto-Crit Edge of Darkness Divine Smiter & Unresistable Crowd Controller.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 23,
@@ -1674,7 +1829,11 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [
+    "Resonance Stone"
+   ],
+   "roles": []
   },
   "carried": [
    "Resonance Stone"
@@ -1684,7 +1843,11 @@
   "notes": [
    "No ability scores found"
   ],
-  "companion": "Lae'zel or Tav — 5-to-8 Attack Per Turn Shadow Blade + Helmet of Grit Boss Blender."
+  "companion": "Lae'zel or Tav — 5-to-8 Attack Per Turn Shadow Blade + Helmet of Grit Boss Blender.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 24,
@@ -1735,7 +1898,9 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
@@ -1743,7 +1908,11 @@
   "notes": [
    "No ability scores found"
   ],
-  "companion": "Astarion — Out-of-Combat Stealth Clearer & 6-Crit Turn-1 Alpha-Strike Archer."
+  "companion": "Astarion — Out-of-Combat Stealth Clearer & 6-Crit Turn-1 Alpha-Strike Archer.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 25,
@@ -1794,7 +1963,9 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
@@ -1802,7 +1973,11 @@
   "notes": [
    "No ability scores found"
   ],
-  "companion": "Karlach (using Soul Coins for +2d4 Fire damage on every unarmed punch all day) or Ascended Astarion (+1d10 Necrotic on every punch)."
+  "companion": "Karlach (using Soul Coins for +2d4 Fire damage on every unarmed punch all day) or Ascended Astarion (+1d10 Necrotic on every punch).",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 26,
@@ -1863,7 +2038,9 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
@@ -1871,7 +2048,11 @@
   "notes": [
    "No ability scores found"
   ],
-  "companion": "Wyll or Tav — Resourceless Machine-Gun Blaster & Prone/Frightened Turn-Skipper."
+  "companion": "Wyll or Tav — Resourceless Machine-Gun Blaster & Prone/Frightened Turn-Skipper.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 27,
@@ -1935,7 +2116,9 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
@@ -1943,7 +2126,11 @@
   "notes": [
    "No ability scores found"
   ],
-  "companion": "Shadowheart — Unbreakable Concentration Spirit Guardians & Bonus Action Dazzling Breath Radiating Orb Spreader."
+  "companion": "Shadowheart — Unbreakable Concentration Spirit Guardians & Bonus Action Dazzling Breath Radiating Orb Spreader.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  },
  {
   "number": 28,
@@ -1989,7 +2176,9 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {}
-   }
+   },
+   "carried": [],
+   "roles": []
   },
   "carried": [],
   "roles": [],
@@ -1997,6 +2186,10 @@
   "notes": [
    "No ability scores found"
   ],
-  "companion": "Lae'zel or Karlach — Heavy Armor 6-Throw Action Surge Artillery."
+  "companion": "Lae'zel or Karlach — Heavy Armor 6-Throw Action Surge Artillery.",
+  "themes": [],
+  "provides": [],
+  "needs": [],
+  "path": ""
  }
 ]

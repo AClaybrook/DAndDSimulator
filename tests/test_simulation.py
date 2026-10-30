@@ -238,3 +238,13 @@ def test_per_die_savage_attacker_beats_whole_set():
     from computations.analytic import expected_dice
     assert expected_dice([2], [6], advantage=True, per_die=True) == pytest.approx(2 * 161 / 36)
     assert expected_dice([2], [6], advantage=True, per_die=True) > expected_dice([2], [6], advantage=True)
+
+def test_hits_crit_matches_analytic():
+    """ Melee attacks against a paralysed target: advantage and every hit is a crit """
+    character = Character(level=5, strength=18, attacks=[Attack(damage="2d6", advantage=True, hits_crit=True)] * 2)
+    enemy = Enemy(armor_class=16)
+    expected = expected_damage_per_round(character, enemy)
+    _, df_by_rounds, _ = simulate_rounds_from_characters([character], enemy, num_rounds=200_000, rng=set_seed(5))
+    assert df_by_rounds[0]["Damage"].mean() == pytest.approx(expected, rel=0.02)
+    plain = Character(level=5, strength=18, attacks=[Attack(damage="2d6", advantage=True)] * 2)
+    assert expected > expected_damage_per_round(plain, enemy) * 1.4

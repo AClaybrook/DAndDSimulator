@@ -54,7 +54,7 @@ def expected_dice(num_die, die_size, reroll_on=0, advantage=False, disadvantage=
     return float(np.dot(np.arange(len(pmf)), pmf))
 
 def hit_and_crit_chance(num_die=(), die_size=(), modifier=0, difficulty_class=15, crit_on=20, advantage=False, disadvantage=False,
-                        reroll_on=0, saving_throw=False, always_hit=False, always_crit=False, **_):
+                        reroll_on=0, saving_throw=False, always_hit=False, always_crit=False, hits_crit=False, **_):
     """ Exact probability to hit (including crits) and to crit for an attack roll or a saving throw (hit = failed save) """
     if always_crit:
         return 1.0, 1.0
@@ -78,7 +78,7 @@ def hit_and_crit_chance(num_die=(), die_size=(), modifier=0, difficulty_class=15
             p_crit += p_face
             continue
         p_hit += p_face * bonus[max(needed, 0):].sum()
-    return float(p_hit), float(p_crit)
+    return float(p_hit), float(p_hit if hits_crit else p_crit)
 
 def expected_attack_damage(attack_context, damage_context, p_first_hit=None, auto_crit=False):
     """ Expected damage of a single attack (before damage reduction, resistances are applied linearly)

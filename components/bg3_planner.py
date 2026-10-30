@@ -8,6 +8,7 @@ from bg3.checkpoints import ACTS, act_level
 from bg3.items import SLOT_LABELS, SLOTS, catalog, condition_id
 from bg3.party import MAX_PARTY_SIZE, build_conflicts, party_conflicts
 from bg3.presets import DEFAULT_PARTY as PRESET_PARTY, PRESETS, examples
+from bg3.roles import CORE_ROLES, ROLE_LABELS
 from bg3.abilities import point_buy_cost, point_buy_problems
 from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_SPELLS, RACES, ROUTINES, SUBCLASSES, TOGGLES, Bg3Character, relevant_toggles, class_levels,
                            class_order,
@@ -149,8 +150,67 @@ def planner():
             dbc.Col([html.H6("Equipment conflicts", className="text-info"), html.Div(id="bg3-conflicts")], xs=12, lg=6),
         ], class_name="mb-3"),
         gear_advice(),
+        party_panel(),
         dcc.Store(id="bg3-party", storage_type="local", data=DEFAULT_PARTY),
     ], className="panel mb-4")
+
+def party_panel():
+    """ Party roles, synergies between members and a simulated party fight at one act """
+    return html.Div([
+        dbc.Row([
+            dbc.Col(html.H5("Party roles, synergies and a party fight", className="mb-0"), width="auto"),
+            dbc.Col(dbc.Select(options=[{"label": ACTS[int(a)][0], "value": a} for a in ACT_KEYS], value="2", id="bg3-party-act", size="sm"),
+                    width="auto"),
+            dbc.Col(dbc.InputGroup([dbc.InputGroupText("Enemy hit points"), dbc.Input(id="bg3-fight-hp", type="number", min=1, step=1, value=300)],
+                                   size="sm"), width="auto"),
+        ], align="center", class_name="g-2 mb-1"),
+        html.P("Roles come from classes, attack style and Charisma (plus the roles a build's source lists). Missing roles and overlaps are only "
+               "notes, themed parties often double up. Synergies are conditions one member sets up for the others; tick the ones your party "
+               "will use. The fight uses the enemy below (AC, saves, resistances) with these hit points, and the rounds per fight setting.", className="small text-muted mb-2"),
+        dbc.Row([
+            dbc.Col([html.H6("Roles", className="text-info"), html.Div(id="bg3-roles")], xs=12, lg=5),
+            dbc.Col([html.H6("Synergies", className="text-info"), dbc.Checklist(id="bg3-synergies", class_name="small mb-2"),
+                     html.Div(id="bg3-synergy-dpr"), html.Div(id="bg3-fight", className="small mt-2"),
+                     dcc.Graph(id="bg3-fight-chart", config={"displayModeBar": False}, style={"height": "220px"})], xs=12, lg=7),
+        ]),
+    ], className="mt-3")
+
+def roles_table(rows, missing, overlaps):
+    header = html.Thead(html.Tr([html.Th("Role")] + [html.Th(name.split(" (")[0]) for name, _ in rows]))
+    body = []
+    for role, label in ROLE_LABELS.items():
+        if not any(role in roles for _, roles in rows) and role not in CORE_ROLES:
+            continue
+        cells = [html.Td(label, className="text-warning" if role in missing else "")]
+        cells += [html.Td("✓" if role in roles else "", title=roles.get(role, ""), className="text-center") for _, roles in rows]
+        body.append(html.Tr(cells))
+    notes = [html.Li(f"Nobody covers: {', '.join(ROLE_LABELS[r] for r in missing)}", className="text-warning")] if missing else []
+    notes += [html.Li(o) for o in overlaps]
+    return html.Div([dbc.Table([header, html.Tbody(body)], size="sm", class_name="mb-1 small"), html.Ul(notes, className="small mb-0")])
+
+def synergy_table(rows):
+    body = [html.Tr([html.Td(name), html.Td(f"{plain:.1f}"), html.Td(f"{boosted:.1f}"), html.Td(gain_text(boosted - plain))]) for name, plain, boosted in rows]
+    total_plain, total = sum(r[1] for r in rows), sum(r[2] for r in rows)
+    body.append(html.Tr([html.Th("Party"), html.Th(f"{total_plain:.1f}"), html.Th(f"{total:.1f}"), html.Th(gain_text(total - total_plain))]))
+    return dbc.Table([html.Thead(html.Tr([html.Th("Damage per round"), html.Th("Alone"), html.Th("With synergies"), html.Th("")])), html.Tbody(body)],
+                     size="sm", class_name="mb-0 small")
+
+def party_fight_summary(result):
+    by_round = result["down_by_round"]
+    first = next((ii + 1 for ii, p in enumerate(by_round) if p >= 0.5), None)
+    likely = f"usually down in round {first}" if first else f"usually still standing after {result['rounds']} rounds"
+    shares = ", ".join(f"{name.split(' (')[0]} {share:.0%}" for name, share in sorted(result["share"].items(), key=lambda kv: -kv[1]))
+    return f"Enemy with {result['hit_points']} hit points: {likely} ({by_round[0]:.0%} in round 1). Damage share: {shares}."
+
+def fight_chart(result):
+    import plotly.graph_objects as go # pylint: disable=import-outside-toplevel
+    rounds = list(range(1, result["rounds"] + 1))
+    fig = go.Figure(go.Bar(x=rounds, y=[100 * p for p in result["down_by_round"]], marker={"color": PARTY_COLORS[2]},
+                           hovertemplate="Down by round %{x}: %{y:.0f}%<extra></extra>"))
+    fig.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", height=220,
+                      margin={"l": 40, "r": 10, "t": 10, "b": 30}, yaxis={"title": "% of fights", "range": [0, 100], "gridcolor": "#444"},
+                      xaxis={"title": "Enemy down by round", "dtick": 1})
+    return fig
 
 def conditional_options(build):
     """ Toggles for the conditional effects of everything the build equips in any act """
@@ -398,4 +458,4 @@ def gear_highlights(build, conflicts, gear_ids):
 
 __all__ = ["planner", "DEFAULT_PARTY", "MAX_PARTY_SIZE", "party_conflicts", "build_conflicts", "conditional_options", "dpr_table",
            "conflicts_list", "dpr_chart", "gear_highlights", "inherited_placeholders", "item_values_table", "suggestions_table", "CUSTOM", "fields_from_character",
-           "character_from_fields", "subclass_options", "builder_summary"]
+           "character_from_fields", "subclass_options", "builder_summary", "roles_table", "synergy_table", "party_fight_summary", "fight_chart"]

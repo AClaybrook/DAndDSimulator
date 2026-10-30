@@ -22,6 +22,8 @@ class Bg3Build:
     levels: dict[str, int] = field(default_factory=dict) # Act: level, overrides the default checkpoints
     # A custom character (bg3.character.Bg3Character as a dict) used instead of the class preset
     character: dict | None = None
+    carried: list[str] = field(default_factory=list) # Items carried rather than worn, i.e. the Resonance Stone
+    roles: list[str] = field(default_factory=list) # Party roles from the build's source, added to the ones worked out from its classes
 
     def to_dict(self):
         return asdict(self)

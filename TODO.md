@@ -6,6 +6,11 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - [ ] Open a PR with the BG3 planner work once you have looked at it
 
 ## Next
+- [ ] Doc builds: ask for the structured format (docs/bg3_build_format.md) in the build doc, then re-import; free text builds miss ability scores, routines and exact slots
+- [ ] Synergies: Arcane Acuity stacks (Hat of Fire Acuity, Battlemage's gloves), Bless/Haste from another member's concentration, Bleeding, Radiating Orb (defensive), Steeped in Bliss mental save disadvantage
+- [ ] Party fight: several enemies, summons (Accursed Spectre, undead), healing and enemy damage (a two sided fight)
+- [ ] Roles: skills and backgrounds in the builder (face and lockpicking are guessed from Charisma and Rogue levels), armour class for front liners
+- [ ] Builder: Eldritch Knight War Magic with Booming Blade, Bladesong, Accursed Spectre, Divine Smite variants (Wrathful, Staggering)
 - [ ] Builder: more subclass features: Wildheart aspects (bleeding/poisoned targets), Beast Master and summons (need a companion model), Eldritch Knight War Magic and Shadow Strike (both trade Extra Attack for less damage, so low priority), Druid with a Scimitar or Shillelagh instead of a Longsword
 - [ ] Builder: Smites as spells (Searing, Branding, Wrathful), Wild Shape, Enraged Throw's Strength based damage
 - [ ] Elixir of Bloodlust (extra action on a kill) and kill based effects in general: needs a fight against several enemies (kill chance per round from Rounds to Kill), the single target model gives them nothing
@@ -44,3 +49,6 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - 2026-10-30: Story choice conflicts: items from different outcomes of the same quest (sparing or killing the Nightsong, Glut or Spaw, Florrick's and Thrinn's one-of rewards) in the conflict report, highlighted, and named in gear suggestions. The Lae'zel example had one (Moonlight Glaive with the Rare Dark Justiciar Gauntlets) and now wears Flawed Helldusk Gloves in Act 2
 - 2026-10-30: Distribution plots are binned on the server (bar heights and box statistics only), so every round is plotted instead of a 400,000 value sample; first page load 1.06MB -> 0.59MB, and simulation responses shrink the same way
 - 2026-10-30: Lightning Charges (Florrick's Sparky Points, Joltshooter and Spellsparkler, Sparkle Hands): +1 to hit and 1 lightning damage on every attack once the build can gain charges, not stacked across items
+- 2026-10-30: Build doc import (bg3.doc_import): all 28 builds of the reference doc as planner examples ("Doc: ..."), every gear name matched; a structured build format for the doc (docs/bg3_build_format.md) that imports exactly
+- 2026-10-30: Builder: Shadow Blade routine (2d8/3d8/4d8 psychic from the highest odd slot, off-hand weapon) and Booming Blade (+1d8 thunder from level 5, 2d8 from 11)
+- 2026-10-30: Party roles, synergies and fight: roles per member with missing roles and overlaps; Resonance Stone (psychic vulnerability), Darkness (advantage for members who see through it), Reverberation (-2 saves), Hold Person (advantage, melee hits crit); damage alone vs with synergies; a simulated party fight against the enemy's hit points (chance it's down by each round, damage share)
