@@ -76,3 +76,21 @@ def test_example_custom_characters_are_valid():
         assert not point_buy_problems(character.scores, character.bonus), build.name
         assert len(character.feats) >= len(feat_opportunities(character)) - 1, build.name
         assert all(expected_damage_per_round(compile_build(build, act), ENEMY, 3) > 0 for act in "123"), build.name
+
+def test_weapon_proficiencies():
+    from bg3.build import Bg3Build, compile_build
+    from bg3.character import is_proficient, weapon_proficiencies
+    from bg3.party import build_conflicts
+    wizard = Bg3Character(race="Human", classes=[["wizard", "Evocation School", 12]], routine="two_handed")
+    profs = weapon_proficiencies(wizard)
+    assert not is_proficient("Greatsword", profs) and is_proficient("Quarterstaff", profs) and is_proficient("Halberd", profs) # Human: polearms
+    character, notes = compile_character(wizard, 5)
+    assert not character.attacks[0].proficient and any("Not proficient" in n for n in notes)
+    # Multiclassing into fighter gives martial weapons, multiclassing into rogue doesn't
+    assert is_proficient("Greatsword", weapon_proficiencies(Bg3Character(classes=[["wizard", "", 2], ["fighter", "Champion", 1]])))
+    assert not is_proficient("Greatsword", weapon_proficiencies(Bg3Character(race="Gold Dwarf", classes=[["wizard", "", 2], ["rogue", "Thief", 1]])))
+    assert is_proficient("Greatsword", weapon_proficiencies(Bg3Character(race="Githyanki", classes=[["wizard", "", 2]])))
+    # Gear: a sword on a wizard is flagged and loses the proficiency bonus
+    build = Bg3Build("Gale", "wizard_fireball", character=wizard.to_dict(), equipment={"1": {"melee_main": "bg3:everburn_blade"}})
+    assert not compile_build(build, 1).attacks[0].proficient
+    assert [c.kind for c in build_conflicts(build, 1)] == ["proficiency"]

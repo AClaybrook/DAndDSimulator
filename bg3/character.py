@@ -8,7 +8,7 @@ from math import ceil
 
 from bg3.abilities import apply_improvement, starting_scores
 from computations.models import STATS, Attack, Character
-from game_data import spell_attacks, weapon_attack
+from game_data import spell_attacks, weapon_attack, weapons
 from game_data.classes import action_surge, per_fight, spell_slots
 
 MAX_LEVEL = 12
@@ -48,6 +48,43 @@ RACES = ["Human", "High Elf", "Wood Elf", "Lolth-Sworn Drow", "Seldarine Drow", 
          "Lightfoot Halfling", "Strongheart Halfling", "Gold Dwarf", "Shield Dwarf", "Duergar", "Forest Gnome", "Deep Gnome", "Rock Gnome",
          "Asmodeus Tiefling", "Mephistopheles Tiefling", "Zariel Tiefling", "Githyanki", "Black Dragonborn", "Copper Dragonborn", "Blue Dragonborn",
          "Bronze Dragonborn", "Brass Dragonborn", "Gold Dragonborn", "Red Dragonborn", "Green Dragonborn", "Silver Dragonborn", "White Dragonborn"]
+# Weapon proficiencies: "simple", "martial" or a base weapon. The first class gives all of these, a multiclass only some (bg3.wiki)
+CLASS_WEAPONS = {
+    "barbarian": {"simple", "martial"}, "bard": {"simple", "Hand Crossbow", "Rapier", "Longsword", "Shortsword"}, "cleric": {"simple", "Flail", "Morningstar"},
+    "druid": {"Club", "Dagger", "Javelin", "Mace", "Quarterstaff", "Scimitar", "Sickle", "Spear"}, "fighter": {"simple", "martial"},
+    "monk": {"simple", "Shortsword"}, "paladin": {"simple", "martial"}, "ranger": {"simple", "martial"},
+    "rogue": {"simple", "Hand Crossbow", "Longsword", "Rapier", "Shortsword"}, "sorcerer": {"Dagger", "Quarterstaff", "Light Crossbow"},
+    "warlock": {"simple"}, "wizard": {"Dagger", "Quarterstaff", "Light Crossbow"},
+}
+MULTICLASS_WEAPONS = {"barbarian": {"simple", "martial"}, "cleric": {"Flail", "Morningstar"}, "fighter": {"simple", "martial"}, "monk": {"simple", "Shortsword"},
+                      "paladin": {"simple", "martial"}, "ranger": {"simple", "martial"}, "warlock": {"simple"}}
+SUBCLASS_WEAPONS = {"The Hexblade": {"martial"}, "War Domain": {"martial"}, "Tempest Domain": {"martial"}, "Death Domain": {"martial"},
+                    "College of Valour": {"martial"}, "Bladesinging": {"Dagger", "Longsword", "Rapier", "Scimitar", "Shortsword", "Sickle"}}
+RACE_WEAPONS = {
+    **{r: {"Spear", "Pike", "Halberd", "Glaive"} for r in ("Human", "High Half-Elf", "Wood Half-Elf", "Drow Half-Elf")},
+    **{r: {"Shortsword", "Longsword", "Shortbow", "Longbow"} for r in ("High Elf", "Wood Elf")},
+    **{r: {"Rapier", "Shortsword", "Hand Crossbow"} for r in ("Lolth-Sworn Drow", "Seldarine Drow")},
+    **{r: {"Battleaxe", "Handaxe", "Light Hammer", "Warhammer"} for r in ("Gold Dwarf", "Shield Dwarf", "Duergar")},
+    "Githyanki": {"Shortsword", "Longsword", "Greatsword"},
+}
+
+def weapon_proficiencies(character, level=MAX_LEVEL):
+    """ Weapon categories and base weapons the character is proficient with at a level """
+    order = class_order(character, level)
+    profs = set(CLASS_WEAPONS.get(order[0], set())) if order else set()
+    for cls in set(order[1:]) - {order[0]}:
+        profs |= MULTICLASS_WEAPONS.get(cls, set())
+    levels = class_levels(character, level)
+    for cls, n in levels.items():
+        profs |= SUBCLASS_WEAPONS.get(subclass_of(character, cls, n), set())
+    profs |= RACE_WEAPONS.get(character.race, set())
+    return profs
+
+def is_proficient(base, profs):
+    """ Whether a base weapon (i.e. 'Greatsword') is covered by proficiencies, unknown weapons count as proficient """
+    w = weapons().get(base)
+    return w is None or base in profs or w.get("category") in profs
+
 # How the character attacks each turn. Weapons are the default ones for the style until gear replaces them
 ROUTINES = {
     "two_handed": "Two-handed weapon", "one_handed": "One-handed weapon (Duelling)", "dual_wield": "Two weapons", "ranged": "Ranged weapon",
@@ -169,11 +206,22 @@ def compile_character(character, level=MAX_LEVEL):
         c.attack_reroll_on = 1 # Halfling Luck
 
     attacks = _attacks(character, c, levels, subs, feats, notes)
+    profs = weapon_proficiencies(character, level)
+    if "Weapon Master" in feats:
+        profs |= {weapon_base(a.name) for a in attacks} # Four weapons of your choice, assumed to be the ones used
+    for a in attacks:
+        if a.is_weapon and not is_proficient(weapon_base(a.name), profs):
+            a.proficient = False
+            notes.append(f"Not proficient with {weapon_base(a.name)}s")
     c.attacks = attacks
     _class_features(character, c, levels, subs, notes)
     split = " / ".join(f"{cls.title()} {n}" + (f" ({subs[cls]})" if subs.get(cls) else "") for cls, n in levels.items())
     c.description = f"{character.race}, {split}. Feats: {', '.join(feats) or 'none'}"
     return c, notes
+
+def weapon_base(attack_name):
+    """ 'Greatsword (Action Surge)' -> 'Greatsword' """
+    return attack_name.split(" (")[0]
 
 def _extra_attacks(levels, subs, character):
     """ Attacks with the Attack action """
@@ -345,5 +393,5 @@ MODELLED_SUBCLASSES = {"Champion", "Battle Master", "Arcane Archer", "Berserker"
                        "Way of the Drunken Master", "The Hexblade", "Draconic Bloodline", "Evocation School", "Bladesinging", "War Domain",
                        "Tempest Domain", "Death Domain", "Life Domain", "Nature Domain", "Trickery Domain", "College of Swords", "College of Valour"}
 
-__all__ = ["Bg3Character", "compile_character", "class_levels", "feat_opportunities", "caster_level", "CLASSES", "SUBCLASSES", "FEATS", "RACES",
+__all__ = ["Bg3Character", "compile_character", "weapon_proficiencies", "is_proficient", "class_levels", "feat_opportunities", "caster_level", "CLASSES", "SUBCLASSES", "FEATS", "RACES",
            "ROUTINES", "CANTRIPS", "TOGGLES", "STATS"]

@@ -8,7 +8,6 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 ## Next
 - [ ] Builder: more subclass features (Eldritch Knight, Wildheart aspects, Circle of Stars, Death Domain Touch of Death, College of Glamour, Shadow Magic...), Battle Master and Arcane Archer as separate dice pools
 - [ ] Builder: leveled damage spells (Fireball, Scorching Ray, Smites as spells), thrown weapon builds (Throwzerker), Wild Shape
-- [ ] Builder: weapon proficiencies by race and class (non-proficient weapons lose the proficiency bonus)
 - [ ] Elixir of Bloodlust (extra action on a kill) and kill based effects in general
 - [ ] Arcane Acuity, Lightning Charges, Momentum and other stacking effects
 - [ ] Story exclusive items (one path or the other) in the conflict report
@@ -35,4 +34,5 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - 2026-10-29: Character builder: race, point buy with +2/+1, up to three classes in order (multiclass feat levels and spell slots), subclasses, feats, fighting styles, attack routine (two-handed, duelling, dual wield, ranged, unarmed, cantrip) and toggles for build set ups. A Champion built with it matches the preset exactly. In the planner as "Custom character"
 - 2026-10-29: Eight example custom characters (Swashbuckler, Path of Giants, Arcane Archer, Bladesinger, Hexblade, Swarmkeeper, Tavern Brawler Drunken Master, Sorlock) with gear per act; one-handed builds use a Rapier when Dexterity is higher
 - 2026-10-29: Planner characters keep everything when sent to the simulator cards: new card fields for BG3 Savage Attacker per die, barbarian level for rage, and the spell save DC bonus from items (tested for every example at every act)
+- 2026-10-30: Weapon proficiencies for custom characters from bg3.wiki: first class, multiclass, subclass (Hexblade, War/Tempest/Death clerics, Valour, Bladesinging) and race proficiencies; weapons without proficiency lose the bonus to hit and are flagged in the conflict report
 - 2026-10-29: Generic +1/+2/+3 trader gear gets an estimated act from its enchantment, items of unknown act are only suggested for Act 3

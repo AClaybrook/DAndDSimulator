@@ -4,6 +4,8 @@ from collections import defaultdict
 from dataclasses import dataclass
 
 from bg3.build import ACT_KEYS, buffs_at, equipment_at
+from bg3.character import Bg3Character, is_proficient, weapon_proficiencies
+from bg3.checkpoints import act_level
 from bg3.items import SLOT_LABELS, catalog
 
 MAX_PARTY_SIZE = 4
@@ -11,7 +13,7 @@ MAX_PARTY_SIZE = 4
 @dataclass
 class Conflict:
     act: str
-    kind: str # shared (several characters), duplicate (one character, two slots), two_handed, wrong_slot, too_early, unknown, elixirs, concentration
+    kind: str # shared (several characters), duplicate (one character, two slots), two_handed, wrong_slot, too_early, unknown, elixirs, concentration, proficiency
     item: str # Item key
     members: list[str]
     message: str
@@ -38,6 +40,13 @@ def build_conflicts(build, act, items=None):
         if len(slots) > 1:
             conflicts.append(Conflict(act, "duplicate", key, [build.name],
                                       f"{build.name}: {items[key].name} is unique but equipped in {' and '.join(SLOT_LABELS[s] for s in slots)}"))
+    if build.character:
+        profs = weapon_proficiencies(Bg3Character.from_dict(build.character), act_level(act, build.levels))
+        for key in gear.values():
+            item = items.get(key)
+            if item is not None and item.weapon and not is_proficient(item.weapon.get("base"), profs):
+                conflicts.append(Conflict(act, "proficiency", key, [build.name],
+                                          f"{build.name}: not proficient with {item.name} ({item.weapon.get('base')}), no proficiency bonus to hit"))
     own_concentration = [b.name for b in buffs_at(build, act) if b.concentration and b.self_cast]
     if len(own_concentration) > 1:
         conflicts.append(Conflict(act, "concentration", "", [build.name],

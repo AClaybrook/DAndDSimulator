@@ -4,7 +4,7 @@ from copy import deepcopy
 from dataclasses import asdict, dataclass, field, fields, replace
 
 from bg3.buffs import BUFFS
-from bg3.character import Bg3Character, compile_character
+from bg3.character import Bg3Character, compile_character, is_proficient, weapon_proficiencies
 from bg3.checkpoints import ACTS, act_level
 from bg3.items import SLOT_LABELS, SLOTS, active_effects, apply_effect, catalog, equip_weapon
 from game_data.classes import BUILDS, build_character
@@ -61,7 +61,9 @@ def compile_build(build, act, items=None):
         character = build_character(build.preset, level, "bg3")
     gear = {slot: items[key] for slot, key in equipment_at(build, act).items() if key in items and items[key].fits(slot)}
 
-    # Weapons replace the preset's weapon for the attacks made with them
+    # Weapons replace the preset's weapon for the attacks made with them. Custom characters lose the proficiency bonus with weapons they
+    # aren't proficient with (presets are assumed proficient)
+    profs = weapon_proficiencies(Bg3Character.from_dict(build.character), level) if build.character else None
     own_attacks = {slot: [] for slot in gear}
     attacks = []
     for attack in character.attacks:
@@ -69,6 +71,8 @@ def compile_build(build, act, items=None):
         item = gear.get(slot)
         if item is not None and item.weapon:
             attack = equip_weapon(attack, item)
+            if profs is not None:
+                attack.proficient = is_proficient(item.weapon.get("base"), profs)
             own_attacks[slot].append(attack)
         else:
             attack = deepcopy(attack)
