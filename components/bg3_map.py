@@ -1,5 +1,6 @@
 """ Act 1 item map: notable items and key pickups on the game's minimap images, a separate page at /map """
 import json
+import re
 from pathlib import Path
 
 import dash_bootstrap_components as dbc
@@ -77,7 +78,7 @@ def hover(points, party=None):
     where = f"{first['location']} (X {first['x']}, Y {first['y']})" + (" - inside, marked at the entrance" if first["inside"] else "")
     lines = [f"<b>{where}</b>"]
     for p in points[:12]:
-        tags = [p["rarity"]] + (["trader"] if p["trader"] else []) + ([f"in {len(p['builds'])} example builds"] if p["builds"] else [])
+        tags = [p["rarity"]] + (["trader"] if p["trader"] else []) + (["⚠ " + p["tip"][:60]] if re.search(r"exclusive|before|only", p.get("tip", ""), re.I) else []) + ([f"in {len(p['builds'])} example builds"] if p["builds"] else [])
         lines.append(f"{'★ ' if p['builds'] else ''}{p['name']} <span style='color:{COLORS.get(p['rarity'])}'>({', '.join(tags)})</span>" +
                      (f"<br>&nbsp;&nbsp;<span style='color:{PARTY_COLOR}'>Party: {', '.join(party[p['key']])}</span>" if p["key"] in party else ""))
     if len(points) > 12:
@@ -152,6 +153,7 @@ def details(points, party=None):
             html.Span(f" {p['rarity']}" + (f", {p['slot'].replace('_', ' ')}" if p.get("slot") else ""), className="text-muted small"),
             html.Div(p["where"], className="small") if p.get("where") else None,
             html.Div(p["notes"], className="small text-muted") if p.get("notes") else None,
+            html.Div(f"Checklist note: {p['tip']}", className="small text-warning") if p.get("tip") else None,
             html.Div(f"Your party: {', '.join(party[p['key']])}", className="small", style={"color": PARTY_COLOR}) if p["key"] in party else None,
             html.Div(f"★ Used by: {', '.join(p['builds'])}", className="small text-info") if p.get("builds") else None,
         ], className="mb-2"))

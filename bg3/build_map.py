@@ -39,11 +39,18 @@ REGION_MAP = {"Wilderness": "wilderness", "Emerald Grove": "wilderness", "Forest
               "Mountain Pass": "mountain", "Rosymorn Monastery Trail": "mountain", "Rosymorn Monastery": "mountain"}
 # Interiors whose location pages give no outdoor entrance: placed at this location instead
 ENTRANCE_OF = {"Shattered Sanctum": "Goblin Camp", "Worg Pens": "Goblin Camp", "Defiled Temple": "Goblin Camp", "Bloodied Shrine": "Goblin Camp",
-               "Secluded Chamber": "Goblin Camp", "Dank Crypt": "Overgrown Ruins", "Creche Y'llek": "Crèche Y'llek"}
+               "Secluded Chamber": "Goblin Camp", "Dank Crypt": "Overgrown Ruins", "Hidden Vault": "Emerald Grove", "Creche Y'llek": "Crèche Y'llek"}
 WAYPOINTS = {"Goblin Camp": ("wilderness", -74, 445), "Blighted Village": ("wilderness", 34, 394), "Riverside Teahouse": ("wilderness", -10, 250),
              "Waukeen's Rest": ("wilderness", -77, 570), "Emerald Grove": ("wilderness", 246, 423), "Overgrown Ruins": ("wilderness", 276, 298)}
 ACT1_LOCATION_CATEGORIES = ["Category:Act One Locations", "Category:Prologue Locations"]
 RARITY_ORDER = ["Common", "Uncommon", "Rare", "Very Rare", "Legendary", "Story"]
+# Community "BG3 Every Item Run (ACT 1)" checklist (published Google Sheet): location text with minimap coordinates and playthrough notes
+CHECKLIST_URL = ("https://docs.google.com/spreadsheets/d/e/2PACX-1vTKfLHIXxsRwE9ad533L8-HbkmaWyfXpOs4RFLqe6xc7PERdFm1VuQzueFT0Gepo4JD5fiW5IrLZ_mE"
+                 "/pubhtml/sheet?headers=false&gid=0")
+# Words in a checklist location that name the map it's on, checked in order
+CHECKLIST_MAPS = [("nautiloid wreck", "wilderness"), ("grymforge", "grymforge"), ("adamantine", "grymforge"), ("crèche", "creche"), ("creche", "creche"), ("nautiloid", "nautiloid"),
+                  ("mountain pass", "mountain"), ("rosymorn", "mountain"), ("underdark", "underdark"), ("ebonlake", "underdark"),
+                  ("arcane tower", "underdark"), ("myconid", "underdark"), ("selûnite", "underdark")]
 
 def to_pixel(map_key, x, y):
     m = MAPS[map_key]
@@ -121,6 +128,37 @@ def entrances(pages, regions, on_map):
                 break
     return found
 
+def fetch_checklist():
+    """ {item name: {"location": text, "notes": text}} from the Act 1 checklist, cached in bg3/data/raw/act1_checklist.json """
+    cache = RAW / "act1_checklist.json"
+    if not cache.exists():
+        import html
+        request = urllib.request.Request(CHECKLIST_URL, headers={"User-Agent": USER_AGENT})
+        with urllib.request.urlopen(request, timeout=60) as response:
+            page = response.read().decode("utf-8")
+        rows = {}
+        for row in re.findall(r"<tr[^>]*>(.*?)</tr>", page, re.S):
+            cells = [html.unescape(re.sub(r"<[^>]+>", " ", c)).strip() for c in re.findall(r"<td[^>]*>(.*?)</td>", row, re.S)]
+            cells = [c for c in cells if c and c not in ("TRUE", "FALSE")]
+            # Item rows are name, rarity, location and optional notes; one cell rows are section headings
+            if len(cells) >= 3 and cells[0] != "Name":
+                rows.setdefault(cells[0], {"location": cells[2], "notes": " ".join(cells[3:])})
+        cache.write_text(json.dumps(rows, ensure_ascii=False), encoding="utf-8")
+    return json.loads(cache.read_text(encoding="utf-8"))
+
+def checklist_spot(text, on_map):
+    """ (map, x, y) from a checklist location like "Grymforge X: -643 Y: 215: ...", or None """
+    match = re.search(r"X\s*:?\s*(-?\d+)\s*,?\s*Y\s*:?\s*(-?\d+)", text)
+    if not match:
+        return None
+    x, y = int(match.group(1)), int(match.group(2))
+    lower = text.lower()
+    named = next((m for word, m in CHECKLIST_MAPS if word in lower), None)
+    for map_key in [named] if named else ["wilderness"]:
+        if MAPS[map_key]["image"] is None or on_map(map_key, x, y):
+            return map_key, x, y
+    return None
+
 def builds_using():
     """ {item key: [example build names]} for gear in the planner's example and doc builds """
     from bg3.presets import examples
@@ -151,12 +189,14 @@ def build():
     items = {i["name"]: i for i in json.loads((DATA / "items.json").read_text(encoding="utf-8"))["items"]}
     parsed = {p["title"]: p for p in json.loads((RAW / "parsed.json").read_text(encoding="utf-8"))}
     users = builds_using()
+    checklist = fetch_checklist()
 
     points, unplaced = [], []
     for name, item in items.items():
         params = parsed.get(name, {}).get("params", {})
         base = {"name": name, "key": item["key"], "rarity": item["rarity"] or "Common", "slot": item["slot"], "kind": "item",
-                "source": item["source"], "notes": short(item.get("notes") or "", 260), "builds": users.get(item["key"], [])}
+                "source": item["source"], "notes": short(item.get("notes") or "", 260), "builds": users.get(item["key"], []),
+                "tip": checklist.get(name, {}).get("notes", "")}
         placed = False
         for suffix in ("", "2", "3", "4", "5"):
             where = params.get(f"where to find{suffix}", "")
@@ -177,17 +217,27 @@ def build():
                 continue
             points.append(point)
             placed = True
+        # Items without a usable wiki location, placed from the checklist's coordinates
+        if not placed and name in checklist and (spot := checklist_spot(checklist[name]["location"], on_map)):
+            text = checklist[name]["location"]
+            # Checklist text starts with a place name ("Grymforge X: ..."), or is a sentence that doesn't
+            location = re.split(r"\s*[(:]|\s+X\s*:", text)[0].strip()
+            if len(location.split()) > 4 or not location[:1].isupper():
+                location = MAPS[spot[0]]["label"]
+            points.append({**base, "location": location, "where": short(text), "trader": bool(re.match(r"\s*sold by", text, re.I)),
+                           "map": spot[0], "inside": False, "x": spot[1], "y": spot[2], "from_checklist": True})
+            placed = True
         if not placed and item["act"] == 1 and item["rarity"] not in ("Common", "", None):
             unplaced.append({**base, "location": item.get("location") or "", "where": short(plain_text(params.get("where to find", "")))})
 
     for pickup in json.loads((DATA / "map_pickups.json").read_text(encoding="utf-8"))["pickups"]:
-        points.append({"key": None, "rarity": "Key", "slot": None, "trader": False, "inside": False, "notes": "", "builds": [],
+        points.append({"key": None, "rarity": "Key", "slot": None, "trader": False, "inside": False, "notes": "", "builds": [], "tip": "",
                        "map": pickup["region"], **pickup})
     for point in points:
         pixel = to_pixel(point["map"], point["x"], point["y"])
         point["px"], point["py"] = pixel if pixel else (None, None)
     maps = {key: {k: v for k, v in m.items() if k != "wiki_file"} for key, m in MAPS.items()}
-    output = {"_source": "Item locations from bg3.wiki (CC BY-NC-SA 4.0); map images are the game's minimap textures (Larian Studios) via bg3.wiki",
+    output = {"_source": "Item locations from bg3.wiki (CC BY-NC-SA 4.0) and the community BG3 Every Item Run (ACT 1) checklist; map images are the game's minimap textures (Larian Studios) via bg3.wiki",
               "maps": maps, "points": points, "unplaced": sorted(unplaced, key=lambda p: -RARITY_ORDER.index(p["rarity"]))}
     OUT.write_text(json.dumps(output, ensure_ascii=False, indent=0), encoding="utf-8")
     print(f"{len(points)} points, {len(unplaced)} notable Act 1 items without a location on a map")
