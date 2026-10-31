@@ -1,21 +1,77 @@
 {
-  "_note": "Key pickups that aren't gear, shown on the Act 1 map. x/y are in-game minimap coordinates; region is wilderness, underdark, creche, grymforge or mountain",
-  "pickups": [
-    {"name": "Auntie Ethel's Hair", "kind": "buff", "region": "wilderness", "x": -10, "y": 250,
-     "location": "Riverside Teahouse",
-     "where": "Defeat Auntie Ethel in her lair under the Riverside Teahouse (or take her bargain): +1 to an ability score of your choice, permanently",
-     "source": "https://bg3.wiki/wiki/Auntie_Ethel%27s_Hair"},
-    {"name": "Sussur Tree", "kind": "key", "region": "underdark", "x": 49, "y": -140,
-     "location": "Underdark",
-     "where": "Sussur Bark from the tree makes the Sussur weapons, whose hits can silence spellcasters",
-     "source": "https://bg3.wiki/wiki/Sussur_Bark"},
-    {"name": "Necromancy of Thay", "kind": "key", "region": "wilderness", "x": 32, "y": 379,
-     "location": "Apothecary's Cellar",
-     "where": "In the hidden cellar of the Blighted Village apothecary; reading it fully pays off in Act 3",
-     "source": "https://bg3.wiki/wiki/Necromancy_of_Thay"},
-    {"name": "Adamantine Forge", "kind": "key", "region": "grymforge", "x": -568, "y": 243,
-     "location": "Adamantine Forge",
-     "where": "Forge Adamantine armour and weapons from Mithral Ore and the moulds found in Grymforge",
-     "source": "https://bg3.wiki/wiki/Adamantine_Forge_(location)"}
-  ]
+ "_note": "Key pickups that aren't gear, shown on the Act 1 map. x/y are in-game minimap coordinates; region is wilderness, underdark, creche, grymforge or mountain",
+ "pickups": [
+  {
+   "name": "Auntie Ethel's Hair",
+   "kind": "buff",
+   "region": "wilderness",
+   "x": -10,
+   "y": 250,
+   "location": "Riverside Teahouse",
+   "where": "Defeat Auntie Ethel in her lair under the Riverside Teahouse (or take her bargain): +1 to an ability score of your choice, permanently",
+   "source": "https://bg3.wiki/wiki/Auntie_Ethel%27s_Hair"
+  },
+  {
+   "name": "Sussur Tree",
+   "kind": "key",
+   "region": "underdark",
+   "x": 49,
+   "y": -140,
+   "location": "Underdark",
+   "where": "Sussur Bark from the tree makes the Sussur weapons, whose hits can silence spellcasters",
+   "source": "https://bg3.wiki/wiki/Sussur_Bark"
+  },
+  {
+   "name": "Necromancy of Thay",
+   "kind": "key",
+   "region": "wilderness",
+   "x": 32,
+   "y": 379,
+   "location": "Apothecary's Cellar",
+   "where": "In the hidden cellar of the Blighted Village apothecary; reading it fully pays off in Act 3",
+   "source": "https://bg3.wiki/wiki/Necromancy_of_Thay"
+  },
+  {
+   "name": "Adamantine Forge",
+   "kind": "key",
+   "region": "grymforge",
+   "x": -568,
+   "y": 243,
+   "location": "Adamantine Forge",
+   "where": "Forge Adamantine armour and weapons from Mithral Ore and the moulds found in Grymforge",
+   "source": "https://bg3.wiki/wiki/Adamantine_Forge_(location)"
+  },
+  {
+   "name": "Loviatar's Love",
+   "kind": "buff",
+   "region": "wilderness",
+   "x": -74,
+   "y": 445,
+   "location": "Shattered Sanctum",
+   "where": "Let Abdirak, the priest of Loviatar in the Shattered Sanctum, test your devotion and pass his checks: +2 to attack rolls and Wisdom saves while below 30% hit points, permanently",
+   "source": "https://bg3.wiki/wiki/Loviatar%27s_Love",
+   "inside": true
+  },
+  {
+   "name": "Volo's Ersatz Eye",
+   "kind": "buff",
+   "region": "wilderness",
+   "x": -74,
+   "y": 445,
+   "location": "Goblin Camp",
+   "where": "Rescue Volo from the Goblin Camp, then let him operate on you in camp: permanent See Invisibility",
+   "source": "https://bg3.wiki/wiki/Volo%27s_Ersatz_Eye",
+   "inside": true
+  },
+  {
+   "name": "Awakened (Zaith'isk)",
+   "kind": "buff",
+   "region": "creche",
+   "x": 1289,
+   "y": -809,
+   "location": "Crèche Y'llek",
+   "where": "Use the Zaith'isk in the Crèche's infirmary and succeed: Illithid powers become bonus actions (per the build doc)",
+   "source": "https://bg3.wiki/wiki/Zaith%27isk"
+  }
+ ]
 }

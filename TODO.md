@@ -10,7 +10,7 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 2. [ ] Map: per member filter for the party gear layer, and where to get each Act 2/3 item once those maps exist
 3. [ ] Map: more key pickups (permanent buffs, tomes, crafting) in bg3/data/map_pickups.json, and from the build doc's Permanent buffs lines
 4. [ ] Map: Act 2 and 3 (Shadow-Cursed Lands and Lower City minimap images exist on bg3.wiki; calibrate them like Act 1), Grymforge and Rosymorn images if they turn up
-5. [ ] Doc builds: re-import once the doc uses docs/request_spec.md; importer support for Level order, Respec and Party blocks
+5. [ ] Doc builds: importer support for Respec (build 25), Party blocks, and Permanent buffs as ability score changes (Hag's Hair +1, Mirror of Loss +2); "Caitlin's Staff" (build 30) isn't a bg3.wiki item name
 6. [ ] Engine and party items below (synergies, two sided fights, more subclass features)
 
 ## Next
@@ -29,6 +29,7 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - [ ] Illithid powers
 
 ## Done
+- 2026-10-31: Doc re-import: the doc now uses the structured format for builds 25-31 (Action Surge Bladesinger Smiter, Pure GWM Hexblade, Hex-Crown Paladin, Darkness Dirty Trickster, and three camp buffers). Importer: Level order (dips taken first count at the right level), "unknown" values skipped, Shield slot, base weapons by name, utility cantrips/spells noted instead of modelled (support builds get their class's damage cantrip), Respec/Permanent buffs/Caveats kept. Map: Loviatar's Love, Volo's Ersatz Eye and the Zaith'isk Awakened buff from the doc's permanent buff list
 - 2026-10-31: Map uses the community "BG3 Every Item Run (ACT 1)" checklist as a second source: coordinates for items the wiki has no usable location for (Sorrow and Robe of Summer in the Hidden Vault, Bow of the Banshee, Jorgoral's Greatsword, Silver Sword of the Astral Plane by disarming Voss), and its playthrough notes (mutually exclusive rewards, take before leaving) in the hover and details. The "Weapons and Items" sheet is a copy of the wiki and the "Item Planner" sheet an empty template, so neither is used
 - 2026-10-31: Map: party gear layer (gold rings on the gear the planner party wears at a chosen act, with a collected checklist saved in the browser, "only my party's gear" filter), an "On this map" item list beside the map, an option to name every marker, readable hover boxes, cleaner where-to-find text
 - 2026-10-31: Act 1 map page (/map): notable items and key pickups on the game's minimap images (Wilderness, Underdark, Crèche; Grymforge, Mountain Pass and Nautiloid on a coordinate grid), rarity filters (Rare and up by default), "used by example builds" filter, trader stock and dungeon interiors toggles, item search, click for details and wiki links, and a list of notable items with no map location. Images calibrated to the in-game minimap coordinates from waypoints (bg3/build_map.py)

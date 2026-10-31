@@ -15,7 +15,7 @@ from pathlib import Path
 from bg3.abilities import point_buy_problems
 from bg3.buffs import BUFFS
 from bg3.build import Bg3Build
-from bg3.character import CLASSES, FEATS, RACES, ROUTINES, SHADOW_BLADE, SUBCLASSES, Bg3Character
+from bg3.character import CANTRIPS, CLASSES, FEATS, LEVELLED_SPELLS, RACES, ROUTINES, SHADOW_BLADE, SUBCLASSES, Bg3Character
 from bg3.items import catalog
 from computations.models import STATS
 
@@ -27,7 +27,8 @@ CARRIED = {"resonance stone"}
 ROLES = ["frontline", "striker", "ranged", "control", "healer", "support", "face", "skills", "summoner"]
 SLOT_WORDS = {"main hand": "melee_main", "off hand": "melee_off", "off-hand": "melee_off", "ranged": "ranged_main", "ranged main": "ranged_main",
               "ranged off": "ranged_off", "helmet": "helmet", "head": "helmet", "cloak": "cloak", "armour": "armour", "armor": "armour", "chest": "armour",
-              "gloves": "gloves", "boots": "boots", "amulet": "amulet", "ring 1": "ring_1", "ring 2": "ring_2"}
+              "gloves": "gloves", "boots": "boots", "amulet": "amulet", "ring 1": "ring_1", "ring 2": "ring_2", "shield": "melee_off"}
+UNKNOWN = {"unknown", "none", "n/a", "-"}
 
 def fetch_text(source):
     """ Plain text of a Google Doc link (read only, via its public mobile view) or a local file """
@@ -55,6 +56,8 @@ def item_index():
     for item in catalog().values():
         if item.key.startswith("bg3:"):
             index.setdefault(_key(item.name), item)
+    for item in catalog().values(): # Plain base weapons ("Quarterstaff") when no named item has that name
+        index.setdefault(_key(item.name), item)
     return index
 
 def match_item(name, index):
@@ -201,6 +204,8 @@ def parse_slots(text, index, carried, unmatched):
         if "=" not in pair:
             continue
         slot, name = (p.strip() for p in pair.split("=", 1))
+        if name.lower() in UNKNOWN:
+            continue
         if slot.lower() == "carried":
             carried.update(n.strip() for n in name.split(",") if n.strip())
             continue
@@ -210,6 +215,17 @@ def parse_slots(text, index, carried, unmatched):
         elif name and not name.lower().startswith(SHADOW_BLADE.lower()):
             unmatched.append(f"{slot} = {name}")
     return equipment
+
+def parse_level_order(text, classes):
+    """ 'Paladin 1, Warlock 1, Paladin 2-11' -> the class key of each level, [] if it doesn't add up to the class split """
+    order = []
+    for name, start, end in re.findall(r"([A-Za-z][A-Za-z' ]*?)\s+(\d+)(?:\s*-\s*(\d+))?(?=\s*(?:,|;|$))", text):
+        cls = next((c for c in CLASSES if c in name.lower()), None)
+        if cls is None:
+            return []
+        order += [cls] * (int(end or start) - int(start) + 1)
+    wanted = sorted(cls for cls, _, levels in classes for _ in range(int(levels)))
+    return order if sorted(order) == wanted else []
 
 def parse_buffs(text):
     names = {b.name.lower(): key for key, b in BUFFS.items()}
@@ -296,9 +312,23 @@ def parse_build(number, title, body, index, items):
                              feats=parse_improvements(field(body, "Feats")) if re.search(r"^Feats:.*,", body, re.M) and "Level" not in
                              field(body, "Feats") else parse_feats(body), routine=routine,
                              fighting_styles=[s.strip() for s in field(body, "Fighting styles").split(",") if s.strip()])
+    if field(body, "Level order"):
+        character.level_order = parse_level_order(field(body, "Level order"), character.classes)
+        if not character.level_order:
+            notes.append(f"Level order not read: {field(body, 'Level order')}")
+    if field(body, "Respec"):
+        notes.append(f"Respec not modelled (uses the final split): {field(body, 'Respec')}")
     if field(body, "Cantrip") or field(body, "Spell"):
-        character.cantrip = field(body, "Cantrip") or character.cantrip
-        character.spell = field(body, "Spell")
+        # Only damage spells the builder models; utility ones (Light, Aid, Hold Monster) and Divine Smite (a class feature here) are noted
+        cantrip = next((c for c in CANTRIPS if c.lower() == field(body, "Cantrip").lower()), None)
+        spell = next((c for c in LEVELLED_SPELLS if c.lower() == field(body, "Spell").lower()), "")
+        # Support builds list a utility cantrip; they still get their class's damage cantrip so their damage isn't another class's
+        natural = {"cleric": "Sacred Flame", "druid": "Produce Flame", "wizard": "Fire Bolt", "sorcerer": "Fire Bolt", "warlock": "Eldritch Blast"}
+        character.cantrip = cantrip or natural.get(character.classes[0][0], character.cantrip)
+        character.spell = spell
+        skipped = [v for v, ok in ((field(body, "Cantrip"), cantrip), (field(body, "Spell"), spell)) if v and not ok and v.lower() not in UNKNOWN]
+        if skipped and routine == "cantrip":
+            notes.append(f"Not a modelled damage spell: {', '.join(skipped)}")
     elif routine == "cantrip":
         character.cantrip = "Eldritch Blast" if "eldritch blast" in body.lower() and any(c[0] == "warlock" for c in classes) else \
             "Fire Bolt" if "fire" in body.lower() else "Toll the Dead" if "toll the dead" in body.lower() else character.cantrip
@@ -312,7 +342,9 @@ def parse_build(number, title, body, index, items):
             "companion": field(body, "Recommended Character/Race", "Assigned Companion / Role", "Companion"),
             "themes": [t.strip().lower() for t in field(body, "Themes").split(",") if t.strip()],
             "provides": [t.strip().lower() for t in field(body, "Provides").split(",") if t.strip()],
-            "needs": [t.strip().lower() for t in field(body, "Needs").split(",") if t.strip()], "path": field(body, "Path")}
+            "needs": [t.strip().lower() for t in field(body, "Needs").split(",") if t.strip()], "path": field(body, "Path"),
+            "permanent_buffs": field(body, "Permanent buffs"), "gear_estimated": bool(re.search(r"^Gear acts:\s*estimated", body, re.M | re.I)),
+            "caveats": field(body, "Caveats")}
 
 def import_text(text):
     text = re.sub(r"^\*\s+", "", normalise(text), flags=re.M) # Required field markers from the format example

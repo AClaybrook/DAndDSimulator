@@ -56,3 +56,20 @@ def test_helpers():
     assert split_gear("Staff (or Other), A + B (Off-Hand), X -> Y") == [("Staff", ""), ("A", ""), ("B", "off"), ("Y", "")]
     base, bonus = split_point_buy({"strength": 8, "dexterity": 14, "constitution": 16, "intelligence": 8, "wisdom": 10, "charisma": 17}, "charisma")
     assert bonus == {"charisma": 2, "constitution": 1} and base["charisma"] == 15
+
+def test_level_order_and_unknowns():
+    from bg3.character import Bg3Character, class_levels
+    from bg3.doc_import import import_text
+    text = """Build 40: Dip First
+Race: unknown
+Classes: 11 Oath of the Crown Paladin / 1 The Hexblade Warlock
+Level order: Paladin 1, Warlock 1, Paladin 2-11
+Abilities: unknown
+Routine: two_handed
+Act 1 Gear: Main Hand = unknown; Shield = Wooden Shield
+"""
+    build = import_text(text)[0]
+    character = Bg3Character.from_dict(build["build"]["character"])
+    assert class_levels(character, 2) == {"paladin": 1, "warlock": 1} # The dip comes at level 2, not 12
+    assert build["unmatched"] == [] # "unknown" is skipped, Shield is the off hand
+    assert build["build"]["equipment"]["1"] == {"melee_off": "bg3:wooden_shield"}

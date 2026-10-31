@@ -424,7 +424,7 @@
 "notes": "When one of your cantrips deals Acid, Cold, Fire, Lightning, or Thunder damage, add your Spellcasting Modifier to the damage dealt",
 "builds": [
 "Gale (Evoker)",
-"15. Jedi Consular"
+"13. Jedi Consular"
 ],
 "tip": "",
 "location": "Crèche Y'llek",
@@ -710,7 +710,9 @@
 "kind": "item",
 "source": "https://bg3.wiki/wiki/Adamantine_Splint_Armour",
 "notes": "Attackers cannot land Critical Hits on the wearer; All incoming damage is reduced by 2; When a melee attack hits you, the Attacker is sent Reeling for 3 turns",
-"builds": [],
+"builds": [
+"29. Camp Cleric Party Buffer"
+],
 "tip": "Can only make two Adamentine Items",
 "location": "Adamantine Forge",
 "where": "Forged from a Splint Mould and Mithral Ore",
@@ -832,7 +834,9 @@
 "kind": "item",
 "source": "https://bg3.wiki/wiki/Chain_Mail",
 "notes": "",
-"builds": [],
+"builds": [
+"29. Camp Cleric Party Buffer"
+],
 "tip": "",
 "location": "Shattered Sanctum",
 "where": "Sold by Roah Moonglow in Act One",
@@ -1574,7 +1578,9 @@
 "kind": "item",
 "source": "https://bg3.wiki/wiki/The_Graceful_Cloth",
 "notes": "You gain a +1 bonus to your Dexterity SavingThrows and also increase your Jump distance by",
-"builds": [],
+"builds": [
+"25. Action Surge Bladesinger Smiter"
+],
 "tip": "",
 "location": "Rosymorn Monastery Trail",
 "where": "Sold by Esther Lady Esther, north-east of the Trielta Crags waypoint",
@@ -1736,11 +1742,11 @@
 "notes": "When the wearer inflicts a condition upon a hostile creature, they also inflict 2 turns of Reverberation",
 "builds": [
 "3. Hexwing Phantom",
-"7. Tempest Bladesinger",
-"11. Hexblade Sorlock",
-"15. Jedi Consular",
-"18. Karlach, God of Thunder",
-"21. The 11/1 Fire Sorlock"
+"6. Tempest Bladesinger",
+"9. Hexblade Sorlock",
+"13. Jedi Consular",
+"16. Karlach, God of Thunder",
+"18. The 11/1 Fire Sorlock"
 ],
 "tip": "",
 "location": "Ebonlake Grotto",
@@ -1763,7 +1769,7 @@
 "notes": "Athletics +1; When you cast a spell that requires Concentration, you gain Momentum for 1 turn; While you are concentrating, you cannot be knocked Prone or moved against your will",
 "builds": [
 "4. Deathreaper",
-"14. Unstoppable Death Monk"
+"12. Unstoppable Death Monk"
 ],
 "tip": "",
 "location": "Shattered Sanctum",
@@ -1807,8 +1813,8 @@
 "builds": [
 "1. The Godblade",
 "2. Nuclear Pure Hexblade Warlock",
-"16. Death Cleric Necromancer",
-"23. Shadow Blade Eldritch Knight"
+"14. Death Cleric Necromancer",
+"20. Shadow Blade Eldritch Knight"
 ],
 "tip": "Why is this a story item?",
 "location": "Grymforge",
@@ -2259,8 +2265,8 @@
 "source": "https://bg3.wiki/wiki/Gloves_of_Belligerent_Skies",
 "notes": "When the wearer deals Thunder, Lightning, or Radiant damage, inflict 2 turns of Reverberation upon the target(s)",
 "builds": [
-"10. Shadow Sorcadin",
-"15. Jedi Consular"
+"8. Shadow Sorcadin",
+"13. Jedi Consular"
 ],
 "tip": "",
 "location": "Crèche Y'llek",
@@ -2306,9 +2312,7 @@
 "builds": [
 "2. Nuclear Pure Hexblade Warlock",
 "4. Deathreaper",
-"6. Hex-Bladesinger",
-"8. Sea Shanty Bladesinging Swashbuckler",
-"22. The 10/2 Smite Swords Bard — SSB"
+"19. The 10/2 Smite Swords Bard — SSB"
 ],
 "tip": "",
 "location": "Crèche Y'llek",
@@ -2409,7 +2413,9 @@
 "kind": "item",
 "source": "https://bg3.wiki/wiki/Gloves_of_Power",
 "notes": "Sleight of Hand +1; On a hit with a weapon attack, possibly inflict a d4 Slashing -1d4 penalty to the target's Attack Rolls and SavingThrows",
-"builds": [],
+"builds": [
+"31. Camp Transmutation Alchemist & Stone Buffer"
+],
 "tip": "",
 "location": "Emerald Grove",
 "where": "Carried by Za'krug in front of the Druid Grove",
@@ -2451,7 +2457,7 @@
 "notes": "",
 "builds": [
 "Throwzerker (Giant, Tavern Brawler)",
-"18. Karlach, God of Thunder"
+"16. Karlach, God of Thunder"
 ],
 "tip": "",
 "location": "Ebonlake Grotto",
@@ -2635,7 +2641,7 @@
 "source": "https://bg3.wiki/wiki/Wondrous_Gloves",
 "notes": "Your ArmourClass increases by 1; In addition, if you have Bardic Inspiration (class action) Bardic Inspiration, you gain 1 more use of it",
 "builds": [
-"19. Skald Dual-Wielding Bard"
+"17. Skald Dual-Wielding Bard"
 ],
 "tip": "",
 "location": "Grymforge",
@@ -2858,7 +2864,7 @@
 "notes": "When you inflict a condition, gain Arcane Synergy for 2 turns",
 "builds": [
 "1. The Godblade",
-"15. Jedi Consular"
+"13. Jedi Consular"
 ],
 "tip": "",
 "location": "Crèche Y'llek",
@@ -3205,7 +3211,9 @@
 "kind": "item",
 "source": "https://bg3.wiki/wiki/Warped_Headband_of_Intellect",
 "notes": "The enchantment has no effect if their Intelligence score is higher without it",
-"builds": [],
+"builds": [
+"25. Action Surge Bladesinger Smiter"
+],
 "tip": "Can be taken from his corpse after convincing him to help in a fight",
 "location": "Blighted Village",
 "where": "Carried by Lump the Enlightened",
@@ -3476,15 +3484,14 @@
 "builds": [
 "2. Nuclear Pure Hexblade Warlock",
 "3. Hexwing Phantom",
-"7. Tempest Bladesinger",
-"8. Sea Shanty Bladesinging Swashbuckler",
-"9. Patch 8 Hexadin / Lockadin",
-"11. Hexblade Sorlock",
-"13. Ultimate Dark Knight",
-"14. Unstoppable Death Monk",
-"15. Jedi Consular",
-"19. Skald Dual-Wielding Bard",
-"23. Shadow Blade Eldritch Knight"
+"6. Tempest Bladesinger",
+"7. Patch 8 Hexadin / Lockadin",
+"9. Hexblade Sorlock",
+"11. Ultimate Dark Knight",
+"12. Unstoppable Death Monk",
+"13. Jedi Consular",
+"17. Skald Dual-Wielding Bard",
+"20. Shadow Blade Eldritch Knight"
 ],
 "tip": "",
 "location": "Crèche Y'llek",
@@ -3546,7 +3553,7 @@
 "source": "https://bg3.wiki/wiki/Ring_of_Elemental_Infusion",
 "notes": "When you deal Acid, Cold, Fire, Lightning, or Thunder damage using a Spell or a Cantrip, that element infuses your weapon",
 "builds": [
-"7. Tempest Bladesinger"
+"6. Tempest Bladesinger"
 ],
 "tip": "",
 "location": "Crèche Y'llek",
@@ -3569,7 +3576,7 @@
 "notes": "",
 "builds": [
 "Throwzerker (Giant, Tavern Brawler)",
-"18. Karlach, God of Thunder"
+"16. Karlach, God of Thunder"
 ],
 "tip": "In Honour mode only, the item's rarity is classified as Rare.",
 "location": "The Hollow",
@@ -3672,8 +3679,7 @@
 "notes": "Armour Class +1; SavingThrow +1",
 "builds": [
 "4. Deathreaper",
-"8. Sea Shanty Bladesinging Swashbuckler",
-"10. Shadow Sorcadin"
+"8. Shadow Sorcadin"
 ],
 "tip": "Much easier to steal the Idol after finishing Investigate Kahga",
 "location": "Tiefling Hideout",
@@ -3797,7 +3803,7 @@
 "builds": [
 "1. The Godblade",
 "2. Nuclear Pure Hexblade Warlock",
-"23. Shadow Blade Eldritch Knight"
+"20. Shadow Blade Eldritch Knight"
 ],
 "tip": "",
 "location": "Crèche Y'llek",
@@ -5258,7 +5264,7 @@
 "builds": [
 "Swashbuckler Rogue (Patch 8)",
 "1. The Godblade",
-"8. Sea Shanty Bladesinging Swashbuckler"
+"25. Action Surge Bladesinger Smiter"
 ],
 "tip": "",
 "location": "Crèche Y'llek",
@@ -5709,7 +5715,7 @@
 "notes": "This weapon will return to its owner when thrown",
 "builds": [
 "Throwzerker (Giant, Tavern Brawler)",
-"18. Karlach, God of Thunder"
+"16. Karlach, God of Thunder"
 ],
 "tip": "",
 "location": "Goblin Camp",
@@ -6671,7 +6677,9 @@
 "kind": "item",
 "source": "https://bg3.wiki/wiki/Shapeshifter%27s_Boon_Ring",
 "notes": "While shapeshifting or disguising yourself, gain a +1d4 bonus to all Ability checks",
-"builds": [],
+"builds": [
+"31. Camp Transmutation Alchemist & Stone Buffer"
+],
 "tip": "You can trade the Ox for it by shooting him to start a fight, escaping (the children's hideout is very close), then coming back offering a gift to compensate him",
 "location": "Emerald Grove",
 "where": "Carried by the Strange Ox in the Druid Grove",
@@ -6869,6 +6877,69 @@
 "source": "https://bg3.wiki/wiki/Adamantine_Forge_(location)",
 "px": null,
 "py": null
+},
+{
+"key": null,
+"rarity": "Key",
+"slot": null,
+"trader": false,
+"inside": true,
+"notes": "",
+"builds": [],
+"tip": "",
+"map": "wilderness",
+"name": "Loviatar's Love",
+"kind": "buff",
+"region": "wilderness",
+"x": -74,
+"y": 445,
+"location": "Shattered Sanctum",
+"where": "Let Abdirak, the priest of Loviatar in the Shattered Sanctum, test your devotion and pass his checks: +2 to attack rolls and Wisdom saves while below 30% hit points, permanently",
+"source": "https://bg3.wiki/wiki/Loviatar%27s_Love",
+"px": 274.6,
+"py": 535.9
+},
+{
+"key": null,
+"rarity": "Key",
+"slot": null,
+"trader": false,
+"inside": true,
+"notes": "",
+"builds": [],
+"tip": "",
+"map": "wilderness",
+"name": "Volo's Ersatz Eye",
+"kind": "buff",
+"region": "wilderness",
+"x": -74,
+"y": 445,
+"location": "Goblin Camp",
+"where": "Rescue Volo from the Goblin Camp, then let him operate on you in camp: permanent See Invisibility",
+"source": "https://bg3.wiki/wiki/Volo%27s_Ersatz_Eye",
+"px": 274.6,
+"py": 535.9
+},
+{
+"key": null,
+"rarity": "Key",
+"slot": null,
+"trader": false,
+"inside": false,
+"notes": "",
+"builds": [],
+"tip": "",
+"map": "creche",
+"name": "Awakened (Zaith'isk)",
+"kind": "buff",
+"region": "creche",
+"x": 1289,
+"y": -809,
+"location": "Crèche Y'llek",
+"where": "Use the Zaith'isk in the Crèche's infirmary and succeed: Illithid powers become bonus actions (per the build doc)",
+"source": "https://bg3.wiki/wiki/Zaith%27isk",
+"px": 211.8,
+"py": 992.8
 }
 ],
 "unplaced": [

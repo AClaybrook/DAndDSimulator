@@ -133,6 +133,7 @@ class Bg3Character:
     cantrip: str = "Eldritch Blast"
     spell: str = "" # A levelled damage spell cast with every slot high enough, before the cantrip (cantrip routine)
     toggles: dict = field(default_factory=dict) # TOGGLES (all on by default), and "ancestry" for Draconic Bloodline (default fire)
+    level_order: list[str] = field(default_factory=list) # The class taken at each level when it isn't "first class first", i.e. a 1 level dip first
 
     def to_dict(self):
         return asdict(self)
@@ -148,6 +149,8 @@ class Bg3Character:
 def class_order(character, level=MAX_LEVEL):
     """ The class of each character level, i.e. ['fighter', 'fighter', 'rogue', ...] up to level """
     order = [cls for cls, _, levels in character.classes for _ in range(int(levels))]
+    if character.level_order and sorted(character.level_order) == sorted(order):
+        order = list(character.level_order)
     return order[:level]
 
 def class_levels(character, level=MAX_LEVEL):

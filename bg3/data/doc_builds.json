@@ -1,8 +1,8 @@
 [
  {
   "number": 1,
-  "title": "The \"Godblade\" (Bladesinger Paladin)",
-  "source": "Nizar GG (Bladesinger Part 1 & GODBLADE Part 2)",
+  "title": "The \"Godblade\" (10 Bladesinger / 2 Crown Paladin)",
+  "source": "Nizar GG (Bladesinger Part 1 & GODBLADE Part 2) & Jay Dunna (Crown Paladin / Bladesinger)",
   "build": {
    "name": "1. The Godblade",
    "preset": "fighter_gwm",
@@ -69,7 +69,8 @@
     "routine": "shadow_blade",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [
     "Resonance Stone"
@@ -86,12 +87,15 @@
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
   "number": 2,
   "title": "\"Nuclear\" Pure Hexblade Warlock",
-  "source": "Nizar GG (The Hexblade Get OP Early & Strongest NUCLEAR Hexblade)",
+  "source": "Nizar GG (The Hexblade Get OP Early & Strongest NUCLEAR Hexblade) & Jay Dunna (OP PURE 12 HEXBLADE)",
   "build": {
    "name": "2. Nuclear Pure Hexblade Warlock",
    "preset": "fighter_gwm",
@@ -117,7 +121,6 @@
      "armour": "bg3:helldusk_armour",
      "gloves": "bg3:helldusk_gloves",
      "ring_1": "bg3:ring_of_arcane_synergy",
-     "ring_2": "bg3:caustic_band",
      "ranged_main": "bg3:the_dead_shot"
     }
    },
@@ -155,7 +158,8 @@
     "routine": "shadow_blade",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [
     "Resonance Stone"
@@ -172,7 +176,10 @@
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
   "number": 3,
@@ -242,7 +249,8 @@
     "routine": "two_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": []
@@ -255,7 +263,10 @@
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
   "number": 4,
@@ -341,7 +352,8 @@
     "routine": "dual_wield",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": []
@@ -356,7 +368,10 @@
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
   "number": 5,
@@ -419,7 +434,8 @@
     "routine": "ranged",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": []
@@ -432,91 +448,17 @@
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
   "number": 6,
-  "title": "\"Hex-Bladesinger\" (Warlock / Wizard Hybrid)",
-  "source": "Jay Dunna (HEX BLADE SINGING Wizard / Warlock Build)",
+  "title": "Tempest Bladesinger (6 Bladesinger / 6 Tempest Cleric — S-Tier)",
+  "source": "Jay Dunna (Bladesinging Wizard Multiclasses are BROKEN OP & Wizard Tier List)",
   "build": {
-   "name": "6. Hex-Bladesinger",
-   "preset": "fighter_gwm",
-   "equipment": {
-    "1": {
-     "gloves": "bg3:gloves_of_dexterity"
-    },
-    "2": {
-     "helmet": "bg3:helmet_of_arcane_acuity"
-    },
-    "3": {
-     "melee_main": "bg3:duellist_s_prerogative",
-     "armour": "bg3:bhaalist_armour",
-     "ring_1": "bg3:band_of_the_mystic_scoundrel"
-    }
-   },
-   "buffs": {},
-   "conditions": [],
-   "levels": {},
-   "character": {
-    "name": "Hex-Bladesinger",
-    "race": "Human",
-    "scores": {
-     "strength": 15,
-     "dexterity": 14,
-     "constitution": 15,
-     "intelligence": 8,
-     "wisdom": 10,
-     "charisma": 8
-    },
-    "bonus": {
-     "strength": 2,
-     "constitution": 1
-    },
-    "classes": [
-     [
-      "warlock",
-      "The Hexblade",
-      6
-     ],
-     [
-      "wizard",
-      "Bladesinging",
-      6
-     ],
-     [
-      "warlock",
-      "The Hexblade",
-      5
-     ]
-    ],
-    "feats": [],
-    "fighting_styles": [],
-    "routine": "shadow_blade",
-    "cantrip": "Eldritch Blast",
-    "spell": "",
-    "toggles": {}
-   },
-   "carried": [],
-   "roles": []
-  },
-  "carried": [],
-  "roles": [],
-  "unmatched": [],
-  "notes": [
-   "No ability scores found"
-  ],
-  "companion": "",
-  "themes": [],
-  "provides": [],
-  "needs": [],
-  "path": ""
- },
- {
-  "number": 7,
-  "title": "Tempest Bladesinger (Wizard / Cleric Hybrid)",
-  "source": "Jay Dunna (Bladesinging Wizard Multiclasses are BROKEN OP)",
-  "build": {
-   "name": "7. Tempest Bladesinger",
+   "name": "6. Tempest Bladesinger",
    "preset": "fighter_gwm",
    "equipment": {
     "1": {
@@ -570,7 +512,8 @@
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": []
@@ -585,97 +528,17 @@
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 8,
-  "title": "Sea Shanty Bladesinging Swashbuckler",
-  "source": "Jay Dunna (Bladesinging Swashbuckler Wizard / Rogue Build)",
-  "build": {
-   "name": "8. Sea Shanty Bladesinging Swashbuckler",
-   "preset": "fighter_gwm",
-   "equipment": {
-    "1": {
-     "melee_main": "bg3:knife_of_the_undermountain_king",
-     "gloves": "bg3:gloves_of_dexterity",
-     "ring_1": "bg3:ring_of_arcane_synergy",
-     "ring_2": "bg3:ring_of_protection"
-    },
-    "2": {
-     "helmet": "bg3:helmet_of_arcane_acuity",
-     "cloak": "bg3:cloak_of_protection",
-     "boots": "bg3:evasive_shoes"
-    },
-    "3": {
-     "melee_main": "bg3:dolor_amarus",
-     "armour": "bg3:bhaalist_armour",
-     "amulet": "bg3:amulet_of_greater_health",
-     "ranged_main": "bg3:hellrider_longbow"
-    }
-   },
-   "buffs": {},
-   "conditions": [],
-   "levels": {},
-   "character": {
-    "name": "Sea Shanty Bladesinging Swashbuckler",
-    "race": "Human",
-    "scores": {
-     "strength": 15,
-     "dexterity": 14,
-     "constitution": 15,
-     "intelligence": 8,
-     "wisdom": 10,
-     "charisma": 8
-    },
-    "bonus": {
-     "strength": 2,
-     "constitution": 1
-    },
-    "classes": [
-     [
-      "wizard",
-      "Bladesinging",
-      8
-     ],
-     [
-      "rogue",
-      "Swashbuckler",
-      4
-     ],
-     [
-      "wizard",
-      "Abjuration School",
-      9
-     ]
-    ],
-    "feats": [],
-    "fighting_styles": [],
-    "routine": "one_handed",
-    "cantrip": "Eldritch Blast",
-    "spell": "",
-    "toggles": {}
-   },
-   "carried": [],
-   "roles": []
-  },
-  "carried": [],
-  "roles": [],
-  "unmatched": [],
-  "notes": [
-   "No ability scores found"
-  ],
-  "companion": "",
-  "themes": [],
-  "provides": [],
-  "needs": [],
-  "path": ""
- },
- {
-  "number": 9,
-  "title": "Patch 8 Hexadin / Lockadin (Vengeance or Oathbreaker)",
+  "number": 7,
+  "title": "Patch 8 Hexadin / Lockadin (Vengeance or Oathbreaker — S-Tier)",
   "source": "Jay Dunna (Hexblade Warlock Multiclasses are BROKEN OP & OP OATHBREAKER HEXBLADE)",
   "build": {
-   "name": "9. Patch 8 Hexadin / Lockadin",
+   "name": "7. Patch 8 Hexadin / Lockadin",
    "preset": "fighter_gwm",
    "equipment": {
     "1": {
@@ -728,7 +591,8 @@
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": []
@@ -743,14 +607,17 @@
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 10,
-  "title": "Shadow Sorcadin (Minthara Patch 8 Spec)",
+  "number": 8,
+  "title": "Shadow Sorcadin (Minthara Patch 8 Spec — S-Tier)",
   "source": "Jay Dunna (MOST OP MINTHARA Build for Patch 8) & Nizar GG (Most Evil BG3 Party)",
   "build": {
-   "name": "10. Shadow Sorcadin",
+   "name": "8. Shadow Sorcadin",
    "preset": "fighter_gwm",
    "equipment": {
     "1": {
@@ -805,7 +672,8 @@
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": []
@@ -820,14 +688,17 @@
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 11,
-  "title": "Hexblade Sorlock (Shadow or Draconic Fire)",
+  "number": 9,
+  "title": "Hexblade Sorlock (Shadow or Draconic Fire — A/S-Tier)",
   "source": "Jay Dunna (HEXBLADE SHADOW SORCERER & Most OP SORLOCK Patch 8)",
   "build": {
-   "name": "11. Hexblade Sorlock",
+   "name": "9. Hexblade Sorlock",
    "preset": "fighter_gwm",
    "equipment": {
     "1": {
@@ -880,7 +751,8 @@
     "routine": "shadow_blade",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": []
@@ -895,21 +767,24 @@
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 12,
-  "title": "Pure 12 Bladesinging Wizard & Sword Dancer of Eilistraee",
-  "source": "Jay Dunna (OP PURE 12 BLADESINGING Wizard & Sword Dancer of Eilistraee)",
+  "number": 10,
+  "title": "Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid",
+  "source": "Jay Dunna (OP PURE 12 BLADESINGING Wizard & Best Wizard Multiclass Tier List)",
   "build": {
-   "name": "12. Pure 12 Bladesinging Wizard & Sword Dancer of Eilistraee",
+   "name": "10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid",
    "preset": "fighter_gwm",
    "equipment": {},
    "buffs": {},
    "conditions": [],
    "levels": {},
    "character": {
-    "name": "Pure 12 Bladesinging Wizard & Sword Dancer of Eilistraee",
+    "name": "Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid",
     "race": "Human",
     "scores": {
      "strength": 15,
@@ -925,9 +800,9 @@
     },
     "classes": [
      [
-      "fighter",
-      "Champion",
-      12
+      "druid",
+      "Circle of Stars",
+      2
      ]
     ],
     "feats": [
@@ -940,7 +815,8 @@
     "routine": "shadow_blade",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": []
@@ -949,21 +825,23 @@
   "roles": [],
   "unmatched": [],
   "notes": [
-   "No class split found",
    "No ability scores found"
   ],
   "companion": "",
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 13,
+  "number": 11,
   "title": "\"Ultimate Dark Knight\" (Vengeance Paladin / Hexblade / Shadow Sorcerer)",
   "source": "ItalianSpartacus (ULTIMATE DARK KNIGHT Build)",
   "build": {
-   "name": "13. Ultimate Dark Knight",
+   "name": "11. Ultimate Dark Knight",
    "preset": "fighter_gwm",
    "equipment": {
     "1": {
@@ -1025,7 +903,8 @@
     "routine": "two_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": [
@@ -1046,14 +925,17 @@
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 14,
+  "number": 12,
   "title": "\"Unstoppable Death Monk\" (Death Cleric / Way of Shadow Monk)",
   "source": "ItalianSpartacus (This Death Monk Build Makes Shadowheart UNSTOPPABLE)",
   "build": {
-   "name": "14. Unstoppable Death Monk",
+   "name": "12. Unstoppable Death Monk",
    "preset": "fighter_gwm",
    "equipment": {
     "1": {
@@ -1113,7 +995,8 @@
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": []
@@ -1126,14 +1009,17 @@
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 15,
+  "number": 13,
   "title": "\"Jedi Consular\" (Bladesinger / Eldritch Knight Fighter)",
   "source": "ItalianSpartacus (ELDRITCH KNIGHT Just Got Way Stronger & MY FAVORITE PATCH 8 WIZARD Jedi Build)",
   "build": {
-   "name": "15. Jedi Consular",
+   "name": "13. Jedi Consular",
    "preset": "fighter_gwm",
    "equipment": {
     "1": {
@@ -1186,16 +1072,13 @@
       11
      ]
     ],
-    "feats": [
-     "War Caster",
-     "intelligence+2",
-     "Savage Attacker"
-    ],
+    "feats": [],
     "fighting_styles": [],
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": []
@@ -1204,20 +1087,23 @@
   "roles": [],
   "unmatched": [],
   "notes": [
-   "Ability scores aren't a 27 point buy with +2/+1, using the defaults"
+   "No ability scores found"
   ],
   "companion": "Lae'zel, Gale, or Tav — Multi-Attack War Magic + Booming Blade Melee/Caster Hybrid.",
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 16,
+  "number": 14,
   "title": "\"Death Cleric Necromancer\" (6 Death Cleric / 6 Necromancy Wizard)",
-  "source": "ItalianSpartacus (DEATH CLERIC NECROMANCER Build Will Make You UNSTOPPABLE!)",
+  "source": "ItalianSpartacus (DEATH CLERIC NECROMANCER Build Will Make You UNSTOPPABLE!) & Jay Dunna (Best Wizard Multiclass Tier List)",
   "build": {
-   "name": "16. Death Cleric Necromancer",
+   "name": "14. Death Cleric Necromancer",
    "preset": "fighter_gwm",
    "equipment": {
     "1": {
@@ -1244,16 +1130,16 @@
     "name": "Death Cleric Necromancer",
     "race": "Human",
     "scores": {
-     "strength": 8,
-     "dexterity": 12,
-     "constitution": 14,
-     "intelligence": 15,
-     "wisdom": 14,
+     "strength": 15,
+     "dexterity": 14,
+     "constitution": 15,
+     "intelligence": 8,
+     "wisdom": 10,
      "charisma": 8
     },
     "bonus": {
-     "wisdom": 2,
-     "intelligence": 1
+     "strength": 2,
+     "constitution": 1
     },
     "classes": [
      [
@@ -1272,7 +1158,8 @@
     "routine": "cantrip",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": [
@@ -1284,19 +1171,24 @@
    "summoner"
   ],
   "unmatched": [],
-  "notes": [],
-  "companion": "Gale or Shadowheart — Undead Summoner & Level 6 Necrotic Nuker.",
+  "notes": [
+   "No ability scores found"
+  ],
+  "companion": "Gale or Shadowheart — Undead Summoner & Immortal Level 6 Circle of Death Nuker.",
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 17,
+  "number": 15,
   "title": "\"Perfect Celestial Monk\" (Circle of the Stars Druid / Open Hand Monk) & \"Radiant Druid\"",
   "source": "ItalianSpartacus (Build The PERFECT CELESTIAL MONK & MY TOP BUILDS for Patch 8)",
   "build": {
-   "name": "17. Perfect Celestial Monk",
+   "name": "15. Perfect Celestial Monk",
    "preset": "fighter_gwm",
    "equipment": {
     "2": {
@@ -1319,16 +1211,16 @@
     "name": "Perfect Celestial Monk",
     "race": "Human",
     "scores": {
-     "strength": 10,
-     "dexterity": 15,
-     "constitution": 14,
+     "strength": 15,
+     "dexterity": 14,
+     "constitution": 15,
      "intelligence": 8,
-     "wisdom": 15,
+     "wisdom": 10,
      "charisma": 8
     },
     "bonus": {
-     "wisdom": 2,
-     "dexterity": 1
+     "strength": 2,
+     "constitution": 1
     },
     "classes": [
      [
@@ -1357,7 +1249,8 @@
     "routine": "unarmed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": [
@@ -1371,19 +1264,24 @@
    "control"
   ],
   "unmatched": [],
-  "notes": [],
+  "notes": [
+   "No ability scores found"
+  ],
   "companion": "Jaheira, Halsin, Shadowheart, or Karlach — Radiant/Force Unarmed Striker & Cosmic Omen Dice Controller.",
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 18,
+  "number": 16,
   "title": "\"Karlach, God of Thunder\" (Giant Barbarian / Fighter Thrower)",
   "source": "ItalianSpartacus (KARLACH, GOD OF THUNDER Giant Barb Build)",
   "build": {
-   "name": "18. Karlach, God of Thunder",
+   "name": "16. Karlach, God of Thunder",
    "preset": "fighter_gwm",
    "equipment": {
     "1": {
@@ -1444,7 +1342,8 @@
     "routine": "thrown",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": [
@@ -1456,19 +1355,24 @@
    "control"
   ],
   "unmatched": [],
-  "notes": [],
+  "notes": [
+   "No ability scores found"
+  ],
   "companion": "Karlach — Thunder/Lightning All-Weapon Thrower & Enemy Suplex Controller.",
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 19,
+  "number": 17,
   "title": "\"Skald\" Dual-Wielding Bard (Swords Bard / Swashbuckler Rogue)",
   "source": "ItalianSpartacus (MY NEW FAVORITE BARD Skald Build)",
   "build": {
-   "name": "19. Skald Dual-Wielding Bard",
+   "name": "17. Skald Dual-Wielding Bard",
    "preset": "fighter_gwm",
    "equipment": {
     "1": {
@@ -1496,73 +1400,6 @@
     "name": "Skald Dual-Wielding Bard",
     "race": "Human",
     "scores": {
-     "strength": 8,
-     "dexterity": 15,
-     "constitution": 14,
-     "intelligence": 8,
-     "wisdom": 10,
-     "charisma": 15
-    },
-    "bonus": {
-     "dexterity": 2,
-     "charisma": 1
-    },
-    "classes": [
-     [
-      "bard",
-      "College of Swords",
-      8
-     ],
-     [
-      "rogue",
-      "Swashbuckler",
-      4
-     ]
-    ],
-    "feats": [
-     "dexterity+2",
-     "Savage Attacker"
-    ],
-    "fighting_styles": [],
-    "routine": "dual_wield",
-    "cantrip": "Eldritch Blast",
-    "spell": "",
-    "toggles": {}
-   },
-   "carried": [],
-   "roles": [
-    "striker",
-    "face"
-   ]
-  },
-  "carried": [],
-  "roles": [
-   "striker",
-   "face"
-  ],
-  "unmatched": [],
-  "notes": [],
-  "companion": "Astarion or Tav (Party Face & Sleight of Hand Skill Monkey) — Dual-Wielding Piercing Crit Striker.",
-  "themes": [],
-  "provides": [],
-  "needs": [],
-  "path": ""
- },
- {
-  "number": 20,
-  "title": "\"Updated Frost Death Knight\" (Hexblade / Shadow Sorcerer), \"Pure 12 Hexblade\" & \"Arcane Stalker\"",
-  "source": "ItalianSpartacus (UPDATED DEATH KNIGHT Build, ULTIMATE PURE Hexblade Warlock Build, & MY TOP BUILDS for Patch 8)",
-  "build": {
-   "name": "20. Updated Frost Death Knight",
-   "preset": "fighter_gwm",
-   "equipment": {},
-   "buffs": {},
-   "conditions": [],
-   "levels": {},
-   "character": {
-    "name": "Updated Frost Death Knight",
-    "race": "Human",
-    "scores": {
      "strength": 15,
      "dexterity": 14,
      "constitution": 15,
@@ -1576,44 +1413,54 @@
     },
     "classes": [
      [
-      "fighter",
-      "Champion",
-      12
+      "bard",
+      "College of Swords",
+      8
+     ],
+     [
+      "rogue",
+      "Swashbuckler",
+      4
      ]
     ],
-    "feats": [
-     "Sharpshooter",
-     "Alert",
-     "dexterity+2"
-    ],
+    "feats": [],
     "fighting_styles": [],
-    "routine": "shadow_blade",
+    "routine": "dual_wield",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
-   "roles": []
+   "roles": [
+    "striker",
+    "face"
+   ]
   },
   "carried": [],
-  "roles": [],
+  "roles": [
+   "striker",
+   "face"
+  ],
   "unmatched": [],
   "notes": [
-   "No class split found",
    "No ability scores found"
   ],
-  "companion": "",
+  "companion": "Astarion or Tav (Party Face & Sleight of Hand Skill Monkey) — Dual-Wielding Piercing Crit Striker.",
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 21,
+  "number": 18,
   "title": "The 11/1 Fire Sorlock (Ranked #1 Overall Build in BG3 — S-Tier)",
-  "source": "Toyhouze (Ranking the 12 BEST Builds in BG3 Patch 8)",
+  "source": "",
   "build": {
-   "name": "21. The 11/1 Fire Sorlock",
+   "name": "18. The 11/1 Fire Sorlock",
    "preset": "fighter_gwm",
    "equipment": {
     "1": {
@@ -1641,15 +1488,15 @@
     "name": "The 11/1 Fire Sorlock",
     "race": "Human",
     "scores": {
-     "strength": 8,
+     "strength": 15,
      "dexterity": 14,
      "constitution": 15,
      "intelligence": 8,
      "wisdom": 10,
-     "charisma": 15
+     "charisma": 8
     },
     "bonus": {
-     "charisma": 2,
+     "strength": 2,
      "constitution": 1
     },
     "classes": [
@@ -1669,7 +1516,8 @@
     "routine": "cantrip",
     "cantrip": "Fire Bolt",
     "spell": "Scorching Ray",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": [
@@ -1683,19 +1531,24 @@
    "face"
   ],
   "unmatched": [],
-  "notes": [],
+  "notes": [
+   "No ability scores found"
+  ],
   "companion": "Tav / Dark Urge (Party Face) or Gale — Quadratic AoE Nuker, Single-Target Boss Melter & 6-Target Command Controller.",
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 22,
+  "number": 19,
   "title": "The 10/2 Smite Swords Bard — \"SSB\" (S-Tier)",
-  "source": "Toyhouze (Ranking the 12 BEST Builds in BG3 Patch 8)",
+  "source": "",
   "build": {
-   "name": "22. The 10/2 Smite Swords Bard — SSB",
+   "name": "19. The 10/2 Smite Swords Bard — SSB",
    "preset": "fighter_gwm",
    "equipment": {
     "1": {
@@ -1750,7 +1603,8 @@
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": [
@@ -1769,14 +1623,17 @@
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 23,
+  "number": 20,
   "title": "Shadow Blade Eldritch Knight (S-Tier — 5 Attacks Per Turn)",
-  "source": "Toyhouze (Ranking the 12 BEST Builds in BG3 Patch 8)",
+  "source": "",
   "build": {
-   "name": "23. Shadow Blade Eldritch Knight",
+   "name": "20. Shadow Blade Eldritch Knight",
    "preset": "fighter_gwm",
    "equipment": {
     "1": {
@@ -1828,7 +1685,8 @@
     "routine": "shadow_blade",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [
     "Resonance Stone"
@@ -1847,14 +1705,17 @@
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 24,
+  "number": 21,
   "title": "5/4/3 Gloom Stalker / Assassin / Arcane Archer (S-Tier)",
-  "source": "Toyhouze (Ranking the 12 BEST Builds in BG3 Patch 8)",
+  "source": "",
   "build": {
-   "name": "24. 5/4/3 Gloom Stalker / Assassin / Arcane Archer",
+   "name": "21. 5/4/3 Gloom Stalker / Assassin / Arcane Archer",
    "preset": "fighter_gwm",
    "equipment": {},
    "buffs": {},
@@ -1897,7 +1758,8 @@
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": []
@@ -1912,14 +1774,17 @@
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 25,
+  "number": 22,
   "title": "Tavern Brawler Open Hand Monk (S-Tier — Zero Gear Contention)",
-  "source": "Toyhouze (Ranking the 12 BEST Builds in BG3 Patch 8)",
+  "source": "",
   "build": {
-   "name": "25. Tavern Brawler Open Hand Monk",
+   "name": "22. Tavern Brawler Open Hand Monk",
    "preset": "fighter_gwm",
    "equipment": {},
    "buffs": {},
@@ -1959,10 +1824,11 @@
     ],
     "feats": [],
     "fighting_styles": [],
-    "routine": "unarmed",
+    "routine": "one_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": []
@@ -1973,18 +1839,21 @@
   "notes": [
    "No ability scores found"
   ],
-  "companion": "Karlach (using Soul Coins for +2d4 Fire damage on every unarmed punch all day) or Ascended Astarion (+1d10 Necrotic on every punch).",
+  "companion": "Karlach (using Soul Coins for +2d4 Fire damage on every punch all day) or Ascended Astarion (+1d10 Necrotic on every punch).",
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 26,
+  "number": 23,
   "title": "Eldritch Blast Sorlock (A-Tier — 12 Beams Per Turn + Prone/Fear Lock)",
-  "source": "Toyhouze (Ranking the 12 BEST Builds in BG3 Patch 8)",
+  "source": "",
   "build": {
-   "name": "26. Eldritch Blast Sorlock",
+   "name": "23. Eldritch Blast Sorlock",
    "preset": "fighter_gwm",
    "equipment": {},
    "buffs": {},
@@ -2020,16 +1889,6 @@
       "fighter",
       "Arcane Archer",
       2
-     ],
-     [
-      "warlock",
-      "The Archfey",
-      2
-     ],
-     [
-      "sorcerer",
-      "Draconic Bloodline",
-      6
      ]
     ],
     "feats": [],
@@ -2037,7 +1896,8 @@
     "routine": "cantrip",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": []
@@ -2052,14 +1912,17 @@
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 27,
+  "number": 24,
   "title": "Circle of the Stars / Light Cleric RadOrb Tank (A-Tier)",
-  "source": "Toyhouze (Ranking the 12 BEST Builds in BG3 Patch 8)",
+  "source": "",
   "build": {
-   "name": "27. Circle of the Stars / Light Cleric RadOrb Tank",
+   "name": "24. Circle of the Stars / Light Cleric RadOrb Tank",
    "preset": "fighter_gwm",
    "equipment": {},
    "buffs": {},
@@ -2090,32 +1953,15 @@
       "cleric",
       "Light Domain",
       10
-     ],
-     [
-      "cleric",
-      "Light Domain",
-      11
-     ],
-     [
-      "druid",
-      "Circle of Stars",
-      1
-     ],
-     [
-      "cleric",
-      "Light Domain",
-      12
      ]
     ],
-    "feats": [
-     "Alert",
-     "War Caster"
-    ],
+    "feats": [],
     "fighting_styles": [],
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": []
    },
    "carried": [],
    "roles": []
@@ -2130,21 +1976,240 @@
   "themes": [],
   "provides": [],
   "needs": [],
-  "path": ""
+  "path": "",
+  "permanent_buffs": "",
+  "gear_estimated": false,
+  "caveats": ""
  },
  {
-  "number": 28,
-  "title": "Tavern Brawler Eldritch Knight Thrower (A-Tier)",
-  "source": "Toyhouze (Ranking the 12 BEST Builds in BG3 Patch 8)",
+  "number": 25,
+  "title": "Action Surge Bladesinger Smiter",
+  "source": "d4: D&D Deep Dive (Video ID: dS8rrFCVSBc)",
   "build": {
-   "name": "28. Tavern Brawler Eldritch Knight Thrower",
+   "name": "25. Action Surge Bladesinger Smiter",
+   "preset": "fighter_gwm",
+   "equipment": {
+    "1": {
+     "melee_off": "bg3:knife_of_the_undermountain_king",
+     "helmet": "bg3:warped_headband_of_intellect",
+     "armour": "bg3:the_graceful_cloth"
+    },
+    "2": {
+     "ring_1": "bg3:shadow_cloaked_ring"
+    }
+   },
+   "buffs": {
+    "1": [
+     "haste"
+    ],
+    "2": [
+     "haste"
+    ],
+    "3": [
+     "haste"
+    ]
+   },
+   "conditions": [],
+   "levels": {},
+   "character": {
+    "name": "Action Surge Bladesinger Smiter",
+    "race": "Githyanki",
+    "scores": {
+     "strength": 8,
+     "dexterity": 15,
+     "constitution": 14,
+     "intelligence": 15,
+     "wisdom": 10,
+     "charisma": 8
+    },
+    "bonus": {
+     "dexterity": 2,
+     "intelligence": 1
+    },
+    "classes": [
+     [
+      "wizard",
+      "Bladesinging",
+      8
+     ],
+     [
+      "paladin",
+      "Oath of the Crown",
+      2
+     ],
+     [
+      "fighter",
+      "Arcane Archer",
+      2
+     ]
+    ],
+    "feats": [
+     "dexterity+2",
+     "Savage Attacker"
+    ],
+    "fighting_styles": [
+     "Defence",
+     "Two-Weapon Fighting"
+    ],
+    "routine": "shadow_blade",
+    "cantrip": "Fire Bolt",
+    "spell": "",
+    "toggles": {},
+    "level_order": [
+     "wizard",
+     "wizard",
+     "wizard",
+     "wizard",
+     "wizard",
+     "wizard",
+     "paladin",
+     "paladin",
+     "fighter",
+     "fighter",
+     "wizard",
+     "wizard"
+    ]
+   },
+   "carried": [],
+   "roles": [
+    "frontline",
+    "striker",
+    "healer"
+   ]
+  },
+  "carried": [],
+  "roles": [
+   "frontline",
+   "striker",
+   "healer"
+  ],
+  "unmatched": [],
+  "notes": [
+   "Respec not modelled (uses the final split): Act 3 = Fighter 1 / Oath of the Crown Paladin 2 / Fighter 2 / Bladesinging Wizard 8"
+  ],
+  "companion": "Lae'zel, Gale, Tav",
+  "themes": [
+   "psychic",
+   "thunder",
+   "crit"
+  ],
+  "provides": [
+   "healing"
+  ],
+  "needs": [
+   "haste",
+   "warding bond",
+   "shield of faith"
+  ],
+  "path": "either",
+  "permanent_buffs": "Act 1 Auntie Ethel's Hair DEX; Act 1 Awakened",
+  "gear_estimated": true,
+  "caveats": "On Honour Mode, Haste only grants 1 extra attack instead of a full Action (5 attacks on Action Surge turn instead of 7). Taking 2 Fighter and 2 Paladin caps spell slots at Level 5 (enough for 4d8 Shadow Blade, but no Level 6 spell slots). Creator does not prescribe a full fixed item list beyond showcased pieces."
+ },
+ {
+  "number": 26,
+  "title": "Pure Two-Handed GWM Hexblade",
+  "source": "d4: D&D Deep Dive (Video ID: dS8rrFCVSBc)",
+  "build": {
+   "name": "26. Pure Two-Handed GWM Hexblade",
+   "preset": "fighter_gwm",
+   "equipment": {},
+   "buffs": {
+    "1": [
+     "hex"
+    ]
+   },
+   "conditions": [],
+   "levels": {},
+   "character": {
+    "name": "Pure Two-Handed GWM Hexblade",
+    "race": "Human",
+    "scores": {
+     "strength": 8,
+     "dexterity": 14,
+     "constitution": 15,
+     "intelligence": 8,
+     "wisdom": 10,
+     "charisma": 15
+    },
+    "bonus": {
+     "constitution": 1,
+     "charisma": 2
+    },
+    "classes": [
+     [
+      "warlock",
+      "The Hexblade",
+      12
+     ]
+    ],
+    "feats": [
+     "Great Weapon Master",
+     "charisma+2",
+     "Savage Attacker"
+    ],
+    "fighting_styles": [],
+    "routine": "two_handed",
+    "cantrip": "Eldritch Blast",
+    "spell": "",
+    "toggles": {},
+    "level_order": []
+   },
+   "carried": [
+    "Drakethroat Glaive"
+   ],
+   "roles": [
+    "frontline",
+    "striker",
+    "face",
+    "summoner"
+   ]
+  },
+  "carried": [
+   "Drakethroat Glaive"
+  ],
+  "roles": [
+   "frontline",
+   "striker",
+   "face",
+   "summoner"
+  ],
+  "unmatched": [],
+  "notes": [],
+  "companion": "Wyll, Tav",
+  "themes": [
+   "thunder",
+   "necrotic",
+   "summons",
+   "crit"
+  ],
+  "provides": [
+   "slow",
+   "frightened",
+   "paralysed"
+  ],
+  "needs": [
+   "bless",
+   "faerie fire"
+  ],
+  "path": "either",
+  "permanent_buffs": "Act 1 Auntie Ethel's Hair CHA",
+  "gear_estimated": true,
+  "caveats": "Polearm Master bonus action haft attack is bugged in BG3 and does not use Charisma from Bind Hexed Weapon or apply weapon elemental damage riders. You cannot maintain a separate Pact Weapon and Hexed Weapon simultaneously to dual-wield with Charisma. Elemental Weapon does not stack with Drakethroat Glaive's Draconic Elemental Weapon buff."
+ },
+ {
+  "number": 27,
+  "title": "Improved Divine Smite Hex-Crown Paladin",
+  "source": "Jay Dunna (Video ID: ozAYagAW7Jo)",
+  "build": {
+   "name": "27. Improved Divine Smite Hex-Crown Paladin",
    "preset": "fighter_gwm",
    "equipment": {},
    "buffs": {},
    "conditions": [],
    "levels": {},
    "character": {
-    "name": "Tavern Brawler Eldritch Knight Thrower",
+    "name": "Improved Divine Smite Hex-Crown Paladin",
     "race": "Human",
     "scores": {
      "strength": 15,
@@ -2160,36 +2225,449 @@
     },
     "classes": [
      [
-      "fighter",
-      "Eldritch Knight",
+      "paladin",
+      "Oath of the Crown",
       11
      ],
      [
-      "cleric",
-      "War Domain",
+      "warlock",
+      "The Hexblade",
       1
      ]
     ],
     "feats": [],
-    "fighting_styles": [],
-    "routine": "thrown",
+    "fighting_styles": [
+     "unknown"
+    ],
+    "routine": "two_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {}
+    "toggles": {},
+    "level_order": [
+     "paladin",
+     "warlock",
+     "paladin",
+     "paladin",
+     "paladin",
+     "paladin",
+     "paladin",
+     "paladin",
+     "paladin",
+     "paladin",
+     "paladin",
+     "paladin"
+    ]
    },
    "carried": [],
-   "roles": []
+   "roles": [
+    "frontline",
+    "striker",
+    "support",
+    "face"
+   ]
   },
   "carried": [],
-  "roles": [],
+  "roles": [
+   "frontline",
+   "striker",
+   "support",
+   "face"
+  ],
   "unmatched": [],
   "notes": [
    "No ability scores found"
   ],
-  "companion": "Lae'zel or Karlach — Heavy Armor 6-Throw Action Surge Artillery.",
-  "themes": [],
-  "provides": [],
-  "needs": [],
-  "path": ""
+  "companion": "Minthara, Wyll, Tav",
+  "themes": [
+   "thunder",
+   "crit"
+  ],
+  "provides": [
+   "bless"
+  ],
+  "needs": [
+   "unknown"
+  ],
+  "path": "either",
+  "permanent_buffs": "",
+  "gear_estimated": true,
+  "caveats": "Oath of the Crown is easy to break via dialogue choices; highlighted as a multiclass strategy breakdown rather than a full gear guide."
+ },
+ {
+  "number": 28,
+  "title": "Darkness Dirty Trickster",
+  "source": "Jay Dunna (Video ID: ozAYagAW7Jo)",
+  "build": {
+   "name": "28. Darkness Dirty Trickster",
+   "preset": "fighter_gwm",
+   "equipment": {},
+   "buffs": {
+    "1": [
+     "hex"
+    ]
+   },
+   "conditions": [],
+   "levels": {},
+   "character": {
+    "name": "Darkness Dirty Trickster",
+    "race": "Human",
+    "scores": {
+     "strength": 15,
+     "dexterity": 14,
+     "constitution": 15,
+     "intelligence": 8,
+     "wisdom": 10,
+     "charisma": 8
+    },
+    "bonus": {
+     "strength": 2,
+     "constitution": 1
+    },
+    "classes": [
+     [
+      "rogue",
+      "Swashbuckler",
+      4
+     ],
+     [
+      "bard",
+      "College of Swords",
+      6
+     ],
+     [
+      "warlock",
+      "The Hexblade",
+      2
+     ]
+    ],
+    "feats": [],
+    "fighting_styles": [
+     "Two-Weapon Fighting"
+    ],
+    "routine": "one_handed",
+    "cantrip": "Eldritch Blast",
+    "spell": "",
+    "toggles": {},
+    "level_order": []
+   },
+   "carried": [],
+   "roles": [
+    "frontline",
+    "striker",
+    "control",
+    "face",
+    "skills"
+   ]
+  },
+  "carried": [],
+  "roles": [
+   "frontline",
+   "striker",
+   "control",
+   "face",
+   "skills"
+  ],
+  "unmatched": [],
+  "notes": [
+   "No ability scores found"
+  ],
+  "companion": "Astarion, Wyll, Tav",
+  "themes": [
+   "darkness",
+   "thunder",
+   "crit"
+  ],
+  "provides": [
+   "darkness",
+   "frightened"
+  ],
+  "needs": [
+   "darkness"
+  ],
+  "path": "either",
+  "permanent_buffs": "",
+  "gear_estimated": true,
+  "caveats": "Highlighted as a multiclass strategy breakdown in Video ID ozAYagAW7Jo; uses Arrow of Darkness or darkness caster to create obscured zones."
+ },
+ {
+  "number": 29,
+  "title": "Camp Cleric Party Buffer",
+  "source": "Casual Veteran Gamer (https://www.youtube.com/watch?v=BdK5SbRRF5E)",
+  "build": {
+   "name": "29. Camp Cleric Party Buffer",
+   "preset": "fighter_gwm",
+   "equipment": {
+    "1": {
+     "armour": "bg3:chain_mail",
+     "melee_off": "bg3:wooden_shield"
+    },
+    "2": {
+     "armour": "bg3:adamantine_splint_armour"
+    },
+    "3": {
+     "amulet": "bg3:spellcrux_amulet"
+    }
+   },
+   "buffs": {},
+   "conditions": [],
+   "levels": {},
+   "character": {
+    "name": "Camp Cleric Party Buffer",
+    "race": "Human",
+    "scores": {
+     "strength": 8,
+     "dexterity": 14,
+     "constitution": 15,
+     "intelligence": 8,
+     "wisdom": 15,
+     "charisma": 10
+    },
+    "bonus": {
+     "constitution": 1,
+     "wisdom": 2
+    },
+    "classes": [
+     [
+      "cleric",
+      "Life Domain",
+      12
+     ]
+    ],
+    "feats": [
+     "wisdom+2",
+     "Tough",
+     "Heavy Armour Master"
+    ],
+    "fighting_styles": [],
+    "routine": "cantrip",
+    "cantrip": "Sacred Flame",
+    "spell": "",
+    "toggles": {},
+    "level_order": []
+   },
+   "carried": [],
+   "roles": [
+    "healer",
+    "support"
+   ]
+  },
+  "carried": [],
+  "roles": [
+   "healer",
+   "support"
+  ],
+  "unmatched": [],
+  "notes": [
+   "Not a modelled damage spell: Light, Aid"
+  ],
+  "companion": "Gale, Hireling",
+  "themes": [
+   "radiant orb"
+  ],
+  "provides": [
+   "bless",
+   "healing"
+  ],
+  "needs": [
+   "none"
+  ],
+  "path": "either",
+  "permanent_buffs": "",
+  "gear_estimated": true,
+  "caveats": "Warding Bond transfers 50 percent of damage taken by the buffed ally to the camp Cleric; non-Gale camp casters can die in camp if they run out of HP, whereas Gale automatically heals himself in camp. Trickery Domain can be chosen instead of Life Domain if you want Seeming at Level 9 to trigger Githyanki racial equipment passives on non-Githyanki party members."
+ },
+ {
+  "number": 30,
+  "title": "Camp Land Druid Buffer",
+  "source": "Casual Veteran Gamer (https://www.youtube.com/watch?v=BdK5SbRRF5E)",
+  "build": {
+   "name": "30. Camp Land Druid Buffer",
+   "preset": "fighter_gwm",
+   "equipment": {
+    "1": {
+     "melee_main": "base:quarterstaff"
+    }
+   },
+   "buffs": {},
+   "conditions": [],
+   "levels": {},
+   "character": {
+    "name": "Camp Land Druid Buffer",
+    "race": "Wood Half-Elf",
+    "scores": {
+     "strength": 8,
+     "dexterity": 14,
+     "constitution": 15,
+     "intelligence": 8,
+     "wisdom": 15,
+     "charisma": 10
+    },
+    "bonus": {
+     "constitution": 1,
+     "wisdom": 2
+    },
+    "classes": [
+     [
+      "druid",
+      "Circle of the Land",
+      12
+     ]
+    ],
+    "feats": [
+     "wisdom+2",
+     "constitution+2",
+     "Alert"
+    ],
+    "fighting_styles": [],
+    "routine": "cantrip",
+    "cantrip": "Produce Flame",
+    "spell": "",
+    "toggles": {},
+    "level_order": []
+   },
+   "carried": [],
+   "roles": [
+    "healer",
+    "support"
+   ]
+  },
+  "carried": [],
+  "roles": [
+   "healer",
+   "support"
+  ],
+  "unmatched": [
+   "Main Hand = Caitlin's Staff"
+  ],
+  "notes": [
+   "Not a modelled damage spell: Guidance, Heroes' Feast"
+  ],
+  "companion": "Hireling, Halsin, Jaheira, Gale",
+  "themes": [
+   "poison"
+  ],
+  "provides": [
+   "healing"
+  ],
+  "needs": [
+   "none"
+  ],
+  "path": "either",
+  "permanent_buffs": "",
+  "gear_estimated": true,
+  "caveats": "Wind Walk is for exploration only and prevents normal attacks until dismissed."
+ },
+ {
+  "number": 31,
+  "title": "Camp Transmutation Alchemist & Stone Buffer",
+  "source": "Casual Veteran Gamer (https://www.youtube.com/watch?v=BdK5SbRRF5E) & Cephalopocalypse (http://www.youtube.com/watch?v=9BcQXb37Bik)",
+  "build": {
+   "name": "31. Camp Transmutation Alchemist & Stone Buffer",
+   "preset": "fighter_gwm",
+   "equipment": {
+    "1": {
+     "ring_1": "bg3:shapeshifter_s_boon_ring"
+    },
+    "2": {
+     "gloves": "bg3:gloves_of_power"
+    },
+    "3": {
+     "amulet": "bg3:khalid_s_gift"
+    }
+   },
+   "buffs": {},
+   "conditions": [],
+   "levels": {},
+   "character": {
+    "name": "Camp Transmutation Alchemist & Stone Buffer",
+    "race": "Lightfoot Halfling",
+    "scores": {
+     "strength": 8,
+     "dexterity": 12,
+     "constitution": 10,
+     "intelligence": 15,
+     "wisdom": 15,
+     "charisma": 10
+    },
+    "bonus": {
+     "intelligence": 1,
+     "wisdom": 2
+    },
+    "classes": [
+     [
+      "wizard",
+      "Transmutation School",
+      6
+     ],
+     [
+      "rogue",
+      "Arcane Trickster",
+      1
+     ],
+     [
+      "druid",
+      "Circle of the Land",
+      1
+     ],
+     [
+      "sorcerer",
+      "Draconic Bloodline",
+      4
+     ]
+    ],
+    "feats": [
+     "wisdom+2",
+     "wisdom+1,intelligence+1"
+    ],
+    "fighting_styles": [],
+    "routine": "cantrip",
+    "cantrip": "Fire Bolt",
+    "spell": "",
+    "toggles": {},
+    "level_order": [
+     "wizard",
+     "wizard",
+     "wizard",
+     "wizard",
+     "wizard",
+     "wizard",
+     "rogue",
+     "druid",
+     "sorcerer",
+     "sorcerer",
+     "sorcerer",
+     "sorcerer"
+    ]
+   },
+   "carried": [],
+   "roles": [
+    "support",
+    "skills"
+   ]
+  },
+  "carried": [],
+  "roles": [
+   "support",
+   "skills"
+  ],
+  "unmatched": [],
+  "notes": [
+   "Not a modelled damage spell: Light, Mage Armour"
+  ],
+  "companion": "Hireling",
+  "themes": [
+   "arcane acuity"
+  ],
+  "provides": [
+   "haste",
+   "darkvision"
+  ],
+  "needs": [
+   "guidance"
+  ],
+  "path": "either",
+  "permanent_buffs": "",
+  "gear_estimated": true,
+  "caveats": "Normally only 1 active Transmuter's Stone can exist at a time. Sending a stone to the camp chest exploit is patched in newer versions, where the buff disappears if the stone leaves the character's inventory or a new stone is created."
  }
 ]
