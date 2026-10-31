@@ -132,6 +132,10 @@ def builds_using():
     return users
 
 def short(text, limit=220):
+    # Leftover template options from the wiki text (radius m=1.5 ft=5, level=0) and coordinate pairs
+    text = re.sub(r"\b[a-z]+\s*=\s*\S+", "", text)
+    text = re.sub(r"\s+-?\d+\s+-?\d+\s*$", "", text)
+    text = re.sub(r"\b(\w+(?: \w+)?) \1('s)?\b", r"\1\2", text) # Character links keep the name and its alias: "Minthara Minthara's"
     text = re.sub(r"\s+", " ", text).strip()
     return text if len(text) <= limit else text[:limit].rsplit(" ", 1)[0] + "…"
 

@@ -34,3 +34,15 @@ def test_figures_and_details():
     spot, points = groups("wilderness", DEFAULT_RARITIES, [], [])[0]
     assert details(points)
     assert DATA["unplaced"]
+
+def test_party_gear_layer():
+    from components.bg3_map import party_checklist, party_gear
+    from components.bg3_planner import DEFAULT_PARTY
+    gear = party_gear(DEFAULT_PARTY, "1")
+    assert "bg3:caustic_band" in gear and len(gear["bg3:caustic_band"]) == 2 # Lae'zel and Karlach both wear it
+    assert {o["value"] for o in party_checklist(DEFAULT_PARTY, "1")} == set(gear)
+    # Party gear shows whatever the rarity filter, with a ring trace, until it's ticked as collected
+    fig = figure("underdark", [], ["party_only"], [], party=gear)
+    assert any(t.name == "Party gear to collect" for t in fig.data)
+    fig = figure("underdark", [], ["party_only"], [], party=gear, collected=list(gear))
+    assert not fig.data
