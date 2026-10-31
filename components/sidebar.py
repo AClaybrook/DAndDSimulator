@@ -50,11 +50,12 @@ sidebar = html.Div(
         dbc.Collapse(
             dbc.Nav(
                 [
-                    dbc.NavLink("BG3 Party Planner", href="#bg3-planner",external_link=True,active="exact"),
-                    dbc.NavLink("Character Builder", href="#character-builder",external_link=True,active="exact"),
-                    dbc.NavLink("Enemy Builder", href="#enemy-builder",external_link=True,active="exact"),
-                    dbc.NavLink("Simulator", href="#simulator",external_link=True,active="exact"),
-                    dbc.NavLink("Damage Tables", href="#damage-tables",external_link=True,active="exact"),
+                    dbc.NavLink("BG3 Party Planner", href="/#bg3-planner",external_link=True,active="exact"),
+                    dbc.NavLink("Character Builder", href="/#character-builder",external_link=True,active="exact"),
+                    dbc.NavLink("Enemy Builder", href="/#enemy-builder",external_link=True,active="exact"),
+                    dbc.NavLink("Simulator", href="/#simulator",external_link=True,active="exact"),
+                    dbc.NavLink("Damage Tables", href="/#damage-tables",external_link=True,active="exact"),
+                    dbc.NavLink([html.I(className="fa-solid fa-map me-1"), "Act 1 Map"], href="/map", active="exact"),
                 ],
                 vertical=True,
                 pills=True,

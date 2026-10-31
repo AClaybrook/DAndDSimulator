@@ -19,6 +19,7 @@ from game_data.classes import BUILDS
 from components.sweeps import SWEEP_PARAMETERS
 from components.help import GRAPH_DESCRIPTIONS, quick_start
 from components.bg3_planner import planner
+from components.bg3_map import map_page, register_map_callbacks
 
 # %%
 # Example
@@ -121,7 +122,7 @@ server = app.server
 fig = generate_plot_data(characters, df_by_rounds, template=template, title="Damage Per Round Distribution")
 
 
-content = html.Div(dbc.Container([
+main_page = html.Div(dbc.Container([
     quick_start(),
     planner(),
     # Character Builder
@@ -201,7 +202,9 @@ content = html.Div(dbc.Container([
             ]),
         ),
     ], className="panel"),
-], fluid=True), id="page-content")
+], fluid=True), id="main-page")
+# The Act 1 map is a separate page at /map, both are in the layout and the url shows one
+content = html.Div([main_page, html.Div(map_page(), id="map-page", style={"display": "none"})], id="page-content")
 
 # Always reachable simulate button, results scroll into view when a simulation finishes
 floating_simulate = dbc.Button([html.I(className="fa-solid fa-dice-d20 me-2"), "Simulate"], color="primary", id="simulate-float", class_name="shadow",
@@ -218,6 +221,7 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content, floating_simula
 #%%
 
 register_callbacks(app, template=template)
+register_map_callbacks(app, template=template)
 
 if __name__ == '__main__':
     # Get the port number from the environment variable, or set to 8050 if not available

@@ -51,6 +51,8 @@ Sessions: every simulation saves the session in your browser, after a reload you
 
 # Technical Notes/Features:
 
+Act 1 Map (sidebar, or `/map`): where to find the notable Act 1 gear and key pickups, on the game's minimap images with in-game coordinates, filters by rarity and a search. Item locations from bg3.wiki; map images © Larian Studios via bg3.wiki.
+
 ## Project Layout
 * `computations/`: the generic simulator
     * `models.py`: Character, Enemy and Attack dataclasses, and the translation of class features into attack/damage contexts
@@ -127,6 +129,7 @@ Rough priority order, the first items have the most impact for the least work.
 
 ### Done in 2.7 (in progress)
 * BG3 Party Planner: act checkpoints, gear and buffs per act, equipment conflicts, expected damage per act, send to the simulator
+* Act 1 item map
 * Typed extra damage on hits (i.e. 1d4 fire on a slashing weapon), resisted separately
 
 * Patch 8 item database from bg3.wiki (911 items, 311 with modelled effects), cross-checked with the community unique item checklist sheet, example builds with gear per act

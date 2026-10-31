@@ -5,6 +5,14 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 ## Active
 - [ ] Open a PR with the BG3 planner work once you have looked at it
 
+## Priorities (most useful while playing first)
+1. [ ] Map: "my party's gear" layer, highlighting the items the planner party (or one member) wears at the current act, with a checklist of what is still to collect
+2. [ ] Map: missables, i.e. items lost to story choices (bg3/data/story_choices.json) or to leaving Act 1 (Grove raid, Nightsong, Crèche), flagged on the map and in the planner
+3. [ ] Map: more key pickups (permanent buffs, tomes, crafting) in bg3/data/map_pickups.json, and from the build doc's Permanent buffs lines
+4. [ ] Map: Act 2 and 3 (Shadow-Cursed Lands and Lower City minimap images exist on bg3.wiki; calibrate them like Act 1), Grymforge and Rosymorn images if they turn up
+5. [ ] Doc builds: re-import once the doc uses docs/request_spec.md; importer support for Level order, Respec and Party blocks
+6. [ ] Engine and party items below (synergies, two sided fights, more subclass features)
+
 ## Next
 - [ ] Doc builds: ask for the structured format (docs/bg3_build_format.md) in the build doc, then re-import; free text builds miss ability scores, routines and exact slots
 - [ ] Synergies: Arcane Acuity stacks (Hat of Fire Acuity, Battlemage's gloves), Bless/Haste from another member's concentration, Bleeding, Radiating Orb (defensive), Steeped in Bliss mental save disadvantage
@@ -21,6 +29,8 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - [ ] Illithid powers
 
 ## Done
+- 2026-10-31: Act 1 map page (/map): notable items and key pickups on the game's minimap images (Wilderness, Underdark, Crèche; Grymforge, Mountain Pass and Nautiloid on a coordinate grid), rarity filters (Rare and up by default), "used by example builds" filter, trader stock and dungeon interiors toggles, item search, click for details and wiki links, and a list of notable items with no map location. Images calibrated to the in-game minimap coordinates from waypoints (bg3/build_map.py)
+- 2026-10-30: docs/request_spec.md, the structured format request for the build doc's maintainer
 - 2026-10-29: Typed extra damage on hits (resisted separately), validated against the exact math
 - 2026-10-29: BG3 build model: class preset + gear, buffs and conditional toggles per act, act checkpoints (levels 5/8/12)
 - 2026-10-29: Party conflicts: shared unique items, duplicates, two-handed with an off hand, wrong slots, items from later acts
