@@ -15,7 +15,7 @@ from pathlib import Path
 from bg3.abilities import point_buy_problems
 from bg3.buffs import BUFFS
 from bg3.build import Bg3Build
-from bg3.character import CANTRIPS, CLASSES, FEATS, LEVELLED_SPELLS, RACES, ROUTINES, SHADOW_BLADE, SUBCLASSES, Bg3Character
+from bg3.character import CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_SPELLS, RACES, ROUTINES, SHADOW_BLADE, SUBCLASSES, Bg3Character
 from bg3.items import catalog
 from computations.models import STATS
 
@@ -311,7 +311,8 @@ def parse_build(number, title, body, index, items):
                              bonus=bonus or Bg3Character().bonus, classes=classes or [["fighter", "Champion", 12]],
                              feats=parse_improvements(field(body, "Feats")) if re.search(r"^Feats:.*,", body, re.M) and "Level" not in
                              field(body, "Feats") else parse_feats(body), routine=routine,
-                             fighting_styles=[s.strip() for s in field(body, "Fighting styles").split(",") if s.strip()])
+                             fighting_styles=[s.strip() for s in field(body, "Fighting styles").split(",") if s.strip() and s.strip().lower() not in UNKNOWN] or
+                             [f for f in FIGHTING_STYLES if re.search(rf"{f} Fighting Style", body, re.I)])
     if field(body, "Level order"):
         character.level_order = parse_level_order(field(body, "Level order"), character.classes)
         if not character.level_order:

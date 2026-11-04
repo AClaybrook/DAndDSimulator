@@ -34,5 +34,11 @@ BUFFS = {b.key: b for b in [
     Buff("hex", "Hex", 1, [Effect("extra_damage", "1d6 necrotic")], "Cast by the character, bonus action", concentration=True, self_cast=True),
     Buff("divine_favour", "Divine Favour", 1, [Effect("extra_damage", "1d4 radiant", applies_to="weapon")], "Paladin, bonus action",
          concentration=True, self_cast=True),
+    # Phalar Aluve's Melody (Act 1 Underdark longsword): the wielder spends an action, once per short rest, for 5 turns. Not concentration
+    Buff("phalar_sing", "Phalar Aluve: Sing", 1, [Effect("attack_dice", "1d4")],
+         "Allies within 6m but not the wielder: +1d4 to attack rolls and saves for 5 turns. Costs the wielder an action, once per short rest"),
+    Buff("phalar_shriek", "Phalar Aluve: Shriek", 1, [Effect("extra_damage", "1d4 thunder")],
+         "Enemies within 6m take +1d4 thunder whenever they are damaged (here: once per hit) and -1d4 on saves, for 5 turns. "
+         "Costs the wielder an action, once per short rest"),
     *elixirs(),
 ]}

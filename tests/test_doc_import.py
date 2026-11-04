@@ -73,3 +73,10 @@ Act 1 Gear: Main Hand = unknown; Shield = Wooden Shield
     assert class_levels(character, 2) == {"paladin": 1, "warlock": 1} # The dip comes at level 2, not 12
     assert build["unmatched"] == [] # "unknown" is skipped, Shield is the off hand
     assert build["build"]["equipment"]["1"] == {"melee_off": "bg3:wooden_shield"}
+
+def test_free_text_fighting_style_and_phalar_buffs():
+    from bg3.buffs import BUFFS
+    from bg3.doc_import import import_text
+    build = import_text("Build 41: Archer\nClass Split: 12 Arcane Archer Fighter.\nLevels 1-11: Archery Fighting Style, Arcane Shot\n")[0]
+    assert build["build"]["character"]["fighting_styles"] == ["Archery"]
+    assert not BUFFS["phalar_sing"].concentration and BUFFS["phalar_shriek"].effects[0].value == "1d4 thunder"

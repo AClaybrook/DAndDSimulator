@@ -245,7 +245,9 @@
      "charisma+2",
      "Great Weapon Master"
     ],
-    "fighting_styles": [],
+    "fighting_styles": [
+     "Defence"
+    ],
     "routine": "two_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
@@ -430,7 +432,9 @@
      "Sharpshooter",
      "dexterity+2"
     ],
-    "fighting_styles": [],
+    "fighting_styles": [
+     "Archery"
+    ],
     "routine": "ranged",
     "cantrip": "Eldritch Blast",
     "spell": "",
@@ -2236,9 +2240,7 @@
      ]
     ],
     "feats": [],
-    "fighting_styles": [
-     "unknown"
-    ],
+    "fighting_styles": [],
     "routine": "two_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
