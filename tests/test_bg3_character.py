@@ -27,6 +27,9 @@ def test_multiclass_levels_feats_and_spell_slots():
     # Feats at class levels 4 (paladin) and 4 (sorcerer, character level 10)
     assert [lv for lv, _ in feat_opportunities(sorcadin)] == [4, 10]
     assert caster_level({"paladin": 5}, {}) == 3 and caster_level({"paladin": 6, "sorcerer": 6}, {}) == 9
+    # Eldritch Knight: level 2 slots at Fighter 7 (Shadow Blade), level 3 slots at 13; nothing before Fighter 3
+    ek = {"fighter": "Eldritch Knight"}
+    assert [caster_level({"fighter": n}, ek) for n in (2, 3, 6, 7, 12, 13)] == [0, 1, 2, 3, 4, 5]
     character, _ = compile_character(sorcadin, 12)
     assert character.once_per_turn_die_mod_list == ["5d8"] and character.advantage # Smite with 5th level slots, Vow of Enmity
 

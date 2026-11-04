@@ -183,13 +183,15 @@ def feat_opportunities(character, level=MAX_LEVEL):
 
 def caster_level(levels, subclasses):
     """ Multiclass spellcaster level: full casters count fully, half casters half (rounded down), Eldritch Knights and Arcane Tricksters a third.
-        A single class half caster rounds up """
+        A single class half or third caster rounds up """
     full = sum(n for cls, n in levels.items() if CASTER.get(cls) == "full")
     half = [n for cls, n in levels.items() if CASTER.get(cls) == "half"]
     third = sum(n for cls, n in levels.items() if subclasses.get(cls) in ("Eldritch Knight", "Arcane Trickster"))
     casting_classes = sum(1 for cls in levels if cls in CASTER) + (third > 0)
     if casting_classes == 1 and len(half) == 1:
         return ceil(half[0] / 2) if half[0] >= 2 else 0
+    if casting_classes == 1 and third and not full:
+        return ceil(third / 3) if third >= 3 else 0 # Single class third casters round up too: level 2 slots at 7, level 3 at 13
     return full + sum(n // 2 for n in half) + third // 3
 
 def warlock_pact_slots(warlock_level):
