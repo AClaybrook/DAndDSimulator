@@ -23,6 +23,7 @@ COLORS = {"Common": "#9a9a9a", "Uncommon": "#3fbf5a", "Rare": "#3d8ff5", "Very R
 WEAPON_SLOTS = {"weapon"}
 LABELLED = {"Key", "Legendary", "Very Rare", "Story"}
 PARTY_COLOR = "#ffd23f"
+MISSABLE_COLOR = "#ff5a5f"
 
 def asset(path):
     try:
@@ -53,6 +54,8 @@ def visible(point, rarities, options, search, party=None):
         return True
     if "party_only" in options:
         return False
+    if "only_missables" in options:
+        return bool(point.get("missable"))
     if point["rarity"] not in rarities:
         return False
     if "builds" in options and point["rarity"] != "Key" and not point["builds"]:
@@ -80,7 +83,8 @@ def hover(points, party=None):
     for p in points[:12]:
         tags = [p["rarity"]] + (["trader"] if p["trader"] else []) + (["⚠ " + p["tip"][:60]] if re.search(r"exclusive|before|only", p.get("tip", ""), re.I) else []) + ([f"in {len(p['builds'])} example builds"] if p["builds"] else [])
         lines.append(f"{'★ ' if p['builds'] else ''}{p['name']} <span style='color:{COLORS.get(p['rarity'])}'>({', '.join(tags)})</span>" +
-                     (f"<br>&nbsp;&nbsp;<span style='color:{PARTY_COLOR}'>Party: {', '.join(party[p['key']])}</span>" if p["key"] in party else ""))
+                     (f"<br>&nbsp;&nbsp;<span style='color:{PARTY_COLOR}'>Party: {', '.join(party[p['key']])}</span>" if p["key"] in party else "") +
+                     (f"<br>&nbsp;&nbsp;<span style='color:{MISSABLE_COLOR}'>⚠ Missable: {p['missable'][:90]}</span>" if p.get("missable") else ""))
     if len(points) > 12:
         lines.append(f"+{len(points) - 12} more, click for the list")
     return "<br>".join(lines)
@@ -126,6 +130,13 @@ def figure(map_key, rarities, options, search, template="plotly_dark", party=Non
                                  hovertext=[hover(ps, party) for _, ps in mine], hoverinfo="text",
                                  customdata=[[map_key, f"{s[0]},{s[1]}"] for s, _ in mine],
                                  marker={"symbol": "circle-open", "size": 28, "color": PARTY_COLOR, "line": {"width": 3}}))
+    # Missable items: a red ring (story choices, one-of rewards, time limits)
+    risky = [(spot, ps) for spot, ps in spots if any(p.get("missable") for p in ps)] if "missables" in options else []
+    if risky:
+        fig.add_trace(go.Scatter(x=[s[0] for s, _ in risky], y=[s[1] for s, _ in risky], mode="markers", name="Missable",
+                                 hovertext=[hover(ps, party) for _, ps in risky], hoverinfo="text",
+                                 customdata=[[map_key, f"{s[0]},{s[1]}"] for s, _ in risky],
+                                 marker={"symbol": "circle-open", "size": 22, "color": MISSABLE_COLOR, "line": {"width": 2}}))
     layout = {"template": template, "margin": {"l": 0, "r": 0, "t": 10, "b": 0}, "dragmode": "pan", "hoverlabel": {"align": "left", "bgcolor": "rgba(20,20,24,0.95)", "bordercolor": "#555", "font": {"color": "#eeeeee", "size": 12}},
               "legend": {"orientation": "h", "y": 1.0, "x": 0.01, "bgcolor": "rgba(0,0,0,0.55)"}, "uirevision": map_key}
     if m["image"]:
@@ -153,7 +164,8 @@ def details(points, party=None):
             html.Span(f" {p['rarity']}" + (f", {p['slot'].replace('_', ' ')}" if p.get("slot") else ""), className="text-muted small"),
             html.Div(p["where"], className="small") if p.get("where") else None,
             html.Div(p["notes"], className="small text-muted") if p.get("notes") else None,
-            html.Div(f"Checklist note: {p['tip']}", className="small text-warning") if p.get("tip") else None,
+            html.Div(f"⚠ Missable: {p['missable']}", className="small text-danger") if p.get("missable") else None,
+            html.Div(f"Checklist note: {p['tip']}", className="small text-warning") if p.get("tip") and p.get("tip") != p.get("missable") else None,
             html.Div(f"Your party: {', '.join(party[p['key']])}", className="small", style={"color": PARTY_COLOR}) if p["key"] in party else None,
             html.Div(f"★ Used by: {', '.join(p['builds'])}", className="small text-info") if p.get("builds") else None,
         ], className="mb-2"))
@@ -184,7 +196,9 @@ def party_checklist(party, act):
         where = "; ".join(sorted({f"{p['location']} ({MAPS[p['map']]['label']})" for p in spots})) or \
             next((u["where"] or u["location"] for u in DATA["unplaced"] if u["key"] == key), "") or "not on the Act 1 maps"
         name = items[key].name if key in items else key
-        options.append((not spots, name, {"label": html.Span([html.B(name), f" - {', '.join(users)}. ", html.Span(where, className="text-muted")]),
+        risk = next((p["missable"] for p in [*spots, *DATA["unplaced"]] if p.get("key") == key and p.get("missable")), "")
+        options.append((not spots, name, {"label": html.Span([html.B(name), f" - {', '.join(users)}. ", html.Span(where, className="text-muted"),
+                                                              html.Span(f" ⚠ Missable: {risk}", className="text-danger") if risk else None]),
                                          "value": key}))
     return [o for *_, o in sorted(options, key=lambda o: (o[0], o[1]))]
 
@@ -207,17 +221,19 @@ def map_page():
                                    label_checked_class_name="active"), xs=12, class_name="mb-2"),
             dbc.Col(dbc.Checklist(options=[{"label": r if r != "Key" else "Key pickups", "value": r} for r in RARITIES], value=DEFAULT_RARITIES,
                                   id="map-rarities", inline=True, class_name="small"), xs=12, lg=6, class_name="mb-2"),
-            dbc.Col(dbc.Checklist(options=[{"label": "Show item names", "value": "names"},
+            dbc.Col(dbc.Checklist(options=[{"label": "Mark missables", "value": "missables"},
+                                           {"label": "Only missables", "value": "only_missables"},
+                                           {"label": "Show item names", "value": "names"},
                                            {"label": "Only my party's gear", "value": "party_only"},
                                            {"label": "Only gear used by example builds", "value": "builds"},
                                            {"label": "Hide trader stock", "value": "no_traders"},
                                            {"label": "Hide items inside dungeons", "value": "no_inside"}],
-                                  value=[], id="map-options", inline=True, class_name="small"), xs=12, lg=6, class_name="mb-2"),
+                                  value=["missables"], id="map-options", inline=True, class_name="small"), xs=12, lg=6, class_name="mb-2"),
             dbc.Col(dcc.Dropdown(options=names, multi=True, placeholder="Find items (highlights them on any map)...", id="map-search"),
                     xs=12, class_name="mb-2"),
         ]),
         dbc.Row([
-            dbc.Col(dcc.Graph(id="map-graph", figure=figure("wilderness", DEFAULT_RARITIES, [], []), style={"height": "80vh"},
+            dbc.Col(dcc.Graph(id="map-graph", figure=figure("wilderness", DEFAULT_RARITIES, ["missables"], []), style={"height": "80vh"},
                               config={"scrollZoom": True, "displaylogo": False}), xs=12, xl=9),
             dbc.Col([html.Div(id="map-found", className="small mb-2"),
                      html.Div("Hover a marker for its items, click it for details.", id="map-details", className="small"),

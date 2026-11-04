@@ -8,5 +8,7 @@
   {"key": "florrick", "act": 1, "quest": "Rescue the Grand Duke (Florrick's reward, one of three)", "source": "https://bg3.wiki/wiki/Rescue_the_Grand_Duke",
    "paths": {"The Joltshooter": ["bg3:the_joltshooter"], "The Sparky Points": ["bg3:the_sparky_points"], "The Spellsparkler": ["bg3:the_spellsparkler"]}},
   {"key": "thrinn", "act": 1, "quest": "Find the Missing Boots (Thrinn's reward, one of two)", "source": "https://bg3.wiki/wiki/Find_the_Missing_Boots",
-   "paths": {"Bracing Band": ["bg3:bracing_band"], "Armour of Uninhibited Kushigo": ["bg3:armour_of_uninhibited_kushigo"]}}
+   "paths": {"Bracing Band": ["bg3:bracing_band"], "Armour of Uninhibited Kushigo": ["bg3:armour_of_uninhibited_kushigo"]}},
+  {"key": "sussur", "act": 1, "quest": "Sussur Bark (one bark, one Sussur weapon)", "source": "https://bg3.wiki/wiki/Sussur_Bark",
+   "paths": {"Sussur Dagger": ["bg3:sussur_dagger"], "Sussur Greatsword": ["bg3:sussur_greatsword"], "Sussur Sickle": ["bg3:sussur_sickle"]}}
 ]

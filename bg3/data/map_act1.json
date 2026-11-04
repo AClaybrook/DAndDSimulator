@@ -62,6 +62,7 @@
 "inside": false,
 "x": 1285,
 "y": -801,
+"missable": "",
 "px": 187.8,
 "py": 948.8
 },
@@ -82,6 +83,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -102,6 +104,7 @@
 "inside": false,
 "x": 1380,
 "y": -798,
+"missable": "",
 "px": 757.8,
 "py": 932.2
 },
@@ -124,6 +127,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -146,6 +150,7 @@
 "inside": false,
 "x": 112,
 "y": -88,
+"missable": "",
 "px": 616.4,
 "py": 270.2
 },
@@ -166,6 +171,7 @@
 "inside": false,
 "x": -55,
 "y": -93,
+"missable": "",
 "px": 232.3,
 "py": 281.8
 },
@@ -186,6 +192,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -206,6 +213,7 @@
 "inside": false,
 "x": 262,
 "y": 481,
+"missable": "",
 "px": 1161.6,
 "py": 440.9
 },
@@ -226,6 +234,7 @@
 "inside": false,
 "x": 160,
 "y": -147,
+"missable": "",
 "px": 726.8,
 "py": 405.9
 },
@@ -246,6 +255,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -269,6 +279,7 @@
 "inside": true,
 "x": 223,
 "y": 525,
+"missable": "",
 "px": 1058.6,
 "py": 324.7
 },
@@ -290,6 +301,7 @@
 "x": 5,
 "y": -363,
 "from_checklist": true,
+"missable": "Take before leaving Nautiloid",
 "px": null,
 "py": null
 },
@@ -310,6 +322,7 @@
 "inside": false,
 "x": 58,
 "y": -110,
+"missable": "Story choice (Deliver Nere's Head): only with 'Glut is Sovereign', not with Spaw is Sovereign",
 "px": 492.2,
 "py": 320.8
 },
@@ -331,6 +344,7 @@
 "x": -41,
 "y": -209,
 "from_checklist": true,
+"missable": "",
 "px": 264.5,
 "py": 548.5
 },
@@ -351,6 +365,7 @@
 "inside": false,
 "x": 79,
 "y": -106,
+"missable": "Story choice (Deliver Nere's Head): only with 'Spaw is Sovereign', not with Glut is Sovereign",
 "px": 540.5,
 "py": 311.6
 },
@@ -371,6 +386,7 @@
 "inside": false,
 "x": 262,
 "y": 542,
+"missable": "",
 "px": 1161.6,
 "py": 279.8
 },
@@ -391,6 +407,7 @@
 "inside": false,
 "x": -68,
 "y": 258,
+"missable": "Pickpocket Mayrina",
 "px": 290.4,
 "py": 1029.6
 },
@@ -411,6 +428,7 @@
 "inside": true,
 "x": 82,
 "y": 450,
+"missable": "",
 "px": 686.4,
 "py": 522.7
 },
@@ -434,6 +452,7 @@
 "inside": false,
 "x": 1379,
 "y": -662,
+"missable": "",
 "px": 751.8,
 "py": 184.2
 },
@@ -454,6 +473,7 @@
 "inside": true,
 "x": 113,
 "y": -127,
+"missable": "",
 "px": 618.7,
 "py": 359.9
 },
@@ -476,6 +496,7 @@
 "inside": false,
 "x": -43,
 "y": -129,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -496,6 +517,7 @@
 "inside": false,
 "x": 111,
 "y": -89,
+"missable": "",
 "px": 614.1,
 "py": 272.5
 },
@@ -516,6 +538,7 @@
 "inside": false,
 "x": -624,
 "y": 224,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -537,6 +560,7 @@
 "x": 230,
 "y": 271,
 "from_checklist": true,
+"missable": "",
 "px": 1077.1,
 "py": 995.3
 },
@@ -557,6 +581,7 @@
 "inside": false,
 "x": 152,
 "y": 366,
+"missable": "",
 "px": 871.2,
 "py": 744.5
 },
@@ -577,6 +602,7 @@
 "inside": false,
 "x": 2,
 "y": 365,
+"missable": "",
 "px": 475.2,
 "py": 747.1
 },
@@ -597,6 +623,7 @@
 "inside": true,
 "x": 276,
 "y": 298,
+"missable": "",
 "px": 1198.6,
 "py": 924.0
 },
@@ -617,6 +644,7 @@
 "inside": false,
 "x": 121,
 "y": -245,
+"missable": "",
 "px": 637.1,
 "py": 631.3
 },
@@ -637,6 +665,7 @@
 "inside": true,
 "x": -74,
 "y": 210,
+"missable": "",
 "px": 274.6,
 "py": 1156.3
 },
@@ -657,6 +686,7 @@
 "inside": false,
 "x": 112,
 "y": -249,
+"missable": "",
 "px": 616.4,
 "py": 640.5
 },
@@ -677,6 +707,7 @@
 "inside": false,
 "x": -48,
 "y": -282,
+"missable": "",
 "px": 248.4,
 "py": 716.4
 },
@@ -699,6 +730,7 @@
 "inside": false,
 "x": -558,
 "y": 230,
+"missable": "Can only make two Adamentine Items",
 "px": null,
 "py": null
 },
@@ -721,6 +753,7 @@
 "inside": false,
 "x": -558,
 "y": 230,
+"missable": "Can only make two Adamentine Items",
 "px": null,
 "py": null
 },
@@ -741,6 +774,7 @@
 "inside": false,
 "x": -628,
 "y": 320,
+"missable": "Story choice (Find the Missing Boots (Thrinn's reward, one of two)): only with 'Armour of Uninhibited Kushigo', not with Bracing Band",
 "px": null,
 "py": null
 },
@@ -761,6 +795,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -783,6 +818,7 @@
 "inside": true,
 "x": 22,
 "y": -209,
+"missable": "",
 "px": 409.4,
 "py": 548.5
 },
@@ -803,6 +839,7 @@
 "inside": false,
 "x": 1380,
 "y": -798,
+"missable": "",
 "px": 757.8,
 "py": 932.2
 },
@@ -823,6 +860,7 @@
 "inside": false,
 "x": 177,
 "y": 560,
+"missable": "",
 "px": 937.2,
 "py": 232.3
 },
@@ -845,6 +883,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -865,6 +904,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -885,6 +925,7 @@
 "inside": false,
 "x": 177,
 "y": 562,
+"missable": "",
 "px": 937.2,
 "py": 227.0
 },
@@ -905,6 +946,7 @@
 "inside": false,
 "x": -657,
 "y": 425,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -925,6 +967,7 @@
 "inside": false,
 "x": -655,
 "y": 424,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -945,6 +988,7 @@
 "inside": false,
 "x": -609,
 "y": -246,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -965,6 +1009,7 @@
 "inside": false,
 "x": 71,
 "y": -220,
+"missable": "",
 "px": 522.1,
 "py": 573.8
 },
@@ -985,6 +1030,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1005,6 +1051,7 @@
 "inside": false,
 "x": -71,
 "y": 592,
+"missable": "",
 "px": 282.5,
 "py": 147.8
 },
@@ -1025,6 +1072,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1045,6 +1093,7 @@
 "inside": true,
 "x": -6,
 "y": 493,
+"missable": "",
 "px": 454.1,
 "py": 409.2
 },
@@ -1065,6 +1114,7 @@
 "inside": false,
 "x": 1380,
 "y": -798,
+"missable": "",
 "px": 757.8,
 "py": 932.2
 },
@@ -1085,6 +1135,7 @@
 "inside": false,
 "x": 205,
 "y": 516,
+"missable": "",
 "px": 1011.1,
 "py": 348.5
 },
@@ -1105,6 +1156,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1125,6 +1177,7 @@
 "inside": false,
 "x": 205,
 "y": 516,
+"missable": "",
 "px": 1011.1,
 "py": 348.5
 },
@@ -1145,6 +1198,7 @@
 "inside": true,
 "x": 113,
 "y": -127,
+"missable": "",
 "px": 618.7,
 "py": 359.9
 },
@@ -1167,6 +1221,7 @@
 "inside": false,
 "x": 176,
 "y": -247,
+"missable": "",
 "px": 763.6,
 "py": 635.9
 },
@@ -1187,6 +1242,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1207,6 +1263,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1227,6 +1284,7 @@
 "inside": false,
 "x": 1380,
 "y": -798,
+"missable": "",
 "px": 757.8,
 "py": 932.2
 },
@@ -1247,6 +1305,7 @@
 "inside": true,
 "x": 24,
 "y": 401,
+"missable": "",
 "px": 533.3,
 "py": 652.1
 },
@@ -1267,6 +1326,7 @@
 "inside": false,
 "x": 177,
 "y": 562,
+"missable": "",
 "px": 937.2,
 "py": 227.0
 },
@@ -1287,6 +1347,7 @@
 "inside": true,
 "x": 246,
 "y": 423,
+"missable": "",
 "px": 1119.4,
 "py": 594.0
 },
@@ -1307,6 +1368,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1327,6 +1389,7 @@
 "inside": true,
 "x": 246,
 "y": 423,
+"missable": "",
 "px": 1119.4,
 "py": 594.0
 },
@@ -1347,6 +1410,7 @@
 "inside": false,
 "x": -53,
 "y": -391,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1367,6 +1431,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1387,6 +1452,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1407,6 +1473,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1427,6 +1494,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1447,6 +1515,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1467,6 +1536,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1487,6 +1557,7 @@
 "inside": true,
 "x": 70,
 "y": -240,
+"missable": "",
 "px": 519.8,
 "py": 619.8
 },
@@ -1507,6 +1578,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1527,6 +1599,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -1547,6 +1620,7 @@
 "inside": false,
 "x": 1380,
 "y": -798,
+"missable": "",
 "px": 757.8,
 "py": 932.2
 },
@@ -1567,6 +1641,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -1589,6 +1664,7 @@
 "inside": false,
 "x": -43,
 "y": -129,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1609,6 +1685,7 @@
 "inside": true,
 "x": -114,
 "y": 612,
+"missable": "Must return chest unopened",
 "px": 169.0,
 "py": 95.0
 },
@@ -1629,6 +1706,7 @@
 "inside": true,
 "x": 82,
 "y": 450,
+"missable": "",
 "px": 686.4,
 "py": 522.7
 },
@@ -1649,6 +1727,7 @@
 "inside": false,
 "x": -645,
 "y": 360,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1669,6 +1748,7 @@
 "inside": false,
 "x": -99,
 "y": 424,
+"missable": "",
 "px": 208.6,
 "py": 591.4
 },
@@ -1689,6 +1769,7 @@
 "inside": false,
 "x": -43,
 "y": -129,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1709,6 +1790,7 @@
 "inside": false,
 "x": 111,
 "y": -89,
+"missable": "",
 "px": 614.1,
 "py": 272.5
 },
@@ -1729,6 +1811,7 @@
 "inside": false,
 "x": 82,
 "y": -97,
+"missable": "",
 "px": 547.4,
 "py": 290.9
 },
@@ -1756,6 +1839,7 @@
 "inside": true,
 "x": 113,
 "y": -127,
+"missable": "",
 "px": 618.7,
 "py": 359.9
 },
@@ -1779,6 +1863,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -1799,6 +1884,7 @@
 "inside": false,
 "x": 111,
 "y": -89,
+"missable": "",
 "px": 614.1,
 "py": 272.5
 },
@@ -1824,6 +1910,7 @@
 "inside": false,
 "x": -854,
 "y": 780,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1844,6 +1931,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1864,6 +1952,7 @@
 "inside": false,
 "x": 1335,
 "y": -660,
+"missable": "",
 "px": 487.8,
 "py": 173.2
 },
@@ -1884,6 +1973,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1904,6 +1994,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -1924,6 +2015,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1944,6 +2036,7 @@
 "inside": false,
 "x": -36,
 "y": -265,
+"missable": "Only revealed upon taking stuff out",
 "px": 276.0,
 "py": 677.3
 },
@@ -1964,6 +2057,7 @@
 "inside": true,
 "x": 3,
 "y": -414,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -1984,6 +2078,7 @@
 "inside": true,
 "x": 24,
 "y": 401,
+"missable": "",
 "px": 533.3,
 "py": 652.1
 },
@@ -2004,6 +2099,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -2024,6 +2120,7 @@
 "inside": false,
 "x": -99,
 "y": 424,
+"missable": "",
 "px": 208.6,
 "py": 591.4
 },
@@ -2044,6 +2141,7 @@
 "inside": true,
 "x": 34,
 "y": 394,
+"missable": "",
 "px": 559.7,
 "py": 670.6
 },
@@ -2064,6 +2162,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -2084,6 +2183,7 @@
 "inside": false,
 "x": 1288,
 "y": -759,
+"missable": "",
 "px": 205.8,
 "py": 717.8
 },
@@ -2104,6 +2204,7 @@
 "inside": false,
 "x": 1380,
 "y": -798,
+"missable": "",
 "px": 757.8,
 "py": 932.2
 },
@@ -2124,6 +2225,7 @@
 "inside": true,
 "x": -114,
 "y": 612,
+"missable": "",
 "px": 169.0,
 "py": 95.0
 },
@@ -2146,6 +2248,7 @@
 "inside": true,
 "x": 32,
 "y": 379,
+"missable": "",
 "px": 554.4,
 "py": 710.2
 },
@@ -2168,6 +2271,7 @@
 "inside": false,
 "x": 1380,
 "y": -798,
+"missable": "",
 "px": 757.8,
 "py": 932.2
 },
@@ -2188,6 +2292,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -2208,6 +2313,7 @@
 "inside": false,
 "x": 80,
 "y": 347,
+"missable": "",
 "px": 681.1,
 "py": 794.6
 },
@@ -2233,6 +2339,7 @@
 "inside": false,
 "x": -99,
 "y": 424,
+"missable": "",
 "px": 208.6,
 "py": 591.4
 },
@@ -2253,6 +2360,7 @@
 "inside": false,
 "x": -43,
 "y": -129,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -2276,6 +2384,7 @@
 "inside": false,
 "x": 1348,
 "y": -677,
+"missable": "",
 "px": 565.8,
 "py": 266.8
 },
@@ -2298,6 +2407,7 @@
 "inside": false,
 "x": -43,
 "y": -129,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -2322,6 +2432,7 @@
 "inside": false,
 "x": 1380,
 "y": -798,
+"missable": "",
 "px": 757.8,
 "py": 932.2
 },
@@ -2342,6 +2453,7 @@
 "inside": true,
 "x": -114,
 "y": 612,
+"missable": "",
 "px": 169.0,
 "py": 95.0
 },
@@ -2362,6 +2474,7 @@
 "inside": false,
 "x": 55,
 "y": -93,
+"missable": "",
 "px": 485.3,
 "py": 281.8
 },
@@ -2382,6 +2495,7 @@
 "inside": true,
 "x": -6,
 "y": 493,
+"missable": "",
 "px": 454.1,
 "py": 409.2
 },
@@ -2402,6 +2516,7 @@
 "inside": false,
 "x": 205,
 "y": 516,
+"missable": "",
 "px": 1011.1,
 "py": 348.5
 },
@@ -2424,6 +2539,7 @@
 "inside": false,
 "x": 208,
 "y": 427,
+"missable": "",
 "px": 1019.0,
 "py": 583.4
 },
@@ -2444,6 +2560,7 @@
 "inside": true,
 "x": -114,
 "y": 612,
+"missable": "",
 "px": 169.0,
 "py": 95.0
 },
@@ -2467,6 +2584,7 @@
 "inside": false,
 "x": -55,
 "y": -93,
+"missable": "",
 "px": 232.3,
 "py": 281.8
 },
@@ -2487,6 +2605,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -2509,6 +2628,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -2529,6 +2649,7 @@
 "inside": false,
 "x": -55,
 "y": -93,
+"missable": "",
 "px": 232.3,
 "py": 281.8
 },
@@ -2549,6 +2670,7 @@
 "inside": false,
 "x": 201,
 "y": 539,
+"missable": "",
 "px": 1000.6,
 "py": 287.8
 },
@@ -2569,6 +2691,7 @@
 "inside": false,
 "x": 37,
 "y": 644,
+"missable": "",
 "px": 567.6,
 "py": 10.6
 },
@@ -2589,6 +2712,7 @@
 "inside": false,
 "x": 95,
 "y": 210,
+"missable": "",
 "px": 720.7,
 "py": 1156.3
 },
@@ -2609,6 +2733,7 @@
 "inside": true,
 "x": 22,
 "y": -209,
+"missable": "",
 "px": 409.4,
 "py": 548.5
 },
@@ -2629,6 +2754,7 @@
 "inside": false,
 "x": -43,
 "y": -129,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -2651,6 +2777,7 @@
 "inside": false,
 "x": -691,
 "y": 374,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -2671,6 +2798,7 @@
 "inside": false,
 "x": 289,
 "y": 488,
+"missable": "",
 "px": 1232.9,
 "py": 422.4
 },
@@ -2691,6 +2819,7 @@
 "inside": false,
 "x": -617,
 "y": 320,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -2711,6 +2840,7 @@
 "inside": false,
 "x": 111,
 "y": -89,
+"missable": "",
 "px": 614.1,
 "py": 272.5
 },
@@ -2731,6 +2861,7 @@
 "inside": false,
 "x": 1392,
 "y": -752,
+"missable": "",
 "px": 829.8,
 "py": 679.2
 },
@@ -2751,6 +2882,7 @@
 "inside": false,
 "x": -595,
 "y": 310,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -2771,6 +2903,7 @@
 "inside": false,
 "x": -606,
 "y": 282,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -2791,6 +2924,7 @@
 "inside": false,
 "x": -620,
 "y": 325,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -2811,6 +2945,7 @@
 "inside": false,
 "x": -666,
 "y": 464,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -2831,6 +2966,7 @@
 "inside": false,
 "x": -574,
 "y": 380,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -2851,6 +2987,7 @@
 "inside": false,
 "x": -574,
 "y": 380,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -2874,6 +3011,7 @@
 "inside": false,
 "x": 1365,
 "y": -663,
+"missable": "",
 "px": 667.8,
 "py": 189.8
 },
@@ -2895,6 +3033,7 @@
 "x": 125,
 "y": -253,
 "from_checklist": true,
+"missable": "",
 "px": 646.3,
 "py": 649.8
 },
@@ -2915,6 +3054,7 @@
 "inside": false,
 "x": -558,
 "y": 230,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -2937,6 +3077,7 @@
 "inside": false,
 "x": 29,
 "y": 405,
+"missable": "",
 "px": 546.5,
 "py": 641.5
 },
@@ -2957,6 +3098,7 @@
 "inside": false,
 "x": 82,
 "y": -241,
+"missable": "",
 "px": 547.4,
 "py": 622.1
 },
@@ -2977,6 +3119,7 @@
 "inside": false,
 "x": 163,
 "y": -248,
+"missable": "",
 "px": 733.7,
 "py": 638.2
 },
@@ -2999,6 +3142,7 @@
 "inside": false,
 "x": 120,
 "y": 35,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -3019,6 +3163,7 @@
 "inside": true,
 "x": 172,
 "y": 423,
+"missable": "",
 "px": 924.0,
 "py": 594.0
 },
@@ -3039,6 +3184,7 @@
 "inside": false,
 "x": 195,
 "y": 252,
+"missable": "",
 "px": 984.7,
 "py": 1045.4
 },
@@ -3059,6 +3205,7 @@
 "inside": false,
 "x": 177,
 "y": 562,
+"missable": "",
 "px": 937.2,
 "py": 227.0
 },
@@ -3079,6 +3226,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -3099,6 +3247,7 @@
 "inside": false,
 "x": 55,
 "y": -93,
+"missable": "",
 "px": 485.3,
 "py": 281.8
 },
@@ -3120,6 +3269,7 @@
 "x": -4,
 "y": 277,
 "from_checklist": true,
+"missable": "",
 "px": 459.4,
 "py": 979.4
 },
@@ -3140,6 +3290,7 @@
 "inside": false,
 "x": 52,
 "y": -70,
+"missable": "",
 "px": 478.4,
 "py": 228.8
 },
@@ -3160,6 +3311,7 @@
 "inside": false,
 "x": 111,
 "y": -89,
+"missable": "",
 "px": 614.1,
 "py": 272.5
 },
@@ -3180,6 +3332,7 @@
 "inside": true,
 "x": 113,
 "y": -127,
+"missable": "",
 "px": 618.7,
 "py": 359.9
 },
@@ -3200,6 +3353,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -3222,6 +3376,7 @@
 "inside": false,
 "x": 13,
 "y": 366,
+"missable": "",
 "px": 504.2,
 "py": 744.5
 },
@@ -3242,6 +3397,7 @@
 "inside": true,
 "x": -10,
 "y": 250,
+"missable": "",
 "px": 443.5,
 "py": 1050.7
 },
@@ -3262,6 +3418,7 @@
 "inside": true,
 "x": -10,
 "y": 250,
+"missable": "",
 "px": 443.5,
 "py": 1050.7
 },
@@ -3282,6 +3439,7 @@
 "inside": false,
 "x": 246,
 "y": 553,
+"missable": "",
 "px": 1119.4,
 "py": 250.8
 },
@@ -3302,6 +3460,7 @@
 "inside": false,
 "x": -628,
 "y": 320,
+"missable": "Story choice (Find the Missing Boots (Thrinn's reward, one of two)): only with 'Bracing Band', not with Armour of Uninhibited Kushigo",
 "px": null,
 "py": null
 },
@@ -3327,6 +3486,7 @@
 "inside": false,
 "x": -55,
 "y": -93,
+"missable": "",
 "px": 232.3,
 "py": 281.8
 },
@@ -3350,6 +3510,7 @@
 "inside": false,
 "x": -70,
 "y": 439,
+"missable": "",
 "px": 285.1,
 "py": 551.8
 },
@@ -3370,6 +3531,7 @@
 "inside": false,
 "x": -99,
 "y": 619,
+"missable": "",
 "px": 208.6,
 "py": 76.6
 },
@@ -3390,6 +3552,7 @@
 "inside": false,
 "x": -12,
 "y": -50,
+"missable": "",
 "px": 331.2,
 "py": 182.8
 },
@@ -3410,6 +3573,7 @@
 "inside": false,
 "x": -610,
 "y": 408,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -3430,6 +3594,7 @@
 "inside": false,
 "x": -26,
 "y": -283,
+"missable": "",
 "px": 299.0,
 "py": 718.8
 },
@@ -3450,6 +3615,7 @@
 "inside": false,
 "x": -34,
 "y": -274,
+"missable": "",
 "px": 280.6,
 "py": 698.0
 },
@@ -3470,6 +3636,7 @@
 "inside": false,
 "x": -628,
 "y": 320,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -3501,6 +3668,7 @@
 "inside": false,
 "x": 1359,
 "y": -831,
+"missable": "",
 "px": 631.8,
 "py": 1113.8
 },
@@ -3521,6 +3689,7 @@
 "inside": false,
 "x": 246,
 "y": 553,
+"missable": "",
 "px": 1119.4,
 "py": 250.8
 },
@@ -3541,6 +3710,7 @@
 "inside": false,
 "x": 326,
 "y": 495,
+"missable": "",
 "px": 1330.6,
 "py": 403.9
 },
@@ -3563,6 +3733,7 @@
 "inside": false,
 "x": 1303,
 "y": -798,
+"missable": "",
 "px": 295.8,
 "py": 932.2
 },
@@ -3586,6 +3757,7 @@
 "inside": false,
 "x": 205,
 "y": 516,
+"missable": "",
 "px": 1011.1,
 "py": 348.5
 },
@@ -3606,6 +3778,7 @@
 "inside": false,
 "x": 246,
 "y": 553,
+"missable": "",
 "px": 1119.4,
 "py": 250.8
 },
@@ -3626,6 +3799,7 @@
 "inside": false,
 "x": -55,
 "y": -93,
+"missable": "",
 "px": 232.3,
 "py": 281.8
 },
@@ -3646,6 +3820,7 @@
 "inside": true,
 "x": 113,
 "y": -127,
+"missable": "",
 "px": 618.7,
 "py": 359.9
 },
@@ -3666,6 +3841,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -3689,6 +3865,7 @@
 "inside": true,
 "x": 227,
 "y": 553,
+"missable": "",
 "px": 1069.2,
 "py": 250.8
 },
@@ -3709,6 +3886,7 @@
 "inside": false,
 "x": 246,
 "y": 553,
+"missable": "",
 "px": 1119.4,
 "py": 250.8
 },
@@ -3729,6 +3907,7 @@
 "inside": true,
 "x": 113,
 "y": -127,
+"missable": "",
 "px": 618.7,
 "py": 359.9
 },
@@ -3749,6 +3928,7 @@
 "inside": false,
 "x": 246,
 "y": 553,
+"missable": "",
 "px": 1119.4,
 "py": 250.8
 },
@@ -3769,6 +3949,7 @@
 "inside": false,
 "x": 58,
 "y": 516,
+"missable": "",
 "px": 623.0,
 "py": 348.5
 },
@@ -3789,6 +3970,7 @@
 "inside": true,
 "x": 24,
 "y": 401,
+"missable": "",
 "px": 533.3,
 "py": 652.1
 },
@@ -3813,6 +3995,7 @@
 "inside": false,
 "x": 1360,
 "y": -657,
+"missable": "",
 "px": 637.8,
 "py": 156.8
 },
@@ -3833,6 +4016,7 @@
 "inside": false,
 "x": 111,
 "y": -89,
+"missable": "",
 "px": 614.1,
 "py": 272.5
 },
@@ -3853,6 +4037,7 @@
 "inside": true,
 "x": 3,
 "y": -296,
+"missable": "",
 "px": 365.7,
 "py": 748.6
 },
@@ -3875,6 +4060,7 @@
 "inside": false,
 "x": -99,
 "y": 424,
+"missable": "Can only be bought from Grat if not Bought from Volo",
 "px": 208.6,
 "py": 591.4
 },
@@ -3897,6 +4083,7 @@
 "inside": false,
 "x": 260,
 "y": 510,
+"missable": "Can only be bought from Grat if not Bought from Volo",
 "px": 1156.3,
 "py": 364.3
 },
@@ -3917,6 +4104,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -3937,6 +4125,7 @@
 "inside": false,
 "x": -558,
 "y": 230,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -3957,6 +4146,7 @@
 "inside": true,
 "x": 70,
 "y": -240,
+"missable": "",
 "px": 519.8,
 "py": 619.8
 },
@@ -3979,6 +4169,7 @@
 "inside": false,
 "x": -53,
 "y": 461,
+"missable": "",
 "px": 330.0,
 "py": 493.7
 },
@@ -3999,6 +4190,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -4019,6 +4211,7 @@
 "inside": false,
 "x": 95,
 "y": 210,
+"missable": "",
 "px": 720.7,
 "py": 1156.3
 },
@@ -4039,6 +4232,7 @@
 "inside": false,
 "x": 177,
 "y": 562,
+"missable": "",
 "px": 937.2,
 "py": 227.0
 },
@@ -4059,6 +4253,7 @@
 "inside": true,
 "x": 246,
 "y": 423,
+"missable": "",
 "px": 1119.4,
 "py": 594.0
 },
@@ -4079,6 +4274,7 @@
 "inside": true,
 "x": 246,
 "y": 423,
+"missable": "",
 "px": 1119.4,
 "py": 594.0
 },
@@ -4099,6 +4295,7 @@
 "inside": false,
 "x": 177,
 "y": 562,
+"missable": "",
 "px": 937.2,
 "py": 227.0
 },
@@ -4119,6 +4316,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -4139,6 +4337,7 @@
 "inside": false,
 "x": -695,
 "y": 420,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -4159,6 +4358,7 @@
 "inside": true,
 "x": 246,
 "y": 423,
+"missable": "",
 "px": 1119.4,
 "py": 594.0
 },
@@ -4179,6 +4379,7 @@
 "inside": true,
 "x": 1357,
 "y": -854,
+"missable": "",
 "px": 619.8,
 "py": 1240.2
 },
@@ -4199,6 +4400,7 @@
 "inside": false,
 "x": 85,
 "y": 212,
+"missable": "",
 "px": 694.3,
 "py": 1151.0
 },
@@ -4219,6 +4421,7 @@
 "inside": false,
 "x": -558,
 "y": 230,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -4239,6 +4442,7 @@
 "inside": false,
 "x": -558,
 "y": 230,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -4259,6 +4463,7 @@
 "inside": false,
 "x": -558,
 "y": 230,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -4279,6 +4484,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -4299,6 +4505,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -4319,6 +4526,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -4342,6 +4550,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -4363,6 +4572,7 @@
 "x": -632,
 "y": 326,
 "from_checklist": true,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -4383,6 +4593,7 @@
 "inside": true,
 "x": -6,
 "y": 493,
+"missable": "",
 "px": 454.1,
 "py": 409.2
 },
@@ -4403,6 +4614,7 @@
 "inside": false,
 "x": -43,
 "y": -129,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -4423,6 +4635,7 @@
 "inside": false,
 "x": 105,
 "y": 44,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -4443,6 +4656,7 @@
 "inside": false,
 "x": 74,
 "y": 74,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -4463,6 +4677,7 @@
 "inside": false,
 "x": 45,
 "y": 37,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -4483,6 +4698,7 @@
 "inside": false,
 "x": 80,
 "y": 44,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -4505,6 +4721,7 @@
 "inside": false,
 "x": -26,
 "y": -272,
+"missable": "",
 "px": 299.0,
 "py": 693.4
 },
@@ -4525,6 +4742,7 @@
 "inside": false,
 "x": 192,
 "y": 546,
+"missable": "",
 "px": 976.8,
 "py": 269.3
 },
@@ -4545,6 +4763,7 @@
 "inside": false,
 "x": -55,
 "y": -93,
+"missable": "",
 "px": 232.3,
 "py": 281.8
 },
@@ -4565,6 +4784,7 @@
 "inside": true,
 "x": 113,
 "y": -127,
+"missable": "",
 "px": 618.7,
 "py": 359.9
 },
@@ -4585,6 +4805,7 @@
 "inside": false,
 "x": 1396,
 "y": -839,
+"missable": "",
 "px": 853.8,
 "py": 1157.8
 },
@@ -4605,6 +4826,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -4625,6 +4847,7 @@
 "inside": false,
 "x": -631,
 "y": 326,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -4645,6 +4868,7 @@
 "inside": false,
 "x": 1380,
 "y": -798,
+"missable": "",
 "px": 757.8,
 "py": 932.2
 },
@@ -4665,6 +4889,7 @@
 "inside": false,
 "x": -99,
 "y": 424,
+"missable": "",
 "px": 208.6,
 "py": 591.4
 },
@@ -4685,6 +4910,7 @@
 "inside": false,
 "x": 205,
 "y": 516,
+"missable": "",
 "px": 1011.1,
 "py": 348.5
 },
@@ -4707,6 +4933,7 @@
 "inside": false,
 "x": -53,
 "y": -391,
+"missable": "Prologue: take it before leaving the Nautiloid",
 "px": null,
 "py": null
 },
@@ -4727,6 +4954,7 @@
 "inside": false,
 "x": 14,
 "y": -196,
+"missable": "",
 "px": 391.0,
 "py": 518.6
 },
@@ -4747,6 +4975,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -4767,6 +4996,7 @@
 "inside": false,
 "x": -574,
 "y": 382,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -4787,6 +5017,7 @@
 "inside": false,
 "x": -26,
 "y": 238,
+"missable": "",
 "px": 401.3,
 "py": 1082.4
 },
@@ -4807,6 +5038,7 @@
 "inside": true,
 "x": -114,
 "y": 612,
+"missable": "",
 "px": 169.0,
 "py": 95.0
 },
@@ -4827,6 +5059,7 @@
 "inside": false,
 "x": -144,
 "y": 565,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -4847,6 +5080,7 @@
 "inside": true,
 "x": 1357,
 "y": -854,
+"missable": "",
 "px": 619.8,
 "py": 1240.2
 },
@@ -4867,6 +5101,7 @@
 "inside": true,
 "x": 1357,
 "y": -854,
+"missable": "",
 "px": 619.8,
 "py": 1240.2
 },
@@ -4887,6 +5122,7 @@
 "inside": true,
 "x": 1357,
 "y": -854,
+"missable": "",
 "px": 619.8,
 "py": 1240.2
 },
@@ -4907,6 +5143,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -4928,6 +5165,7 @@
 "x": -99,
 "y": 424,
 "from_checklist": true,
+"missable": "",
 "px": 208.6,
 "py": 591.4
 },
@@ -4949,6 +5187,7 @@
 "x": -99,
 "y": 424,
 "from_checklist": true,
+"missable": "",
 "px": 208.6,
 "py": 591.4
 },
@@ -4969,6 +5208,7 @@
 "inside": false,
 "x": -85,
 "y": 631,
+"missable": "",
 "px": 245.5,
 "py": 44.9
 },
@@ -4989,6 +5229,7 @@
 "inside": false,
 "x": -55,
 "y": -93,
+"missable": "",
 "px": 232.3,
 "py": 281.8
 },
@@ -5009,6 +5250,7 @@
 "inside": true,
 "x": 204,
 "y": 501,
+"missable": "",
 "px": 1008.5,
 "py": 388.1
 },
@@ -5029,6 +5271,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -5049,6 +5292,7 @@
 "inside": true,
 "x": 1357,
 "y": -854,
+"missable": "",
 "px": 619.8,
 "py": 1240.2
 },
@@ -5069,6 +5313,7 @@
 "inside": true,
 "x": -114,
 "y": 612,
+"missable": "",
 "px": 169.0,
 "py": 95.0
 },
@@ -5089,6 +5334,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -5109,6 +5355,7 @@
 "inside": false,
 "x": -55,
 "y": -93,
+"missable": "",
 "px": 232.3,
 "py": 281.8
 },
@@ -5129,6 +5376,7 @@
 "inside": false,
 "x": -43,
 "y": -129,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -5149,6 +5397,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -5169,6 +5418,7 @@
 "inside": false,
 "x": 177,
 "y": 562,
+"missable": "",
 "px": 937.2,
 "py": 227.0
 },
@@ -5189,6 +5439,7 @@
 "inside": false,
 "x": -447,
 "y": -525,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -5209,6 +5460,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -5230,6 +5482,7 @@
 "x": -632,
 "y": 326,
 "from_checklist": true,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -5250,6 +5503,7 @@
 "inside": false,
 "x": -643,
 "y": 411,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -5274,6 +5528,7 @@
 "inside": false,
 "x": 1380,
 "y": -798,
+"missable": "",
 "px": 757.8,
 "py": 932.2
 },
@@ -5294,6 +5549,7 @@
 "inside": false,
 "x": 1380,
 "y": -798,
+"missable": "",
 "px": 757.8,
 "py": 932.2
 },
@@ -5314,6 +5570,7 @@
 "inside": false,
 "x": 177,
 "y": 562,
+"missable": "",
 "px": 937.2,
 "py": 227.0
 },
@@ -5334,6 +5591,7 @@
 "inside": false,
 "x": 55,
 "y": -93,
+"missable": "",
 "px": 485.3,
 "py": 281.8
 },
@@ -5354,6 +5612,7 @@
 "inside": false,
 "x": -38,
 "y": -284,
+"missable": "",
 "px": 271.4,
 "py": 721.0
 },
@@ -5374,6 +5633,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -5394,6 +5654,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -5419,6 +5680,7 @@
 "inside": false,
 "x": 111,
 "y": -89,
+"missable": "",
 "px": 614.1,
 "py": 272.5
 },
@@ -5439,6 +5701,7 @@
 "inside": false,
 "x": -574,
 "y": 377,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -5459,6 +5722,7 @@
 "inside": false,
 "x": -643,
 "y": 215,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -5479,6 +5743,7 @@
 "inside": false,
 "x": -601,
 "y": 199,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -5499,6 +5764,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -5519,6 +5785,7 @@
 "inside": true,
 "x": 22,
 "y": -209,
+"missable": "",
 "px": 409.4,
 "py": 548.5
 },
@@ -5539,6 +5806,7 @@
 "inside": true,
 "x": 172,
 "y": 423,
+"missable": "",
 "px": 924.0,
 "py": 594.0
 },
@@ -5559,6 +5827,7 @@
 "inside": true,
 "x": 223,
 "y": 525,
+"missable": "Only obtainable after completing Investigate Kahga as a Druid and keeping her alive",
 "px": 1058.6,
 "py": 324.7
 },
@@ -5581,6 +5850,7 @@
 "inside": false,
 "x": 116,
 "y": -192,
+"missable": "Must succeed either religion or strength to obtain",
 "px": 625.6,
 "py": 509.4
 },
@@ -5601,6 +5871,7 @@
 "inside": false,
 "x": 332,
 "y": 526,
+"missable": "",
 "px": 1346.4,
 "py": 322.1
 },
@@ -5621,6 +5892,7 @@
 "inside": true,
 "x": 32,
 "y": 379,
+"missable": "",
 "px": 554.4,
 "py": 710.2
 },
@@ -5641,6 +5913,7 @@
 "inside": true,
 "x": 246,
 "y": 423,
+"missable": "",
 "px": 1119.4,
 "py": 594.0
 },
@@ -5661,6 +5934,7 @@
 "inside": true,
 "x": 1357,
 "y": -854,
+"missable": "",
 "px": 619.8,
 "py": 1240.2
 },
@@ -5681,6 +5955,7 @@
 "inside": false,
 "x": 205,
 "y": 516,
+"missable": "",
 "px": 1011.1,
 "py": 348.5
 },
@@ -5702,6 +5977,7 @@
 "x": -4,
 "y": 277,
 "from_checklist": true,
+"missable": "",
 "px": 459.4,
 "py": 979.4
 },
@@ -5725,6 +6001,7 @@
 "inside": false,
 "x": -99,
 "y": 424,
+"missable": "",
 "px": 208.6,
 "py": 591.4
 },
@@ -5745,6 +6022,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -5765,6 +6043,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -5785,6 +6064,7 @@
 "inside": true,
 "x": -114,
 "y": 612,
+"missable": "",
 "px": 169.0,
 "py": 95.0
 },
@@ -5805,6 +6085,7 @@
 "inside": true,
 "x": 24,
 "y": 401,
+"missable": "",
 "px": 533.3,
 "py": 652.1
 },
@@ -5825,6 +6106,7 @@
 "inside": true,
 "x": 36,
 "y": 24,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -5846,6 +6128,7 @@
 "x": 97,
 "y": 64,
 "from_checklist": true,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -5867,6 +6150,7 @@
 "x": 89,
 "y": 34,
 "from_checklist": true,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -5887,6 +6171,7 @@
 "inside": true,
 "x": 36,
 "y": 24,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -5907,6 +6192,7 @@
 "inside": false,
 "x": -677,
 "y": 398,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -5927,6 +6213,7 @@
 "inside": false,
 "x": 33,
 "y": 597,
+"missable": "",
 "px": 557.0,
 "py": 134.6
 },
@@ -5948,6 +6235,7 @@
 "x": -632,
 "y": 326,
 "from_checklist": true,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -5969,6 +6257,7 @@
 "x": 177,
 "y": 562,
 "from_checklist": true,
+"missable": "",
 "px": 937.2,
 "py": 227.0
 },
@@ -5989,6 +6278,7 @@
 "inside": false,
 "x": 73,
 "y": -187,
+"missable": "",
 "px": 526.7,
 "py": 497.9
 },
@@ -6009,6 +6299,7 @@
 "inside": true,
 "x": 70,
 "y": -240,
+"missable": "",
 "px": 519.8,
 "py": 619.8
 },
@@ -6029,6 +6320,7 @@
 "inside": false,
 "x": 28,
 "y": -295,
+"missable": "",
 "px": 423.2,
 "py": 746.3
 },
@@ -6049,6 +6341,7 @@
 "inside": true,
 "x": 246,
 "y": 423,
+"missable": "",
 "px": 1119.4,
 "py": 594.0
 },
@@ -6069,6 +6362,7 @@
 "inside": true,
 "x": 1357,
 "y": -854,
+"missable": "",
 "px": 619.8,
 "py": 1240.2
 },
@@ -6089,6 +6383,7 @@
 "inside": false,
 "x": 25,
 "y": 603,
+"missable": "",
 "px": 535.9,
 "py": 118.8
 },
@@ -6109,6 +6404,7 @@
 "inside": false,
 "x": 205,
 "y": 516,
+"missable": "",
 "px": 1011.1,
 "py": 348.5
 },
@@ -6129,6 +6425,7 @@
 "inside": true,
 "x": 3,
 "y": -296,
+"missable": "",
 "px": 365.7,
 "py": 748.6
 },
@@ -6149,6 +6446,7 @@
 "inside": true,
 "x": -74,
 "y": 210,
+"missable": "",
 "px": 274.6,
 "py": 1156.3
 },
@@ -6169,6 +6467,7 @@
 "inside": false,
 "x": 161,
 "y": -200,
+"missable": "",
 "px": 729.1,
 "py": 527.8
 },
@@ -6191,6 +6490,7 @@
 "inside": true,
 "x": 34,
 "y": 394,
+"missable": "",
 "px": 559.7,
 "py": 670.6
 },
@@ -6211,6 +6511,7 @@
 "inside": true,
 "x": 34,
 "y": 394,
+"missable": "Story choice (Sussur Bark (one bark, one Sussur weapon)): only with 'Sussur Dagger', not with Sussur Greatsword / Sussur Sickle",
 "px": 559.7,
 "py": 670.6
 },
@@ -6231,6 +6532,7 @@
 "inside": true,
 "x": 34,
 "y": 394,
+"missable": "Story choice (Sussur Bark (one bark, one Sussur weapon)): only with 'Sussur Greatsword', not with Sussur Dagger / Sussur Sickle",
 "px": 559.7,
 "py": 670.6
 },
@@ -6251,6 +6553,7 @@
 "inside": true,
 "x": 34,
 "y": 394,
+"missable": "Story choice (Sussur Bark (one bark, one Sussur weapon)): only with 'Sussur Sickle', not with Sussur Dagger / Sussur Greatsword",
 "px": 559.7,
 "py": 670.6
 },
@@ -6271,6 +6574,7 @@
 "inside": false,
 "x": -66,
 "y": 609,
+"missable": "Yeva's sword has to be acquired before the first zone travel (including teleporting to the camp) after coming to Waukeen's Rest for the first time.",
 "px": 295.7,
 "py": 103.0
 },
@@ -6293,6 +6597,7 @@
 "inside": false,
 "x": 110,
 "y": 560,
+"missable": "",
 "px": 760.3,
 "py": 232.3
 },
@@ -6315,6 +6620,7 @@
 "inside": false,
 "x": -854,
 "y": -780,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -6338,6 +6644,7 @@
 "inside": false,
 "x": 111,
 "y": -89,
+"missable": "",
 "px": 614.1,
 "py": 272.5
 },
@@ -6360,6 +6667,7 @@
 "inside": true,
 "x": 1357,
 "y": -854,
+"missable": "",
 "px": 619.8,
 "py": 1240.2
 },
@@ -6380,6 +6688,7 @@
 "inside": false,
 "x": -63,
 "y": 600,
+"missable": "Story choice (Rescue the Grand Duke (Florrick's reward, one of three)): only with 'The Joltshooter', not with The Sparky Points / The Spellsparkler",
 "px": 303.6,
 "py": 126.7
 },
@@ -6400,6 +6709,7 @@
 "inside": true,
 "x": 1357,
 "y": -854,
+"missable": "",
 "px": 619.8,
 "py": 1240.2
 },
@@ -6420,6 +6730,7 @@
 "inside": false,
 "x": -63,
 "y": 600,
+"missable": "Story choice (Rescue the Grand Duke (Florrick's reward, one of three)): only with 'The Sparky Points', not with The Joltshooter / The Spellsparkler",
 "px": 303.6,
 "py": 126.7
 },
@@ -6440,6 +6751,7 @@
 "inside": false,
 "x": -63,
 "y": 600,
+"missable": "Story choice (Rescue the Grand Duke (Florrick's reward, one of three)): only with 'The Spellsparkler', not with The Joltshooter / The Sparky Points",
 "px": 303.6,
 "py": 126.7
 },
@@ -6460,6 +6772,7 @@
 "inside": true,
 "x": 276,
 "y": 298,
+"missable": "",
 "px": 1198.6,
 "py": 924.0
 },
@@ -6482,6 +6795,7 @@
 "inside": true,
 "x": -114,
 "y": 612,
+"missable": "",
 "px": 169.0,
 "py": 95.0
 },
@@ -6502,6 +6816,7 @@
 "inside": false,
 "x": 1380,
 "y": -798,
+"missable": "",
 "px": 757.8,
 "py": 932.2
 },
@@ -6525,6 +6840,7 @@
 "inside": false,
 "x": 10,
 "y": 420,
+"missable": "",
 "px": 496.3,
 "py": 601.9
 },
@@ -6545,6 +6861,7 @@
 "inside": true,
 "x": 222,
 "y": 326,
+"missable": "",
 "px": 1056.0,
 "py": 850.1
 },
@@ -6566,6 +6883,7 @@
 "x": -99,
 "y": 424,
 "from_checklist": true,
+"missable": "",
 "px": 208.6,
 "py": 591.4
 },
@@ -6586,6 +6904,7 @@
 "inside": true,
 "x": -7,
 "y": -210,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -6606,6 +6925,7 @@
 "inside": false,
 "x": -668,
 "y": 442,
+"missable": "",
 "px": null,
 "py": null
 },
@@ -6626,6 +6946,7 @@
 "inside": false,
 "x": 1380,
 "y": -798,
+"missable": "",
 "px": 757.8,
 "py": 932.2
 },
@@ -6646,6 +6967,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -6666,6 +6988,7 @@
 "inside": true,
 "x": -74,
 "y": 445,
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -6688,6 +7011,7 @@
 "inside": false,
 "x": 217,
 "y": 540,
+"missable": "",
 "px": 1042.8,
 "py": 285.1
 },
@@ -6708,6 +7032,7 @@
 "inside": false,
 "x": -58,
 "y": 263,
+"missable": "",
 "px": 316.8,
 "py": 1016.4
 },
@@ -6728,6 +7053,7 @@
 "inside": true,
 "x": -74,
 "y": 210,
+"missable": "",
 "px": 274.6,
 "py": 1156.3
 },
@@ -6749,6 +7075,7 @@
 "x": -139,
 "y": 561,
 "from_checklist": true,
+"missable": "Voss must be disarmed before beginning the encounter",
 "px": null,
 "py": null
 },
@@ -6770,6 +7097,7 @@
 "x": 275,
 "y": 244,
 "from_checklist": true,
+"missable": "",
 "px": 1195.9,
 "py": 1066.6
 },
@@ -6791,6 +7119,7 @@
 "x": 137,
 "y": 442,
 "from_checklist": true,
+"missable": "",
 "px": 831.6,
 "py": 543.8
 },
@@ -6812,6 +7141,7 @@
 "location": "Riverside Teahouse",
 "where": "Defeat Auntie Ethel in her lair under the Riverside Teahouse (or take her bargain): +1 to an ability score of your choice, permanently",
 "source": "https://bg3.wiki/wiki/Auntie_Ethel%27s_Hair",
+"missable": "",
 "px": 443.5,
 "py": 1050.7
 },
@@ -6833,6 +7163,7 @@
 "location": "Underdark",
 "where": "Sussur Bark from the tree makes the Sussur weapons, whose hits can silence spellcasters",
 "source": "https://bg3.wiki/wiki/Sussur_Bark",
+"missable": "",
 "px": 471.5,
 "py": 389.8
 },
@@ -6854,6 +7185,7 @@
 "location": "Apothecary's Cellar",
 "where": "In the hidden cellar of the Blighted Village apothecary; reading it fully pays off in Act 3",
 "source": "https://bg3.wiki/wiki/Necromancy_of_Thay",
+"missable": "",
 "px": 554.4,
 "py": 710.2
 },
@@ -6875,6 +7207,7 @@
 "location": "Adamantine Forge",
 "where": "Forge Adamantine armour and weapons from Mithral Ore and the moulds found in Grymforge",
 "source": "https://bg3.wiki/wiki/Adamantine_Forge_(location)",
+"missable": "",
 "px": null,
 "py": null
 },
@@ -6896,6 +7229,7 @@
 "location": "Shattered Sanctum",
 "where": "Let Abdirak, the priest of Loviatar in the Shattered Sanctum, test your devotion and pass his checks: +2 to attack rolls and Wisdom saves while below 30% hit points, permanently",
 "source": "https://bg3.wiki/wiki/Loviatar%27s_Love",
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -6917,6 +7251,7 @@
 "location": "Goblin Camp",
 "where": "Rescue Volo from the Goblin Camp, then let him operate on you in camp: permanent See Invisibility",
 "source": "https://bg3.wiki/wiki/Volo%27s_Ersatz_Eye",
+"missable": "",
 "px": 274.6,
 "py": 535.9
 },
@@ -6938,6 +7273,7 @@
 "location": "Crèche Y'llek",
 "where": "Use the Zaith'isk in the Crèche's infirmary and succeed: Illithid powers become bonus actions (per the build doc)",
 "source": "https://bg3.wiki/wiki/Zaith%27isk",
+"missable": "",
 "px": 211.8,
 "py": 992.8
 }
@@ -6954,7 +7290,8 @@
 "builds": [],
 "tip": "Has a common variant in the Zhentarim hideout",
 "location": "In a chest inside the Tiefling Hideout in the Druid Grove",
-"where": "In a chest inside the Tiefling Hideout in the Druid Grove"
+"where": "In a chest inside the Tiefling Hideout in the Druid Grove",
+"missable": ""
 },
 {
 "name": "Mask of the Shapeshifter",
@@ -6967,7 +7304,8 @@
 "builds": [],
 "tip": "Deluxe Upgrade item",
 "location": "In the Traveller's Chest at the Campsite",
-"where": "In the Traveller's Chest at the Campsite"
+"where": "In the Traveller's Chest at the Campsite",
+"missable": ""
 },
 {
 "name": "Infernal Robe",
@@ -6980,7 +7318,8 @@
 "builds": [],
 "tip": "Karlach :(",
 "location": "Campsite (Act One)",
-"where": "Rewarded by Mizora"
+"where": "Rewarded by Mizora",
+"missable": ""
 },
 {
 "name": "Ring of Evasion",
@@ -6993,7 +7332,8 @@
 "builds": [],
 "tip": "Cannot be gotten if not playing as Origin Gale",
 "location": "Campsite (Act One)",
-"where": "Given by Tara during the first Long Rest following the completion of the Escape the Nautiloid quest (only if Gale is chosen as Origin)"
+"where": "Given by Tara during the first Long Rest following the completion of the Escape the Nautiloid quest (only if Gale is chosen as Origin)",
+"missable": ""
 },
 {
 "name": "Chain Shirt +2",
@@ -7006,7 +7346,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by traders using the levelled magic armour table if the player is between levels 5 and 8",
-"where": "Sold by traders using the levelled magic armour table if the player is between levels 5 and 8"
+"where": "Sold by traders using the levelled magic armour table if the player is between levels 5 and 8",
+"missable": ""
 },
 {
 "name": "Hide Armour +2",
@@ -7021,7 +7362,8 @@
 ],
 "tip": "",
 "location": "Sold by traders using the levelled magic armour table if the player character is level 5 or above\n* Sold by Grat in the ",
-"where": "Sold by traders using the levelled magic armour table if the player character is level 5 or above * Sold by Grat in the Goblin Camp regardless of level"
+"where": "Sold by traders using the levelled magic armour table if the player character is level 5 or above * Sold by Grat in the Goblin Camp regardless of level",
+"missable": ""
 },
 {
 "name": "Padded Armour +2",
@@ -7034,7 +7376,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by traders using the levelled magic armour table if the player is between levels 5 and 8",
-"where": "Sold by traders using the levelled magic armour table if the player is between levels 5 and 8"
+"where": "Sold by traders using the levelled magic armour table if the player is between levels 5 and 8",
+"missable": ""
 },
 {
 "name": "Ring Mail Armour +2",
@@ -7047,7 +7390,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by traders using the levelled magic armour table if the player is between levels 5 and 8",
-"where": "Sold by traders using the levelled magic armour table if the player is between levels 5 and 8"
+"where": "Sold by traders using the levelled magic armour table if the player is between levels 5 and 8",
+"missable": ""
 },
 {
 "name": "The Deathstalker Mantle",
@@ -7060,7 +7404,8 @@
 "builds": [],
 "tip": "Must be Durge, should kill Quil instead of Alfira",
 "location": "Campsite (Act One)",
-"where": "given to The Dark Urge Origin by Sceleritas Fel"
+"where": "given to The Dark Urge Origin by Sceleritas Fel",
+"missable": "Must be Durge, should kill Quil instead of Alfira"
 },
 {
 "name": "Spear +2",
@@ -7073,7 +7418,8 @@
 "builds": [],
 "tip": "",
 "location": "Carried by Dream Guardian Dream Guardians or Breaker of War in the final fight scenario",
-"where": "Carried by Dream Guardian Dream Guardians or Breaker of War in the final fight scenario"
+"where": "Carried by Dream Guardian Dream Guardians or Breaker of War in the final fight scenario",
+"missable": ""
 },
 {
 "name": "Blazer of Benevolence",
@@ -7086,7 +7432,8 @@
 "builds": [],
 "tip": "",
 "location": "Campsite (Act One)",
-"where": "Reward for rescuing Volo from the Goblin Camp during the quest Rescue Volo"
+"where": "Reward for rescuing Volo from the Goblin Camp during the quest Rescue Volo",
+"missable": ""
 },
 {
 "name": "Chain Mail +1",
@@ -7099,7 +7446,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by traders using the levelled magic armour table if the player is between levels 4 and 6",
-"where": "Sold by traders using the levelled magic armour table if the player is between levels 4 and 6"
+"where": "Sold by traders using the levelled magic armour table if the player is between levels 4 and 6",
+"missable": ""
 },
 {
 "name": "Chain Shirt +1",
@@ -7112,7 +7460,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by traders using the levelled magic armour table if the player character is between levels 2 and 4",
-"where": "Sold by traders using the levelled magic armour table if the player character is between levels 2 and 4"
+"where": "Sold by traders using the levelled magic armour table if the player character is between levels 2 and 4",
+"missable": ""
 },
 {
 "name": "Half Plate Armour +1",
@@ -7125,7 +7474,8 @@
 "builds": [],
 "tip": "",
 "location": "",
-"where": ""
+"where": "",
+"missable": ""
 },
 {
 "name": "Hide Armour +1",
@@ -7138,7 +7488,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by traders using the levelled magic armour table if the player character is between levels 2 and 4",
-"where": "Sold by traders using the levelled magic armour table if the player character is between levels 2 and 4"
+"where": "Sold by traders using the levelled magic armour table if the player character is between levels 2 and 4",
+"missable": ""
 },
 {
 "name": "Leather Armour +1",
@@ -7151,7 +7502,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by traders using the levelled magic armour table if the player is between levels 4 and 6",
-"where": "Sold by traders using the levelled magic armour table if the player is between levels 4 and 6"
+"where": "Sold by traders using the levelled magic armour table if the player is between levels 4 and 6",
+"missable": ""
 },
 {
 "name": "Padded Armour +1",
@@ -7164,7 +7516,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by traders using the levelled magic armour table if the player is between levels 2 and 4",
-"where": "Sold by traders using the levelled magic armour table if the player is between levels 2 and 4"
+"where": "Sold by traders using the levelled magic armour table if the player is between levels 2 and 4",
+"missable": ""
 },
 {
 "name": "Ring Mail Armour +1",
@@ -7177,7 +7530,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by traders using the levelled magic armour table if the player is between levels 2 and 4",
-"where": "Sold by traders using the levelled magic armour table if the player is between levels 2 and 4"
+"where": "Sold by traders using the levelled magic armour table if the player is between levels 2 and 4",
+"missable": ""
 },
 {
 "name": "Scale Mail +1",
@@ -7190,7 +7544,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by traders using the levelled magic armour table if the player is between levels 4 and 6",
-"where": "Sold by traders using the levelled magic armour table if the player is between levels 4 and 6"
+"where": "Sold by traders using the levelled magic armour table if the player is between levels 4 and 6",
+"missable": ""
 },
 {
 "name": "Scale Mail Armour +1",
@@ -7203,7 +7558,8 @@
 "builds": [],
 "tip": "",
 "location": "",
-"where": ""
+"where": "",
+"missable": ""
 },
 {
 "name": "Battleaxe +1",
@@ -7216,7 +7572,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 },
 {
 "name": "Dagger +1",
@@ -7229,7 +7586,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table\n* On a small hill overlooking the barn at the Blighted Village, stuck int",
-"where": "Sold by any trader using the magic melee table * On a small hill overlooking the barn at the Blighted Village, stuck into a piece of meat roasting over a campfire"
+"where": "Sold by any trader using the magic melee table * On a small hill overlooking the barn at the Blighted Village, stuck into a piece of meat roasting over a campfire",
+"missable": ""
 },
 {
 "name": "Flail +1",
@@ -7242,7 +7600,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 },
 {
 "name": "Githyanki Crossbow",
@@ -7255,7 +7614,8 @@
 "builds": [],
 "tip": "",
 "location": "Mountain Pass: Carried by Chost Raider Chost, Zastri Raider Zastri and Voss Kith'rak Voss of the githyanki patrol",
-"where": "Mountain Pass: Carried by Chost Raider Chost, Zastri Raider Zastri and Voss Kith'rak Voss of the githyanki patrol"
+"where": "Mountain Pass: Carried by Chost Raider Chost, Zastri Raider Zastri and Voss Kith'rak Voss of the githyanki patrol",
+"missable": ""
 },
 {
 "name": "Githyanki Greatsword",
@@ -7268,7 +7628,8 @@
 "builds": [],
 "tip": "The version carried by Sarth Baretha has a unique property and can be consumed by Gale.",
 "location": "Carried by multiple githyanki in the Crèche Y'llek\n* Carried by Shadow-Cursed Githyanki Warriors at Last Light Inn",
-"where": "Carried by multiple githyanki in the Crèche Y'llek * Carried by Shadow-Cursed Githyanki Warriors at Last Light Inn"
+"where": "Carried by multiple githyanki in the Crèche Y'llek * Carried by Shadow-Cursed Githyanki Warriors at Last Light Inn",
+"missable": ""
 },
 {
 "name": "Githyanki Longsword (+1)",
@@ -7281,7 +7642,8 @@
 "builds": [],
 "tip": "",
 "location": "Mountain Pass: Carried by For'reth Gish For'reth, member of the githyanki patrol -143 562",
-"where": "Mountain Pass: Carried by For'reth Gish For'reth, member of the githyanki patrol"
+"where": "Mountain Pass: Carried by For'reth Gish For'reth, member of the githyanki patrol",
+"missable": ""
 },
 {
 "name": "Glaive +1",
@@ -7294,7 +7656,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 },
 {
 "name": "Greataxe +1",
@@ -7307,7 +7670,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table\n* The Risen Road: On a rack in the hidden room in the cellar of the Risen",
-"where": "Sold by any trader using the magic melee table * The Risen Road: On a rack in the hidden room in the cellar of the Risen Road Toll House * Fraygo's Flophouse: Carried by Adventurer Rosanna"
+"where": "Sold by any trader using the magic melee table * The Risen Road: On a rack in the hidden room in the cellar of the Risen Road Toll House * Fraygo's Flophouse: Carried by Adventurer Rosanna",
+"missable": ""
 },
 {
 "name": "Halberd +1",
@@ -7320,7 +7684,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 },
 {
 "name": "Light Hammer +1",
@@ -7333,7 +7698,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 },
 {
 "name": "Longbow +1",
@@ -7346,7 +7712,8 @@
 "builds": [],
 "tip": "",
 "location": "Goblin Camp: Sold by Grat Grat the Trader\n* Shattered Sanctum: Sold by Roah Moonglow\n* Zhentarim Hideout: Sold by Brem a",
-"where": "Goblin Camp: Sold by Grat the Trader * Shattered Sanctum: Sold by Roah Moonglow * Zhentarim Hideout: Sold by Brem after completing Find the Missing Shipment"
+"where": "Goblin Camp: Sold by Grat the Trader * Shattered Sanctum: Sold by Roah Moonglow * Zhentarim Hideout: Sold by Brem after completing Find the Missing Shipment",
+"missable": ""
 },
 {
 "name": "Longsword +1",
@@ -7359,7 +7726,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 },
 {
 "name": "Mace +1",
@@ -7372,7 +7740,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 },
 {
 "name": "Maul +1",
@@ -7385,7 +7754,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 },
 {
 "name": "Morningstar +1",
@@ -7398,7 +7768,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 },
 {
 "name": "Pike +1",
@@ -7411,7 +7782,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 },
 {
 "name": "Quarterstaff +1",
@@ -7424,7 +7796,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 },
 {
 "name": "Rapier +1",
@@ -7437,7 +7810,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 },
 {
 "name": "Scimitar +1",
@@ -7450,7 +7824,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 },
 {
 "name": "Shortsword +1",
@@ -7463,7 +7838,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 },
 {
 "name": "Spear +1",
@@ -7476,7 +7852,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 },
 {
 "name": "Trident +1",
@@ -7489,7 +7866,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 },
 {
 "name": "Warhammer +1",
@@ -7502,7 +7880,8 @@
 "builds": [],
 "tip": "",
 "location": "Sold by any trader using the magic melee table",
-"where": "Sold by any trader using the magic melee table"
+"where": "Sold by any trader using the magic melee table",
+"missable": ""
 }
 ]
 }

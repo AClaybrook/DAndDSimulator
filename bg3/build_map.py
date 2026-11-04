@@ -159,6 +159,34 @@ def checklist_spot(text, on_map):
             return map_key, x, y
     return None
 
+# Checklist notes that mean an item can be missed: one-of rewards, time limits, a check or a choice to make
+MISSABLE_NOTE = re.compile(r"mutually exclusive|before (?:leaving|the first|beginning)|must (?:succeed|return|be|complete)|return the chest unopened|"
+                           r"easily missable|only (?:obtainable|be obtained|revealed|be bought)|can only (?:make|be obtained|be bought)|"
+                           r"only two adamantine|^pickpocket|disarm|they drink them", re.I)
+
+def missable_reasons():
+    """ {item key: reason} from the story choices (bg3/data/story_choices.json) """
+    from bg3.party import story_choices # pylint: disable=import-outside-toplevel
+    reasons = {}
+    for choice in story_choices():
+        paths = choice["paths"]
+        for path, keys in paths.items():
+            others = [p for p in paths if p != path]
+            for key in keys:
+                reasons[key] = f"Story choice ({choice['quest']}): only with '{path}', not with {' / '.join(others)}"
+    return reasons
+
+def missable(point, reasons):
+    """ Why an item can be missed, or "" """
+    if point.get("key") in reasons:
+        return reasons[point["key"]]
+    tip = point.get("tip", "")
+    if tip and MISSABLE_NOTE.search(tip) and "underwear" not in point["name"].lower():
+        return tip
+    if point.get("map") == "nautiloid" and point.get("rarity") not in ("Common", None):
+        return "Prologue: take it before leaving the Nautiloid"
+    return ""
+
 def builds_using():
     """ {item key: [example build names]} for gear in the planner's example and doc builds """
     from bg3.presets import examples
@@ -233,6 +261,9 @@ def build():
     for pickup in json.loads((DATA / "map_pickups.json").read_text(encoding="utf-8"))["pickups"]:
         points.append({"key": None, "rarity": "Key", "slot": None, "trader": False, "inside": False, "notes": "", "builds": [], "tip": "",
                        "map": pickup["region"], **pickup})
+    reasons = missable_reasons()
+    for point in [*points, *unplaced]:
+        point["missable"] = missable(point, reasons)
     for point in points:
         pixel = to_pixel(point["map"], point["x"], point["y"])
         point["px"], point["py"] = pixel if pixel else (None, None)

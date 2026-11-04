@@ -46,3 +46,14 @@ def test_party_gear_layer():
     assert any(t.name == "Party gear to collect" for t in fig.data)
     fig = figure("underdark", [], ["party_only"], [], party=gear, collected=list(gear))
     assert not fig.data
+
+def test_missables():
+    from components.bg3_map import figure
+    missable = {p["name"]: p["missable"] for p in POINTS if p.get("missable")}
+    assert "Story choice" in missable["Sussur Greatsword"] and "Story choice" in missable["The Sparky Points"]
+    assert "Phalar Aluve" in missable and "Svartlebee's Woundseeker" in missable
+    assert not any(p.get("missable") for p in POINTS if p["rarity"] == "Common" and p["map"] == "nautiloid" and not p.get("tip"))
+    names = [t.name for t in figure("wilderness", DEFAULT_RARITIES, ["missables"], []).data]
+    assert "Missable" in names
+    only = figure("underdark", [], ["only_missables"], [])
+    assert all("Missable" in (t.name or "") or t.name for t in only.data)
