@@ -34,6 +34,10 @@ BUFFS = {b.key: b for b in [
     Buff("hex", "Hex", 1, [Effect("extra_damage", "1d6 necrotic")], "Cast by the character, bonus action", concentration=True, self_cast=True),
     Buff("divine_favour", "Divine Favour", 1, [Effect("extra_damage", "1d4 radiant", applies_to="weapon")], "Paladin, bonus action",
          concentration=True, self_cast=True),
+    # Defensive spells: no damage effect, counted by the armour class (bg3.defence)
+    Buff("shield_of_faith", "Shield of Faith", 1, [], "+2 AC (concentration). Counted in armour class, not damage", concentration=True),
+    Buff("mage_armour", "Mage Armour", 1, [], "AC 13 + DEX without armour, until a long rest (camp cast)"),
+    Buff("warding_bond", "Warding Bond", 1, [], "+1 AC and saves, resistance to all damage; the caster takes the same damage (camp cast)"),
     # Phalar Aluve's Melody (Act 1 Underdark longsword): the wielder spends an action, once per short rest, for 5 turns. Not concentration
     Buff("phalar_sing", "Phalar Aluve: Sing", 1, [Effect("attack_dice", "1d4")],
          "Allies within 6m but not the wielder: +1d4 to attack rolls and saves for 5 turns. Costs the wielder an action, once per short rest"),

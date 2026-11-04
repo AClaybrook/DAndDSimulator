@@ -30,7 +30,7 @@ from components.session import SETTINGS_IDS, describe_session, make_session, par
 from components.bg3_planner import (DEFAULT_PARTY, MAX_PARTY_SIZE, CUSTOM, conditional_options, conflicts_list, dpr_chart, dpr_table, gear_highlights,
                                     inherited_placeholders, item_values_table, suggestions_table, fields_from_character, character_from_fields,
                                     subclass_options, builder_summary, toggle_options, roles_table,
-                                    synergy_table, party_fight_summary, fight_chart, kit_info, variants_table)
+                                    synergy_table, party_fight_summary, fight_chart, kit_info, variants_table, ac_table)
 from bg3.kits import QUICK_VARIANTS, apply_kit, kits, taken_by_others, variant_build, variant_damage
 from bg3.items import SLOT_LABELS, catalog
 from bg3.character import Bg3Character
@@ -918,6 +918,11 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             builder_summary(custom, levels_now) if custom else None,
             toggle_options(custom.classes) if custom else [],
         )
+
+    @app.callback(Output("bg3-ac", "children"), Input("bg3-party", "data"), Input("enemy-values", "data"), Input("bg3-enemy-attack", "value"))
+    def show_ac(party, enemy_dict, attack_bonus):
+        builds = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)]
+        return ac_table(builds, Enemy.from_dict(enemy_dict) if enemy_dict else Enemy(), attack_bonus)
 
     @app.callback(Output("bg3-kit-info", "children"), Input("bg3-kit", "value"))
     def show_kit(kit_key):

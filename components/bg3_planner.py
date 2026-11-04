@@ -7,6 +7,7 @@ from bg3.buffs import BUFFS
 from bg3.checkpoints import ACTS, act_level
 from bg3.items import SLOT_LABELS, SLOTS, catalog, condition_id
 from bg3.kits import QUICK_VARIANTS, kits
+from bg3.defence import armour_class, attack_bonus_for, hit_chance
 from bg3.party import MAX_PARTY_SIZE, build_conflicts, party_conflicts
 from bg3.presets import DEFAULT_PARTY as PRESET_PARTY, PRESETS, examples
 from bg3.roles import CORE_ROLES, ROLE_LABELS
@@ -89,6 +90,23 @@ def gear_table():
 
 THEME_LABELS = {"damage": "Damage", "style": "Weapon style", "role": "Role"}
 
+def ac_table(builds, enemy, attack_bonus=None):
+    """ Armour class of each character at each act and the chance the enemy hits it (the given attack bonus, or the DMG one for its
+        challenge rating) """
+    bonus = int(attack_bonus) if attack_bonus not in (None, "") else attack_bonus_for(enemy)
+    rows = []
+    for b in builds:
+        cells = [html.Td(b.name)]
+        for act in ACT_KEYS:
+            ac, parts = armour_class(b, act)
+            title = " + ".join(f"{source} {value:+d}" if ii else f"{source} {value}" for ii, (source, value) in enumerate(parts))
+            cells.append(html.Td([html.B(str(ac)), html.Span(f" · hit {hit_chance(ac, bonus):.0%}", className="text-muted")], title=title))
+        rows.append(html.Tr(cells))
+    header = html.Thead(html.Tr([html.Th("Armour class")] + [html.Th(f"Act {a}") for a in ACT_KEYS]))
+    note = html.Div(f"Hit chance for an attack bonus of +{bonus}. Mage Armour, Shield of Faith and Warding Bond are buffs above; "
+                    "hover a cell for the sources. The Shield reaction (+5) isn't counted", className="small text-muted")
+    return html.Div([dbc.Table([header, html.Tbody(rows)], size="sm", hover=True, class_name="mb-0 small"), note])
+
 def kit_options(none_label=None):
     options = [{"label": none_label, "value": ""}] if none_label else []
     return options + [{"label": f"{THEME_LABELS.get(k['theme'], k['theme'])}: {k['name']} (Act {k['act']})", "value": key} for key, k in kits().items()]
@@ -139,17 +157,23 @@ def variants_panel():
         html.Div(id="bg3-variants"),
     ], className="mb-3")
 
+def ac_cell(build, act):
+    ac, parts = armour_class(build, act)
+    return html.Span(str(ac), title=" + ".join(f"{source} {value:+d}" if ii else f"{source} {value}" for ii, (source, value) in enumerate(parts)))
+
 def variants_table(rows):
-    """ rows: [(name, description, [damage per act])], the first is the build itself """
+    """ rows: [(name, description, [damage per act], build)], the first is the build itself """
     base = rows[0][2]
-    header = html.Thead(html.Tr([html.Th("Variant"), html.Th("What changes")] + [html.Th(f"Act {a}") for a in ACT_KEYS] + [html.Th("")]))
+    header = html.Thead(html.Tr([html.Th("Variant"), html.Th("What changes")] + [html.Th(f"Act {a}") for a in ACT_KEYS] +
+                                [html.Th("AC by act", title="Armour class at each act; hover for where it comes from")] + [html.Th("")]))
     body = []
-    for ii, (name, description, values) in enumerate(rows):
+    for ii, (name, description, values, built) in enumerate(rows):
         cells = [html.Td(name), html.Td(description, className="text-muted")]
         for act_index, value in enumerate(values):
             delta = value - base[act_index]
             cells.append(html.Td([f"{value:.1f}", html.Span(f" {delta:+.1f}", className="text-success" if delta > 0.05 else "text-danger" if delta < -0.05
                                                               else "text-muted") if ii else None]))
+        cells.append(html.Td([part for act in ACT_KEYS for part in (ac_cell(built, act), " / ")][:-1], className="text-nowrap"))
         actions = [] if ii == 0 else [
             dbc.Button("Use as gear", id={"type": "bg3-var-use", "index": ii - 1}, color="secondary", size="sm", outline=True, class_name="me-1",
                        title="Copy this variant's kit, buffs and toggles into the character"),
@@ -221,7 +245,13 @@ def planner():
             dbc.Col([dbc.Row([dbc.Col(html.H6("Expected damage per round", className="text-info mb-0")), dbc.Col(enemies_select(), width="auto")],
                              align="center", class_name="mb-1"), html.Div(id="bg3-dpr"),
                      dcc.Graph(id="bg3-dpr-chart", config={"displayModeBar": False}, style={"height": "280px"})], xs=12, lg=6),
-            dbc.Col([html.H6("Equipment conflicts", className="text-info"), html.Div(id="bg3-conflicts")], xs=12, lg=6),
+            dbc.Col([html.H6("Equipment conflicts", className="text-info"), html.Div(id="bg3-conflicts"),
+                     dbc.Row([dbc.Col(html.H6("Defence", className="text-info mb-0")),
+                              dbc.Col(dbc.InputGroup([dbc.InputGroupText("Enemy attack bonus"),
+                                                      dbc.Input(id="bg3-enemy-attack", type="number", min=0, max=20, step=1, value=6,
+                                                                style={"maxWidth": "5rem"})], size="sm"), width="auto")],
+                             align="center", class_name="mt-3 mb-1"),
+                     html.Div(id="bg3-ac")], xs=12, lg=6),
         ], class_name="mb-3"),
         variants_panel(),
         gear_advice(),

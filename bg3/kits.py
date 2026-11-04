@@ -108,13 +108,14 @@ def describe_variant(variant):
     return "; ".join(parts) or "same as the build"
 
 def variant_damage(build, enemy, rounds_per_fight, enemies=1):
-    """ [(name, description, [damage per round per act])] for the build and each of its variants, against a group of enemies """
+    """ [(name, description, [damage per round per act], build)] for the build and each of its variants, against a group of enemies """
     from computations.analytic import expected_damage_vs_enemies # pylint: disable=import-outside-toplevel
     def per_act(b):
         return [expected_damage_vs_enemies(compile_build(b, act), enemy, rounds_per_fight, enemies) for act in ACT_KEYS]
-    rows = [("Build as planned", "its own gear and buffs", per_act(build))]
+    rows = [("Build as planned", "its own gear and buffs", per_act(build), build)]
     for variant in build.variants:
-        rows.append((variant.get("name") or "Variant", describe_variant(variant), per_act(variant_build(build, variant))))
+        built = variant_build(build, variant)
+        rows.append((variant.get("name") or "Variant", describe_variant(variant), per_act(built), built))
     return rows
 
 __all__ = ["kits", "kit_gear", "apply_kit", "taken_by_others", "variant_build", "variant_damage", "describe_variant", "QUICK_VARIANTS", "Bg3Build"]
