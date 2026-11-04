@@ -154,9 +154,9 @@ def replace_toggle(character, key):
     return compile_character(off, 6)[0]
 
 def test_builder_only_offers_toggles_for_its_classes():
-    assert relevant_toggles([["fighter", "Champion", 12]]) == []
-    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse", "booming_blade"]
-    assert relevant_toggles([["warlock", "The Fiend", 12]]) == ["booming_blade"]
+    assert relevant_toggles([["fighter", "Champion", 12]]) == ["advantage"]
+    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse", "booming_blade", "advantage"]
+    assert relevant_toggles([["warlock", "The Fiend", 12]]) == ["booming_blade", "advantage"]
 
 
 def test_shadow_blade_and_booming_blade():
@@ -176,3 +176,10 @@ def test_shadow_blade_and_booming_blade():
     assert early.attacks[0].name == "Rapier" and notes
     blade.toggles["booming_blade"] = False
     assert not compile_character(blade, 5)[0].attacks[0].extra_damage_list
+
+def test_advantage_toggle_is_off_by_default():
+    character = Bg3Character(classes=[["wizard", "Bladesinging", 5]], routine="shadow_blade")
+    assert not character.toggle("advantage") and character.toggle("booming_blade")
+    plain, _ = compile_character(character, 5)
+    character.toggles["advantage"] = True
+    assert not plain.advantage and compile_character(character, 5)[0].advantage

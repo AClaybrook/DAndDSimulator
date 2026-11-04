@@ -105,13 +105,17 @@ TOGGLES = {
     "starry_form": "Starry Form: Archer (Circle of Stars)", "symbiotic": "Symbiotic Entity (Circle of Spores)",
     "storm_close": "Enemies within 6 m when casting (Heart of the Storm)",
     "booming_blade": "Booming Blade on the first melee attack each turn",
+    "advantage": "Attack with advantage (Shadow Blade in darkness or dim light, hiding, Dirty Tricks, Faerie Fire, Darkness with Devil's Sight)",
 }
+# Toggles that are off unless ticked: advantage depends on the fight, so it isn't assumed
+TOGGLE_DEFAULTS = {"advantage": False}
 # The class (and subclass) each toggle is for, so the builder only offers the ones that matter
 TOGGLE_FOR = {"rage": ("barbarian", ""), "reckless": ("barbarian", ""), "smite": ("paladin", ""), "vow": ("paladin", ""),
               "curse": ("warlock", "The Hexblade"), "surprise": ("rogue", "Assassin"), "manifestation": ("monk", "Way of the Open Hand"),
               "damaged_target": ("ranger", "Hunter"), "starry_form": ("druid", "Circle of Stars"), "symbiotic": ("druid", "Circle of Spores"),
               "storm_close": ("sorcerer", "Storm Sorcery"),
-              "booming_blade": [("wizard", ""), ("sorcerer", ""), ("warlock", ""), ("fighter", "Eldritch Knight"), ("rogue", "Arcane Trickster")]}
+              "booming_blade": [("wizard", ""), ("sorcerer", ""), ("warlock", ""), ("fighter", "Eldritch Knight"), ("rogue", "Arcane Trickster")],
+              "advantage": [(cls, "") for cls in CLASSES]}
 
 def relevant_toggles(classes):
     """ Toggles for a [class, subclass, levels] list """
@@ -144,7 +148,7 @@ class Bg3Character:
         return cls(**{k: v for k, v in data.items() if k in names})
 
     def toggle(self, key):
-        return self.toggles.get(key, True)
+        return self.toggles.get(key, TOGGLE_DEFAULTS.get(key, True))
 
 def class_order(character, level=MAX_LEVEL):
     """ The class of each character level, i.e. ['fighter', 'fighter', 'rogue', ...] up to level """
@@ -424,6 +428,8 @@ def _class_features(character, c, levels, subs, notes):
                 if a.is_weapon:
                     a.extra_damage_list = [*a.extra_damage_list, "1d6 fire"] # Elemental Cleaver
     if barbarian >= 2 and character.toggle("reckless") and character.routine != "ranged":
+        c.advantage = True
+    if character.toggle("advantage"):
         c.advantage = True
     c.brutal_critical = barbarian >= 9
     # Paladin
