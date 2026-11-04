@@ -6,7 +6,7 @@ from dataclasses import asdict, dataclass, field, fields, replace
 from bg3.buffs import BUFFS
 from bg3.character import Bg3Character, compile_character, is_proficient, weapon_proficiencies
 from bg3.checkpoints import ACTS, act_level
-from bg3.items import SLOT_LABELS, SLOTS, active_effects, apply_effect, apply_lightning_charges, catalog, equip_weapon
+from bg3.items import SLOT_LABELS, SLOTS, active_effects, apply_effect, apply_lightning_charges, apply_reverberation, catalog, equip_weapon
 from game_data.classes import BUILDS, build_character
 
 ACT_KEYS = [str(a) for a in ACTS]
@@ -105,6 +105,7 @@ def compile_build(build, act, items=None):
             apply_effect(character, effect, own)
     # Charges from several items don't stack their bonuses
     apply_lightning_charges(character, [(e, own) for e, own in effects if e.kind == "lightning_charges"])
+    apply_reverberation(character, {item.key for item in gear.values()})
 
     # Haste: one more attack with the main weapon each round
     main = next((a for a in character.attacks if a.is_weapon and not a.offhand and not a.uses_per_fight and not a.fallback_for), None)

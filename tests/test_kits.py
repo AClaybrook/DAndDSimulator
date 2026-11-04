@@ -52,3 +52,20 @@ def test_variants_compare_without_changing_the_build():
     preset = Bg3Build("Fighter", "fighter_gwm", variants=[dict(QUICK_VARIANTS["advantage"])])
     assert compile_build(variant_build(preset, preset.variants[0]), "1").advantage
     assert Bg3Build.from_dict(godblade.to_dict()).variants == godblade.variants # Saved with the party
+
+def test_reverberation_bursts_and_prone():
+    from bg3 import synergy
+    ex = examples()
+    godblade, _, _ = apply_kit(ex["1. The Godblade"], "thunder", "1")
+    attacks = compile_build(godblade, "1").attacks
+    burst = next(a for a in attacks if a.name == "Reverberation (5 stacks)")
+    assert burst.damage == "1d4" and burst.damage_type == "thunder" and 0 < burst.uses_per_fight <= 3
+    # Ring of Elemental Infusion: only the weapon attack after Booming Blade
+    infused = [a.name for a in attacks if "1d4" in a.bonus_damage_die_mod_list]
+    assert infused == ["Knife of the Undermountain King (Offhand)"]
+    assert not any(a.name.startswith("Reverberation") for a in compile_build(ex["1. The Godblade"], "1").attacks)
+    party = [godblade, ex["4. Deathreaper"]]
+    enemy = enemy_from_monster("Mind Flayer")
+    assert "prone_reverb" in synergy.available(party, "1") and 0 < synergy.prone_share(party, "1", enemy) < 1
+    plain, prone = (dict((n, d) for n, _, d in synergy.party_damage(party, "1", enemy, 3, active)) for active in ([], ["prone_reverb"]))
+    assert prone["4. Deathreaper"] > plain["4. Deathreaper"] # Melee advantage against a Prone target

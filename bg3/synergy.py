@@ -8,7 +8,7 @@ import numpy as np
 from bg3.build import compile_build, equipment_at
 from bg3.character import Bg3Character, class_levels, subclass_of
 from bg3.checkpoints import act_level
-from bg3.items import catalog
+from bg3.items import catalog, reverberation_per_round
 from computations.analytic import expected_damage_per_round
 from computations.numerical_simulation import fight_damage, set_seed
 
@@ -26,6 +26,8 @@ SYNERGIES = {s.key: s for s in [
     Synergy("darkness", "Darkness on the enemy", "members who see through magical darkness (Devil's Sight, Eyes of the Dark, Shar's Spear) attack with "
             "advantage", False),
     Synergy("reverberation", "Reverberation", "stacks from thunder and condition items: -2 to the enemy's Strength, Dexterity and Constitution saves", True),
+    Synergy("prone_reverb", "Prone from Reverberation", "at 5 stacks the enemy makes a CON save (effectively DC 15) or falls Prone: melee attacks "
+            "against it have advantage. Tick to assume it's Prone for the melee members' attacks", False),
     Synergy("paralysed", "Enemy paralysed (Hold Person / Monster)", "advantage on attacks, melee hits are crits, Strength and Dexterity saves fail", False),
 ]}
 REVERBERATION_ITEMS = {"bg3:boots_of_stormy_clamour", "bg3:gloves_of_belligerent_skies", "bg3:spineshudder_amulet"}
@@ -76,6 +78,9 @@ def available(builds, act):
     reverb = [b.name for b in builds if set(equipment_at(b, act).values()) & REVERBERATION_ITEMS]
     if reverb:
         found["reverberation"] = reverb
+    stackers = [b.name for b in builds if reverberation_per_round(compile_build(b, act), set(equipment_at(b, act).values())) > 1]
+    if stackers:
+        found["prone_reverb"] = stackers
     holders = [b.name for b in builds if casts_hold_person(b, act)]
     if holders:
         found["paralysed"] = holders
@@ -106,7 +111,7 @@ def apply(builds, act, enemy, active):
         for attack in character.attacks:
             if attack.saving_throw:
                 continue
-            if sighted or "paralysed" in active:
+            if sighted or "paralysed" in active or ("prone_reverb" in active and attack.type in ("weapon (melee)", "unarmed")):
                 attack.advantage = True
             if "paralysed" in active and attack.type in ("weapon (melee)", "unarmed"):
                 attack.hits_crit = True
@@ -148,7 +153,17 @@ def psychic_users(builds, act):
             users.append(build.name)
     return users
 
-def describe(builds, act):
+def prone_share(builds, act, enemy=None):
+    """ Share of turns the enemy is knocked Prone by Reverberation: the party's stacks on one target reach 5 in some rounds, and it fails a
+        CON save of effectively DC 15 (10 plus the Reverberation penalty) """
+    added = sum(reverberation_per_round(compile_build(b, act), set(equipment_at(b, act).values())) for b in builds)
+    if added <= 1:
+        return 0.0
+    con = enemy.saving_throw_modifier("constitution") if enemy is not None else 2
+    fail = min(max((15 - con - 1) / 20, 0.05), 0.95)
+    return min(1.0, (added - 1) / 5) * fail
+
+def describe(builds, act, enemy=None):
     """ One line per available synergy: what it does, who sets it up and who gains """
     act = str(act)
     lines = {}
@@ -157,6 +172,9 @@ def describe(builds, act):
         who = f"set up by {', '.join(members)}" if members else "nobody carries it yet, tick to assume someone does"
         if key == "darkness":
             who += f"; sees through it: {', '.join(b.name for b in builds if sees_in_darkness(b, act)) or 'nobody'}"
+        if key == "prone_reverb":
+            share = prone_share(builds, act, enemy)
+            who += f"; about {share:.0%} of turns against this enemy (5 stack bursts x its chance to fail the save)"
         if key == "resonance_stone":
             who += f"; psychic damage: {', '.join(psychic_users(builds, act)) or 'nobody'}"
         lines[key] = f"{s.name}: {s.effect} ({who})"

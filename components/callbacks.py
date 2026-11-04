@@ -1025,7 +1025,7 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         if hit_points:
             enemy.hit_points = max(int(hit_points), 1)
         rounds = max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)
-        descriptions = synergy.describe(builds, act)
+        descriptions = synergy.describe(builds, act, enemy)
         options = [{"label": text, "value": key} for key, text in descriptions.items()]
         if active is None or ctx.triggered_id != "bg3-synergies" and not set(active) & set(descriptions):
             active = synergy.default_active(builds, act)

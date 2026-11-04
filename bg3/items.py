@@ -5,7 +5,7 @@ from dataclasses import dataclass, field, fields, replace
 from functools import cache
 from pathlib import Path
 
-from computations.models import STATS
+from computations.models import STATS, Attack
 from game_data import weapons
 
 DATA = Path(__file__).parent / "data"
@@ -125,6 +125,12 @@ def _attacks_for(character, effect, own_attacks):
         return own_attacks
     applies = APPLIES_TO.get(effect.applies_to, APPLIES_TO["all"])
     attacks = [a for a in character.attacks if applies(a)]
+    if (effect.condition or "").startswith("First weapon hit after"):
+        # Ring of Elemental Infusion: one weapon attack a turn, the first after the elemental cantrip (Booming Blade) or spell
+        weapons = [a for a in attacks if a.is_weapon and not a.uses_per_fight]
+        after = next((ii for ii, a in enumerate(weapons) if "Booming Blade" in a.name), None)
+        pick = weapons[after + 1:after + 2] if after is not None else weapons[:1]
+        return pick
     if "cantrip" in (effect.condition or "").lower() and "thunder" in (effect.condition or "").lower():
         # Elemental cantrip effects (Necklace of Elemental Augmentation) also count Booming Blade, a cantrip on a weapon attack
         attacks += [a for a in character.attacks if "Booming Blade" in a.name and a not in attacks]
@@ -189,3 +195,34 @@ def equip_weapon(attack, item):
                    two_handed=two_handed, heavy="heavy" in props,
                    bonus_attack_die_mod_list=list(attack.bonus_attack_die_mod_list), bonus_damage_die_mod_list=list(attack.bonus_damage_die_mod_list),
                    extra_damage_list=list(attack.extra_damage_list))
+
+# Reverberation (bg3.wiki): each turn of it is -1 to STR/DEX/CON saves; at 5 or more the target takes 1d4 thunder, makes a CON save
+# (DC 10, with the penalty effectively 15) or falls Prone, and the condition ends
+REVERBERATION_TYPES = ("thunder", "lightning", "radiant")
+ASSUMED_HIT_CHANCE = 0.65 # Items are compiled before the enemy is known, so stacks per round assume a typical chance to hit
+
+def reverberation_hits(character):
+    """ Attacks per round that deal thunder, lightning or radiant damage (the damage type or a rider) """
+    def elemental(a):
+        return a.damage_type in REVERBERATION_TYPES or any(t in r for r in a.extra_damage_list for t in REVERBERATION_TYPES)
+    return sum(1 for a in character.attacks if elemental(a) and not a.fallback_for)
+
+def reverberation_per_round(character, gear_keys):
+    """ Expected turns of Reverberation added per round: Gloves of Belligerent Skies add 2 per thunder, lightning or radiant hit, and Boots of
+        Stormy Clamour 2 more whenever a condition (Reverberation included) is inflicted """
+    if "bg3:gloves_of_belligerent_skies" not in gear_keys:
+        return 0.0
+    per_hit = 2 + 2 * ("bg3:boots_of_stormy_clamour" in gear_keys)
+    return ASSUMED_HIT_CHANCE * reverberation_hits(character) * per_hit
+
+def apply_reverberation(character, gear_keys):
+    """ Adds the 5 stack burst as an attack: 1d4 thunder that always lands, in the share of rounds the target reaches 5 stacks (stacks drop by
+        one each turn). Returns that share, which the party's Prone synergy uses """
+    added = reverberation_per_round(character, gear_keys)
+    if added <= 1:
+        return 0.0
+    share = min(1.0, (added - 1) / 5)
+    # Uses per fight: bursts in a typical 3 round fight
+    character.attacks = [*character.attacks, Attack(name="Reverberation (5 stacks)", type="spell", damage="1d4", damage_type="thunder",
+                                                    always_hit=True, once_per_turn_eligible=False, uses_per_fight=round(3 * share, 2))]
+    return share
