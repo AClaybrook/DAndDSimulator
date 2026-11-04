@@ -20,6 +20,7 @@ from components.sweeps import SWEEP_PARAMETERS
 from components.help import GRAPH_DESCRIPTIONS, quick_start
 from components.bg3_planner import planner
 from components.bg3_map import map_page, register_map_callbacks
+from components.static_html import static
 
 # %%
 # Example
@@ -195,11 +196,11 @@ main_page = html.Div(dbc.Container([
                 ),
         ]),
         dbc.Row(
-            html.Div(id="damage-tables", children=[
+            html.Div(id="damage-tables", children=static([
                 *build_leaderboard(characters, df_by_rounds),
                 *add_tables(df_by_rounds, characters, by_round=True, width=3),
                 *build_breakdown_tables(characters, [attack_breakdown(c, enemy) for c in characters]),
-            ]),
+            ])),
         ),
     ], className="panel"),
 ], fluid=True), id="main-page")

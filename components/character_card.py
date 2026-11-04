@@ -85,12 +85,11 @@ def _children(component):
     return [children] if isinstance(children, dict) else []
 
 def _is_label_row(component):
-    """ A row made by label_row: a column with a Label and a column with an input """
+    """ A row made by label_row: a Label and an input """
     if not isinstance(component, dict) or component.get('type') != 'Row':
         return False
     columns = component['props'].get('children')
-    return (isinstance(columns, list) and len(columns) == 2
-            and isinstance(columns[0].get('props', {}).get('children'), dict) and columns[0]['props']['children'].get('type') == 'Label')
+    return isinstance(columns, list) and len(columns) == 2 and isinstance(columns[0], dict) and columns[0].get('type') == 'Label'
 
 def label_value_rows(component):
     """ Yields (label, value) for every label/input row inside a (serialized) component tree, used to read values back from the UI.
@@ -99,8 +98,8 @@ def label_value_rows(component):
     while stack:
         node = stack.pop(0)
         if _is_label_row(node):
-            label_col, value_col = node['props']['children']
-            yield label_col['props']['children']['props']['children'], value_col['props']['children']['props'].get('value')
+            label, field = node['props']['children']
+            yield label['props']['children'], field['props'].get('value')
         elif isinstance(node, (dict, list)):
             stack[:0] = _children(node)
 
@@ -207,8 +206,10 @@ def characters_from_ui(characters_list, attack_stores):
     return characters
 
 def label_row(label, component):
-    """ A row with a label on the left and an input on the right, the structure is used to read values back """
-    return dbc.Row([dbc.Col(dbc.Label(label, style=LABEL_STYLE)), dbc.Col(component)], class_name="label-row")
+    """ A row with a label on the left and an input on the right, the structure is used to read values back. The label and the input are
+        the row's columns, no Col around them: 3 components a field instead of 5, and the browser checks every component on each update """
+    component.class_name = f"{getattr(component, 'class_name', None) or ''} col".strip()
+    return dbc.Row([dbc.Label(label, style=LABEL_STYLE, class_name="col"), component], class_name="label-row")
 
 def number_row(label, value, min_, max_, step=1, **kwargs):
     return label_row(label, dbc.Input(type="number", value=value, min=min_, max=max_, step=step, style=INPUT_STYLE, size="sm", **kwargs))
@@ -227,9 +228,9 @@ def tag_fields(component, id_type, **keys):
         so callbacks can react to any field changing (i.e. the expected damage badge) """
     children = getattr(component, "children", None)
     if isinstance(component, dbc.Row) and getattr(component, "class_name", None) == "label-row":
-        label_col, input_col = children
-        if getattr(input_col.children, "id", None) is None:
-            input_col.children.id = {"type": id_type, "field": label_col.children.children, **keys}
+        label, field = children
+        if getattr(field, "id", None) is None:
+            field.id = {"type": id_type, "field": label.children, **keys}
     elif isinstance(children, (list, tuple)):
         for child in children:
             tag_fields(child, id_type, **keys)

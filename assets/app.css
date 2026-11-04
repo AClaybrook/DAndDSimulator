@@ -126,6 +126,14 @@ input:invalid {
   margin-bottom: 0;
 }
 
+/* The input is the row's second column itself, keep the gutter a wrapping column used to give */
+.label-row > .form-control,
+.label-row > .form-select,
+.label-row > .form-check {
+  margin-left: calc(var(--bs-gutter-x) * 0.5);
+  margin-right: calc(var(--bs-gutter-x) * 0.5);
+}
+
 /* Two columns of fields for the enemy card on wider screens */
 @media (min-width: 36em) {
   .enemy-grid {

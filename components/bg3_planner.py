@@ -179,6 +179,12 @@ def variants_panel():
         ], class_name="g-1 mb-1", align="center"),
         html.Div([html.Small("Quick variants: ", className="text-muted me-1"), dbc.ButtonGroup(quick, size="sm")], className="mb-2"),
         html.Div(id="bg3-variants"),
+        # One picker for the actions, not buttons on each row: the table is redrawn on every edit and stays a single component
+        dbc.InputGroup([
+            dbc.Select(id="bg3-var-pick", options=[], placeholder="Pick a variant..."),
+            dbc.Button("Use as gear", id="bg3-var-use", color="secondary", outline=True, title="Copy the variant's kit, buffs and toggles into the character"),
+            dbc.Button(html.I(className="fa-solid fa-xmark"), id="bg3-var-del", color="danger", outline=True, title="Delete the variant"),
+        ], size="sm", class_name="mt-1", style={"maxWidth": "32rem"}),
     ], className="mb-3")
 
 def ac_cell(build, act):
@@ -194,7 +200,7 @@ def variants_table(rows, enemy):
     base = rows[0][2]
     header = html.Thead(html.Tr([html.Th("Variant"), html.Th("What changes")] + [html.Th(f"Act {a}") for a in ACT_KEYS] +
                                 [html.Th("AC by act", title="Armour class at each act; hover for where it comes from"),
-                                 html.Th("Score by act", title="Overall score (0-100) at each act; hover for the parts")] + [html.Th("")]))
+                                 html.Th("Score by act", title="Overall score (0-100) at each act; hover for the parts")]))
     body = []
     for ii, (name, description, values, built) in enumerate(rows):
         cells = [html.Td(name), html.Td(description, className="text-muted")]
@@ -204,12 +210,6 @@ def variants_table(rows, enemy):
                                                               else "text-muted") if ii else None]))
         cells.append(html.Td([part for act in ACT_KEYS for part in (ac_cell(built, act), " / ")][:-1], className="text-nowrap"))
         cells.append(html.Td([part for act in ACT_KEYS for part in (score_cell(built, act, enemy), " / ")][:-1], className="text-nowrap"))
-        actions = [] if ii == 0 else [
-            dbc.Button("Use as gear", id={"type": "bg3-var-use", "index": ii - 1}, color="secondary", size="sm", outline=True, class_name="me-1",
-                       title="Copy this variant's kit, buffs and toggles into the character"),
-            dbc.Button(html.I(className="fa-solid fa-xmark"), id={"type": "bg3-var-del", "index": ii - 1}, color="danger", size="sm", outline=True,
-                       title="Delete this variant")]
-        cells.append(html.Td(actions, className="text-nowrap"))
         body.append(html.Tr(cells))
     return dbc.Table([header, html.Tbody(body)], size="sm", hover=True, class_name="small mb-0")
 

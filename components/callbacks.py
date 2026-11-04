@@ -25,6 +25,7 @@ from components.character_card import (generate_character_card, set_attack_from_
                                        label_value_rows, validation_errors, character_dict_from_labels)
 from components.enemy_card import extract_enemy_ui_values, generate_enemy_card_body, enemy_dict_from_labels
 from components.variants import make_variant
+from components.static_html import static
 from components.sweeps import SWEEP_PARAMETERS, run_sweep
 from components.session import SETTINGS_IDS, describe_session, make_session, parse_session
 from components.bg3_planner import (DEFAULT_PARTY, MAX_PARTY_SIZE, CUSTOM, conditional_options, conflicts_list, dpr_chart, dpr_table, gear_highlights,
@@ -105,6 +106,11 @@ def dpa_vs_ac_tables(df_acs, order, x_col='Armor Class'):
     return data_summary
 
 # Note: Intellisense is not recognizing the callbacks as being accessed
+def unchanged(values, old):
+    """ no_update for each value equal to what the browser already has """
+    old = old or [None] * len(values)
+    return [no_update if v == o else v for v, o in zip(values, old)]
+
 def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: disable=too-many-statements
     """ Registers all callbacks for the app"""
     if sidebar:
@@ -700,7 +706,7 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             fig = generate_fight_plot(fights, template=template)
             tables = fight_summary(fights) + breakdown
             summary = results_summary({name: damage.sum(axis=0).mean() for name, damage in fights.items()}, f"damage per {rounds_per_fight} round fight", context=f"against {enemy.name}.")
-        return fig, tables, None, spinner, summary, session
+        return fig, static(tables), None, spinner, summary, session
 
 
     # Resimulate since storing data is very memory intensive. Could implment client side callbacks, but this is sufficient for now
@@ -829,9 +835,13 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         Input("bg3-party", "data"), # Imported sessions replace the party
         Input("bg3-enemies", "value"),
         State("bg3-load-preset", "value"),
+        State({"type": "bg3-gear", "slot": ALL, "act": ALL, "group": ALL}, "className"),
+        State({"type": "bg3-gear", "slot": ALL, "act": ALL, "group": ALL}, "placeholder"),
+        State("bg3-member-tabs", "children"),
+        State("bg3-conditions", "options"),
     )
     def sync_planner(active_tab, _add, _remove, _load, name, preset, levels, gear, buffs, conditions, enemy_dict, rounds_per_fight, cb_values, cb_subs,
-                     party, enemies, example): # pylint: disable=too-many-locals
+                     party, enemies, example, old_classes, old_placeholders, old_tabs, old_conditions): # pylint: disable=too-many-locals
         """ Keeps the party store and the member editor in sync. Editing updates the selected member, switching members loads them """
         party = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)] or [Bg3Build.from_dict(DEFAULT_PARTY[0])]
         selected = min(int(active_tab or 0), len(party) - 1)
@@ -883,7 +893,12 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
         rounds = max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)
         gains = {(c.act, c.item): shared_item_gains(party, c, enemy, rounds) for c in conflicts if c.kind == "shared"}
+        # Every output prop sent is a store update in the browser, so unchanged ones are skipped
+        old_labels = [(t.get("props", {}).get("label"), t.get("props", {}).get("tab_id")) for t in (old_tabs or []) if isinstance(t, dict)]
         tabs = [dbc.Tab(label=b.name, tab_id=str(ii)) for ii, b in enumerate(party)]
+        if old_labels == [(b.name, str(ii)) for ii, b in enumerate(party)]:
+            tabs = no_update
+        conditions_now = conditional_options(member)
         outputs_from_member = not editor_changed
         # Builder fields: loaded when switching members or to a custom character, left alone while they are being edited
         custom = Bg3Character.from_dict(member.character) if member.character else None
@@ -899,41 +914,51 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         return (
             [b.to_dict() for b in party],
             tabs,
-            str(selected),
-            member.name if outputs_from_member else no_update,
-            (CUSTOM if member.character else member.preset) if outputs_from_member else no_update,
-            [act_level(gid["act"], member.levels) for gid in level_ids] if outputs_from_member else [no_update] * len(level_ids),
-            [member.equipment.get(gid["act"], {}).get(gid["slot"]) for gid in gear_ids] if outputs_from_member else [no_update] * len(gear_ids),
-            gear_highlights(member, conflicts, gear_ids),
-            inherited_placeholders(member, gear_ids),
-            [member.buffs.get(bid["act"], []) for bid in buff_ids] if outputs_from_member else [no_update] * len(buff_ids),
-            conditional_options(member),
-            [c for c in member.conditions if c in {o["value"] for o in conditional_options(member)}] if outputs_from_member else no_update,
-            conflicts_list(conflicts, gains),
-            dpr_table(party, enemy, rounds, int(enemies or 1)),
-            cb_out,
+            str(selected) if str(selected) != str(active_tab) else no_update,
+            member.name if outputs_from_member and member.name != name else no_update,
+            (CUSTOM if member.character else member.preset) if outputs_from_member and (CUSTOM if member.character else member.preset) != preset else no_update,
+            unchanged([act_level(gid["act"], member.levels) for gid in level_ids], levels) if outputs_from_member else [no_update] * len(level_ids),
+            unchanged([member.equipment.get(gid["act"], {}).get(gid["slot"]) for gid in gear_ids], gear) if outputs_from_member else [no_update] * len(gear_ids),
+            unchanged(gear_highlights(member, conflicts, gear_ids), old_classes),
+            unchanged(inherited_placeholders(member, gear_ids), old_placeholders),
+            unchanged([member.buffs.get(bid["act"], []) for bid in buff_ids], [b or [] for b in buffs]) if outputs_from_member else [no_update] * len(buff_ids),
+            conditions_now if conditions_now != old_conditions else no_update,
+            [c for c in member.conditions if c in {o["value"] for o in conditions_now}] if outputs_from_member else no_update,
+            static(conflicts_list(conflicts, gains)),
+            static(dpr_table(party, enemy, rounds, int(enemies or 1))),
+            unchanged(cb_out, cb_values) if load_builder else cb_out,
             sub_options,
-            sub_values,
+            unchanged(sub_values, cb_subs),
             custom is not None,
-            builder_summary(custom, levels_now) if custom else None,
+            static(builder_summary(custom, levels_now)) if custom else None,
             toggle_options(custom.classes) if custom else [],
         )
 
-    @app.callback(Output("bg3-ac", "children"), Input("bg3-party", "data"), Input("enemy-values", "data"), Input("bg3-enemy-attack", "value"))
-    def show_ac(party, enemy_dict, attack_bonus):
-        builds = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)]
-        return ac_table(builds, Enemy.from_dict(enemy_dict) if enemy_dict else Enemy(), attack_bonus)
-
-    @app.callback(Output("bg3-score", "children"), Input("bg3-party", "data"), Input("enemy-values", "data"), Input("rounds-per-fight", "value"),
-                  Input("bg3-enemy-attack", "value"))
-    def show_score(party, enemy_dict, rounds_per_fight, attack_bonus):
+    @app.callback(
+        Output("bg3-ac", "children"),
+        Output("bg3-score", "children"),
+        Output("bg3-dpr-chart", "figure"),
+        Input("bg3-party", "data"),
+        Input("enemy-values", "data"),
+        Input("rounds-per-fight", "value"),
+        Input("bg3-enemy-attack", "value"),
+        Input("bg3-enemies", "value"),
+    )
+    def party_summaries(party, enemy_dict, rounds_per_fight, attack_bonus, enemies):
+        """ Armour class, overall score and the damage chart of the party. One callback: each callback costs the browser a round of
+            store updates over the whole page """
         builds = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)]
         enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
-        return score_table(builds, enemy, max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1), int(attack_bonus if attack_bonus is not None else 6))
+        rounds = max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)
+        chart = dpr_chart(builds, enemy, rounds, int(enemies or 1))
+        if ctx.triggered_id == "bg3-enemies":
+            return no_update, no_update, chart
+        return (static(ac_table(builds, enemy, attack_bonus)),
+                static(score_table(builds, enemy, rounds, int(attack_bonus if attack_bonus is not None else 6))), chart)
 
     @app.callback(Output("bg3-kit-info", "children"), Input("bg3-kit", "value"))
     def show_kit(kit_key):
-        return kit_info(kit_key)
+        return static(kit_info(kit_key))
 
     @app.callback(
         Output("bg3-party", "data", allow_duplicate=True),
@@ -941,8 +966,8 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         Input("bg3-kit-apply", "n_clicks"),
         Input("bg3-var-add", "n_clicks"),
         Input({"type": "bg3-var-quick", "key": ALL}, "n_clicks"),
-        Input({"type": "bg3-var-del", "index": ALL}, "n_clicks"),
-        Input({"type": "bg3-var-use", "index": ALL}, "n_clicks"),
+        Input("bg3-var-del", "n_clicks"),
+        Input("bg3-var-use", "n_clicks"),
         State("bg3-party", "data"),
         State("bg3-member-tabs", "active_tab"),
         State("bg3-kit", "value"),
@@ -952,13 +977,14 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         State("bg3-var-kit", "value"),
         State("bg3-var-buffs", "value"),
         State("bg3-var-adv", "value"),
+        State("bg3-var-pick", "value"),
         prevent_initial_call=True,
     )
     def kits_and_variants(*args):
         """ Quick gear from a kit, and adding, deleting or using variants of the selected character. Manual gear editing is untouched:
             a kit only fills its own slots, and variants live next to the gear """
-        party, active_tab, kit_key, kit_act, kit_opts, var_name, var_kit, var_buffs, var_adv = args[5:]
-        # Pattern matched buttons also fire when the variants table is redrawn; only real clicks count
+        party, active_tab, kit_key, kit_act, kit_opts, var_name, var_kit, var_buffs, var_adv, picked = args[5:]
+        # Only real clicks count (n_clicks of None comes from a button being created)
         if not party or not ctx.triggered or not ctx.triggered[0]["value"]:
             raise PreventUpdate
         builds = [Bg3Build.from_dict(b) for b in party]
@@ -983,15 +1009,16 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             member.variants = [*member.variants, variant]
         elif isinstance(triggered, dict) and triggered.get("type") == "bg3-var-quick":
             member.variants = [*member.variants, dict(QUICK_VARIANTS[triggered["key"]])]
-        elif isinstance(triggered, dict) and triggered.get("type") == "bg3-var-del":
-            member.variants = [v for ii, v in enumerate(member.variants) if ii != triggered["index"]]
-        elif isinstance(triggered, dict) and triggered.get("type") == "bg3-var-use":
-            index = triggered["index"]
-            if index >= len(member.variants):
-                raise PreventUpdate
-            used = variant_build(member, member.variants[index])
-            used.name, used.variants = member.name, [v for ii, v in enumerate(member.variants) if ii != index]
-            member = used
+        elif triggered in ("bg3-var-del", "bg3-var-use"):
+            index = int(picked) if picked not in (None, "") else -1
+            if not 0 <= index < len(member.variants):
+                return no_update, alert("Pick a variant first", color="warning")
+            if triggered == "bg3-var-del":
+                member.variants = [v for ii, v in enumerate(member.variants) if ii != index]
+            else:
+                used = variant_build(member, member.variants[index])
+                used.name, used.variants = member.name, [v for ii, v in enumerate(member.variants) if ii != index]
+                member = used
         else:
             raise PreventUpdate
         builds[selected] = member
@@ -999,19 +1026,24 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
 
     @app.callback(
         Output("bg3-variants", "children"),
+        Output("bg3-var-pick", "options"),
+        Output("bg3-var-pick", "value"),
         Input("bg3-party", "data"),
         Input("bg3-member-tabs", "active_tab"),
         Input("enemy-values", "data"),
         Input("rounds-per-fight", "value"),
         Input("bg3-enemies", "value"),
+        State("bg3-var-pick", "value"),
     )
-    def show_variants(party, active_tab, enemy_dict, rounds_per_fight, enemies):
+    def show_variants(party, active_tab, enemy_dict, rounds_per_fight, enemies, picked):
         if not party:
             raise PreventUpdate
         builds = [Bg3Build.from_dict(b) for b in party]
         member = builds[min(int(active_tab or 0), len(builds) - 1)]
         enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
-        return variants_table(variant_damage(member, enemy, max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1), int(enemies or 1)), enemy)
+        rows = variant_damage(member, enemy, max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1), int(enemies or 1))
+        options = [{"label": name, "value": str(ii)} for ii, (name, *_) in enumerate(rows[1:])]
+        return static(variants_table(rows, enemy)), options, picked if picked in {o["value"] for o in options} else None
 
     @app.callback(
         Output("bg3-synergies", "options"),
@@ -1043,21 +1075,8 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             active = synergy.default_active(builds, act)
         active = [k for k in active if k in descriptions]
         result = synergy.simulate_party_fight(builds, act, enemy, rounds, active)
-        return (options, active, roles_table(*party_roles(builds, act)), synergy_table(synergy.party_damage(builds, act, enemy, rounds, active)),
+        return (options, active, static(roles_table(*party_roles(builds, act))), static(synergy_table(synergy.party_damage(builds, act, enemy, rounds, active))),
                 party_fight_summary(result), fight_chart(result))
-
-    @app.callback(
-        Output("bg3-dpr-chart", "figure"),
-        Input("bg3-party", "data"),
-        Input("enemy-values", "data"),
-        Input("rounds-per-fight", "value"),
-        Input("bg3-enemies", "value"),
-    )
-    def party_chart(party, enemy_dict, rounds_per_fight, enemies):
-        """ Expected damage per round of the party across the act checkpoints """
-        builds = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)]
-        enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
-        return dpr_chart(builds, enemy, max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1), int(enemies or 1))
 
     @app.callback(
         Output("bg3-item-values", "children"),
@@ -1078,8 +1097,8 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
         rounds = max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)
         act = act or "1"
-        return (item_values_table(item_values(member, act, enemy, rounds)),
-                suggestions_table(slot_suggestions(member, act, slot or "melee_main", enemy, rounds, party=builds)))
+        return (static(item_values_table(item_values(member, act, enemy, rounds))),
+                static(suggestions_table(slot_suggestions(member, act, slot or "melee_main", enemy, rounds, party=builds))))
 
     @app.callback(
         Output("character_row", "children", allow_duplicate=True),

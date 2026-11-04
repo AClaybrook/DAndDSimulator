@@ -11,6 +11,7 @@ from dash.exceptions import PreventUpdate
 from bg3.build import ACT_KEYS, Bg3Build, equipment_at
 from bg3.checkpoints import ACTS
 from bg3.items import SLOT_LABELS, catalog
+from components.static_html import static
 
 DATA = json.loads((Path(__file__).parent.parent / "bg3" / "data" / "map_act1.json").read_text(encoding="utf-8"))
 MAPS = DATA["maps"]
@@ -257,6 +258,9 @@ def map_page():
                 "minimap textures © Larian Studios, via bg3.wiki. Unofficial fan tool."], className="small text-muted mt-2"),
     ], fluid=True)
 
+def on_map_page(pathname):
+    return (pathname or "").rstrip("/").endswith("/map")
+
 def register_map_callbacks(app, template="plotly_dark"):
     @app.callback(
         Output("main-page", "style"),
@@ -265,18 +269,20 @@ def register_map_callbacks(app, template="plotly_dark"):
         Input("url", "pathname"),
     )
     def route(pathname):
-        on_map = (pathname or "").rstrip("/").endswith("/map")
         hidden = {"display": "none"}
-        return (hidden, {}, hidden) if on_map else ({}, hidden, {})
+        return (hidden, {}, hidden) if on_map_page(pathname) else ({}, hidden, {})
 
     @app.callback(
         Output("map-party-list", "options"),
         Output("map-party-list", "value"),
-        Input("bg3-party", "data"),
         Input("map-party-act", "value"),
+        Input("url", "pathname"),
+        State("bg3-party", "data"),
         State("map-collected", "data"),
     )
-    def party_list(party, act, collected):
+    def party_list(act, pathname, party, collected):
+        if not on_map_page(pathname):
+            raise PreventUpdate # Hidden. The party is a State: planner edits don't redraw the map, opening the page does
         options = party_checklist(party, act)
         return options, [o["value"] for o in options if o["value"] in set(collected or [])]
 
@@ -300,18 +306,21 @@ def register_map_callbacks(app, template="plotly_dark"):
         Input("map-rarities", "value"),
         Input("map-options", "value"),
         Input("map-search", "value"),
-        Input("bg3-party", "data"),
         Input("map-party-act", "value"),
         Input("map-party-list", "value"),
+        Input("url", "pathname"),
+        State("bg3-party", "data"),
     )
-    def update_map(map_key, rarities, options, search, party, act, collected):
+    def update_map(map_key, rarities, options, search, act, collected, pathname, party):
+        if not on_map_page(pathname):
+            raise PreventUpdate
         found = []
         for name in search or []:
             maps = sorted({MAPS[p["map"]]["label"] for p in POINTS if p["name"] == name})
             found.append(html.Div(f"{name}: {', '.join(maps)}"))
         gear = {k: v for k, v in party_gear(party, act).items() if k not in set(collected or [])}
         spots = groups(map_key, rarities or [], options or [], search or [], gear)
-        return (figure(map_key, rarities or [], options or [], search or [], template, gear), found, map_list(map_key, spots, gear))
+        return (figure(map_key, rarities or [], options or [], search or [], template, gear), static(found), static(map_list(map_key, spots, gear)))
 
     @app.callback(
         Output("map-details", "children"),
@@ -333,5 +342,5 @@ def register_map_callbacks(app, template="plotly_dark"):
         gear = {k: v for k, v in party_gear(party, act).items() if k not in set(collected or [])}
         for s, points in groups(map_key, rarities or [], options or [], search or [], gear):
             if f"{s[0]},{s[1]}" == spot:
-                return details(points, gear)
+                return static(details(points, gear))
         return no_update
