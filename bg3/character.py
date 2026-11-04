@@ -96,7 +96,7 @@ DEFAULT_WEAPONS = {"two_handed": "Greatsword", "one_handed": "Longsword", "dual_
                    "dual_hand_crossbows": "Hand Crossbow"}
 RANGED_ROUTINES = ("ranged", "dual_hand_crossbows")
 # Damage spells cast with spell slots before falling back to the attack cantrip
-LEVELLED_SPELLS = ["Magic Missile", "Guiding Bolt", "Inflict Wounds", "Burning Hands", "Thunderwave", "Scorching Ray", "Shatter", "Fireball",
+LEVELLED_SPELLS = ["Magic Missile", "Guiding Bolt", "Inflict Wounds", "Burning Hands", "Thunderwave", "Scorching Ray", "Shatter", "Fireball", "Spirit Guardians",
                    "Lightning Bolt", "Blight", "Cone of Cold", "Chain Lightning", "Disintegrate"]
 POLEARMS = {"Glaive", "Halberd", "Pike", "Quarterstaff", "Spear"}
 CANTRIPS = ["Eldritch Blast", "Fire Bolt", "Ray of Frost", "Sacred Flame", "Toll the Dead", "Chill Touch", "Shocking Grasp", "Produce Flame"]
@@ -108,17 +108,18 @@ TOGGLES = {
     "starry_form": "Starry Form: Archer (Circle of Stars)", "symbiotic": "Symbiotic Entity (Circle of Spores)",
     "storm_close": "Enemies within 6 m when casting (Heart of the Storm)",
     "booming_blade": "Booming Blade on the first melee attack each turn",
+    "horde_breaker": "Horde Breaker instead of Colossus Slayer (an extra attack on a second enemy, needs 2+ enemies)",
     "advantage": "Attack with advantage (Shadow Blade in darkness or dim light, hiding, Dirty Tricks, Faerie Fire, Darkness with Devil's Sight)",
 }
 # Toggles that are off unless ticked: advantage depends on the fight, so it isn't assumed
-TOGGLE_DEFAULTS = {"advantage": False}
+TOGGLE_DEFAULTS = {"advantage": False, "horde_breaker": False}
 # The class (and subclass) each toggle is for, so the builder only offers the ones that matter
 TOGGLE_FOR = {"rage": ("barbarian", ""), "reckless": ("barbarian", ""), "smite": ("paladin", ""), "vow": ("paladin", ""),
               "curse": ("warlock", "The Hexblade"), "surprise": ("rogue", "Assassin"), "manifestation": ("monk", "Way of the Open Hand"),
               "damaged_target": ("ranger", "Hunter"), "starry_form": ("druid", "Circle of Stars"), "symbiotic": ("druid", "Circle of Spores"),
               "storm_close": ("sorcerer", "Storm Sorcery"),
               "booming_blade": [("wizard", ""), ("sorcerer", ""), ("warlock", ""), ("fighter", "Eldritch Knight"), ("rogue", "Arcane Trickster")],
-              "advantage": [(cls, "") for cls in CLASSES]}
+              "horde_breaker": ("ranger", "Hunter"), "advantage": [(cls, "") for cls in CLASSES]}
 
 def relevant_toggles(classes):
     """ Toggles for a [class, subclass, levels] list """
@@ -246,7 +247,7 @@ def compile_character(character, level=MAX_LEVEL):
         if a.is_weapon and not is_proficient(weapon_base(a.name), profs):
             a.proficient = False
             notes.append(f"Not proficient with {weapon_base(a.name)}s")
-    c.attacks = attacks
+    c.attacks = attacks + _spirit_guardians(character, c, levels, subs, notes)
     if character.toggle("booming_blade") and "booming_blade" in relevant_toggles(character.classes):
         _booming_blade(c, character)
     _class_features(character, c, levels, subs, notes)
@@ -273,6 +274,21 @@ def _extra_attacks(levels, subs, character):
         attacks = 2
     return attacks
 
+def _spirit_guardians(character, c, levels, subs, notes):
+    """ Spirit Guardians as the build's spell: cast once (a level 3 slot), the aura then damages the enemies around the caster every round
+        of the fight (3 by default), WIS save for half. Fights without a free slot go without it """
+    if character.spell != "Spirit Guardians":
+        return []
+    slots = spell_slots(caster_level(levels, subs))
+    pact, pact_level = warlock_pact_slots(levels.get("warlock", 0))
+    casts = per_fight(per_long_rest=sum(slots[2:]), per_short_rest=pact if pact_level >= 3 else 0)
+    if not casts or not levels.get("cleric"):
+        notes.append("Spirit Guardians needs a Cleric with a level 3 spell slot")
+        return []
+    aura = spell_attacks("Spirit Guardians", ability_stat="wisdom", slot_level=3, ruleset="bg3")[0]
+    # Lasts 10 turns, so one cast covers a fight; uses per fight is the rounds it's up
+    return [replace(aura, name="Spirit Guardians (aura)", damage_type="radiant", uses_per_fight=10 * min(casts, 1.0), once_per_turn_eligible=False)]
+
 def _attacks(character, c, levels, subs, feats, notes):
     routine = character.routine
     if routine == "cantrip":
@@ -282,7 +298,7 @@ def _attacks(character, c, levels, subs, feats, notes):
         beams = spell_attacks(character.cantrip, ability_stat=stat, character_level=c.level, ruleset="bg3")
         cantrip = [replace(a, name=f"{a.name} {ii + 1}" if len(beams) > 1 else a.name) for ii, a in enumerate(beams)]
         druid = levels.get("druid", 0)
-        if not character.spell:
+        if not character.spell or character.spell == "Spirit Guardians":
             if druid >= 2 and subs.get("druid") == "Circle of Stars":
                 # Star Map: Guiding Bolt without a spell slot (2, 3 at 5, 4 at 9 per long rest)
                 bolts = [replace(a, uses_per_fight=per_fight(per_long_rest=2 + (druid >= 5) + (druid >= 9)))
@@ -456,7 +472,11 @@ def _class_features(character, c, levels, subs, notes):
         elif oath == "Oath of the Crown":
             c.bonus_attack_die_mod_list = [*c.bonus_attack_die_mod_list, str(c.proficiency_bonus)]
     # Ranger
-    if ranger >= 3 and subs.get("ranger") == "Hunter" and character.toggle("damaged_target") and weapon:
+    if ranger >= 3 and subs.get("ranger") == "Hunter" and character.toggle("horde_breaker") and weapon:
+        main = next((a for a in c.attacks if a.is_weapon and not a.offhand and not a.uses_per_fight), None)
+        if main is not None:
+            c.attacks.append(replace(main, name=f"{main.name.split(' (')[0]} (Horde Breaker)", min_enemies=2))
+    elif ranger >= 3 and subs.get("ranger") == "Hunter" and character.toggle("damaged_target") and weapon:
         _once_per_turn(c, "1d8")
     if ranger >= 3 and subs.get("ranger") == "Swarmkeeper":
         _once_per_turn(c, "1d8" if ranger >= 11 else "1d6")

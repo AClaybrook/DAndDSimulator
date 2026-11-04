@@ -111,6 +111,10 @@ class Attack:
     extra_damage_list: list[str] = field(default_factory=list)
     # Reroll damage dice at or below this, for this attack only (i.e. BG3 weapons like Twist of Fortune), like Great Weapon Fighting
     damage_reroll_on: int = 0
+    # Several enemies (BG3 planner): an area spell or aura hits up to this many of them; an attack that needs a second enemy (Horde Breaker)
+    # only counts with at least min_enemies. The simulator and single target numbers use one enemy
+    targets: int = 1
+    min_enemies: int = 1
 
     def __post_init__(self):
         if self.heavy is None:

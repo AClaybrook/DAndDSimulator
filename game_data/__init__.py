@@ -103,6 +103,7 @@ def spell_attacks(name, ability_stat="charisma", character_level=1, slot_level=N
         saving_throw_stat=s.get("save", "dexterity"),
         saving_throw_success_multiplier=s.get("on_save", 0),
         bonus_damage_die_mod_list=list(bonus_damage or []),
+        targets=s.get("targets", 1),
     )
     return [attack] + [Attack(**{**attack.to_dict(), "bonus_damage_die_mod_list": list(attack.bonus_damage_die_mod_list)}) for _ in range(projectiles - 1)]
 

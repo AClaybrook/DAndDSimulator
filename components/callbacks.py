@@ -827,10 +827,11 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         Input({"type": "bg3-cb", "field": ALL}, "value"),
         Input({"type": "bg3-cb-sub", "row": ALL}, "value"),
         Input("bg3-party", "data"), # Imported sessions replace the party
+        Input("bg3-enemies", "value"),
         State("bg3-load-preset", "value"),
     )
     def sync_planner(active_tab, _add, _remove, _load, name, preset, levels, gear, buffs, conditions, enemy_dict, rounds_per_fight, cb_values, cb_subs,
-                     party, example): # pylint: disable=too-many-locals
+                     party, enemies, example): # pylint: disable=too-many-locals
         """ Keeps the party store and the member editor in sync. Editing updates the selected member, switching members loads them """
         party = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)] or [Bg3Build.from_dict(DEFAULT_PARTY[0])]
         selected = min(int(active_tab or 0), len(party) - 1)
@@ -909,7 +910,7 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             conditional_options(member),
             [c for c in member.conditions if c in {o["value"] for o in conditional_options(member)}] if outputs_from_member else no_update,
             conflicts_list(conflicts, gains),
-            dpr_table(party, enemy, rounds),
+            dpr_table(party, enemy, rounds, int(enemies or 1)),
             cb_out,
             sub_options,
             sub_values,
@@ -990,14 +991,15 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         Input("bg3-member-tabs", "active_tab"),
         Input("enemy-values", "data"),
         Input("rounds-per-fight", "value"),
+        Input("bg3-enemies", "value"),
     )
-    def show_variants(party, active_tab, enemy_dict, rounds_per_fight):
+    def show_variants(party, active_tab, enemy_dict, rounds_per_fight, enemies):
         if not party:
             raise PreventUpdate
         builds = [Bg3Build.from_dict(b) for b in party]
         member = builds[min(int(active_tab or 0), len(builds) - 1)]
         enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
-        return variants_table(variant_damage(member, enemy, max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)))
+        return variants_table(variant_damage(member, enemy, max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1), int(enemies or 1)))
 
     @app.callback(
         Output("bg3-synergies", "options"),
@@ -1037,12 +1039,13 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         Input("bg3-party", "data"),
         Input("enemy-values", "data"),
         Input("rounds-per-fight", "value"),
+        Input("bg3-enemies", "value"),
     )
-    def party_chart(party, enemy_dict, rounds_per_fight):
+    def party_chart(party, enemy_dict, rounds_per_fight, enemies):
         """ Expected damage per round of the party across the act checkpoints """
         builds = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)]
         enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
-        return dpr_chart(builds, enemy, max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1))
+        return dpr_chart(builds, enemy, max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1), int(enemies or 1))
 
     @app.callback(
         Output("bg3-item-values", "children"),

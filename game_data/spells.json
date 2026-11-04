@@ -1,5 +1,5 @@
 {
-    "_source": "Damage dealing spells from the 5e SRD 5.1 (CC-BY-4.0) that also exist in Baldur's Gate 3. attack is 'attack' (spell attack roll), 'save' or 'auto' (always hits). Cantrips scale with character level (BG3: levels 5 and 10, 5e: levels 5, 11 and 17). 'upcast' is the extra damage per slot level above the base level, 'projectiles' are separate attack rolls (beams, rays, darts)",
+    "_source": "Damage dealing spells from the 5e SRD 5.1 (CC-BY-4.0) that also exist in Baldur's Gate 3. attack is 'attack' (spell attack roll), 'save' or 'auto' (always hits). Cantrips scale with character level (BG3: levels 5 and 10, 5e: levels 5, 11 and 17). 'upcast' is the extra damage per slot level above the base level, 'projectiles' are separate attack rolls (beams, rays, darts). 'targets' is how many enemies of a group the area usually catches (BG3 planner's enemies setting), 1 when missing",
     "spells": [
         {
             "name": "Eldritch Blast",
@@ -70,7 +70,8 @@
             "save": "dexterity",
             "on_save": 0,
             "damage": "1d6",
-            "damage_type": "acid"
+            "damage_type": "acid",
+            "targets": 2
         },
         {
             "name": "Poison Spray",
@@ -124,7 +125,8 @@
             "on_save": 0.5,
             "damage": "3d6",
             "damage_type": "fire",
-            "upcast": "1d6"
+            "upcast": "1d6",
+            "targets": 3
         },
         {
             "name": "Thunderwave",
@@ -134,7 +136,8 @@
             "on_save": 0.5,
             "damage": "2d8",
             "damage_type": "thunder",
-            "upcast": "1d8"
+            "upcast": "1d8",
+            "targets": 3
         },
         {
             "name": "Scorching Ray",
@@ -153,7 +156,8 @@
             "on_save": 0.5,
             "damage": "3d8",
             "damage_type": "thunder",
-            "upcast": "1d8"
+            "upcast": "1d8",
+            "targets": 3
         },
         {
             "name": "Fireball",
@@ -163,7 +167,8 @@
             "on_save": 0.5,
             "damage": "8d6",
             "damage_type": "fire",
-            "upcast": "1d6"
+            "upcast": "1d6",
+            "targets": 4
         },
         {
             "name": "Lightning Bolt",
@@ -173,7 +178,8 @@
             "on_save": 0.5,
             "damage": "8d6",
             "damage_type": "lightning",
-            "upcast": "1d6"
+            "upcast": "1d6",
+            "targets": 3
         },
         {
             "name": "Spirit Guardians",
@@ -183,7 +189,8 @@
             "on_save": 0.5,
             "damage": "3d8",
             "damage_type": "radiant",
-            "upcast": "1d8"
+            "upcast": "1d8",
+            "targets": 3
         },
         {
             "name": "Blight",
@@ -203,7 +210,8 @@
             "on_save": 0.5,
             "damage": "8d8",
             "damage_type": "cold",
-            "upcast": "1d8"
+            "upcast": "1d8",
+            "targets": 4
         },
         {
             "name": "Chain Lightning",
@@ -212,7 +220,8 @@
             "save": "dexterity",
             "on_save": 0.5,
             "damage": "10d8",
-            "damage_type": "lightning"
+            "damage_type": "lightning",
+            "targets": 4
         },
         {
             "name": "Disintegrate",

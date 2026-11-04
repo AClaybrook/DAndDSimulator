@@ -107,11 +107,11 @@ def describe_variant(variant):
         parts.append("advantage")
     return "; ".join(parts) or "same as the build"
 
-def variant_damage(build, enemy, rounds_per_fight):
-    """ [(name, description, [damage per round per act])] for the build and each of its variants """
-    from computations.analytic import expected_damage_per_round # pylint: disable=import-outside-toplevel
+def variant_damage(build, enemy, rounds_per_fight, enemies=1):
+    """ [(name, description, [damage per round per act])] for the build and each of its variants, against a group of enemies """
+    from computations.analytic import expected_damage_vs_enemies # pylint: disable=import-outside-toplevel
     def per_act(b):
-        return [expected_damage_per_round(compile_build(b, act), enemy, rounds_per_fight) for act in ACT_KEYS]
+        return [expected_damage_vs_enemies(compile_build(b, act), enemy, rounds_per_fight, enemies) for act in ACT_KEYS]
     rows = [("Build as planned", "its own gear and buffs", per_act(build))]
     for variant in build.variants:
         rows.append((variant.get("name") or "Variant", describe_variant(variant), per_act(variant_build(build, variant))))

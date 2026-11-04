@@ -15,7 +15,7 @@ from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_S
                            class_order,
                            compile_character, feat_opportunities)
 from computations.models import STATS
-from computations.analytic import expected_damage_per_round
+from computations.analytic import expected_damage_vs_enemies
 from game_data.classes import BUILDS
 
 DEFAULT_PARTY = [PRESETS[name].to_dict() for name in PRESET_PARTY]
@@ -218,7 +218,8 @@ def planner():
         ], align="center"),
         member_editor,
         dbc.Row([
-            dbc.Col([html.H6("Expected damage per round", className="text-info"), html.Div(id="bg3-dpr"),
+            dbc.Col([dbc.Row([dbc.Col(html.H6("Expected damage per round", className="text-info mb-0")), dbc.Col(enemies_select(), width="auto")],
+                             align="center", class_name="mb-1"), html.Div(id="bg3-dpr"),
                      dcc.Graph(id="bg3-dpr-chart", config={"displayModeBar": False}, style={"height": "280px"})], xs=12, lg=6),
             dbc.Col([html.H6("Equipment conflicts", className="text-info"), html.Div(id="bg3-conflicts")], xs=12, lg=6),
         ], class_name="mb-3"),
@@ -302,14 +303,23 @@ def conditional_options(build):
 PARTY_COLORS = ["#636EFA", "#EF553B", "#00A87C", "#AB63FA"]
 SURFACE = "#303030"
 
-def dpr_chart(builds, enemy, rounds_per_fight):
+ENEMY_COUNTS = [1, 2, 3, 4]
+
+def enemies_select():
+    """ How many enemies the damage numbers are against: single target attacks hit one, area spells and auras up to their size """
+    return html.Div(dbc.Select(options=[{"label": f"vs {n} enem{'y' if n == 1 else 'ies'}", "value": str(n)} for n in ENEMY_COUNTS], value="1",
+                               id="bg3-enemies", size="sm", style={"maxWidth": "9rem"}),
+                    title="Damage summed over a group of enemies. Weapon attacks hit one, area spells and auras (Fireball, Spirit Guardians) "
+                          "hit up to their size, Horde Breaker needs a second enemy. Hover a damage cell for 1 to 4 enemies")
+
+def dpr_chart(builds, enemy, rounds_per_fight, enemies=1):
     """ Expected damage per round of each character across the act checkpoints """
     import plotly.graph_objects as go
     fig = go.Figure()
     ends = []
     for ii, b in enumerate(builds):
         acts = [f"Act {a} (L{act_level(a, b.levels)})" for a in ACT_KEYS]
-        values = [expected_damage_per_round(compile_build(b, a), enemy, rounds_per_fight) for a in ACT_KEYS]
+        values = [expected_damage_vs_enemies(compile_build(b, a), enemy, rounds_per_fight, enemies) for a in ACT_KEYS]
         color = PARTY_COLORS[ii % len(PARTY_COLORS)]
         fig.add_trace(go.Scatter(
             x=[f"Act {a}" for a in ACT_KEYS], y=values, name=b.name, mode="lines+markers", customdata=acts,
@@ -330,14 +340,17 @@ def dpr_chart(builds, enemy, rounds_per_fight):
         xaxis={"title": None, "showgrid": False}, hoverlabel={"bgcolor": "#222"})
     return fig
 
-def dpr_table(builds, enemy, rounds_per_fight):
-    """ Exact expected damage per round for each character at each act """
+def dpr_table(builds, enemy, rounds_per_fight, enemies=1):
+    """ Exact expected damage per round for each character at each act, against a group of enemies (hover a cell for 1 to 4) """
     rows = []
     for b in builds:
         cells = [html.Td(b.name)]
         for act in ACT_KEYS:
             try:
-                cells.append(html.Td(f"{expected_damage_per_round(compile_build(b, act), enemy, rounds_per_fight):.1f}"))
+                character = compile_build(b, act)
+                by_count = [expected_damage_vs_enemies(character, enemy, rounds_per_fight, n) for n in ENEMY_COUNTS]
+                cells.append(html.Td(f"{by_count[enemies - 1]:.1f}",
+                                     title="vs 1 / 2 / 3 / 4 enemies: " + " / ".join(f"{v:.1f}" for v in by_count)))
             except Exception as e: # pylint: disable=broad-exception-caught
                 cells.append(html.Td("?", title=str(e)))
         rows.append(html.Tr(cells))
