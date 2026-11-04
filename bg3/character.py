@@ -89,9 +89,12 @@ def is_proficient(base, profs):
 ROUTINES = {
     "two_handed": "Two-handed weapon", "one_handed": "One-handed weapon (Duelling)", "dual_wield": "Two weapons", "ranged": "Ranged weapon",
     "unarmed": "Unarmed strikes", "thrown": "Thrown weapon", "cantrip": "Attack cantrip", "shadow_blade": "Shadow Blade (and an off-hand weapon)",
+    "dual_hand_crossbows": "Two hand crossbows",
 }
 SHADOW_BLADE = "Shadow Blade"
-DEFAULT_WEAPONS = {"two_handed": "Greatsword", "one_handed": "Longsword", "dual_wield": "Shortsword", "ranged": "Longbow", "thrown": "Handaxe"}
+DEFAULT_WEAPONS = {"two_handed": "Greatsword", "one_handed": "Longsword", "dual_wield": "Shortsword", "ranged": "Longbow", "thrown": "Handaxe",
+                   "dual_hand_crossbows": "Hand Crossbow"}
+RANGED_ROUTINES = ("ranged", "dual_hand_crossbows")
 # Damage spells cast with spell slots before falling back to the attack cantrip
 LEVELLED_SPELLS = ["Magic Missile", "Guiding Bolt", "Inflict Wounds", "Burning Hands", "Thunderwave", "Scorching Ray", "Shatter", "Fireball",
                    "Lightning Bolt", "Blight", "Cone of Cold", "Chain Lightning", "Disintegrate"]
@@ -321,7 +324,7 @@ def _attacks(character, c, levels, subs, feats, notes):
     if routine == "shadow_blade":
         return _shadow_blade_attacks(c, levels, subs, count, stat_for, notes)
     name = DEFAULT_WEAPONS[routine]
-    weapon_stat = "dexterity" if routine in ("ranged", "dual_wield") else "strength"
+    weapon_stat = "dexterity" if routine in ("ranged", "dual_wield", "dual_hand_crossbows") else "strength"
     if routine == "one_handed" and c.dexterity > c.strength:
         name, weapon_stat = "Rapier", "dexterity" # Finesse
     main = weapon_attack(name, ability_stat=stat_for(weapon_stat))
@@ -329,8 +332,10 @@ def _attacks(character, c, levels, subs, feats, notes):
         main = replace(main, type="thrown", name=f"{name} (Thrown)")
     attacks = [replace(main) for _ in range(count)]
     bonus_actions = 2 if levels.get("rogue", 0) >= 3 and subs.get("rogue") == "Thief" else 1 # Fast Hands
-    if routine == "dual_wield":
-        offhand = weapon_attack("Longsword" if "Dual Wielder" in feats else name, ability_stat=stat_for(weapon_stat), offhand=True)
+    if routine in ("dual_wield", "dual_hand_crossbows"):
+        # The off-hand attack takes the bonus action; it adds the ability modifier only with Two-Weapon Fighting
+        offhand = weapon_attack("Longsword" if "Dual Wielder" in feats and routine == "dual_wield" else name, ability_stat=stat_for(weapon_stat),
+                                offhand=True)
         attacks += [replace(offhand) for _ in range(bonus_actions)]
         bonus_actions = 0
     # Bonus action attacks: Frenzy, Polearm Master butt end, Swashbuckler Dirty Tricks, War Priest
@@ -341,7 +346,7 @@ def _attacks(character, c, levels, subs, feats, notes):
     if bonus_actions and "Polearm Master" in feats and name in POLEARMS:
         attacks.append(Attack(name="Polearm Butt End", ability_stat=stat_for("strength"), damage="1d4", damage_type="bludgeoning"))
         bonus_actions -= 1
-    if bonus_actions and levels.get("rogue", 0) >= 4 and subs.get("rogue") == "Swashbuckler" and routine != "ranged":
+    if bonus_actions and levels.get("rogue", 0) >= 4 and subs.get("rogue") == "Swashbuckler" and routine not in RANGED_ROUTINES:
         attacks.append(replace(main, name=f"{main.name} (Flick o' the Wrist)"))
         bonus_actions -= 1
     if bonus_actions and levels.get("cleric") and subs.get("cleric") == "War Domain":
@@ -412,7 +417,7 @@ def _class_features(character, c, levels, subs, notes):
     if fighter >= 3 and subs.get("fighter") == "Battle Master" and weapon:
         dice = 4 + (fighter >= 7)
         _limited_rider(c, "Trip Attack", per_fight(per_short_rest=dice), bonus="1d10" if fighter >= 10 else "1d8")
-    if fighter >= 3 and subs.get("fighter") == "Arcane Archer" and character.routine == "ranged":
+    if fighter >= 3 and subs.get("fighter") == "Arcane Archer" and character.routine in RANGED_ROUTINES:
         arrows = 4 + 3 * (fighter >= 7) + 3 * (fighter >= 10)
         _limited_rider(c, "Arcane Shot", per_fight(per_short_rest=arrows), extra="2d6 psychic") # Beguiling Arrow
     # Barbarian
@@ -427,7 +432,7 @@ def _class_features(character, c, levels, subs, notes):
             for a in c.attacks:
                 if a.is_weapon:
                     a.extra_damage_list = [*a.extra_damage_list, "1d6 fire"] # Elemental Cleaver
-    if barbarian >= 2 and character.toggle("reckless") and character.routine != "ranged":
+    if barbarian >= 2 and character.toggle("reckless") and character.routine not in RANGED_ROUTINES:
         c.advantage = True
     if character.toggle("advantage"):
         c.advantage = True

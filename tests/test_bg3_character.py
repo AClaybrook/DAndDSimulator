@@ -183,3 +183,10 @@ def test_advantage_toggle_is_off_by_default():
     plain, _ = compile_character(character, 5)
     character.toggles["advantage"] = True
     assert not plain.advantage and compile_character(character, 5)[0].advantage
+
+def test_dual_hand_crossbows():
+    character = Bg3Character(classes=[["ranger", "Gloom Stalker", 5]], routine="dual_hand_crossbows", fighting_styles=["Archery"])
+    c, _ = compile_character(character, 5)
+    names = [a.name for a in c.attacks]
+    assert names.count("Hand Crossbow") == 2 and "Hand Crossbow (Offhand)" in names
+    assert all(a.type == "weapon (ranged)" for a in c.attacks)

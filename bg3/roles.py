@@ -29,7 +29,7 @@ def member_roles(build, act):
             "ranged" if any(a.type == "weapon (ranged)" for a in character.attacks) else "two_handed"
     if routine in MELEE:
         roles.setdefault("frontline", f"{routine.replace('_', ' ')} attacks")
-    if routine in ("ranged", "cantrip", "thrown"):
+    if routine in ("ranged", "dual_hand_crossbows", "cantrip", "thrown"):
         roles.setdefault("ranged", f"{routine} attacks")
     healers = [c for c in ("cleric", "druid", "bard") if levels.get(c)] + (["paladin"] if levels.get("paladin", 0) >= 1 else [])
     if healers:

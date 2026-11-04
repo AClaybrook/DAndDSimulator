@@ -25,7 +25,7 @@ FIELDS (in this order; the ones marked REQUIRED matter most)
 `Abilities:` the 27-point-buy scores BEFORE the racial +2/+1, then `|`, then the +2/+1. Example: `Abilities: STR 8, DEX 15, CON 14, INT 15, WIS 10, CHA 8 | +2 DEX, +1 INT`. Leave out Hag's Hair, elixirs and Mirror of Loss here; those go under Permanent buffs. If only final scores are known, write `Final abilities: STR 8, DEX 17, ...` instead (REQUIRED)
 `Feats:` the choice at each feat level, in order, comma separated. Each is a feat name, `+2 DEX`, or `+1 DEX +1 CON` (REQUIRED)
 `Fighting styles:` comma separated, in the order gained
-`Routine:` exactly one of `two_handed`, `one_handed`, `dual_wield`, `ranged`, `unarmed`, `thrown`, `cantrip`, `shadow_blade`. This is how the build mainly attacks each turn (REQUIRED)
+`Routine:` exactly one of `two_handed`, `one_handed`, `dual_wield`, `ranged`, `dual_hand_crossbows`, `unarmed`, `thrown`, `cantrip`, `shadow_blade`. This is how the build mainly attacks each turn (REQUIRED)
 `Cantrip:` the main attack cantrip, if any (e.g. Eldritch Blast, Booming Blade)
 `Spell:` the main levelled damage spell cast with slots, if any (e.g. Scorching Ray)
 `Permanent buffs:` act and buff, separated by `;`. Example: `Permanent buffs: Act 1 Auntie Ethel's Hair DEX; Act 3 Mirror of Loss INT`
