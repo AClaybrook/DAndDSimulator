@@ -63,6 +63,9 @@ def apply_kit(build, kit_key, act, taken=(), only_empty=False):
     if only_empty:
         chosen = {slot: key for slot, key in chosen.items() if not current.get(slot)}
     build.equipment = {**build.equipment, act: {**build.equipment.get(act, {}), **chosen}}
+    # The kit's buffs (Mage Armour for the unarmoured kit, Hill Giant Strength for throwing), ticked at that act and still editable
+    if kits()[kit_key].get("buffs"):
+        build.buffs = {**build.buffs, act: list(dict.fromkeys([*build.buffs.get(act, []), *kits()[kit_key]["buffs"]]))}
     placed = {f"{k}#" for k in chosen.values()}
     build.conditions = list(dict.fromkeys([*build.conditions, *(c for c in kit_conditions(kit_key) if c.split("#")[0] + "#" in placed)]))
     return build, chosen, blocked

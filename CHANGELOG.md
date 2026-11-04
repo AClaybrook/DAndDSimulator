@@ -9,6 +9,7 @@ Baldur's Gate 3 first. The original simulator and analytics are unchanged, BG3 b
   - Equipment conflicts per act: unique items wanted by more than one character, a unique item in two slots, a two-handed weapon with an off hand, items found in a later act, and items in the wrong slot. Conflicting cells are highlighted.
   - "Add to simulator" adds the party at an act, or the selected character at every act, as cards.
   - The party is saved in the browser.
+- **Overall score:** a 0-100 score per character and act that weighs damage, area damage, toughness (hit points and AC), control, support and utility, so all round builds rank fairly against pure damage. Hover for the parts; the method and its limits are in docs/scoring.md.
 - **Armour class:** a Defence table shows each character's AC at each act and the chance an enemy hits it (attack bonus editable), with the sources on hover; variants show AC too, so the High AC kit's +AC is visible next to its damage cost. Shield of Faith, Mage Armour and Warding Bond are new buffs; Bladesong is a toggle.
 - **Map missables:** red rings and a warning line on items you can lose to story choices or by missing a step, with an "Only missables" filter.
 - **Reverberation:** the thunder kit's stacks, their 1d4 thunder burst and a "Prone from Reverberation" party synergy.

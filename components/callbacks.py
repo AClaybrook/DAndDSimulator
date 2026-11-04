@@ -30,7 +30,7 @@ from components.session import SETTINGS_IDS, describe_session, make_session, par
 from components.bg3_planner import (DEFAULT_PARTY, MAX_PARTY_SIZE, CUSTOM, conditional_options, conflicts_list, dpr_chart, dpr_table, gear_highlights,
                                     inherited_placeholders, item_values_table, suggestions_table, fields_from_character, character_from_fields,
                                     subclass_options, builder_summary, toggle_options, roles_table,
-                                    synergy_table, party_fight_summary, fight_chart, kit_info, variants_table, ac_table)
+                                    synergy_table, party_fight_summary, fight_chart, kit_info, variants_table, ac_table, score_table)
 from bg3.kits import QUICK_VARIANTS, apply_kit, kits, taken_by_others, variant_build, variant_damage
 from bg3.items import SLOT_LABELS, catalog
 from bg3.character import Bg3Character
@@ -924,6 +924,13 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         builds = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)]
         return ac_table(builds, Enemy.from_dict(enemy_dict) if enemy_dict else Enemy(), attack_bonus)
 
+    @app.callback(Output("bg3-score", "children"), Input("bg3-party", "data"), Input("enemy-values", "data"), Input("rounds-per-fight", "value"),
+                  Input("bg3-enemy-attack", "value"))
+    def show_score(party, enemy_dict, rounds_per_fight, attack_bonus):
+        builds = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)]
+        enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
+        return score_table(builds, enemy, max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1), int(attack_bonus if attack_bonus is not None else 6))
+
     @app.callback(Output("bg3-kit-info", "children"), Input("bg3-kit", "value"))
     def show_kit(kit_key):
         return kit_info(kit_key)
@@ -1004,7 +1011,7 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         builds = [Bg3Build.from_dict(b) for b in party]
         member = builds[min(int(active_tab or 0), len(builds) - 1)]
         enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
-        return variants_table(variant_damage(member, enemy, max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1), int(enemies or 1)))
+        return variants_table(variant_damage(member, enemy, max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1), int(enemies or 1)), enemy)
 
     @app.callback(
         Output("bg3-synergies", "options"),

@@ -8,6 +8,7 @@ from bg3.checkpoints import ACTS, act_level
 from bg3.items import SLOT_LABELS, SLOTS, catalog, condition_id
 from bg3.kits import QUICK_VARIANTS, kits
 from bg3.defence import armour_class, attack_bonus_for, hit_chance
+from bg3.score import WEIGHTS, score
 from bg3.party import MAX_PARTY_SIZE, build_conflicts, party_conflicts
 from bg3.presets import DEFAULT_PARTY as PRESET_PARTY, PRESETS, examples
 from bg3.roles import CORE_ROLES, ROLE_LABELS
@@ -107,6 +108,29 @@ def ac_table(builds, enemy, attack_bonus=None):
                     "hover a cell for the sources. The Shield reaction (+5) isn't counted", className="small text-muted")
     return html.Div([dbc.Table([header, html.Tbody(rows)], size="sm", hover=True, class_name="mb-0 small"), note])
 
+PART_LABELS = {"damage": "Damage", "aoe": "AoE", "defence": "Defence", "control": "Control", "support": "Support", "utility": "Utility"}
+
+def score_title(result):
+    return "\n".join(f"{PART_LABELS[k]} {v}/100 (weight {WEIGHTS[k]}): {result.notes[k]}" for k, v in result.parts.items())
+
+def score_table(builds, enemy, rounds_per_fight, attack_bonus):
+    """ The all round score of each character at each act, with its six parts on hover """
+    rows = []
+    for b in builds:
+        cells = [html.Td(b.name)]
+        for act in ACT_KEYS:
+            result = score(b, act, enemy, rounds_per_fight, attack_bonus)
+            best = sorted(result.parts.items(), key=lambda kv: -kv[1])[:2]
+            cells.append(html.Td([html.B(f"{result.total:.0f}"), html.Span(" · " + ", ".join(f"{PART_LABELS[k]} {v}" for k, v in best),
+                                                                         className="text-muted")], title=score_title(result)))
+        rows.append(html.Tr(cells))
+    weights = ", ".join(f"{PART_LABELS[k]} {w}" for k, w in WEIGHTS.items())
+    return html.Div([
+        dbc.Table([html.Thead(html.Tr([html.Th("Overall score")] + [html.Th(f"Act {a}") for a in ACT_KEYS])), html.Tbody(rows)],
+                  size="sm", hover=True, class_name="mb-0 small"),
+        html.Div(f"0-100: damage, area damage and effective HP against fixed references for each act, and points for control, support and "
+                 f"utility tools, weighted {weights}. Hover a cell for the parts (docs/scoring.md)", className="small text-muted")])
+
 def kit_options(none_label=None):
     options = [{"label": none_label, "value": ""}] if none_label else []
     return options + [{"label": f"{THEME_LABELS.get(k['theme'], k['theme'])}: {k['name']} (Act {k['act']})", "value": key} for key, k in kits().items()]
@@ -161,11 +185,16 @@ def ac_cell(build, act):
     ac, parts = armour_class(build, act)
     return html.Span(str(ac), title=" + ".join(f"{source} {value:+d}" if ii else f"{source} {value}" for ii, (source, value) in enumerate(parts)))
 
-def variants_table(rows):
+def score_cell(build, act, enemy):
+    result = score(build, act, enemy)
+    return html.Span(f"{result.total:.0f}", title=score_title(result))
+
+def variants_table(rows, enemy):
     """ rows: [(name, description, [damage per act], build)], the first is the build itself """
     base = rows[0][2]
     header = html.Thead(html.Tr([html.Th("Variant"), html.Th("What changes")] + [html.Th(f"Act {a}") for a in ACT_KEYS] +
-                                [html.Th("AC by act", title="Armour class at each act; hover for where it comes from")] + [html.Th("")]))
+                                [html.Th("AC by act", title="Armour class at each act; hover for where it comes from"),
+                                 html.Th("Score by act", title="Overall score (0-100) at each act; hover for the parts")] + [html.Th("")]))
     body = []
     for ii, (name, description, values, built) in enumerate(rows):
         cells = [html.Td(name), html.Td(description, className="text-muted")]
@@ -174,6 +203,7 @@ def variants_table(rows):
             cells.append(html.Td([f"{value:.1f}", html.Span(f" {delta:+.1f}", className="text-success" if delta > 0.05 else "text-danger" if delta < -0.05
                                                               else "text-muted") if ii else None]))
         cells.append(html.Td([part for act in ACT_KEYS for part in (ac_cell(built, act), " / ")][:-1], className="text-nowrap"))
+        cells.append(html.Td([part for act in ACT_KEYS for part in (score_cell(built, act, enemy), " / ")][:-1], className="text-nowrap"))
         actions = [] if ii == 0 else [
             dbc.Button("Use as gear", id={"type": "bg3-var-use", "index": ii - 1}, color="secondary", size="sm", outline=True, class_name="me-1",
                        title="Copy this variant's kit, buffs and toggles into the character"),
@@ -251,7 +281,8 @@ def planner():
                                                       dbc.Input(id="bg3-enemy-attack", type="number", min=0, max=20, step=1, value=6,
                                                                 style={"maxWidth": "5rem"})], size="sm"), width="auto")],
                              align="center", class_name="mt-3 mb-1"),
-                     html.Div(id="bg3-ac")], xs=12, lg=6),
+                     html.Div(id="bg3-ac"),
+                     html.H6("Overall score", className="text-info mt-3 mb-1"), html.Div(id="bg3-score")], xs=12, lg=6),
         ], class_name="mb-3"),
         variants_panel(),
         gear_advice(),

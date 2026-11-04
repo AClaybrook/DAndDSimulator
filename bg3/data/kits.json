@@ -365,7 +365,10 @@
      "bg3:bloodguzzler_garb",
      "bg3:the_graceful_cloth"
     ]
-   }
+   },
+   "buffs": [
+    "mage_armour"
+   ]
   },
   {
    "key": "tank_heavy",
