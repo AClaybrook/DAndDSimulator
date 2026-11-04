@@ -51,6 +51,8 @@ Sessions: every simulation saves the session in your browser, after a reload you
 
 # Technical Notes/Features:
 
+Kits and variants: in the planner, "Quick gear" fills a curated item kit's slots (docs/act1_item_kits.md) and "Variants" compares the selected character with a kit, buffs or advantage, without changing its own gear.
+
 Act 1 Map (sidebar, or `/map`): where to find the notable Act 1 gear and key pickups, on the game's minimap images with in-game coordinates, filters by rarity and a search. Item locations from bg3.wiki; map images © Larian Studios via bg3.wiki.
 
 ## Project Layout

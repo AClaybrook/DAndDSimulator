@@ -30,7 +30,9 @@ from components.session import SETTINGS_IDS, describe_session, make_session, par
 from components.bg3_planner import (DEFAULT_PARTY, MAX_PARTY_SIZE, CUSTOM, conditional_options, conflicts_list, dpr_chart, dpr_table, gear_highlights,
                                     inherited_placeholders, item_values_table, suggestions_table, fields_from_character, character_from_fields,
                                     subclass_options, builder_summary, toggle_options, roles_table,
-                                    synergy_table, party_fight_summary, fight_chart)
+                                    synergy_table, party_fight_summary, fight_chart, kit_info, variants_table)
+from bg3.kits import QUICK_VARIANTS, apply_kit, kits, taken_by_others, variant_build, variant_damage
+from bg3.items import SLOT_LABELS, catalog
 from bg3.character import Bg3Character
 from bg3.analysis import item_values, shared_item_gains, slot_suggestions
 from bg3.build import ACT_KEYS, Bg3Build, compile_build
@@ -915,6 +917,87 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             builder_summary(custom, levels_now) if custom else None,
             toggle_options(custom.classes) if custom else [],
         )
+
+    @app.callback(Output("bg3-kit-info", "children"), Input("bg3-kit", "value"))
+    def show_kit(kit_key):
+        return kit_info(kit_key)
+
+    @app.callback(
+        Output("bg3-party", "data", allow_duplicate=True),
+        Output("bg3-kit-result", "children"),
+        Input("bg3-kit-apply", "n_clicks"),
+        Input("bg3-var-add", "n_clicks"),
+        Input({"type": "bg3-var-quick", "key": ALL}, "n_clicks"),
+        Input({"type": "bg3-var-del", "index": ALL}, "n_clicks"),
+        Input({"type": "bg3-var-use", "index": ALL}, "n_clicks"),
+        State("bg3-party", "data"),
+        State("bg3-member-tabs", "active_tab"),
+        State("bg3-kit", "value"),
+        State("bg3-kit-act", "value"),
+        State("bg3-kit-options", "value"),
+        State("bg3-var-name", "value"),
+        State("bg3-var-kit", "value"),
+        State("bg3-var-buffs", "value"),
+        State("bg3-var-adv", "value"),
+        prevent_initial_call=True,
+    )
+    def kits_and_variants(*args):
+        """ Quick gear from a kit, and adding, deleting or using variants of the selected character. Manual gear editing is untouched:
+            a kit only fills its own slots, and variants live next to the gear """
+        party, active_tab, kit_key, kit_act, kit_opts, var_name, var_kit, var_buffs, var_adv = args[5:]
+        # Pattern matched buttons also fire when the variants table is redrawn; only real clicks count
+        if not party or not ctx.triggered or not ctx.triggered[0]["value"]:
+            raise PreventUpdate
+        builds = [Bg3Build.from_dict(b) for b in party]
+        selected = min(int(active_tab or 0), len(builds) - 1)
+        member = builds[selected]
+        triggered = ctx.triggered_id
+        message = no_update
+        if triggered == "bg3-kit-apply":
+            if kit_key not in kits():
+                return no_update, alert("Pick a kit first", color="warning")
+            act = kit_act or "1"
+            taken = taken_by_others(builds, selected, act) if "skip" in (kit_opts or []) else ()
+            member, placed, blocked = apply_kit(member, kit_key, act, taken, only_empty="only_empty" in (kit_opts or []))
+            items = catalog()
+            done = ", ".join(items[k].name for k in placed.values()) or "nothing (every kit slot already had an item)"
+            message = html.Div([html.Span(f"{kits()[kit_key]['name']} at {ACTS[int(act)][0]}: {done}."),
+                                html.Span(f" Taken by another character: {', '.join(SLOT_LABELS.get(s, s) for s in blocked)}." if blocked else "",
+                                          className="text-warning")])
+        elif triggered == "bg3-var-add":
+            variant = {"name": var_name or (kits()[var_kit]["name"] if var_kit in kits() else "Variant"), "kit": var_kit or None,
+                       "buffs": list(var_buffs or []), "toggles": {"advantage": True} if "advantage" in (var_adv or []) else {}}
+            member.variants = [*member.variants, variant]
+        elif isinstance(triggered, dict) and triggered.get("type") == "bg3-var-quick":
+            member.variants = [*member.variants, dict(QUICK_VARIANTS[triggered["key"]])]
+        elif isinstance(triggered, dict) and triggered.get("type") == "bg3-var-del":
+            member.variants = [v for ii, v in enumerate(member.variants) if ii != triggered["index"]]
+        elif isinstance(triggered, dict) and triggered.get("type") == "bg3-var-use":
+            index = triggered["index"]
+            if index >= len(member.variants):
+                raise PreventUpdate
+            used = variant_build(member, member.variants[index])
+            used.name, used.variants = member.name, [v for ii, v in enumerate(member.variants) if ii != index]
+            member = used
+        else:
+            raise PreventUpdate
+        builds[selected] = member
+        return [b.to_dict() for b in builds], message
+
+    @app.callback(
+        Output("bg3-variants", "children"),
+        Input("bg3-party", "data"),
+        Input("bg3-member-tabs", "active_tab"),
+        Input("enemy-values", "data"),
+        Input("rounds-per-fight", "value"),
+    )
+    def show_variants(party, active_tab, enemy_dict, rounds_per_fight):
+        if not party:
+            raise PreventUpdate
+        builds = [Bg3Build.from_dict(b) for b in party]
+        member = builds[min(int(active_tab or 0), len(builds) - 1)]
+        enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
+        return variants_table(variant_damage(member, enemy, max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)))
 
     @app.callback(
         Output("bg3-synergies", "options"),

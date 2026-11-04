@@ -24,6 +24,9 @@ class Bg3Build:
     character: dict | None = None
     carried: list[str] = field(default_factory=list) # Items carried rather than worn, i.e. the Resonance Stone
     roles: list[str] = field(default_factory=list) # Party roles from the build's source, added to the ones worked out from its classes
+    # Named "what ifs" compared next to the build (bg3.kits): {"name", "kit", "act", "buffs", "toggles", "conditions"}. They never change the gear
+    variants: list[dict] = field(default_factory=list)
+    advantage: bool = False # Attacks with advantage (for class presets; custom characters have the "advantage" toggle)
 
     def to_dict(self):
         return asdict(self)
@@ -108,6 +111,8 @@ def compile_build(build, act, items=None):
     if main is not None:
         character.attacks += [replace(main, name=f"{main.name.split(' (')[0]} (Haste)") for _ in range(extra_attacks)]
 
+    if build.advantage:
+        character.advantage = True
     label = ACTS[int(act)][0]
     character.name = f"{build.name} ({label})" if build.name else label
     worn = ", ".join(f"{SLOT_LABELS[slot]}: {item.name}" for slot, item in gear.items())

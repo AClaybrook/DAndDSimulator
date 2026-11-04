@@ -6,6 +6,7 @@ from bg3.build import ACT_KEYS, compile_build, equipment_at
 from bg3.buffs import BUFFS
 from bg3.checkpoints import ACTS, act_level
 from bg3.items import SLOT_LABELS, SLOTS, catalog, condition_id
+from bg3.kits import QUICK_VARIANTS, kits
 from bg3.party import MAX_PARTY_SIZE, build_conflicts, party_conflicts
 from bg3.presets import DEFAULT_PARTY as PRESET_PARTY, PRESETS, examples
 from bg3.roles import CORE_ROLES, ROLE_LABELS
@@ -86,6 +87,78 @@ def gear_table():
             for act in ACT_KEYS], class_name="g-1 mb-1"))
     return html.Div([*rows, dcc.Store(id="bg3-item-options", data=grouped_item_options())], className="bg3-gear-table")
 
+THEME_LABELS = {"damage": "Damage", "style": "Weapon style", "role": "Role"}
+
+def kit_options(none_label=None):
+    options = [{"label": none_label, "value": ""}] if none_label else []
+    return options + [{"label": f"{THEME_LABELS.get(k['theme'], k['theme'])}: {k['name']} (Act {k['act']})", "value": key} for key, k in kits().items()]
+
+def kit_picker():
+    """ Quick gear: fill the gear cells below from a curated kit. Only the kit's slots change, and every cell stays editable """
+    return html.Div([
+        dbc.InputGroup([
+            dbc.InputGroupText("Quick gear"),
+            dbc.Select(options=kit_options(), placeholder="Fill gear from a kit...", id="bg3-kit"),
+            dbc.Select(options=[{"label": f"at {ACTS[int(a)][0]}", "value": a} for a in ACT_KEYS], value="1", id="bg3-kit-act", style={"maxWidth": "11rem"}),
+            dbc.Button("Fill gear", id="bg3-kit-apply", color="secondary", title="Put the kit's items in their slots at that act. Other slots are kept"),
+        ], size="sm", class_name="mb-1"),
+        dbc.Checklist(options=[{"label": "Skip items another character has (use the kit's next option)", "value": "skip"},
+                               {"label": "Only fill empty slots", "value": "only_empty"}],
+                      value=["skip"], id="bg3-kit-options", inline=True, class_name="small"),
+        html.Div(id="bg3-kit-info", className="small text-muted"),
+        html.Div(id="bg3-kit-result", className="small mb-2"),
+    ], className="bg3-kit-picker")
+
+def kit_info(kit_key):
+    kit = kits().get(kit_key)
+    if not kit:
+        return "Kits are curated Act 1 item sets (docs/act1_item_kits.md). Filling one only changes its slots; edit any cell afterwards."
+    items = catalog()
+    pieces = "; ".join(f"{SLOT_LABELS.get(slot, slot)}: {' / '.join(items[k].name for k in options if k in items)}" for slot, options in kit["slots"].items())
+    lines = [f"Trigger: {kit['trigger']}.", f"Fits: {kit['fits']}." if kit.get("fits") else "", f"Party: {kit['synergy']}." if kit.get("synergy") else "",
+             kit.get("notes", ""), f"Items (best first): {pieces}."]
+    return [html.Div(line) for line in lines if line]
+
+def variants_panel():
+    """ Variants of the selected character: a kit, buffs and toggles layered over its own gear, compared side by side """
+    quick = [dbc.Button(v["name"], id={"type": "bg3-var-quick", "key": key}, color="secondary", outline=True, size="sm")
+             for key, v in QUICK_VARIANTS.items()]
+    return html.Div([
+        html.H6("Variants of the selected character", className="text-info mb-1"),
+        html.P("A variant is a what if: a kit, buffs or advantage on top of the character's own gear. Variants never change the gear above; "
+               "'Use as gear' copies one into it.", className="small text-muted mb-1"),
+        dbc.Row([
+            dbc.Col(dbc.InputGroup([dbc.InputGroupText("Name"), dbc.Input(id="bg3-var-name", type="text", placeholder="optional")], size="sm"), xs=12, md=3),
+            dbc.Col(dbc.Select(options=kit_options("No kit"), value="", id="bg3-var-kit", size="sm"), xs=12, md=4),
+            dbc.Col(dcc.Dropdown(options=[{"label": b.name, "value": key} for key, b in BUFFS.items()], multi=True, placeholder="Buffs...",
+                                 id="bg3-var-buffs", className="bg3-gear"), xs=12, md=3),
+            dbc.Col(dbc.Checklist(options=[{"label": "Advantage", "value": "advantage"}], value=[], id="bg3-var-adv", class_name="small"), xs=6, md=1),
+            dbc.Col(dbc.Button("Add", id="bg3-var-add", color="primary", size="sm"), xs=6, md=1),
+        ], class_name="g-1 mb-1", align="center"),
+        html.Div([html.Small("Quick variants: ", className="text-muted me-1"), dbc.ButtonGroup(quick, size="sm")], className="mb-2"),
+        html.Div(id="bg3-variants"),
+    ], className="mb-3")
+
+def variants_table(rows):
+    """ rows: [(name, description, [damage per act])], the first is the build itself """
+    base = rows[0][2]
+    header = html.Thead(html.Tr([html.Th("Variant"), html.Th("What changes")] + [html.Th(f"Act {a}") for a in ACT_KEYS] + [html.Th("")]))
+    body = []
+    for ii, (name, description, values) in enumerate(rows):
+        cells = [html.Td(name), html.Td(description, className="text-muted")]
+        for act_index, value in enumerate(values):
+            delta = value - base[act_index]
+            cells.append(html.Td([f"{value:.1f}", html.Span(f" {delta:+.1f}", className="text-success" if delta > 0.05 else "text-danger" if delta < -0.05
+                                                              else "text-muted") if ii else None]))
+        actions = [] if ii == 0 else [
+            dbc.Button("Use as gear", id={"type": "bg3-var-use", "index": ii - 1}, color="secondary", size="sm", outline=True, class_name="me-1",
+                       title="Copy this variant's kit, buffs and toggles into the character"),
+            dbc.Button(html.I(className="fa-solid fa-xmark"), id={"type": "bg3-var-del", "index": ii - 1}, color="danger", size="sm", outline=True,
+                       title="Delete this variant")]
+        cells.append(html.Td(actions, className="text-nowrap"))
+        body.append(html.Tr(cells))
+    return dbc.Table([header, html.Tbody(body)], size="sm", hover=True, class_name="small mb-0")
+
 def buff_options(act):
     """ Spells, then elixirs, available by an act. Hover for what isn't modelled """
     def label(b):
@@ -117,7 +190,7 @@ def planner():
             html.Small("Conditional item effects (tick the ones your build sets up)", className="text-muted"),
             dbc.Checklist(id="bg3-conditions", class_name="small"),
         ], xs=12, lg=4),
-        dbc.Col(gear_table(), xs=12, lg=8),
+        dbc.Col([kit_picker(), gear_table()], xs=12, lg=8),
     ], class_name="mb-3")
 
     return html.Section([
@@ -149,6 +222,7 @@ def planner():
                      dcc.Graph(id="bg3-dpr-chart", config={"displayModeBar": False}, style={"height": "280px"})], xs=12, lg=6),
             dbc.Col([html.H6("Equipment conflicts", className="text-info"), html.Div(id="bg3-conflicts")], xs=12, lg=6),
         ], class_name="mb-3"),
+        variants_panel(),
         gear_advice(),
         party_panel(),
         dcc.Store(id="bg3-party", storage_type="local", data=DEFAULT_PARTY),

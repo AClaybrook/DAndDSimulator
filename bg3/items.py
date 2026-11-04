@@ -124,7 +124,11 @@ def _attacks_for(character, effect, own_attacks):
     if effect.applies_to == "self":
         return own_attacks
     applies = APPLIES_TO.get(effect.applies_to, APPLIES_TO["all"])
-    return [a for a in character.attacks if applies(a)]
+    attacks = [a for a in character.attacks if applies(a)]
+    if "cantrip" in (effect.condition or "").lower() and "thunder" in (effect.condition or "").lower():
+        # Elemental cantrip effects (Necklace of Elemental Augmentation) also count Booming Blade, a cantrip on a weapon attack
+        attacks += [a for a in character.attacks if "Booming Blade" in a.name and a not in attacks]
+    return attacks
 
 def apply_effect(character, effect, own_attacks=()):
     """ Applies one effect to a character (in place). own_attacks are the attacks made with the item's weapon """
