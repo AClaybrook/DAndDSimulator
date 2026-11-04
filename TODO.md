@@ -11,7 +11,10 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 3. [ ] Map: more key pickups (permanent buffs, tomes, crafting) in bg3/data/map_pickups.json, and from the build doc's Permanent buffs lines
 4. [ ] Map: Act 2 and 3 (Shadow-Cursed Lands and Lower City minimap images exist on bg3.wiki; calibrate them like Act 1), Grymforge and Rosymorn images if they turn up
 5. [ ] Doc builds: importer support for Respec (build 25), Party blocks, and Permanent buffs as ability score changes (Hag's Hair +1, Mirror of Loss +2); "Caitlin's Staff" (build 30) isn't a bg3.wiki item name
-6. [ ] Engine and party items below (synergies, two sided fights, more subclass features)
+6. [ ] AoE: an enemy group setting (count, spacing), targets per area spell/aura (Spirit Guardians per turn, Fireball, Call Lightning, Shatter, Thunderwave, Slashing Flourish), save-for-half, and a Wet synergy (Create Water: lightning/cold vulnerability) with Destructive Wrath maximising thunder/lightning; ranking "damage per round vs a group"
+7. [ ] Defence and support metrics: armour AC from bg3.wiki, enemy attack profiles, effective HP / rounds to go down, damage prevented by buffs (Shield of Faith, Warding Bond, Aid, Haste AC, Heroes' Feast) and by control (enemy turns lost to Hold Person, Command, Hypnotic Pattern), healing per round; a support ranking = party damage added + damage prevented + healing
+8. [ ] Giant Barbarian: Elemental Cleaver on thrown weapons (and its Thrown greatsword) and Boot of the Giants aren't counted, so Giant throwers are undersold from Act 2
+9. [ ] Engine and party items below (synergies, two sided fights, more subclass features)
 
 ## Next
 - [ ] Doc builds: ask for the structured format (docs/bg3_build_format.md) in the build doc, then re-import; free text builds miss ability scores, routines and exact slots
