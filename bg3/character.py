@@ -360,7 +360,7 @@ def shadow_blade_dice(levels, subs):
     return 0 if highest < 2 else 4 if highest >= 5 else 3 if highest >= 3 else 2
 
 def _shadow_blade_attacks(c, levels, subs, count, stat_for, notes):
-    """ Shadow Blade in the main hand (cast before the fight, concentration), a dagger in the off hand with the bonus action """
+    """ Shadow Blade in the main hand (cast before the fight with a bonus action; in BG3 it lasts until a long rest, no concentration), a dagger in the off hand with the bonus action """
     dice = shadow_blade_dice(levels, subs)
     stat = stat_for("dexterity" if c.dexterity >= c.strength else "strength") # Finesse
     if not dice:
