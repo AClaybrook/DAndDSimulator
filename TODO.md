@@ -3,6 +3,7 @@
 Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user facing summary of each release.
 
 ## Active
+- [ ] Before making the repository public: add local_data/ to .gitignore and `git rm --cached local_data/bg3.sqlite` (personal leaderboard runs and party builds)
 - [ ] Open a PR with the BG3 planner work once you have looked at it
 
 ## Priorities (most useful while playing first)
@@ -24,7 +25,7 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 15. [ ] Engine and party items below (synergies, two sided fights, more subclass features)
 
 ## Next
-- [ ] Leaderboard, next steps: a vs 3 enemies column (casters and auras rank low on single target), a "best kit" scenario (each build with the best kit for its trigger), AC and overall score columns, loading a leaderboard build into the planner with one click, and Act 2 and 3 Reddit build gear
+- [ ] Leaderboard, next steps: martial area attacks (Cleave, Whirlwind, Volley) for the 2-4 enemy views, weapon choice in gear variants (they keep the planned weapons), a variant that balances damage against AC by a set trade off, loading a leaderboard build or variant into the planner with one click, armour for example builds that list none (several show AC 9-13 as planned), and Act 2 and 3 gear for the Reddit builds
 - [ ] Separate PR: rebuild the front end as standard HTML/CSS/JS (or a small framework) over a Python API for the calculations (FastAPI or Flask: compile a build, damage, AC, fight sims, items, kits, map data). State kept in the browser (party, variants, collected items) and saved through the API; the Dash app stays until the new one matches it. See the trade offs in the conversation notes: much faster UI and full control of layout and mobile, at the cost of rewriting ~1,500 lines of Dash callbacks and keeping two layers in sync
 - [ ] Illithid powers: model the damage and control ones (Mind Blast, Black Hole, Concentrated Blast, Cull the Weak, Force Tunnel, Psionic Backlash, Displacer Beast Shape, Freecast), their bonus action use with Awakened, and tadpole counts per act; as buffs/attacks in the builder and in the score
 - [ ] Doc builds: ask for the structured format (docs/bg3_build_format.md) in the build doc, then re-import; free text builds miss ability scores, routines and exact slots

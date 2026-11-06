@@ -1113,60 +1113,100 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
 
     @app.callback(
         Output("bg3-leaderboard", "children"),
-        Output("bg3-lb-saved-info", "children"),
+        Output("bg3-lb-scenario-note", "children"),
         Input("bg3-lb-collapse", "is_open"),
         Input("bg3-lb-scenario", "value"),
+        Input("bg3-lb-enemies", "value"),
         Input("bg3-lb-sort", "value"),
         Input("bg3-lb-sources", "value"),
+        Input("bg3-lb-variants", "value"),
+        Input("bg3-lb-search", "value"),
+        Input("bg3-lb-compare", "value"),
         Input("bg3-party", "data"),
-        Input("bg3-lb-saved", "data"),
+        Input("bg3-lb-refresh", "data"),
     )
-    def show_leaderboard(is_open, scenario, sort, sources, party, saved):
-        """ Computed only while open: about a second for every build at every act and scenario, then cached for the examples """
+    def show_leaderboard(is_open, scenario, enemies, sort, sources, variants, search, compare_run, party, _refresh):
+        """ Computed only while open. The example builds come from the latest database run, the party is computed (cached by spec) """
         if not is_open:
             raise PreventUpdate
-        from bg3.leaderboard import load_snapshot # pylint: disable=import-outside-toplevel
+        from bg3 import db # pylint: disable=import-outside-toplevel
+        from bg3.leaderboard import SCENARIO_NOTES, key # pylint: disable=import-outside-toplevel
         entries = leaderboard_entries([Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)])
-        snapshot = {e["name"]: e for e in load_snapshot()["entries"]}
-        info = f"Saved {saved['date']}, {len(saved['entries'])} builds" if saved else "No saved ranking in this browser yet"
-        return (static(leaderboard_table(entries, scenario or "advantage", sort or "overall", sources, (saved or {}).get("entries"), snapshot)),
-                info)
+        compare_to = {key(e): e for e in db.load_run(int(compare_run))} if compare_run else None
+        scenario = scenario or "reliable"
+        return (static(leaderboard_table(entries, scenario, enemies or 1, sort or "overall", sources, variants, search, compare_to)),
+                SCENARIO_NOTES[scenario])
 
     @app.callback(
-        Output("bg3-lb-saved", "data"),
+        Output("bg3-lb-compare", "options"),
+        Output("bg3-lb-compare", "value"),
+        Input("bg3-lb-collapse", "is_open"),
+        Input("bg3-lb-refresh", "data"),
+        State("bg3-lb-compare", "value"),
+    )
+    def leaderboard_runs(is_open, _refresh, current):
+        """ Saved runs to compare with; by default the newest saved party, else the run before the latest examples run """
+        if not is_open:
+            raise PreventUpdate
+        from bg3 import db # pylint: disable=import-outside-toplevel
+        found = db.runs()
+        options = [{"label": "Nothing", "value": ""}] + [
+            {"label": f"#{r['id']} {r['created'][:16].replace('T', ' ')} {'party' if r['kind'] == 'party' else 'all builds'}"
+                      f"{': ' + r['label'] if r['label'] else ''} ({r['count']} rows)", "value": str(r["id"])} for r in found]
+        if current and current in {o["value"] for o in options}:
+            return options, current
+        party_runs = [r for r in found if r["kind"] == "party"]
+        example_runs = [r for r in found if r["kind"] == "examples"]
+        default = str(party_runs[0]["id"]) if party_runs else str(example_runs[1]["id"]) if len(example_runs) > 1 else ""
+        return options, default
+
+    @app.callback(
+        Output("bg3-lb-refresh", "data"),
+        Output("bg3-lb-saved-info", "children"),
         Input("bg3-lb-save", "n_clicks"),
+        Input("bg3-lb-optimise", "n_clicks"),
         State("bg3-party", "data"),
+        State("bg3-lb-label", "value"),
+        State("bg3-lb-refresh", "data"),
         prevent_initial_call=True,
     )
-    def save_leaderboard(n_clicks, party):
-        if not n_clicks:
+    def save_leaderboard(save_clicks, optimise_clicks, party, label, refresh):
+        """ Saves the party (planned gear, or with gear variants found by search) as a run in the local database """
+        if not (save_clicks or optimise_clicks):
             raise PreventUpdate
-        from datetime import datetime # pylint: disable=import-outside-toplevel
-        entries = leaderboard_entries([Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)])
-        return {"date": datetime.now().strftime("%Y-%m-%d %H:%M"), "entries": {e["name"]: e for e in entries if e["source"] == "Your party"}}
+        from bg3 import db # pylint: disable=import-outside-toplevel
+        from bg3.leaderboard import cached_entry, entries_for, fingerprint # pylint: disable=import-outside-toplevel
+        builds = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)]
+        entries, specs = [], {}
+        for b in builds:
+            if ctx.triggered_id == "bg3-lb-optimise":
+                rows, prints = entries_for(b.name, b, "Your party")
+            else:
+                rows, prints = [{**cached_entry(b.name, b, "Your party"), "base": fingerprint(b)}], {fingerprint(b): b}
+            entries += rows
+            specs.update(prints)
+        what = "party with gear variants" if ctx.triggered_id == "bg3-lb-optimise" else "party"
+        run_id = db.save_run(entries, specs, "party", label or what)
+        return (refresh or 0) + 1, f"Saved run #{run_id}: {what}, {len(entries)} rows, in local_data/bg3.sqlite"
 
     @app.callback(
         Output("bg3-lb-download", "data"),
         Input("bg3-lb-download-button", "n_clicks"),
         State("bg3-party", "data"),
-        State("bg3-lb-scenario", "value"),
         prevent_initial_call=True,
     )
-    def download_leaderboard(n_clicks, party, scenario):
-        """ The ranking with every build's full spec, so it can be reproduced or compared later """
+    def download_leaderboard(n_clicks, party):
+        """ Every row with its full build spec, so it can be reproduced or compared later """
         if not n_clicks:
             raise PreventUpdate
-        from bg3.leaderboard import REFERENCE_ENEMIES, ROUNDS_PER_FIGHT, SCENARIOS, all_builds, key, overall # pylint: disable=import-outside-toplevel
+        from bg3 import db # pylint: disable=import-outside-toplevel
+        from bg3.leaderboard import REFERENCE_ENEMIES, ROUNDS_PER_FIGHT, SCENARIOS, fingerprint # pylint: disable=import-outside-toplevel
         builds = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)]
+        mine = {fingerprint(b): b.to_dict() for b in builds}
         entries = leaderboard_entries(builds)
-        specs = {**{n: b.to_dict() for n, b in all_builds().items()}, **{f"Your party: {b.name}": b.to_dict() for b in builds}}
-        totals = overall(entries, scenario or "advantage")
-        ranked_entries = sorted(entries, key=lambda e: -totals[key(e)])
-        data = {"scenarios": {k: v[0] for k, v in SCENARIOS.items()}, "ranked_by": f"overall, {SCENARIOS[scenario or 'advantage'][0]}",
-                "enemies": REFERENCE_ENEMIES, "rounds_per_fight": ROUNDS_PER_FIGHT,
-                "entries": [{**e, "overall": round(100 * totals[key(e)], 1),
-                             "build": specs.get(f"Your party: {e['name']}" if e["source"] == "Your party" else e["name"])} for e in ranked_entries]}
-        return {"content": json.dumps(data, indent=1, ensure_ascii=False), "filename": "bg3_leaderboard.json"}
+        data = {"scenarios": SCENARIOS, "enemies": REFERENCE_ENEMIES, "rounds_per_fight": ROUNDS_PER_FIGHT,
+                "entries": [{**e, "build": mine.get(e["fingerprint"]) or db.build_by_fingerprint(e["fingerprint"])} for e in entries]}
+        return {"content": json.dumps(data, ensure_ascii=False), "filename": "bg3_leaderboard.json"}
 
     @app.callback(
         Output("character_row", "children", allow_duplicate=True),

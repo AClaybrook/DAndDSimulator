@@ -132,7 +132,7 @@ Rough priority order, the first items have the most impact for the least work.
 ### Done in 2.7 (in progress)
 * BG3 Party Planner: act checkpoints, gear and buffs per act, equipment conflicts, expected damage per act, send to the simulator
 * Act 1 item map
-* Damage leaderboard: every example build and your party ranked by act under the same conditions (docs/leaderboard.md), with build fingerprints and saved rankings to track changes
+* Damage leaderboard: every example build, gear variants (max damage, max AC, best score) and your party ranked by act under the same conditions, against 1 to 4 enemies, with no buffs, reliable buffs or a max nova round (docs/leaderboard.md). Runs and build specs are saved in a local SQLite database (local_data/bg3.sqlite, personal: gitignore it before making the repository public)
 * Typed extra damage on hits (i.e. 1d4 fire on a slashing weapon), resisted separately
 
 * Patch 8 item database from bg3.wiki (911 items, 311 with modelled effects), cross-checked with the community unique item checklist sheet, example builds with gear per act

@@ -34,9 +34,27 @@ def box_stats(values):
     inside = values[(values >= q1 - 1.5 * iqr) & (values <= q3 + 1.5 * iqr)]
     return {"q1": [q1], "median": [median], "q3": [q3], "lowerfence": [inside.min()], "upperfence": [inside.max()], "mean": [values.mean()]}
 
-def generate_histogram(groups, colors=None, histnorm='percent', opacity=0.75, x_title="Damage", template='plotly_dark', title=None, **kwargs):
+def smooth_curve(counts, width, values):
+    """ A smooth fit of a binned distribution: a Gaussian kernel density estimate (Silverman's bandwidth) of the counts, in the same units as
+        the bars. Returns (bin centre offsets, heights as a share of the values per bin) """
+    n = len(values)
+    spread = min(np.std(values), (np.percentile(values, 75) - np.percentile(values, 25)) / 1.34 or np.std(values))
+    bandwidth = max(1.06 * spread * n ** -0.2, width) / width # In bins, at least one bin
+    reach = int(np.ceil(4 * bandwidth))
+    kernel = np.exp(-0.5 * (np.arange(-reach, reach + 1) / bandwidth) ** 2)
+    smoothed = np.convolve(counts, kernel / kernel.sum(), mode="full")[reach:reach + len(counts)]
+    return np.arange(len(counts)), smoothed / n
+
+def distribution_summary(values):
+    """ Mean, standard deviation and skew of a distribution, the shape of a fit in three numbers """
+    mean, sd = float(np.mean(values)), float(np.std(values))
+    skew = float(np.mean(((values - mean) / sd) ** 3)) if sd else 0.0
+    return mean, sd, skew
+
+def generate_histogram(groups, colors=None, histnorm='percent', opacity=0.75, x_title="Damage", template='plotly_dark', title=None, fit=True, **kwargs):
     """ Overlaid histograms of integer values with a box plot of each group above, from {name: values}.
-        Bins are one damage wide, or wider so there are at most MAX_BINS """
+        Bins are one damage wide, or wider so there are at most MAX_BINS. fit adds a smooth curve (kernel density) over each histogram,
+        hover it for the mean, standard deviation and skew """
     from plotly.subplots import make_subplots # pylint: disable=import-outside-toplevel
     groups = {name: np.asarray(v) for name, v in groups.items() if len(v)}
     colors = colors or {name: COLORS[ii % len(COLORS)] for ii, name in enumerate(groups)}
@@ -55,6 +73,12 @@ def generate_histogram(groups, colors=None, histnorm='percent', opacity=0.75, x_
                                  marker={"color": colors[name], "line": {"width": 0}}, customdata=np.stack([starts[keep], starts[keep] + width - 1], axis=1),
                                  hovertemplate=f"{name}<br>{x_title} {label}: %{{y:.2f}}{'%' if histnorm == 'percent' else ''}<extra></extra>"),
                           row=2, col=1)
+            if fit and len(values) > 30 and values.std() > 0:
+                offsets, curve = smooth_curve(counts, width, values)
+                mean, sd, skew = distribution_summary(values)
+                fig.add_trace(go.Scatter(x=low + width * offsets + (width - 1) / 2, y=curve * (100 if histnorm == "percent" else 1), mode="lines",
+                                         name=f"{name} (fit)", legendgroup=name, showlegend=False, line={"color": colors[name], "width": 2},
+                                         hovertemplate=f"{name} fit<br>mean {mean:.1f}, sd {sd:.1f}, skew {skew:+.2f}<extra></extra>"), row=2, col=1)
             fig.add_trace(go.Box(y=[name], orientation="h", name=name, legendgroup=name, showlegend=False, marker={"color": colors[name]},
                                  boxmean=True, **box_stats(values)), row=1, col=1)
     fig.update_layout(barmode="overlay", bargap=0, template=template, title=title, legend={"tracegroupgap": 0}, **kwargs)

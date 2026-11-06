@@ -108,7 +108,7 @@ def test_histograms_are_binned():
     """ Every round is plotted, but only bar heights and box statistics are sent to the browser """
     import numpy as np
     import pandas as pd
-    from components.plots import MAX_BINS, generate_damage_per_attack_histogram, generate_plot_data
+    from components.plots import MAX_BINS, generate_damage_per_attack_histogram, generate_histogram, generate_plot_data
     rng = np.random.default_rng(1)
     small, large = rng.integers(0, 30, 1_000_000), rng.integers(0, 1000, 1_000_000)
     fig = generate_plot_data([Character(name="A"), Character(name="B")], [pd.DataFrame({"Damage": small}), pd.DataFrame({"Damage": large})], title="DPR")
@@ -120,7 +120,12 @@ def test_histograms_are_binned():
     assert len(fig.to_json()) < 60_000
     df = pd.DataFrame({"Damage": small, "Attack": np.where(small % 2, "Slash", "Stab")})
     fig = generate_damage_per_attack_histogram([Character(name="A")], [df])
-    assert {t.name for t in fig.data} == {"A-Slash", "A-Stab"} and len({t.marker.color for t in fig.data}) == 1
+    plain = [t for t in fig.data if t.type != "scatter"]
+    assert {t.name for t in plain} == {"A-Slash", "A-Stab"} and len({t.marker.color for t in plain}) == 1
+    # A smooth fit over each histogram, in the same units (its points add up to about the bars' 100%)
+    fits = {t.name: t for t in fig.data if t.type == "scatter"}
+    assert set(fits) == {"A-Slash (fit)", "A-Stab (fit)"} and all("mean" in t.hovertemplate for t in fits.values())
+    assert sum(next(t for t in generate_histogram({"A": large}).data if t.type == "scatter").y) == pytest.approx(100, abs=3)
 
 def test_typed_extra_damage_round_trip_and_validation():
     from components.character_card import validation_errors
