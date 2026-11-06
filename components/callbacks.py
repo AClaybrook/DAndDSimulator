@@ -31,7 +31,8 @@ from components.session import SETTINGS_IDS, describe_session, make_session, par
 from components.bg3_planner import (DEFAULT_PARTY, MAX_PARTY_SIZE, CUSTOM, conditional_options, conflicts_list, dpr_chart, dpr_table, gear_highlights,
                                     inherited_placeholders, item_values_table, suggestions_table, fields_from_character, character_from_fields,
                                     subclass_options, builder_summary, toggle_options, roles_table,
-                                    synergy_table, party_fight_summary, fight_chart, kit_info, variants_table, ac_table, score_table)
+                                    synergy_table, party_fight_summary, fight_chart, kit_info, variants_table, ac_table, score_table,
+                                    leaderboard_entries, leaderboard_table)
 from bg3.kits import QUICK_VARIANTS, apply_kit, kits, taken_by_others, variant_build, variant_damage
 from bg3.items import SLOT_LABELS, catalog
 from bg3.character import Bg3Character
@@ -1099,6 +1100,73 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         act = act or "1"
         return (static(item_values_table(item_values(member, act, enemy, rounds))),
                 static(suggestions_table(slot_suggestions(member, act, slot or "melee_main", enemy, rounds, party=builds))))
+
+    @app.callback(
+        Output("bg3-lb-collapse", "is_open"),
+        Output("bg3-lb-toggle", "children"),
+        Input("bg3-lb-toggle", "n_clicks"),
+        State("bg3-lb-collapse", "is_open"),
+        prevent_initial_call=True,
+    )
+    def toggle_leaderboard(_, is_open):
+        return not is_open, "Hide" if not is_open else "Show"
+
+    @app.callback(
+        Output("bg3-leaderboard", "children"),
+        Output("bg3-lb-saved-info", "children"),
+        Input("bg3-lb-collapse", "is_open"),
+        Input("bg3-lb-scenario", "value"),
+        Input("bg3-lb-sort", "value"),
+        Input("bg3-lb-sources", "value"),
+        Input("bg3-party", "data"),
+        Input("bg3-lb-saved", "data"),
+    )
+    def show_leaderboard(is_open, scenario, sort, sources, party, saved):
+        """ Computed only while open: about a second for every build at every act and scenario, then cached for the examples """
+        if not is_open:
+            raise PreventUpdate
+        from bg3.leaderboard import load_snapshot # pylint: disable=import-outside-toplevel
+        entries = leaderboard_entries([Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)])
+        snapshot = {e["name"]: e for e in load_snapshot()["entries"]}
+        info = f"Saved {saved['date']}, {len(saved['entries'])} builds" if saved else "No saved ranking in this browser yet"
+        return (static(leaderboard_table(entries, scenario or "advantage", sort or "overall", sources, (saved or {}).get("entries"), snapshot)),
+                info)
+
+    @app.callback(
+        Output("bg3-lb-saved", "data"),
+        Input("bg3-lb-save", "n_clicks"),
+        State("bg3-party", "data"),
+        prevent_initial_call=True,
+    )
+    def save_leaderboard(n_clicks, party):
+        if not n_clicks:
+            raise PreventUpdate
+        from datetime import datetime # pylint: disable=import-outside-toplevel
+        entries = leaderboard_entries([Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)])
+        return {"date": datetime.now().strftime("%Y-%m-%d %H:%M"), "entries": {e["name"]: e for e in entries if e["source"] == "Your party"}}
+
+    @app.callback(
+        Output("bg3-lb-download", "data"),
+        Input("bg3-lb-download-button", "n_clicks"),
+        State("bg3-party", "data"),
+        State("bg3-lb-scenario", "value"),
+        prevent_initial_call=True,
+    )
+    def download_leaderboard(n_clicks, party, scenario):
+        """ The ranking with every build's full spec, so it can be reproduced or compared later """
+        if not n_clicks:
+            raise PreventUpdate
+        from bg3.leaderboard import REFERENCE_ENEMIES, ROUNDS_PER_FIGHT, SCENARIOS, all_builds, key, overall # pylint: disable=import-outside-toplevel
+        builds = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)]
+        entries = leaderboard_entries(builds)
+        specs = {**{n: b.to_dict() for n, b in all_builds().items()}, **{f"Your party: {b.name}": b.to_dict() for b in builds}}
+        totals = overall(entries, scenario or "advantage")
+        ranked_entries = sorted(entries, key=lambda e: -totals[key(e)])
+        data = {"scenarios": {k: v[0] for k, v in SCENARIOS.items()}, "ranked_by": f"overall, {SCENARIOS[scenario or 'advantage'][0]}",
+                "enemies": REFERENCE_ENEMIES, "rounds_per_fight": ROUNDS_PER_FIGHT,
+                "entries": [{**e, "overall": round(100 * totals[key(e)], 1),
+                             "build": specs.get(f"Your party: {e['name']}" if e["source"] == "Your party" else e["name"])} for e in ranked_entries]}
+        return {"content": json.dumps(data, indent=1, ensure_ascii=False), "filename": "bg3_leaderboard.json"}
 
     @app.callback(
         Output("character_row", "children", allow_duplicate=True),

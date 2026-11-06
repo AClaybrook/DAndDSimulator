@@ -287,6 +287,7 @@ def planner():
         variants_panel(),
         gear_advice(),
         party_panel(),
+        leaderboard_panel(),
         dcc.Store(id="bg3-party", storage_type="local", data=DEFAULT_PARTY),
     ], className="panel mb-4")
 
@@ -603,6 +604,91 @@ def gear_highlights(build, conflicts, gear_ids):
     flagged = {(c.act, k) for c in conflicts if build.name in c.members for k in (c.items or [c.item])}
     gear_by_act = {act: equipment_at(build, act) for act in ACT_KEYS}
     return ["bg3-gear bg3-conflict" if (gid["act"], gear_by_act[gid["act"]].get(gid["slot"])) in flagged else "bg3-gear" for gid in gear_ids]
+
+def leaderboard_panel():
+    """ Every example build and the party ranked by damage at each act, under the same conditions """
+    from bg3.leaderboard import SCENARIOS, REFERENCE_ENEMIES, ROUNDS_PER_FIGHT # pylint: disable=import-outside-toplevel
+    enemies = ", ".join(v["name"] for v in REFERENCE_ENEMIES.values())
+    return html.Div([
+        dbc.Row([
+            dbc.Col(html.H5("Damage leaderboard", className="mb-0"), width="auto"),
+            dbc.Col(dbc.Button("Show", id="bg3-lb-toggle", color="secondary", outline=True, size="sm"), width="auto"),
+        ], align="center", class_name="g-2 mb-1"),
+        dbc.Collapse([
+            html.P(f"Every example build (presets, the build doc, Reddit approximations) and your party, at each act with its own planned gear. "
+                   f"Same conditions for everyone: one reference enemy per act ({enemies}, no resistances), single target, {ROUNDS_PER_FIGHT} "
+                   "round fights, and the outside help the scenario gives. A build's own buffs are removed except Hex and Divine Favour; "
+                   "'As planned' keeps them. Hover a name for its spec. The fingerprint changes when a build's spec changes; save the ranking "
+                   "to see later what moved. docs/leaderboard.md has the same tables.", className="small text-muted mb-2"),
+            dbc.Row([
+                dbc.Col(dbc.InputGroup([dbc.InputGroupText("Scenario"), dbc.Select(
+                    options=[{"label": label, "value": key} for key, (label, _, _) in SCENARIOS.items()], value="advantage", id="bg3-lb-scenario")],
+                    size="sm"), xs=12, md=4),
+                dbc.Col(dbc.InputGroup([dbc.InputGroupText("Rank by"), dbc.Select(
+                    options=[{"label": "Overall (all acts)", "value": "overall"}] + [{"label": f"Act {a}", "value": a} for a in ACT_KEYS],
+                    value="overall", id="bg3-lb-sort")], size="sm"), xs=12, md=3),
+                dbc.Col(dbc.Checklist(options=[{"label": s, "value": s} for s in ("Your party", "Preset", "Build doc", "Reddit (approx.)")],
+                                      value=["Your party", "Preset", "Build doc", "Reddit (approx.)"], id="bg3-lb-sources", inline=True,
+                                      class_name="small"), xs=12, md=5),
+            ], class_name="g-1 mb-1", align="center"),
+            html.Div([
+                dbc.Button("Save this ranking", id="bg3-lb-save", color="info", outline=True, size="sm", class_name="me-1",
+                           title="Remember these numbers and fingerprints in this browser, so the Change column shows what moved since"),
+                dbc.Button("Download with build specs", id="bg3-lb-download-button", color="info", outline=True, size="sm",
+                           title="The ranking and every build's full spec as JSON"),
+                html.Span(id="bg3-lb-saved-info", className="small text-muted ms-2"),
+            ], className="mb-1"),
+            html.Div(id="bg3-leaderboard"),
+            dcc.Download(id="bg3-lb-download"),
+        ], id="bg3-lb-collapse", is_open=False),
+        dcc.Store(id="bg3-lb-saved", storage_type="local"),
+    ], className="mt-3")
+
+def leaderboard_entries(party):
+    """ Example builds (cached) and the party's members as leaderboard entries """
+    from bg3.leaderboard import all_builds, cached_entry, fingerprint, entry # pylint: disable=import-outside-toplevel
+    examples_ = all_builds()
+    entries = [cached_entry(name, b) for name, b in examples_.items()]
+    by_print = {e["fingerprint"]: e["name"] for e in entries}
+    for b in party:
+        mine = entry(b.name, b, "Your party")
+        mine["same_as"] = by_print.get(fingerprint(b))
+        entries.append(mine)
+    return entries
+
+def leaderboard_table(entries, scenario, sort, sources, saved=None, snapshot=None):
+    """ The ranked table. saved: {name: entry} saved in this browser; snapshot: {name: entry} from bg3/data/leaderboard.json """
+    from bg3.leaderboard import compare, key, overall, ranked # pylint: disable=import-outside-toplevel
+    shown = [e for e in entries if e["source"] in (sources or [])]
+    if not shown:
+        return html.Div("Nothing to show, tick a source above", className="small text-muted")
+    totals = overall(shown, scenario)
+    places = {act: {key(e): ii for ii, e in enumerate(ranked(shown, scenario, act), start=1)} for act in ACT_KEYS}
+    order = sorted(shown, key=lambda e: -(totals[key(e)] if sort == "overall" else (e["damage"][scenario][sort] or 0)))
+    header = html.Thead(html.Tr([html.Th("#"), html.Th("Build"), html.Th("Source")] + [html.Th(f"Act {a}") for a in ACT_KEYS] +
+                                [html.Th("Overall", title="Average share of the best damage at each act, 100 = best in every act"),
+                                 html.Th("Fingerprint", title="Changes when the build's spec (classes, feats, gear, buffs, toggles) changes"),
+                                 html.Th("Change", title="Against your saved ranking (party), or the saved snapshot (examples)")]))
+    rows = []
+    for rank, e in enumerate(order, start=1):
+        cells = [html.Td(rank), html.Td(e["name"], title=e["spec"]), html.Td(e["source"], className="text-muted")]
+        for act in ACT_KEYS:
+            value = e["damage"][scenario][act]
+            cells.append(html.Td([f"{value:.1f}" if value is not None else "?",
+                                  html.Span(f" #{places[act].get(key(e))}", className="text-muted")],
+                                 title=f"Level {e['levels'][act]}"))
+        cells.append(html.Td(f"{100 * totals[key(e)]:.0f}"))
+        cells.append(html.Td(html.Span(e["fingerprint"], className="font-monospace"),
+                             title=f"Same build as {e['same_as']}" if e.get("same_as") else None))
+        reference = (saved or {}).get(e["name"]) if e["source"] == "Your party" else (snapshot or {}).get(e["name"])
+        if e["source"] == "Your party" and reference is None:
+            cells.append(html.Td("not saved", className="text-muted"))
+        else:
+            status, delta = compare(e, reference, scenario)
+            text = status if status in ("same", "new") else f"{status}: " + " / ".join(f"{d:+.1f}" for d in delta.values())
+            cells.append(html.Td(text, className="text-muted" if status == "same" else "text-warning"))
+        rows.append(html.Tr(cells, className="table-active fw-semibold" if e["source"] == "Your party" else None))
+    return dbc.Table([header, html.Tbody(rows)], size="sm", hover=True, class_name="small mb-0")
 
 __all__ = ["planner", "DEFAULT_PARTY", "MAX_PARTY_SIZE", "party_conflicts", "build_conflicts", "conditional_options", "dpr_table",
            "conflicts_list", "dpr_chart", "gear_highlights", "inherited_placeholders", "item_values_table", "suggestions_table", "CUSTOM", "fields_from_character",

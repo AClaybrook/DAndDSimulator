@@ -15,7 +15,8 @@ from pathlib import Path
 from bg3.abilities import point_buy_problems
 from bg3.buffs import BUFFS
 from bg3.build import Bg3Build
-from bg3.character import CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_SPELLS, RACES, ROUTINES, SHADOW_BLADE, SUBCLASSES, Bg3Character
+from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_SPELLS, RACES, ROUTINES, SHADOW_BLADE, SUBCLASSES, Bg3Character,
+                           feat_opportunities)
 from bg3.items import catalog
 from computations.models import STATS
 
@@ -347,14 +348,95 @@ def parse_build(number, title, body, index, items):
             "permanent_buffs": field(body, "Permanent buffs"), "gear_estimated": bool(re.search(r"^Gear acts:\s*estimated", body, re.M | re.I)),
             "caveats": field(body, "Caveats")}
 
+# ---------- Guesses for what free text builds leave out, each one noted on the build
+
+CASTING_STAT = {"wizard": "intelligence", "cleric": "wisdom", "druid": "wisdom", "warlock": "charisma", "sorcerer": "charisma", "bard": "charisma",
+                "paladin": "charisma"}
+NO_SCORES = "No ability scores found"
+CLASS_ALIASES = {"Bladesinger": ("wizard", "Bladesinging")}
+
+def main_stats(classes, routine, feats):
+    """ (primary, secondary) abilities for a build: what it attacks with, then what it casts with (or Constitution) """
+    casters = [(int(levels), cls) for cls, _, levels in classes if cls in CASTING_STAT]
+    casting = CASTING_STAT[max(casters)[1]] if casters else None
+    if routine == "cantrip":
+        return casting or "charisma", "constitution"
+    if routine == "unarmed":
+        return ("strength", "dexterity") if "Tavern Brawler" in feats else ("dexterity", "wisdom")
+    if any(sub == "The Hexblade" for _, sub, _ in classes):
+        return "charisma", "dexterity" if routine in ("ranged", "dual_hand_crossbows", "shadow_blade", "dual_wield") else "constitution"
+    weapon = "strength" if routine in ("two_handed", "thrown") else "dexterity"
+    return weapon, casting if casting and casting != weapon else "constitution"
+
+def guessed_scores(primary, secondary):
+    """ A 27 point buy: 15 / 15 / 14 / 10 / 8 / 8, with +2 on the primary and +1 on the secondary """
+    scores = {s: 8 for s in STATS}
+    scores[primary] = scores[secondary] = 15
+    third = next(s for s in ("constitution", "dexterity", "wisdom", "strength") if s not in (primary, secondary))
+    scores[third] = 14
+    fourth = next(s for s in ("wisdom", "dexterity", "constitution", "intelligence") if scores[s] == 8)
+    scores[fourth] = 10
+    return scores, {primary: 2, secondary: 1}
+
+def repair(entry):
+    """ Fills what a free text build left out, so it can be compared fairly: a class listed twice (later rows are respec or levelling notes),
+        missing ability scores (a point buy for its main stats) and missing feats (+2 to the primary ability). Each fix is noted """
+    character, notes = entry["build"]["character"], entry.setdefault("notes", [])
+    seen, classes = set(), []
+    for row in character["classes"]:
+        if row[0] not in seen:
+            seen.add(row[0])
+            classes.append(row)
+    title = entry["build"]["name"]
+    if sum(int(n) for _, _, n in classes) < 12:
+        # A class the title names with a word the split parser doesn't know, i.e. '10 Bladesinger / 2 Stars Druid'
+        for word, (cls, sub) in CLASS_ALIASES.items():
+            if (m := re.search(rf"(\d+) {word}", title)) and cls not in seen:
+                classes.insert(0, [cls, sub, int(m.group(1))])
+                seen.add(cls)
+    if classes != character["classes"]:
+        notes.append("Class split: repeated class rows dropped or a class from the title added (" +
+                     " / ".join(f"{c} {n}" for c, _, n in classes) + ")")
+        character["classes"] = classes
+        character["level_order"] = []
+    no_feats = not character.get("feats")
+    for feat in FEATS:
+        if feat in title and feat not in character.get("feats", []):
+            character["feats"] = [feat, *character.get("feats", [])]
+            notes.append(f"Feat from the title: {feat}")
+    weapons = [k for gear in entry["build"].get("equipment", {}).values() for slot, k in gear.items() if slot in ("melee_main", "ranged_main")]
+    if character["routine"] == "one_handed" and not weapons:
+        # No weapon to go on: monks fight unarmed, archer subclasses shoot
+        levels = {}
+        for cls, _, n in classes:
+            levels[cls] = levels.get(cls, 0) + int(n)
+        if max(levels, key=levels.get) == "monk":
+            character["routine"] = "unarmed"
+        elif any(sub in ("Arcane Archer", "Gloom Stalker") for _, sub, _ in classes) or "Archer" in title:
+            character["routine"] = "ranged"
+        if character["routine"] != "one_handed":
+            notes.append(f"Routine guessed from the classes: {character['routine']}")
+    primary, secondary = main_stats(character["classes"], character["routine"], character.get("feats", []))
+    if NO_SCORES in notes and not any(n.startswith("Ability scores guessed") for n in notes):
+        character["scores"], character["bonus"] = guessed_scores(primary, secondary)
+        notes.append(f"Ability scores guessed: 15 {primary.title()} +2, 15 {secondary.title()} +1, point buy")
+    if no_feats and not any(n.startswith("Feats guessed") for n in notes):
+        have = list(character.get("feats", []))
+        slots = len(feat_opportunities(Bg3Character.from_dict(character))) - len(have)
+        guesses = [f"{primary}+2", f"{primary}+1,{secondary}+1"] + ["constitution+2"] * 4
+        character["feats"] = have + guesses[:max(slots, 0)]
+        if slots > 0:
+            notes.append("Feats guessed: ability improvements to the main stats")
+    return entry
+
 def import_text(text):
     text = re.sub(r"^\*\s+", "", normalise(text), flags=re.M) # Required field markers from the format example
     index, items = item_index(), catalog()
-    return [parse_build(n, title, body, index, items) for n, title, body in build_sections(text)]
+    return [repair(parse_build(n, title, body, index, items)) for n, title, body in build_sections(text)]
 
 def load():
     """ The imported builds, [] when nothing has been imported """
-    return json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else []
+    return [repair(e) for e in json.loads(OUT.read_text(encoding="utf-8"))] if OUT.exists() else []
 
 if __name__ == "__main__":
     builds = import_text(fetch_text(sys.argv[1]))

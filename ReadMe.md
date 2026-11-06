@@ -132,6 +132,7 @@ Rough priority order, the first items have the most impact for the least work.
 ### Done in 2.7 (in progress)
 * BG3 Party Planner: act checkpoints, gear and buffs per act, equipment conflicts, expected damage per act, send to the simulator
 * Act 1 item map
+* Damage leaderboard: every example build and your party ranked by act under the same conditions (docs/leaderboard.md), with build fingerprints and saved rankings to track changes
 * Typed extra damage on hits (i.e. 1d4 fire on a slashing weapon), resisted separately
 
 * Patch 8 item database from bg3.wiki (911 items, 311 with modelled effects), cross-checked with the community unique item checklist sheet, example builds with gear per act
