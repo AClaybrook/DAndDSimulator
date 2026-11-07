@@ -157,9 +157,9 @@ def replace_toggle(character, key):
     return compile_character(off, 6)[0]
 
 def test_builder_only_offers_toggles_for_its_classes():
-    assert relevant_toggles([["fighter", "Champion", 12]]) == ["advantage"]
-    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse", "booming_blade", "honour_mode", "advantage"]
-    assert relevant_toggles([["warlock", "The Fiend", 12]]) == ["booming_blade", "honour_mode", "advantage"]
+    assert relevant_toggles([["fighter", "Champion", 12]]) == ["reactions", "advantage"]
+    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse", "booming_blade", "honour_mode", "reactions", "advantage"]
+    assert relevant_toggles([["warlock", "The Fiend", 12]]) == ["booming_blade", "honour_mode", "reactions", "advantage"]
 
 
 def test_shadow_blade_and_booming_blade():
@@ -243,3 +243,15 @@ def test_flick_and_sneak_attack_follow_a_finesse_weapon_from_gear():
     assert not plain.once_per_turn_die_mod_list and not any("Flick" in a.name for a in plain.attacks)
     breeze = compile_build(Bg3Build("Swash", "fighter_gwm", character=swash.to_dict(), equipment={"3": {"melee_main": "bg3:the_dancing_breeze"}}), "3")
     assert breeze.once_per_turn_die_mod_list == ["6d6"] and any("Flick" in a.name for a in breeze.attacks)
+
+def test_reaction_attacks_and_the_halberd_of_vigilance():
+    """ Polearm Master and Sentinel add expected reaction attacks; the Halberd of Vigilance gives them advantage """
+    from bg3.build import compile_build
+    from bg3.presets import PRESETS
+    c = compile_build(PRESETS["Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel)"], "3")
+    reactions = [a for a in c.attacks if "reaction)" in a.name]
+    assert [a.uses_per_fight for a in reactions] == [1.0, 1.5] and all(a.advantage for a in reactions)
+    plain = compile_build(PRESETS["Battle Master: Glaive (Polearm Master, GWM, Sentinel)"], "3")
+    assert [a.advantage for a in plain.attacks if "reaction)" in a.name] == [True, False] # Sentinel: advantage on opportunity attacks only
+    off = Bg3Character.from_dict({**PRESETS["Battle Master: Glaive (Polearm Master, GWM, Sentinel)"].character, "toggles": {"reactions": False}})
+    assert not any("reaction)" in a.name for a in compile_character(off, 12)[0].attacks)

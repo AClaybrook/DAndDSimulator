@@ -38,6 +38,30 @@ computations/analytic.py).
   most once per round. That is worth a few points per round, not enough to close the gap to a Paladin. The no-gear fighters trail
   mostly because they have no Vow (advantage), no smites, and GWM's -5 against AC 18.
 
+## Polearm builds: why the plain Glaive is low, and the Halberd of Vigilance
+
+![Sustained damage by act, and Act 3 sustained vs burst with reaction attacks](build_comparison.png)
+
+| Act 3, sustained / burst | Own turn | Reactions | Total |
+|---|---|---|---|
+| Padlock, Halberd of Vigilance (Polearm Master) | 95 | +6 | 101 / 169 |
+| Battle Master, Halberd, Polearm Master + GWM + Sentinel, with advantage | 82 | +14 | 96 / 140 |
+| Battle Master, Halberd, Polearm Master + GWM + Sentinel | 51 | +14 | 65 / 100 |
+| Battle Master, Halberd, GWM + Savage Attacker (no reaction feats) | 53 | 0 | 53 / 72 |
+| Fighter 8 / Swashbuckler 4, The Dancing Breeze (Dexterity) | 47 | +4 | 51 / 60 |
+| Battle Master, plain Glaive, no gear | 31 | +7 | 38 / 59 |
+
+- **The plain Glaive with no gear** hits AC 18 55% of the time for 1d10 + 4: no magic weapon, no smites, no advantage, and GWM's -5 isn't
+  worth it there. It is a no gear baseline, not how the build is played.
+- **The Halberd of Vigilance** (Act 2) roughly doubles it: +2 to hit and damage, 1d4 force on every hit, and every reaction attack with
+  advantage. With Polearm Master (an enemy entering your reach, about once a fight) and Sentinel (an enemy next to you attacking an
+  ally, about every other round) the reactions add about 14 a round in Act 3, so the reaction feats beat Savage Attacker and Strength
+  (65 vs 53). With advantage (Trip Attack's prone, Faerie Fire, Reckless allies) it reaches 96, level with the Padlock.
+- **On a Padlock** the Halberd is the strongest polearm: a bound pact weapon with 3 attacks, the butt end and smites on all four hits.
+- **Dexterity glaive:** only works from Act 3 (The Dancing Breeze is the one finesse polearm), and the Swashbuckler's Sneak Attack and
+  Flick o' the Wrist come back with it. Before Act 3 a Dexterity build would use another weapon.
+- Reaction attacks are an estimate (the `reactions` toggle on every build); real fights give more when enemies run past you.
+
 ## Lockadin, Sorcadin and pure Hexblade variants
 
 | Build (Shadow Blade + shield unless noted) | Act 1 | Act 2 | Act 3 | Act 3 without advantage |

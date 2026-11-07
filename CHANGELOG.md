@@ -23,6 +23,9 @@
   Warlock 5 attacks 3 times with the pact weapon; an "Honour Mode rules" toggle turns it off). Sneak Attack only with finesse or ranged
   weapons. Shadow Blade needs a Sorcerer, Warlock or Wizard level. New attack routines: Polearm (Glaive; Polearm Master's butt end gets
   GWF and GWM) and Shadow Blade with a shield (Duelling, +2 AC).
+- **Reaction attacks:** Polearm Master (an enemy entering your reach, about once a fight) and Sentinel (an enemy next to you attacking an
+  ally, about every other round) as expected reaction attacks, with advantage from the Halberd of Vigilance; a "reactions" toggle.
+  Finesse weapons from gear hit with the higher of Strength and Dexterity.
 - **Padlock vs Sorcadin vs polearm builds:** eight new example builds and docs/padlock_vs_sorcadin.md, sustained and burst damage by act.
 - **Smaller additions:** re-import the build doc from the planner; overlay example builds on the planner's damage chart; leaderboard and
   map settings kept in the URL; keyboard shortcuts (1-4 pages, t theme, r simulate again, ? list); a light theme; a browser smoke test

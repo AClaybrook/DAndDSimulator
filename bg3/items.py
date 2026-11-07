@@ -184,6 +184,9 @@ def apply_lightning_charges(character, sources):
         a.bonus_attack_die_mod_list = [*a.bonus_attack_die_mod_list, "1"]
         a.extra_damage_list = [*a.extra_damage_list, "1 lightning"]
 
+# Items whose wielder makes every reaction attack roll with advantage (bg3.wiki)
+REACTION_ADVANTAGE = {"bg3:halberd_of_vigilance"}
+
 def equip_weapon(attack, item):
     """ The attack made with a weapon item instead of the preset's weapon (dice, type, enhancement, properties) """
     w = item.weapon

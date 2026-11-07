@@ -20,6 +20,7 @@ def custom(name, scores, bonus, classes, feats, routine, styles=(), race="Human"
                              routine=routine, **kwargs)
     return dict(character=character.to_dict())
 
+HALBERD = {"2": {"melee_main": "bg3:halberd_of_vigilance"}}
 # Booming Blade off for the weapon comparison: every build makes plain weapon attacks
 NO_BOOMING = {"booming_blade": False}
 # (label, routine, fighting style, second feat) for the Paladin multiclasses: one handed with a shield, two handed, a polearm
@@ -137,6 +138,21 @@ PRESETS = {b.name: b for b in [
     Bg3Build("Battle Master: Glaive (Polearm Master, GWM, Sentinel)", "fighter_gwm", **custom(
         "Polearm Battle Master", STRENGTH, {"strength": 2, "constitution": 1}, [["fighter", "Battle Master", 12]],
         ["Polearm Master", "Great Weapon Master", "strength+2", "Sentinel"], "polearm", ["Great Weapon Fighting"])),
+    # Halberd of Vigilance (Act 2: +2, 1d4 force, every reaction attack with advantage) with and without the reaction feats
+    Bg3Build("Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel)", "fighter_gwm", equipment=HALBERD, **custom(
+        "Vigilant Battle Master", STRENGTH, {"strength": 2, "constitution": 1}, [["fighter", "Battle Master", 12]],
+        ["Polearm Master", "Great Weapon Master", "strength+2", "Sentinel"], "polearm", ["Great Weapon Fighting"])),
+    Bg3Build("Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats)", "fighter_gwm", equipment=HALBERD, **custom(
+        "Halberd Battle Master", STRENGTH, {"strength": 2, "constitution": 1}, [["fighter", "Battle Master", 12]],
+        ["Great Weapon Master", "strength+2", "Savage Attacker", "strength+1,constitution+1"], "polearm", ["Great Weapon Fighting"])),
+    Bg3Build("Padlock: Halberd of Vigilance (GWF, Polearm Master)", "paladin_smite", equipment=HALBERD, **custom(
+        "Padlock (Halberd of Vigilance)", PALADIN, {"charisma": 2, "strength": 1}, [["paladin", "Oath of Vengeance", 7], ["warlock", "The Hexblade", 5]],
+        ["charisma+2", "Polearm Master"], "polearm", ["Great Weapon Fighting"], level_order=["warlock"] * 5 + ["paladin"] * 7, toggles=NO_BOOMING)),
+    # Dexterity glaive: The Dancing Breeze (Act 3) is the only finesse polearm, so Rakish Sneak Attack and Flick o' the Wrist come online there
+    Bg3Build("Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master)", "fighter_gwm", equipment={"3": {"melee_main": "bg3:the_dancing_breeze"}},
+             **custom("Dancing Breeze Swashbuckler", DEXTERITY, {"dexterity": 2, "constitution": 1}, [["fighter", "Battle Master", 8], ["rogue", "Swashbuckler", 4]],
+                      ["dexterity+2", "Polearm Master", "Great Weapon Master", "dexterity+1,constitution+1"], "polearm", ["Great Weapon Fighting"],
+                      level_order=["fighter"] * 5 + ["rogue"] * 4 + ["fighter"] * 3)),
     Bg3Build("Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM)", "fighter_gwm", **custom(
         "Polearm Swashbuckler", STRENGTH, {"strength": 2, "constitution": 1}, [["fighter", "Battle Master", 9], ["rogue", "Swashbuckler", 3]],
         ["Polearm Master", "Great Weapon Master", "strength+2"], "polearm", ["Great Weapon Fighting"],

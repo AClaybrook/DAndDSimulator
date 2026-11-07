@@ -111,6 +111,8 @@ TOGGLES = {
     "booming_blade": "Booming Blade on the first melee attack each turn",
     "bladesong": "Bladesong in fights (+2/+3/+4 AC without medium or heavy armour or a shield)",
     "horde_breaker": "Horde Breaker instead of Colossus Slayer (an extra attack on a second enemy, needs 2+ enemies)",
+    "reactions": "Reaction attacks: Polearm Master when an enemy enters your reach (about once a fight), Sentinel when an enemy next to you "
+    "attacks an ally (about every other round)",
     "honour_mode": "Honour Mode rules: Pact of the Blade's Extra Attack doesn't stack with another class's (it does in other modes)",
     "advantage": "Attack with advantage (Shadow Blade in darkness or dim light, hiding, Dirty Tricks, Faerie Fire, Darkness with Devil's Sight)",
 }
@@ -122,7 +124,7 @@ TOGGLE_FOR = {"rage": ("barbarian", ""), "reckless": ("barbarian", ""), "smite":
               "damaged_target": ("ranger", "Hunter"), "starry_form": ("druid", "Circle of Stars"), "symbiotic": ("druid", "Circle of Spores"),
               "storm_close": ("sorcerer", "Storm Sorcery"),
               "booming_blade": [("wizard", ""), ("sorcerer", ""), ("warlock", ""), ("fighter", "Eldritch Knight"), ("rogue", "Arcane Trickster")],
-              "horde_breaker": ("ranger", "Hunter"), "honour_mode": ("warlock", ""), "bladesong": ("wizard", "Bladesinging"), "advantage": [(cls, "") for cls in CLASSES]}
+              "horde_breaker": ("ranger", "Hunter"), "honour_mode": ("warlock", ""), "reactions": [(cls, "") for cls in CLASSES], "bladesong": ("wizard", "Bladesinging"), "advantage": [(cls, "") for cls in CLASSES]}
 
 def relevant_toggles(classes):
     """ Toggles for a [class, subclass, levels] list """
@@ -228,7 +230,7 @@ def compile_character(character, level=MAX_LEVEL, main_finesse=None):
     for feat in feats:
         if feat in FEAT_FLAGS:
             setattr(c, FEAT_FLAGS[feat], True)
-        elif feat not in ("Dual Wielder", "Polearm Master", "Athlete"):
+        elif feat not in ("Dual Wielder", "Polearm Master", "Athlete", "Sentinel"):
             notes.append(f"{feat}: not modelled")
     c.savage_attacker_per_die = c.savage_attacker # BG3 Savage Attacker keeps the higher of each die
     styles = [s for s in character.fighting_styles if FIGHTING_STYLES.get(s)]
@@ -356,7 +358,8 @@ def _attacks(character, c, levels, subs, feats, notes, main_finesse=None):
         return attacks
 
     if routine in ("shadow_blade", "shadow_blade_shield"):
-        return _shadow_blade_attacks(c, levels, subs, count, stat_for, notes, shield=routine == "shadow_blade_shield")
+        blades = _shadow_blade_attacks(c, levels, subs, count, stat_for, notes, shield=routine == "shadow_blade_shield")
+        return blades + _reaction_attacks(character, blades[0], weapon_base(blades[0].name), feats, routine)
     name = DEFAULT_WEAPONS[routine]
     weapon_stat = "dexterity" if routine in ("ranged", "dual_wield", "dual_hand_crossbows") else "strength"
     if routine == "one_handed" and c.dexterity > c.strength:
@@ -389,6 +392,7 @@ def _attacks(character, c, levels, subs, feats, notes, main_finesse=None):
     if bonus_actions and levels.get("cleric") and subs.get("cleric") == "War Domain":
         charges = 3 + (levels["cleric"] >= 5) + (levels["cleric"] >= 8) + (levels["cleric"] >= 11)
         attacks.append(replace(main, name=f"{main.name} (War Priest)", uses_per_fight=per_fight(per_long_rest=charges)))
+    attacks += _reaction_attacks(character, main, name, feats, routine)
     if levels.get("fighter", 0) >= 2:
         attacks += action_surge(levels["fighter"], "bg3", replace(main))
     if levels.get("ranger", 0) >= 3 and subs.get("ranger") == "Gloom Stalker":
@@ -399,6 +403,23 @@ def knows_shadow_blade(levels, subs):
     """ Shadow Blade is on the Sorcerer, Warlock and Wizard lists (and the Eldritch Knight's and Arcane Trickster's, which use the Wizard's) """
     return any(levels.get(cls) for cls in ("sorcerer", "warlock", "wizard")) or \
         subs.get("fighter") == "Eldritch Knight" or subs.get("rogue") == "Arcane Trickster"
+
+# Reaction attacks per fight (an estimate): Polearm Master's attack when an enemy enters your reach, about once a fight as enemies close in;
+# Sentinel's when an enemy next to you attacks an ally, about every other round of a 3 round fight
+POLEARM_REACTIONS, SENTINEL_REACTIONS = 1.0, 1.5
+
+def _reaction_attacks(character, main, name, feats, routine):
+    """ Reaction attacks the build's feats make likely, with the main weapon (GWM and GWF apply). Polearm Master's is an opportunity
+        attack, so Sentinel gives it advantage. Items like the Halberd of Vigilance give every reaction attack advantage (bg3.build) """
+    if not character.toggle("reactions") or routine in (*RANGED_ROUTINES, "cantrip", "thrown"):
+        return []
+    out = []
+    if "Polearm Master" in feats and name in POLEARMS:
+        out.append(replace(main, name=f"{weapon_base(main.name)} (Polearm Master reaction)", uses_per_fight=POLEARM_REACTIONS,
+                           advantage=main.advantage or "Sentinel" in feats))
+    if "Sentinel" in feats:
+        out.append(replace(main, name=f"{weapon_base(main.name)} (Sentinel reaction)", uses_per_fight=SENTINEL_REACTIONS))
+    return out
 
 def shadow_blade_dice(levels, subs):
     """ Shadow Blade's dice from the highest spell slot: 2d8, 3d8 from a level 3 slot, 4d8 from a level 5 slot (even levels add nothing).
