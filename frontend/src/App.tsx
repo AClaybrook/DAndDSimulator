@@ -1,29 +1,21 @@
-import { AppShell, Burger, Group, NavLink, Paper, Stack, Text, Title } from '@mantine/core'
+import { AppShell, Burger, Group, NavLink, Text, Title } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { IconChartHistogram, IconMap, IconSwords, IconTrophy } from '@tabler/icons-react'
 import { useEffect, useState } from 'react'
+import { LeaderboardPage } from './pages/leaderboard/LeaderboardPage'
+import { MapPage } from './pages/map/MapPage'
+import { PlannerPage } from './pages/planner/PlannerPage'
 import { SimulatorPage } from './pages/simulator/SimulatorPage'
 
 const PAGES = [
-  { key: 'simulator', label: 'Simulator', icon: IconChartHistogram, ready: true },
-  { key: 'planner', label: 'Party planner', icon: IconSwords, ready: false },
-  { key: 'leaderboard', label: 'Leaderboard', icon: IconTrophy, ready: false },
-  { key: 'map', label: 'Act 1 map', icon: IconMap, ready: false },
+  { key: 'planner', label: 'Party planner', icon: IconSwords, page: PlannerPage },
+  { key: 'leaderboard', label: 'Leaderboard', icon: IconTrophy, page: LeaderboardPage },
+  { key: 'map', label: 'Act 1 map', icon: IconMap, page: MapPage },
+  { key: 'simulator', label: 'Simulator', icon: IconChartHistogram, page: SimulatorPage },
 ]
 
 // Pages live in the URL hash (#/simulator), so a reload or a shared link opens the same page
-const currentPage = () => window.location.hash.replace('#/', '') || 'simulator'
-
-function ComingSoon({ label }: { label: string }) {
-  return (
-    <Paper p="lg" withBorder maw={640}>
-      <Stack gap="xs">
-        <Title order={4}>{label}</Title>
-        <Text size="sm">This page is being rebuilt next. Until then the classic app has it: <code>uv run python app.py</code>, then open http://localhost:8050.</Text>
-      </Stack>
-    </Paper>
-  )
-}
+const currentPage = () => window.location.hash.replace('#/', '') || 'planner'
 
 export default function App() {
   const [opened, { toggle, close }] = useDisclosure()
@@ -47,10 +39,10 @@ export default function App() {
       <AppShell.Navbar p="xs">
         {PAGES.map((p) => (
           <NavLink key={p.key} href={`#/${p.key}`} label={p.label} leftSection={<p.icon size={18} />} active={p.key === active.key}
-            description={p.ready ? undefined : 'being rebuilt'} onClick={close} />
+            onClick={close} />
         ))}
       </AppShell.Navbar>
-      <AppShell.Main>{active.key === 'simulator' ? <SimulatorPage /> : <ComingSoon label={active.label} />}</AppShell.Main>
+      <AppShell.Main><active.page /></AppShell.Main>
     </AppShell>
   )
 }

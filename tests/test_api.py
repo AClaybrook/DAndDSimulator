@@ -53,3 +53,33 @@ def test_presets_and_templates():
     attacks = client.post("/api/simulator/template", json={"value": "weapon:Greatsword:", "ability_stat": "strength"}).json()
     assert attacks[0]["damage"] == "2d6"
     assert client.get("/api/simulator/enemy", params={"value": "cr:5"}).json()["armor_class"] > 10
+
+def test_planner_endpoints():
+    options = client.get("/api/planner/options").json()
+    party = options["defaultParty"]
+    assert len(party) == 4 and options["items"]["melee"] and options["kits"]
+    evaluation = client.post("/api/planner/evaluate", json={"party": party}).json()
+    first = evaluation["members"][0]["acts"]
+    assert set(first) == {"1", "2", "3"} and len(first["1"]["damage"]) == 4 and first["3"]["damage"][0] > first["1"]["damage"][0]
+    assert any(c["kind"] == "shared" for c in evaluation["conflicts"]) # The default party shares a Caustic Band on purpose
+    rows = client.post("/api/planner/variants", json={"build": {**party[0], "variants": [{"name": "Bless", "buffs": ["bless"]}]}}).json()
+    assert [r["name"] for r in rows][1] == "Bless" and rows[1]["damage"][0] > rows[0]["damage"][0]
+    kit = client.post("/api/planner/kit", json={"party": party, "selected": 0, "kit": "thunder"}).json()
+    assert kit["placed"] and kit["build"]["equipment"]["1"]
+    analysis = client.post("/api/planner/party", json={"party": party, "act": "2"}).json()
+    assert len(analysis["damage"]) == 4 and analysis["fight"]["down_by_round"]
+    advice = client.post("/api/planner/advice", json={"party": party, "build": party[0], "slot": "gloves"}).json()
+    assert advice["suggestions"]
+    assert client.get("/api/planner/example", params={"name": "nope"}).status_code == 404
+
+def test_leaderboard_and_map_endpoints():
+    party = client.get("/api/planner/options").json()["defaultParty"]
+    rows = client.post("/api/leaderboard/entries", json={"party": party}).json()
+    mine = [r for r in rows if r["source"] == "Your party"]
+    assert len(mine) >= 4 and all("reliable@1" in r["damage"] for r in mine)
+    assert len({r["key"] for r in rows}) == len(rows)
+    data = client.get("/api/map/data").json()
+    assert len(data["points"]) > 200 and data["maps"][0]["image"].startswith("/assets/maps/")
+    assert client.get(data["maps"][0]["image"]).status_code == 200
+    gear = client.post("/api/map/party-gear", params={"act": "1"}, json={"party": party}).json()
+    assert any(g["name"] == "Caustic Band" and len(g["users"]) == 2 for g in gear)
