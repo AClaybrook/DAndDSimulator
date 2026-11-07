@@ -11,7 +11,7 @@ import { SimulatorPage } from './pages/simulator/SimulatorPage'
 const PAGES = [
   { key: 'planner', label: 'Party planner', icon: IconSwords, page: PlannerPage },
   { key: 'leaderboard', label: 'Leaderboard', icon: IconTrophy, page: LeaderboardPage },
-  { key: 'map', label: 'Act 1 map', icon: IconMap, page: MapPage },
+  { key: 'map', label: 'Item map', icon: IconMap, page: MapPage },
   { key: 'simulator', label: 'Simulator', icon: IconChartHistogram, page: SimulatorPage },
 ]
 

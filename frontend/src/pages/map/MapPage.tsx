@@ -1,5 +1,5 @@
 import {
-  Anchor, Badge, Center, Checkbox, Chip, Grid, Group, Loader, MultiSelect, ScrollArea, SegmentedControl, Select, Stack, Switch, Tabs, Text,
+  Anchor, Badge, Center, Checkbox, Chip, Grid, Group, Loader, MultiSelect, ScrollArea, SegmentedControl, Stack, Switch, Tabs, Text,
 } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
@@ -41,7 +41,7 @@ export function MapPage() {
   const data = useQuery({ queryKey: ['map'], queryFn: bg3.mapData, staleTime: Infinity })
   const { party, collected, toggleCollected } = useParty()
   const [mapKey, setMapKey] = useState('wilderness')
-  const [act, setAct] = useState('1')
+  const [act, setActState] = useState('1')
   const [search, setSearch] = useState<string[]>([])
   const [selected, setSelected] = useState<string | null>(null)
   const [tab, setTab] = useState<string | null>('party')
@@ -52,6 +52,12 @@ export function MapPage() {
   const wanted = useMemo(() => new Set((gear.data ?? []).filter((g) => !collected.includes(g.key)).map((g) => g.key)), [gear.data, collected])
   const users = useMemo(() => Object.fromEntries((gear.data ?? []).map((g) => [g.key, g.users])), [gear.data])
   const set = (change: Partial<Filters>) => setFilters((f) => ({ ...f, ...change }))
+  // The act picks the regions shown, the party's gear and the items with no spot
+  const setAct = (a: string) => {
+    setActState(a)
+    setMapKey(data.data?.maps.find((m) => String(m.act) === a)?.key ?? mapKey)
+    setSelected(null)
+  }
 
   const spots = useMemo(() => (data.data ? spotsOf(data.data, mapKey, filters, search, wanted) : []), [data.data, mapKey, filters, search, wanted])
   const figure = useMemo(() => (data.data ? mapFigure(data.data, mapKey, spots, filters, search, wanted, users) : null), [data.data, mapKey, spots, filters, search, wanted, users])
@@ -62,7 +68,9 @@ export function MapPage() {
   const d = data.data
   const chosen = spots.find((s) => s.id === selected)
   const names = [...new Set(d.points.map((p) => p.name))].sort()
-  const found = search.map((name) => ({ name, maps: [...new Set(d.points.filter((p) => p.name === name).map((p) => d.maps.find((m) => m.key === p.map)!.label))] }))
+  const actMaps = d.maps.filter((m) => String(m.act) === act)
+  const mapName = (key: string) => { const m = d.maps.find((x) => x.key === key)!; return `${m.label} (Act ${m.act})` }
+  const found = search.map((name) => ({ name, maps: [...new Set(d.points.filter((p) => p.name === name).map((p) => mapName(p.map)))] }))
   const onClick = (point: PlotClick) => {
     const id = (point.customdata as string[] | undefined)?.[0]
     if (id) { setSelected(id); setTab('selected') }
@@ -70,9 +78,10 @@ export function MapPage() {
 
   return (
     <>
-      <PageHeader title="Act 1 map" subtitle="Where to find the notable gear and key pickups. Click a marker for its items; scroll to zoom." />
+      <PageHeader title="Item map" subtitle="Where to find the notable gear and key pickups. Click a marker for its items; scroll to zoom."
+        actions={<SegmentedControl size="xs" value={act} onChange={setAct} data={d.acts.map((a) => ({ value: String(a), label: `Act ${a}` }))} />} />
       <SegmentedControl fullWidth value={mapKey} onChange={(k) => { setMapKey(k); setSelected(null) }} mb="md"
-        data={d.maps.map((m) => ({ value: m.key, label: <Group gap={6} justify="center" wrap="nowrap"><span>{m.label}</span><Badge size="xs" variant="light">{counts[m.key]}</Badge></Group> }))} />
+        data={actMaps.map((m) => ({ value: m.key, label: <Group gap={6} justify="center" wrap="nowrap"><span>{m.label}</span><Badge size="xs" variant="light">{counts[m.key]}</Badge></Group> }))} />
       <Grid gap="md">
         <Grid.Col span={{ base: 12, lg: 8 }}>
           <Section padding="xs">
@@ -106,10 +115,7 @@ export function MapPage() {
               </Tabs.List>
               <ScrollArea h="68vh" mt="xs" offsetScrollbars>
                 <Tabs.Panel value="party">
-                  <Group justify="space-between" mb="xs">
-                    <Text size="xs" c="dimmed">Gold rings: gear your planner party wears. Tick items as you collect them.</Text>
-                    <Select size="xs" w={110} value={act} onChange={(v) => v && setAct(v)} allowDeselect={false} data={['1', '2', '3'].map((a) => ({ value: a, label: `Act ${a}` }))} />
-                  </Group>
+                  <Text size="xs" c="dimmed" mb="xs">Gold rings: gear your planner party wears at Act {act}. Tick items as you collect them.</Text>
                   {!party.length && <Text size="sm" c="dimmed">Add characters in the Party planner to see their gear here.</Text>}
                   <Stack gap={8}>
                     {(gear.data ?? []).map((g) => (
@@ -126,7 +132,7 @@ export function MapPage() {
                 <Tabs.Panel value="list"><MapList data={d} spots={spots} wanted={wanted} onPick={(id) => { setSelected(id); setTab('selected') }} /></Tabs.Panel>
                 <Tabs.Panel value="elsewhere">
                   <Text size="xs" c="dimmed" mb="xs">Notable items with no spot on these maps: camp chests, traders' levelled stock, carried by wandering characters.</Text>
-                  <Stack gap={6}>{d.unplaced.map((u) => <ItemLine key={u.key + u.name} data={d} p={u} />)}</Stack>
+                  <Stack gap={6}>{d.unplaced.filter((u) => String(u.act) === act).map((u) => <ItemLine key={u.key + u.name} data={d} p={u} />)}</Stack>
                 </Tabs.Panel>
               </ScrollArea>
             </Tabs>

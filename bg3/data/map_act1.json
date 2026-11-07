@@ -1,5 +1,6 @@
 {
 "_source": "Item locations from bg3.wiki (CC BY-NC-SA 4.0) and the community BG3 Every Item Run (ACT 1) checklist; map images are the game's minimap textures (Larian Studios) via bg3.wiki",
+"act": 1,
 "maps": {
 "wilderness": {
 "label": "Wilderness",

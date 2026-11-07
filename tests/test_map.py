@@ -35,3 +35,16 @@ def test_missables():
     assert "Story choice" in missable["Sussur Greatsword"] and "Story choice" in missable["The Sparky Points"]
     assert "Phalar Aluve" in missable and "Svartlebee's Woundseeker" in missable
     assert not any(p.get("missable") for p in POINTS if p["rarity"] == "Common" and p["map"] == "nautiloid" and not p.get("tip"))
+
+def test_act2_spots():
+    """ Act 2 items land in their places on the Shadow-Cursed Lands image: the Last Light Inn's island in the north, Moonrise Towers in the south """
+    spots = {}
+    for p in POINTS:
+        if p["act"] == 2:
+            spots.setdefault(p["name"], []).append(p)
+    inn = spots["Hat of Fire Acuity"][0]
+    moonrise = spots["Hat of Storm Scion's Power"][0]
+    assert inn["map"] == moonrise["map"] == "shadowcursed"
+    assert inn["py"] < 500 < 1100 < moonrise["py"]
+    assert spots["Boots of Brilliance"][0]["map"] == "gauntlet" and spots["Infernal Rapier"][0]["map"] == "colony"
+    assert {m["act"] for m in data()["maps"]} == {1, 2}

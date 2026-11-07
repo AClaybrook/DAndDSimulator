@@ -1,11 +1,23 @@
-""" The Act 1 map's data for the browser, which filters and draws it (so every filter change is instant), and the party's gear on it """
+""" The Act 1 and Act 2 maps' data for the browser, which filters and draws it (so every filter change is instant), and the party's gear on it """
 import json
 from pathlib import Path
 
 from bg3.build import Bg3Build, equipment_at
 from bg3.items import SLOT_LABELS, catalog
 
-DATA = json.loads((Path(__file__).parent.parent / "bg3" / "data" / "map_act1.json").read_text(encoding="utf-8"))
+ACTS = [1, 2]
+
+def _load():
+    """ Both acts' map files as one: maps, points and unplaced items each tagged with their act """
+    merged = {"maps": {}, "points": [], "unplaced": []}
+    for act in ACTS:
+        raw = json.loads((Path(__file__).parent.parent / "bg3" / "data" / f"map_act{act}.json").read_text(encoding="utf-8"))
+        merged["maps"].update({key: {**m, "act": act} for key, m in raw["maps"].items()})
+        merged["points"] += [{**p, "act": act} for p in raw["points"]]
+        merged["unplaced"] += [{**u, "act": act} for u in raw["unplaced"]]
+    return merged
+
+DATA = _load()
 MAPS = DATA["maps"]
 POINTS = DATA["points"]
 RARITIES = ["Key", "Legendary", "Story", "Very Rare", "Rare", "Uncommon", "Common"]
@@ -21,8 +33,9 @@ MISSABLE_COLOR = "#ff5a5f"
 
 def data():
     return {
-        "maps": [{"key": k, "label": m["label"], "image": f"/assets/maps/{m['image']}" if m["image"] else None,
+        "maps": [{"key": k, "label": m["label"], "act": m["act"], "image": f"/assets/maps/{m['image']}" if m["image"] else None,
                   "width": m.get("width"), "height": m.get("height")} for k, m in MAPS.items()],
+        "acts": ACTS,
         "points": POINTS,
         "unplaced": [u for u in DATA["unplaced"] if u["rarity"] != "Uncommon"],
         "rarities": RARITIES,
@@ -44,9 +57,10 @@ def party_gear(party_dicts, act):
     rows = []
     for key, who in users.items():
         spots = [p for p in POINTS if p["key"] == key]
-        unplaced = next((u for u in DATA["unplaced"] if u["key"] == key), None)
+        unplaced = next((u for u in DATA["unplaced"] if u["key"] == key and u["act"] == int(act)), None) or \
+            next((u for u in DATA["unplaced"] if u["key"] == key), None)
         where = "; ".join(sorted({f"{p['location']} ({MAPS[p['map']]['label']})" for p in spots})) or \
-            ((unplaced["where"] or unplaced["location"]) if unplaced else "") or "not on the Act 1 maps"
+            ((unplaced["where"] or unplaced["location"]) if unplaced else "") or "not on the Act 1 or 2 maps"
         missable = next((p["missable"] for p in [*spots, *([unplaced] if unplaced else [])] if p.get("missable")), "")
         rows.append({"key": key, "name": items[key].name if key in items else key, "users": who, "where": where, "missable": missable,
                      "placed": bool(spots), "maps": sorted({p["map"] for p in spots})})

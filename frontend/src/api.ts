@@ -198,9 +198,11 @@ export interface Run { id: number; created: string; label: string; kind: string;
 export interface MapPoint {
   name: string; key: string; rarity: string; slot: string; kind: string; source: string; notes: string; builds: string[]; tip: string
   location: string; where: string; trader: boolean; map: string; inside: boolean; x: number; y: number; px?: number; py?: number; missable?: string
+  act: number
 }
 export interface MapData {
-  maps: { key: string; label: string; image: string | null; width: number | null; height: number | null }[]
+  maps: { key: string; label: string; act: number; image: string | null; width: number | null; height: number | null }[]
+  acts: number[]
   points: MapPoint[]
   unplaced: MapPoint[]
   rarities: string[]
