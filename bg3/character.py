@@ -205,8 +205,9 @@ def warlock_pact_slots(warlock_level):
     slots = 1 if warlock_level == 1 else 2 if warlock_level < 11 else 3
     return slots, min(5, (warlock_level + 1) // 2)
 
-def compile_character(character, level=MAX_LEVEL):
-    """ The Character at a level, and notes on what is and isn't modelled """
+def compile_character(character, level=MAX_LEVEL, main_finesse=None):
+    """ The Character at a level, and notes on what is and isn't modelled. main_finesse: whether the main hand weapon from gear is finesse
+        or ranged (Sneak Attack, Flick o' the Wrist), None to go by the routine's default weapon """
     level = max(1, min(int(level), MAX_LEVEL, len(class_order(character))))
     levels = class_levels(character, level)
     subs = {cls: subclass_of(character, cls, n) for cls, n in levels.items()}
@@ -242,7 +243,7 @@ def compile_character(character, level=MAX_LEVEL):
     if character.race.endswith("Halfling"):
         c.attack_reroll_on = 1 # Halfling Luck
 
-    attacks = _attacks(character, c, levels, subs, feats, notes)
+    attacks = _attacks(character, c, levels, subs, feats, notes, main_finesse)
     profs = weapon_proficiencies(character, level)
     if "Weapon Master" in feats:
         profs |= {weapon_base(a.name) for a in attacks} # Four weapons of your choice, assumed to be the ones used
@@ -253,7 +254,7 @@ def compile_character(character, level=MAX_LEVEL):
     c.attacks = attacks + _spirit_guardians(character, c, levels, subs, notes)
     if character.toggle("booming_blade") and "booming_blade" in relevant_toggles(character.classes):
         _booming_blade(c, character)
-    _class_features(character, c, levels, subs, notes)
+    _class_features(character, c, levels, subs, notes, main_finesse)
     split = " / ".join(f"{cls.title()} {n}" + (f" ({subs[cls]})" if subs.get(cls) else "") for cls, n in levels.items())
     c.description = f"{character.race}, {split}. Feats: {', '.join(feats) or 'none'}"
     return c, notes
@@ -304,7 +305,7 @@ def _spirit_guardians(character, c, levels, subs, notes):
     # Lasts 10 turns, so one cast covers a fight; uses per fight is the rounds it's up
     return [replace(aura, name="Spirit Guardians (aura)", damage_type="radiant", uses_per_fight=10 * min(casts, 1.0), once_per_turn_eligible=False)]
 
-def _attacks(character, c, levels, subs, feats, notes):
+def _attacks(character, c, levels, subs, feats, notes, main_finesse=None):
     routine = character.routine
     if routine == "cantrip":
         stat = max((SPELL_ABILITY[cls] for cls in levels if cls in SPELL_ABILITY), key=lambda s: getattr(c, s), default="charisma")
@@ -380,7 +381,9 @@ def _attacks(character, c, levels, subs, feats, notes):
         # The other end of the same weapon: Great Weapon Fighting and Great Weapon Master apply to it as to the blade
         attacks.append(replace(main, name="Polearm Butt End", damage="1d4", damage_type="bludgeoning"))
         bonus_actions -= 1
-    if bonus_actions and levels.get("rogue", 0) >= 4 and subs.get("rogue") == "Swashbuckler" and routine not in RANGED_ROUTINES:
+    finesse = _finesse_or_ranged(main) if main_finesse is None else main_finesse
+    if bonus_actions and levels.get("rogue", 0) >= 4 and subs.get("rogue") == "Swashbuckler" and routine not in RANGED_ROUTINES and finesse:
+        # Dirty Trick: Flick o' the Wrist needs a finesse weapon in the main hand (bg3.wiki)
         attacks.append(replace(main, name=f"{main.name} (Flick o' the Wrist)"))
         bonus_actions -= 1
     if bonus_actions and levels.get("cleric") and subs.get("cleric") == "War Domain":
@@ -462,7 +465,7 @@ def _once_per_turn(c, dice, uses=0, crit_only=False):
         c.once_per_turn_uses_per_fight = uses
     c.once_per_turn_crit_only = c.once_per_turn_crit_only or crit_only
 
-def _class_features(character, c, levels, subs, notes):
+def _class_features(character, c, levels, subs, notes, main_finesse=None):
     weapon = character.routine not in ("cantrip",)
     fighter, barbarian, paladin, ranger, rogue = (levels.get(k, 0) for k in ("fighter", "barbarian", "paladin", "ranger", "rogue"))
     monk, warlock, sorcerer, wizard, cleric, bard = (levels.get(k, 0) for k in ("monk", "warlock", "sorcerer", "wizard", "cleric", "bard"))
@@ -520,7 +523,7 @@ def _class_features(character, c, levels, subs, notes):
     if ranger >= 3 and subs.get("ranger") == "Swarmkeeper":
         _once_per_turn(c, "1d8" if ranger >= 11 else "1d6")
     # Rogue: Sneak Attack, never on off-hand attacks, and only with a finesse or ranged weapon (not a greatsword or a glaive)
-    finesse = any(a.is_weapon and not a.offhand and _finesse_or_ranged(a) for a in c.attacks)
+    finesse = any(a.is_weapon and not a.offhand and _finesse_or_ranged(a) for a in c.attacks) if main_finesse is None else main_finesse
     if rogue and character.routine != "unarmed" and not finesse:
         notes.append("Sneak Attack needs a finesse or ranged weapon, so this weapon gets none")
     if rogue and character.routine != "unarmed" and finesse:

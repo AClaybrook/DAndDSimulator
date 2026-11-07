@@ -120,12 +120,13 @@ PRESETS = {b.name: b for b in [
     }, **custom("Sorlock", CHARISMA, {"charisma": 2, "constitution": 1}, [["warlock", "The Fiend", 2], ["sorcerer", "Draconic Bloodline", 10]],
                 ["charisma+2", "charisma+1,constitution+1"], "cantrip", cantrip="Eldritch Blast")),
     # Padlock vs Sorcadin vs a polearm fighter, by weapon, with no gear so only the class and weapon choices differ (docs/padlock_vs_sorcadin.md).
-    # Padlock: Paladin 5 (Act 1), Hexblade 3 for the pact weapon (Act 2), Hexblade 5 and Paladin 7 (Act 3): Pact of the Blade's Extra Attack
-    # stacks with the Paladin's outside Honour Mode, 3 attacks
+    # Padlock: Hexblade 5 first (Act 1: Shadow Blade and Extra Attack with Charisma), then Paladin 3 (Act 2) and 7 (Act 3): Pact of the Blade's
+    # Extra Attack stacks with the Paladin's outside Honour Mode, 3 attacks. Paladin first would bring heavy armour (multiclassing into
+    # Paladin only gives medium) but weaker Acts 1 and 2
     *[Bg3Build(f"Padlock: {label}", "paladin_smite", **custom(f"Padlock ({label})", PALADIN, {"charisma": 2, "strength": 1},
                                                              [["paladin", "Oath of Vengeance", 7], ["warlock", "The Hexblade", 5]],
                                                              ["charisma+2", feat], routine, [style],
-                                                             level_order=["paladin"] * 5 + ["warlock"] * 5 + ["paladin"] * 2, toggles=NO_BOOMING))
+                                                             level_order=["warlock"] * 5 + ["paladin"] * 7, toggles=NO_BOOMING))
       for label, routine, style, feat in PALADIN_WEAPONS],
     # Sorcadin: Paladin 6 then Sorcerer 6, slots for smites (5 levels of slots by Act 3) and a Quickened spell
     *[Bg3Build(f"Sorcadin: {label}", "paladin_smite", **custom(f"Sorcadin ({label})", PALADIN, {"strength": 2, "charisma": 1},

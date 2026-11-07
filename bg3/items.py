@@ -191,6 +191,10 @@ def equip_weapon(attack, item):
     two_handed = "two-handed" in props or (attack.two_handed and "versatile" in props and not attack.offhand)
     damage = w.get("versatile_damage") if two_handed and "versatile" in props and w.get("versatile_damage") else w["damage"]
     suffix = attack.name[attack.name.index(" ("):] if " (" in attack.name else ""
+    if attack.name == "Polearm Butt End": # The other end of the new polearm: its enhancement and properties, still 1d4 bludgeoning
+        return replace(attack, weapon_enhancement=int(w.get("enhancement", 0)), two_handed=two_handed, heavy="heavy" in props,
+                       bonus_attack_die_mod_list=list(attack.bonus_attack_die_mod_list), bonus_damage_die_mod_list=list(attack.bonus_damage_die_mod_list),
+                       extra_damage_list=list(attack.extra_damage_list))
     return replace(attack, name=item.name + suffix, damage=damage, damage_type=w["damage_type"], weapon_enhancement=int(w.get("enhancement", 0)),
                    two_handed=two_handed, heavy="heavy" in props,
                    bonus_attack_die_mod_list=list(attack.bonus_attack_die_mod_list), bonus_damage_die_mod_list=list(attack.bonus_damage_die_mod_list),

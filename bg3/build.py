@@ -62,11 +62,16 @@ def compile_build(build, act, items=None):
     """ The build's Character at an act checkpoint, with gear, buffs and toggled conditions applied """
     items = items or catalog()
     level = act_level(act, build.levels)
+    gear = {slot: items[key] for slot, key in equipment_at(build, act).items() if key in items and items[key].fits(slot)}
     if build.character:
-        character, _ = compile_character(Bg3Character.from_dict(build.character), level)
+        # A finesse or ranged weapon from gear decides Sneak Attack and Flick o' the Wrist (i.e. The Dancing Breeze, a finesse glaive)
+        bg3_character = Bg3Character.from_dict(build.character)
+        weapon = (gear.get("ranged_main") if bg3_character.routine in ("ranged", "dual_hand_crossbows") else gear.get("melee_main"))
+        weapon = weapon.weapon if weapon is not None and weapon.weapon else None
+        finesse = None if weapon is None else weapon.get("kind") == "ranged" or "finesse" in (weapon.get("properties") or [])
+        character, _ = compile_character(bg3_character, level, finesse)
     else:
         character = build_character(build.preset, level, "bg3")
-    gear = {slot: items[key] for slot, key in equipment_at(build, act).items() if key in items and items[key].fits(slot)}
 
     # Weapons replace the preset's weapon for the attacks made with them. Custom characters lose the proficiency bonus with weapons they
     # aren't proficient with (presets are assumed proficient)

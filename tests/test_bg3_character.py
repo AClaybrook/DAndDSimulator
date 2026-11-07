@@ -234,3 +234,12 @@ def test_sneak_attack_needs_a_finesse_or_ranged_weapon():
     glaive = Bg3Character("Glaive rogue", classes=[["rogue", "Swashbuckler", 5]], routine="polearm")
     c, notes = compile_character(glaive, 5)
     assert not c.once_per_turn_die_mod_list and any("finesse" in n for n in notes)
+
+def test_flick_and_sneak_attack_follow_a_finesse_weapon_from_gear():
+    """ Flick o' the Wrist and Rakish Sneak Attack need a finesse weapon: none with a plain glaive, both with The Dancing Breeze (a finesse glaive) """
+    from bg3.build import Bg3Build, compile_build
+    swash = Bg3Character("Swash", classes=[["rogue", "Swashbuckler", 12]], routine="polearm")
+    plain = compile_build(Bg3Build("Swash", "fighter_gwm", character=swash.to_dict()), "3")
+    assert not plain.once_per_turn_die_mod_list and not any("Flick" in a.name for a in plain.attacks)
+    breeze = compile_build(Bg3Build("Swash", "fighter_gwm", character=swash.to_dict(), equipment={"3": {"melee_main": "bg3:the_dancing_breeze"}}), "3")
+    assert breeze.once_per_turn_die_mod_list == ["6d6"] and any("Flick" in a.name for a in breeze.attacks)
