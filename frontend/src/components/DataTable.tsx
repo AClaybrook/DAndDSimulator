@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-table'
 import { useMemo, useState, type CSSProperties, type ReactNode } from 'react'
 import type { Table as TableData, Value } from '../api'
+import { formatValue } from '../format'
 
 interface SortTableProps<T> {
   data: T[]
@@ -91,8 +92,6 @@ export function SortTable<T>({ data, columns, initialSorting = [], hidden = [], 
 }
 
 type Row = Record<string, Value>
-export const formatValue = (v: Value) =>
-  typeof v === 'number' ? (Number.isInteger(v) ? String(v) : v.toFixed(2)) : Array.isArray(v) ? v.join(', ') : String(v ?? '')
 
 // The backend's {columns, rows} tables
 export function DataTable({ table, maxHeight }: { table: TableData; maxHeight?: number }) {

@@ -6,8 +6,15 @@
   are rebuilt. The Simulator is first: characters with their live expected damage on the left, the answer up front (who leads and by how
   much), the same plots as before, and sortable, filterable tables folded underneath. Characters open in a side panel with Stats, Attacks
   and Bonuses tabs, rarely used fields folded away. Results update shortly after each edit. Everything is kept in the browser.
-  `uv run python -m api` serves it on http://localhost:8000. The Dash app (`app.py`) stays for the planner, leaderboard and map until
-  they're rebuilt.
+  `uv run python -m api` serves it on http://localhost:8000.
+- **Every page in the new app:** the Party planner (a strip of the party with damage per act; Gear, Build, Buffs, Variants and Gear advice
+  tabs; results tabs for the damage chart and score, conflicts, and the party fight, synergies and roles), the Leaderboard (best builds up
+  front, a damage vs armour class scatter, sortable rankings with a detail panel per build, saved runs to compare), and the Act 1 map
+  (region switcher, markers drawn in the browser so every filter is instant, the party's gear as a checklist). One enemy is shared by the
+  planner and the simulator.
+- **Redesign:** navigation moved to the top bar, a refined dark theme, every page built from the same parts (a header with its controls,
+  headline numbers, titled cards). Less to open by hand: results are tabs instead of folded sections, editors show every field group,
+  attacks are a list with the selected one's fields beside it, and the enemy is a summary with a side panel editor.
 
 ## 2.7.0 (in progress)
 

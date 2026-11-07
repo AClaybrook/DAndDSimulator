@@ -3,11 +3,11 @@
 Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user facing summary of each release.
 
 ## Active
-- [ ] UI rebuild (React + TypeScript over FastAPI, `frontend/` and `api/`), page by page. Done: API skeleton, Simulator page. Next:
-  leaderboard page (sortable table + damage vs AC scatter, row drawer with spec and "load into planner"), party planner (member strip,
-  Build/Gear/Buffs tabs with a paper doll gear grid per act, results tabs; more than 4 characters in its comparison charts), Act 1 map
-  (big region tabs, filters and the party checklist in a side panel), then session import/export and the remaining simulator extras
-  (copy variants menu, attack "Save"-free editing is done)
+- [ ] New UI, last gaps before the Dash app can go: session export/import (characters, enemy, settings and the party in one file),
+  "Add to simulator" from the planner (party at an act as simulator characters), the simulator card copy menu (variants: +2 main stat,
+  one level higher, advantage, GWM/Sharpshooter, Bless), CSV export of simulation results, the build doc import button
+- [ ] New UI, next: compare more than four characters in the planner's charts, URL state for leaderboard filters, keyboard shortcuts,
+  a light theme, Playwright smoke tests in CI
 - [ ] When the new UI matches the Dash app: remove `app.py`, `components/` (Dash only, keep anything the API imports by moving it into
   `api/` or the engine packages first: plots, sweeps, help text, validation), `assets/app.css` and `assets/callbacks.js`, the Dash and
   gunicorn dependencies, and point `Procfile` at `uvicorn api.main:app`; drop the old session formats in `components/session.py`

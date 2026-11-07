@@ -22,11 +22,11 @@ Live here: https://d-and-d-damage-simulator-745953dd5908.herokuapp.com/
 * Download or git clone the repo from: https://github.com/AClaybrook/DAndDSimulator
 * Install [uv](https://docs.astral.sh/uv/getting-started/installation/) (it installs the right Python version for you)
 * `uv sync` to create the virtual environment and install the dependencies
-* The new app (React front end over a FastAPI backend, being rebuilt page by page; the Simulator is done):
+* The app (React front end over a FastAPI backend: Party planner, Leaderboard, Act 1 map and Simulator):
     * Once: `cd frontend && npm install && npm run build` (needs Node 22)
     * `uv run python -m api`, then open http://localhost:8000
     * For front end work: `uv run python -m api` and, in `frontend/`, `npm run dev` (http://localhost:5173, reloads as you edit)
-* The classic Dash app (every page, until the new one catches up) on localhost 8050:
+* The classic Dash app (kept until a few last features move over, see TODO.md) on localhost 8050:
     * `uv run python app.py`
     * Or select the `.venv` interpreter and run app.py from VsCode
 * Development:

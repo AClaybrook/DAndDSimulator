@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Group, Menu, Modal, NumberInput, Paper, Select, Stack, Text, Title, Tooltip } from '@mantine/core'
+import { ActionIcon, Button, Group, Menu, Modal, NumberInput, Paper, Select, Stack, Text, Tooltip } from '@mantine/core'
 import { IconCopy, IconPencil, IconPlus, IconTrash } from '@tabler/icons-react'
 import { useState } from 'react'
 import { api, type Expected, type Options } from '../../api'
@@ -25,9 +25,9 @@ export function PartyPanel({ options, expected, onEdit }: Props) {
   }
 
   return (
-    <Paper p="sm" withBorder>
-      <Group justify="space-between" mb="xs">
-        <Title order={5}>Characters</Title>
+    <Paper p="md" withBorder>
+      <Group justify="space-between" mb="sm">
+        <Text fw={600}>Characters</Text>
         <Menu position="bottom-end">
           <Menu.Target>
             <Button size="xs" variant="light" leftSection={<IconPlus size={14} />} disabled={characters.length >= MAX_CHARACTERS}>Add</Button>
@@ -44,7 +44,7 @@ export function PartyPanel({ options, expected, onEdit }: Props) {
         {characters.map((c, i) => {
           const dpr = expected?.characters?.[i]?.damagePerRound
           return (
-            <Paper key={c.uid} p={6} withBorder style={{ borderLeft: `4px solid ${COLORS[i % COLORS.length]}`, cursor: 'pointer' }} onClick={() => onEdit(c.uid!)}>
+            <Paper key={c.uid} p="xs" radius="md" withBorder style={{ borderLeft: `4px solid ${COLORS[i % COLORS.length]}`, cursor: 'pointer' }} onClick={() => onEdit(c.uid!)}>
               <Group justify="space-between" wrap="nowrap" gap="xs">
                 <div style={{ minWidth: 0, flex: 1 }}>
                   <Text size="sm" fw={500} truncate>{c.name}</Text>

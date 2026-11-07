@@ -37,13 +37,13 @@ export function PlannerPage() {
     <>
       <PageHeader title="Party planner" subtitle="Up to four characters, with gear and buffs for each act checkpoint"
         actions={<>
-          <Select size="xs" w={250} searchable placeholder="Enemy..." value={null} data={simOptions.data?.enemies ?? []}
-            onChange={async (v) => v && setEnemy(await api.enemy(v))} leftSection={<Text size="10px" c="dimmed">vs</Text>}
-            description={enemy ? `${enemy.name}: AC ${enemy.armor_class}` : undefined} />
+          <Select size="xs" w={260} searchable value={null} data={simOptions.data?.enemies ?? []}
+            placeholder={enemy ? `${enemy.name} · AC ${enemy.armor_class}` : 'Enemy...'} title="The enemy for damage and hit chances, shared with the Simulator"
+            onChange={async (v) => v && setEnemy(await api.enemy(v))} leftSection={<Text size="10px" c="dimmed">vs</Text>} />
           <SegmentedControl size="xs" value={String(enemies)} onChange={(v) => setEnemies(Number(v))}
             data={[1, 2, 3, 4].map((n) => ({ value: String(n), label: n === 1 ? '1 enemy' : `${n} (AoE)` }))} />
-          <NumberInput size="xs" w={130} placeholder="from CR" value={attackBonus ?? ''} min={0} max={20} leftSection={<Text size="10px" c="dimmed">to hit</Text>}
-            leftSectionWidth={44} onChange={(v) => setAttackBonus(v === '' ? null : Number(v))} title="The enemy's attack bonus, for the chance to be hit (empty: from its challenge rating)" />
+          <NumberInput size="xs" w={150} placeholder="auto" value={attackBonus ?? ''} min={0} max={20} leftSection={<Text size="10px" c="dimmed">Enemy to hit +</Text>}
+            leftSectionWidth={84} onChange={(v) => setAttackBonus(v === '' ? null : Number(v))} title="The enemy's attack bonus, for the chance to be hit (empty: from its challenge rating)" />
         </>} />
       <PartyStrip options={o} evaluation={evaluation.data} enemies={enemies} />
       {party.length > 0 && (

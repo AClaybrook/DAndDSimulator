@@ -42,16 +42,3 @@ export function Section({ title, actions, children, padding = 'md' }: { title?: 
     </Paper>
   )
 }
-
-// Plotly layout for charts drawn in the browser, matching the dark theme of the backend's figures
-export function chartLayout(extra: Record<string, unknown> = {}): Record<string, unknown> {
-  const axis = { gridcolor: 'rgba(255,255,255,0.08)', zerolinecolor: 'rgba(255,255,255,0.15)', linecolor: 'rgba(255,255,255,0.2)' }
-  return {
-    font: { color: '#C9C9C9', family: 'inherit', size: 12 },
-    hoverlabel: { bgcolor: '#25262b', bordercolor: '#444', font: { color: '#eee' } },
-    legend: { orientation: 'h', y: -0.18 },
-    ...extra,
-    xaxis: { ...axis, ...(extra.xaxis as object) },
-    yaxis: { ...axis, ...(extra.yaxis as object) },
-  }
-}

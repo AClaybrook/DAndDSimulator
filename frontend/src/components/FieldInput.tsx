@@ -1,4 +1,4 @@
-import { Accordion, NumberInput, Select, SimpleGrid, Switch, TextInput } from '@mantine/core'
+import { NumberInput, Select, SimpleGrid, Switch, TextInput } from '@mantine/core'
 import type { Value } from '../api'
 import { STATS, type Field, type FieldGroup } from '../fields'
 
@@ -35,35 +35,22 @@ export function FieldInput({ field, value, onChange }: Props) {
   }
 }
 
-// Groups of fields: the plain ones open, advanced ones folded into an accordion
-export function FieldGroups({ groups, values, onChange }: { groups: FieldGroup[]; values: Record<string, unknown>; onChange: (key: string, value: Value) => void }) {
-  const grid = (group: FieldGroup) => (
-    <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xs" verticalSpacing={4}>
-      {group.fields.map((field) => (
-        <FieldInput key={field.key} field={field} value={values[field.key] as Value} onChange={(v) => onChange(field.key, v)} />
-      ))}
-    </SimpleGrid>
-  )
-  const open = groups.filter((g) => !g.advanced)
-  const folded = groups.filter((g) => g.advanced)
+// Groups of fields, each under a small heading, all visible: no folding to open
+export function FieldGroups({ groups, values, onChange, columns = 2 }: {
+  groups: FieldGroup[]; values: Record<string, unknown>; onChange: (key: string, value: Value) => void; columns?: number
+}) {
   return (
     <>
-      {open.map((group) => (
-        <div key={group.title} style={{ marginBottom: 12 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, opacity: 0.7, marginBottom: 4 }}>{group.title}</div>
-          {grid(group)}
+      {groups.map((group) => (
+        <div key={group.title} style={{ marginBottom: 14 }}>
+          <div className="section-label" style={{ marginBottom: 4 }}>{group.title}</div>
+          <SimpleGrid cols={{ base: 1, sm: columns }} spacing="xs" verticalSpacing={4}>
+            {group.fields.map((field) => (
+              <FieldInput key={field.key} field={field} value={values[field.key] as Value} onChange={(v) => onChange(field.key, v)} />
+            ))}
+          </SimpleGrid>
         </div>
       ))}
-      {folded.length > 0 && (
-        <Accordion variant="contained" multiple>
-          {folded.map((group) => (
-            <Accordion.Item key={group.title} value={group.title}>
-              <Accordion.Control>{group.title}</Accordion.Control>
-              <Accordion.Panel>{grid(group)}</Accordion.Panel>
-            </Accordion.Item>
-          ))}
-        </Accordion>
-      )}
     </>
   )
 }

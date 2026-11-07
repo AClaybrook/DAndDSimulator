@@ -15,7 +15,6 @@ export interface Field {
 export interface FieldGroup {
   title: string
   fields: Field[]
-  advanced?: boolean // Collapsed until opened
 }
 
 export const STATS = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']
@@ -70,7 +69,6 @@ export const CHARACTER_GROUPS: FieldGroup[] = [
       f('bonus_crit_die_mod_list', 'Bonus crit damage', 'list', { help: DICE }),
       f('bonus_miss_die_mod_list', 'Damage on a miss', 'list', { help: DICE }),
     ],
-    advanced: true,
   },
   {
     title: 'Once per turn and first round',
@@ -81,7 +79,6 @@ export const CHARACTER_GROUPS: FieldGroup[] = [
       f('first_round_advantage', 'First round advantage', 'bool'),
       f('first_round_auto_crit', 'First round hits are crits', 'bool'),
     ],
-    advanced: true,
   },
 ]
 
@@ -119,7 +116,6 @@ export const ATTACK_GROUPS: FieldGroup[] = [
       f('saving_throw_success_multiplier', 'Damage on a successful save', 'float', { min: 0, max: 1 }),
       f('targets', 'Targets (area spells)', 'int', { min: 1, max: 10 }),
     ],
-    advanced: true,
   },
   {
     title: 'Bonus dice',
@@ -133,7 +129,6 @@ export const ATTACK_GROUPS: FieldGroup[] = [
       f('bonus_crit_die_mod_list', 'Bonus crit damage', 'list', { help: DICE }),
       f('bonus_miss_die_mod_list', 'Damage on a miss', 'list', { help: DICE }),
     ],
-    advanced: true,
   },
 ]
 
@@ -146,7 +141,6 @@ export const ENEMY_GROUPS: FieldGroup[] = [
   {
     title: 'Saving throws',
     fields: STATS.map((s) => f(`${s}_save`, `${s[0].toUpperCase()}${s.slice(1, 3)} save`, 'int', { help: 'Empty: from the ability score' })),
-    advanced: true,
   },
   {
     title: 'Resistances',
@@ -158,7 +152,6 @@ export const ENEMY_GROUPS: FieldGroup[] = [
       f('vulnerability', 'Vulnerable to everything', 'bool'),
       f('damage_reduction', 'Damage reduction per hit', 'int', { min: 0 }),
     ],
-    advanced: true,
   },
 ]
 

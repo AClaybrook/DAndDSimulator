@@ -1,15 +1,10 @@
 import { ActionIcon, Button, Group, Menu, Modal, Paper, Select, SimpleGrid, Stack, Text, Tooltip } from '@mantine/core'
 import { IconPlus, IconTrash, IconUserPlus } from '@tabler/icons-react'
 import { useState } from 'react'
-import { bg3, type Build, type Evaluation, type PlannerOptions } from '../../api'
+import { bg3, type Evaluation, type PlannerOptions } from '../../api'
 import { ACTS, useParty } from '../../party'
+import { classLine } from '../../format'
 import { COLORS } from '../../store'
-
-export function classLine(build: Build, options: PlannerOptions) {
-  const classes = (build.character as { classes?: [string, string, number][] } | null)?.classes
-  if (classes?.length) return classes.map(([c, sub, n]) => `${c[0].toUpperCase()}${c.slice(1)} ${n}${sub ? ` (${sub})` : ''}`).join(' / ')
-  return options.presets.find((p) => p.key === build.preset)?.label ?? build.preset
-}
 
 // The party at a glance: each member's damage in every act; click one to edit it
 export function PartyStrip({ options, evaluation, enemies }: { options: PlannerOptions; evaluation: Evaluation | undefined; enemies: number }) {
