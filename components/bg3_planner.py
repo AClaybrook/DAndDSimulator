@@ -619,7 +619,7 @@ def leaderboard_panel():
         dbc.Collapse([
             html.P(f"Every example build (presets, the build doc, Reddit approximations), gear variants of each, and your party, at each act. "
                    f"Same conditions for everyone: one reference enemy per act ({enemies}, no resistances), {ROUNDS_PER_FIGHT} round fights, "
-                   "the help the scenario gives and the enemies in reach (area spells, Spirit Guardians and Horde Breaker count against 2+). "
+                   "the help the scenario gives, and damage summed over 1 to 4 enemies (area spells, Spirit Guardians and Horde Breaker count against 2+). "
                    "Gear variants keep the weapons and search every armour, accessory and shield the build can wear for max damage, max AC or "
                    "the best overall score. Hover a name for its spec, a damage cell for its advantage source and area option. Saved runs and "
                    "every build's spec are kept in local_data/bg3.sqlite.", className="small text-muted mb-2"),
@@ -627,8 +627,9 @@ def leaderboard_panel():
                 dbc.Col(dbc.InputGroup([dbc.InputGroupText("Scenario"), dbc.Select(
                     options=[{"label": label, "value": k} for k, label in SCENARIOS.items()], value="reliable", id="bg3-lb-scenario")],
                     size="sm"), xs=12, md=4),
-                dbc.Col(dbc.InputGroup([dbc.InputGroupText("Enemies"), dbc.Select(
-                    options=[{"label": f"{n} in reach", "value": str(n)} for n in ENEMY_COUNTS], value="1", id="bg3-lb-enemies")],
+                dbc.Col(dbc.InputGroup([dbc.InputGroupText("Damage vs"), dbc.Select(
+                    options=[{"label": "1 enemy" if n == 1 else f"{n} enemies (AoE)", "value": str(n)} for n in ENEMY_COUNTS], value="1",
+                    id="bg3-lb-enemies")],
                     size="sm"), xs=6, md=2),
                 dbc.Col(dbc.InputGroup([dbc.InputGroupText("Rank by"), dbc.Select(
                     options=[{"label": "Damage, all acts", "value": "overall"}] + [{"label": f"Damage, Act {a}", "value": a} for a in ACT_KEYS] +
