@@ -87,7 +87,7 @@ def with_gear(build, act, gear):
 def shield_slot_free(build, act):
     """ A shield fits when the build fights one handed with nothing in the off hand """
     routine = (build.character or {}).get("routine") if build.character else ("one_handed" if "smite" in build.preset else "")
-    return routine in ("one_handed", "shadow_blade", "cantrip") and not equipment_at(build, act).get("melee_off")
+    return routine in ("one_handed", "shadow_blade", "shadow_blade_shield", "cantrip") and not equipment_at(build, act).get("melee_off")
 
 def optimise(build, act, objective, items=None):
     """ The gear (slot: item key, '' for empty) that maximises objective(build) at an act, one slot at a time """

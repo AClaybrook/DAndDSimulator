@@ -101,7 +101,7 @@ def reliable_advantage(build, act):
             subs = {"ranger": "Gloom Stalker"}
         if build.preset == "monk_open_hand":
             subs = {"monk": "Way of the Open Hand"}
-    if routine == "shadow_blade":
+    if routine in ("shadow_blade", "shadow_blade_shield"):
         return "Shadow Blade in dim light or darkness"
     if levels.get("barbarian", 0) >= 2:
         return "Reckless Attack"

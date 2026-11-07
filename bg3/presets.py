@@ -9,6 +9,8 @@ DEXTERITY = {"strength": 8, "dexterity": 15, "constitution": 15, "intelligence":
 CHARISMA = {"strength": 8, "dexterity": 14, "constitution": 15, "intelligence": 8, "wisdom": 10, "charisma": 15}
 WISDOM = {"strength": 8, "dexterity": 14, "constitution": 15, "intelligence": 8, "wisdom": 15, "charisma": 10}
 INTELLIGENCE = {"strength": 8, "dexterity": 15, "constitution": 15, "intelligence": 15, "wisdom": 8, "charisma": 8}
+# Paladin multiclasses: a Strength and a Charisma 15 (Padlocks hit with Charisma once the pact weapon is bound, Sorcadins with Strength)
+PALADIN = {"strength": 15, "dexterity": 10, "constitution": 14, "intelligence": 8, "wisdom": 8, "charisma": 15}
 # Tavern Brawler monks hit with Strength (added twice), unarmed strikes use the higher of Strength and Dexterity
 BRAWLER = {"strength": 15, "dexterity": 15, "constitution": 14, "intelligence": 8, "wisdom": 10, "charisma": 8}
 
@@ -17,6 +19,15 @@ def custom(name, scores, bonus, classes, feats, routine, styles=(), race="Human"
     character = Bg3Character(name=name, race=race, scores=scores, bonus=bonus, classes=classes, feats=feats, fighting_styles=list(styles),
                              routine=routine, **kwargs)
     return dict(character=character.to_dict())
+
+# Booming Blade off for the weapon comparison: every build makes plain weapon attacks
+NO_BOOMING = {"booming_blade": False}
+# (label, routine, fighting style, second feat) for the Paladin multiclasses: one handed with a shield, two handed, a polearm
+PALADIN_WEAPONS = [
+    ("Shadow Blade + shield", "shadow_blade_shield", "Duelling", "charisma+1,constitution+1"),
+    ("Greatsword (GWF, GWM)", "two_handed", "Great Weapon Fighting", "Great Weapon Master"),
+    ("Glaive (GWF, Polearm Master)", "polearm", "Great Weapon Fighting", "Polearm Master"),
+]
 
 PRESETS = {b.name: b for b in [
     Bg3Build("Lae'zel (Champion, GWM)", "fighter_gwm", equipment={
@@ -108,6 +119,27 @@ PRESETS = {b.name: b for b in [
         "3": {"helmet": "bg3:hood_of_the_weave"},
     }, **custom("Sorlock", CHARISMA, {"charisma": 2, "constitution": 1}, [["warlock", "The Fiend", 2], ["sorcerer", "Draconic Bloodline", 10]],
                 ["charisma+2", "charisma+1,constitution+1"], "cantrip", cantrip="Eldritch Blast")),
+    # Padlock vs Sorcadin vs a polearm fighter, by weapon, with no gear so only the class and weapon choices differ (docs/padlock_vs_sorcadin.md).
+    # Padlock: Paladin 5 (Act 1), Hexblade 3 for the pact weapon (Act 2), Hexblade 5 and Paladin 7 (Act 3): Pact of the Blade's Extra Attack
+    # stacks with the Paladin's outside Honour Mode, 3 attacks
+    *[Bg3Build(f"Padlock: {label}", "paladin_smite", **custom(f"Padlock ({label})", PALADIN, {"charisma": 2, "strength": 1},
+                                                             [["paladin", "Oath of Vengeance", 7], ["warlock", "The Hexblade", 5]],
+                                                             ["charisma+2", feat], routine, [style],
+                                                             level_order=["paladin"] * 5 + ["warlock"] * 5 + ["paladin"] * 2, toggles=NO_BOOMING))
+      for label, routine, style, feat in PALADIN_WEAPONS],
+    # Sorcadin: Paladin 6 then Sorcerer 6, slots for smites (5 levels of slots by Act 3) and a Quickened spell
+    *[Bg3Build(f"Sorcadin: {label}", "paladin_smite", **custom(f"Sorcadin ({label})", PALADIN, {"strength": 2, "charisma": 1},
+                                                              [["paladin", "Oath of Vengeance", 6], ["sorcerer", "Draconic Bloodline", 6]],
+                                                              ["strength+2", feat.replace("charisma", "strength")], routine, [style],
+                                                              toggles=NO_BOOMING))
+      for label, routine, style, feat in PALADIN_WEAPONS],
+    Bg3Build("Battle Master: Glaive (Polearm Master, GWM, Sentinel)", "fighter_gwm", **custom(
+        "Polearm Battle Master", STRENGTH, {"strength": 2, "constitution": 1}, [["fighter", "Battle Master", 12]],
+        ["Polearm Master", "Great Weapon Master", "strength+2", "Sentinel"], "polearm", ["Great Weapon Fighting"])),
+    Bg3Build("Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM)", "fighter_gwm", **custom(
+        "Polearm Swashbuckler", STRENGTH, {"strength": 2, "constitution": 1}, [["fighter", "Battle Master", 9], ["rogue", "Swashbuckler", 3]],
+        ["Polearm Master", "Great Weapon Master", "strength+2"], "polearm", ["Great Weapon Fighting"],
+        level_order=["fighter"] * 5 + ["rogue"] * 3 + ["fighter"] * 4)),
 ]}
 
 DEFAULT_PARTY = ["Lae'zel (Champion, GWM)", "Karlach (Berserker)", "Astarion (Assassin, dual wield)", "Gale (Evoker)"]

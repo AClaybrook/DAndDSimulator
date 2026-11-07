@@ -72,6 +72,10 @@ def armour_class(build, act):
     armour = data.get(gear.get("armour", ""), {})
     kind = armour.get("type", "clothing")
     shield = data.get(gear.get("melee_off", ""), {}) if data.get(gear.get("melee_off", ""), {}).get("type") == "shield" else {}
+    # Shadow Blade and a shield: a plain shield when the gear has none
+    shield_routine = bool(build.character) and build.character.get("routine") == "shadow_blade_shield"
+    if shield_routine and not shield:
+        shield = {"type": "shield", "bonus": 2}
     buffs = {b.key for b in buffs_at(build, act)}
     parts = []
     if kind == "light":
@@ -92,7 +96,7 @@ def armour_class(build, act):
             options.append(("Unarmoured Defence (10 + DEX + CON)", 10 + dex + con))
         parts.append(max(options, key=lambda o: o[1]))
     if shield:
-        parts.append((items[gear["melee_off"]].name, shield.get("bonus", 2)))
+        parts.append((items[gear["melee_off"]].name if gear.get("melee_off") in items else "Shield", shield.get("bonus", 2)))
     if kind in ("light", "medium", "heavy") and ("Defence" in styles or "Defense" in styles):
         parts.append(("Defence fighting style", 1))
     for key in gear.values():

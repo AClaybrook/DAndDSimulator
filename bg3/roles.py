@@ -8,7 +8,7 @@ ROLE_LABELS = {"frontline": "Front line (melee)", "ranged": "Ranged damage", "he
                "skills": "Locks, traps and sleight of hand", "control": "Control caster", "support": "Buffs (Bless, Haste, Aid)",
                "striker": "Damage dealer", "summoner": "Summoner"}
 CORE_ROLES = ["frontline", "ranged", "healer", "face", "skills", "control"]
-MELEE = {"two_handed", "one_handed", "dual_wield", "unarmed", "shadow_blade"}
+MELEE = {"two_handed", "polearm", "one_handed", "dual_wield", "unarmed", "shadow_blade", "shadow_blade_shield"}
 CASTERS = {"bard", "cleric", "druid", "sorcerer", "warlock", "wizard"}
 
 def member_roles(build, act):
