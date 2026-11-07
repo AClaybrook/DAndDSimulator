@@ -35,11 +35,12 @@ def box_stats(values):
     return {"q1": [q1], "median": [median], "q3": [q3], "lowerfence": [inside.min()], "upperfence": [inside.max()], "mean": [values.mean()]}
 
 def smooth_curve(counts, width, values):
-    """ A smooth fit of a binned distribution: a Gaussian kernel density estimate (Silverman's bandwidth) of the counts, in the same units as
-        the bars. Returns (bin centre offsets, heights as a share of the values per bin) """
+    """ A smooth fit of a binned distribution: a Gaussian kernel density estimate of the counts, in the same units as the bars. Half
+        Silverman's bandwidth: damage distributions have a hump per number of hits, and the full rule smooths the peaks away.
+        Returns (bin centre offsets, heights as a share of the values per bin) """
     n = len(values)
     spread = min(np.std(values), (np.percentile(values, 75) - np.percentile(values, 25)) / 1.34 or np.std(values))
-    bandwidth = max(1.06 * spread * n ** -0.2, width) / width # In bins, at least one bin
+    bandwidth = max(0.5 * 1.06 * spread * n ** -0.2, width) / width # In bins, at least one bin
     reach = int(np.ceil(4 * bandwidth))
     kernel = np.exp(-0.5 * (np.arange(-reach, reach + 1) / bandwidth) ** 2)
     smoothed = np.convolve(counts, kernel / kernel.sum(), mode="full")[reach:reach + len(counts)]
