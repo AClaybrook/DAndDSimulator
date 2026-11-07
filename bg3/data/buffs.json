@@ -1,0 +1,107 @@
+{
+ "_source": "Elixirs from bg3.wiki (CC BY-NC-SA 4.0), effects written from their text by bg3/build_items.py",
+ "patch": "8",
+ "buffs": [
+  {
+   "key": "elixir:elixir_of_battlemage_s_power",
+   "name": "Elixir of Battlemage's Power",
+   "act": 3,
+   "effects": [
+    {
+     "kind": "spell_dc",
+     "value": 3
+    },
+    {
+     "kind": "attack_bonus",
+     "value": 3,
+     "applies_to": "spell"
+    }
+   ],
+   "notes": "Drink to increase the effectiveness of your spells. You gain 3 stacks of Arcane Acuity until your next long rest. Replaces effects from other elixirs when drunk.",
+   "exclusive": true,
+   "source": "https://bg3.wiki/wiki/Elixir_of_Battlemage's_Power"
+  },
+  {
+   "key": "elixir:elixir_of_bloodlust",
+   "name": "Elixir of Bloodlust",
+   "act": 1,
+   "effects": [],
+   "notes": "Drink to enter a bloodlust. Once per turn when you kill a foe, you gain 5 and an additional action. * Replaces effects from other elixirs when drunk.",
+   "exclusive": true,
+   "source": "https://bg3.wiki/wiki/Elixir_of_Bloodlust"
+  },
+  {
+   "key": "elixir:elixir_of_cloud_giant_strength",
+   "name": "Elixir of Cloud Giant Strength",
+   "act": 2,
+   "effects": [
+    {
+     "kind": "ability_min",
+     "stat": "strength",
+     "value": 27
+    }
+   ],
+   "notes": "Consume the elixir to increase your Strength to 27. * Replaces effects of other elixirs when drunk. action",
+   "exclusive": true,
+   "source": "https://bg3.wiki/wiki/Elixir_of_Cloud_Giant_Strength"
+  },
+  {
+   "key": "elixir:elixir_of_heroism",
+   "name": "Elixir of Heroism",
+   "act": 1,
+   "effects": [
+    {
+     "kind": "attack_dice",
+     "value": "1d4"
+    }
+   ],
+   "notes": "Gain 10 and a d4 Slashing 1d4 bonus to Attack Rolls and SavingThrows until the next long rest.",
+   "exclusive": false,
+   "source": "https://bg3.wiki/wiki/Elixir_of_Heroism"
+  },
+  {
+   "key": "elixir:elixir_of_hill_giant_strength",
+   "name": "Elixir of Hill Giant Strength",
+   "act": 1,
+   "effects": [
+    {
+     "kind": "ability_min",
+     "stat": "strength",
+     "value": 21
+    }
+   ],
+   "notes": "Consume the elixir to increase your Strength to 21. * Replaces effects of other elixirs when drunk. action",
+   "exclusive": true,
+   "source": "https://bg3.wiki/wiki/Elixir_of_Hill_Giant_Strength"
+  },
+  {
+   "key": "elixir:elixir_of_viciousness",
+   "name": "Elixir of Viciousness",
+   "act": 1,
+   "effects": [
+    {
+     "kind": "crit_range",
+     "value": 1
+    }
+   ],
+   "notes": "The number you need to roll to land a Critical Hit is reduced by 1. ** Some class features reduce the Critical Hit number; this elixir's effect is additive * Replaces effects from other elixirs when drunk.",
+   "exclusive": true,
+   "source": "https://bg3.wiki/wiki/Elixir_of_Viciousness"
+  },
+  {
+   "key": "elixir:elixir_of_the_colossus",
+   "name": "Elixir of the Colossus",
+   "act": 1,
+   "effects": [
+    {
+     "kind": "damage_bonus",
+     "value": "1d4",
+     "applies_to": "weapon"
+    }
+   ],
+   "notes": "Drink to increase your size. Weapons deal an additional 1d4 damage. You gain Advantage on Strength Checks and saves.",
+   "exclusive": false,
+   "source": "https://bg3.wiki/wiki/Elixir_of_the_Colossus"
+  }
+ ]
+}

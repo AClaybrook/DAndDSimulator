@@ -1,0 +1,4141 @@
+{
+ "meta": {
+  "wiki": "https://bg3.wiki",
+  "fetched": "2026-10-29",
+  "patch": "Patch 8 (Hotfix 36 listed as latest)",
+  "method": "MediaWiki API action=parse rendered HTML; class progression tables parsed programmatically, feature text summarised from each feature page",
+  "license": "bg3.wiki content is CC BY-NC-SA 4.0"
+ },
+ "classes": {
+  "barbarian": {
+   "source": "https://bg3.wiki/wiki/Barbarian",
+   "hit_points": {
+    "level_1": "12 + CON modifier",
+    "per_level": "7 + CON modifier"
+   },
+   "feat_levels": [
+    4,
+    8,
+    12
+   ],
+   "extra_attack_level": 5,
+   "improved_extra_attack_level": null,
+   "fighting_style": null,
+   "spellcasting": null,
+   "spell_ability": null,
+   "item_spellcasting_ability": "charisma",
+   "weapon_proficiencies": [
+    "Simple weapons",
+    "Martial weapons"
+   ],
+   "progression": {
+    "1": {
+     "proficiency_bonus": 2,
+     "rage_charges": 2,
+     "rage_damage": 2,
+     "brutal_critical_extra_dice": 0
+    },
+    "2": {
+     "proficiency_bonus": 2,
+     "rage_charges": 2,
+     "rage_damage": 2,
+     "brutal_critical_extra_dice": 0
+    },
+    "3": {
+     "proficiency_bonus": 2,
+     "rage_charges": 3,
+     "rage_damage": 2,
+     "brutal_critical_extra_dice": 0
+    },
+    "4": {
+     "proficiency_bonus": 2,
+     "rage_charges": 3,
+     "rage_damage": 2,
+     "brutal_critical_extra_dice": 0
+    },
+    "5": {
+     "proficiency_bonus": 3,
+     "rage_charges": 3,
+     "rage_damage": 2,
+     "brutal_critical_extra_dice": 0
+    },
+    "6": {
+     "proficiency_bonus": 3,
+     "rage_charges": 4,
+     "rage_damage": 2,
+     "brutal_critical_extra_dice": 0
+    },
+    "7": {
+     "proficiency_bonus": 3,
+     "rage_charges": 4,
+     "rage_damage": 2,
+     "brutal_critical_extra_dice": 0
+    },
+    "8": {
+     "proficiency_bonus": 3,
+     "rage_charges": 4,
+     "rage_damage": 2,
+     "brutal_critical_extra_dice": 0
+    },
+    "9": {
+     "proficiency_bonus": 4,
+     "rage_charges": 4,
+     "rage_damage": 3,
+     "brutal_critical_extra_dice": 1
+    },
+    "10": {
+     "proficiency_bonus": 4,
+     "rage_charges": 4,
+     "rage_damage": 3,
+     "brutal_critical_extra_dice": 1
+    },
+    "11": {
+     "proficiency_bonus": 4,
+     "rage_charges": 4,
+     "rage_damage": 3,
+     "brutal_critical_extra_dice": 1
+    },
+    "12": {
+     "proficiency_bonus": 4,
+     "rage_charges": 5,
+     "rage_damage": 3,
+     "brutal_critical_extra_dice": 1
+    }
+   },
+   "progression_notes": "rage_damage is the flat bonus while raging (+2, +3 from barbarian level 9). rage_charges recharge on long rest.",
+   "features": [
+    {
+     "level": 1,
+     "name": "Rage",
+     "effect": "Bonus action + 1 Rage Charge, 10 turns. Deal +2 extra damage (+3 at level 9) with melee and improvised weapons, unarmed strikes and thrown objects; resistance to physical damage; Advantage on Strength checks and saves. Unlike 5e it also applies to finesse/Dexterity melee attacks. Can't cast or concentrate on spells. Heavy armour imposes Rage Impeded (no extra damage/resistance). Ends early if you neither attack an enemy nor take damage in a turn.",
+     "source": "https://bg3.wiki/wiki/Rage",
+     "resource": "rage_charges (long rest)"
+    },
+    {
+     "level": 2,
+     "name": "Reckless Attack",
+     "effect": "Melee weapon attack (or a free post-strike reaction on a miss, reroll). Until your next turn you have Advantage on melee and throwing attack rolls; enemies have Advantage on attacks against you.",
+     "source": "https://bg3.wiki/wiki/Reckless_Attack"
+    },
+    {
+     "level": 5,
+     "name": "Extra Attack",
+     "effect": "Make an additional free attack after making an unarmed or weapon attack with an Action. Does not stack with other Extra Attack sources (except Warlock Deepened Pact outside Honour mode).",
+     "source": "https://bg3.wiki/wiki/Extra_Attack"
+    },
+    {
+     "level": 7,
+     "name": "Feral Instinct",
+     "effect": "+3 to Initiative and can't be Surprised.",
+     "source": "https://bg3.wiki/wiki/Barbarian"
+    },
+    {
+     "level": 9,
+     "name": "Brutal Critical",
+     "effect": "On a critical hit roll one extra weapon damage die (one die only, e.g. +1d6 for a greatsword, +1d12 for a greataxe). Only main-hand melee weapon attacks or unarmed melee attacks.",
+     "source": "https://bg3.wiki/wiki/Brutal_Critical"
+    },
+    {
+     "level": 11,
+     "name": "Relentless Rage",
+     "effect": "Once per short rest, dropping to 0 HP while Enraged leaves you at 1 HP instead.",
+     "source": "https://bg3.wiki/wiki/Barbarian"
+    }
+   ],
+   "subclasses": {
+    "Berserker": {
+     "source": "https://bg3.wiki/wiki/Berserker",
+     "patch8": false,
+     "features": [
+      {
+       "level": 3,
+       "name": "Frenzy",
+       "effect": "Replaces Rage (same +2/+3 damage, resistance, Advantage on STR). While Frenzied you gain Frenzied Strike and Enraged Throw and can make an Improvised Melee Weapon attack as a bonus action.",
+       "source": "https://bg3.wiki/wiki/Frenzy"
+      },
+      {
+       "level": 3,
+       "name": "Frenzied Strike",
+       "effect": "While Enraged: bonus action melee weapon attack, once per turn. Each use adds a stack of Frenzied Strain (-1 to attack rolls per stack until Frenzy ends); bug: no Strain is applied from barbarian level 9.",
+       "source": "https://bg3.wiki/wiki/Frenzied_Strike"
+      },
+      {
+       "level": 3,
+       "name": "Enraged Throw",
+       "effect": "While Frenzied: bonus action, throw an item or creature (range 18 m), additional damage based on Strength, knocks the target Prone (no save). Thrown weapons deal their melee damage.",
+       "source": "https://bg3.wiki/wiki/Enraged_Throw"
+      },
+      {
+       "level": 6,
+       "name": "Mindless Rage",
+       "effect": "While Frenzied, can't be Charmed or Frightened; Calm Emotions no longer ends rage.",
+       "source": "https://bg3.wiki/wiki/Berserker"
+      },
+      {
+       "level": 10,
+       "name": "Intimidating Presence",
+       "effect": "Action: Frighten an enemy; can be maintained.",
+       "source": "https://bg3.wiki/wiki/Berserker"
+      }
+     ]
+    },
+    "Giant": {
+     "source": "https://bg3.wiki/wiki/Giant_(barbarian_subclass)",
+     "patch8": true,
+     "wiki_name": "Path of Giants (page: Giant (barbarian subclass))",
+     "features": [
+      {
+       "level": 3,
+       "name": "Giant's Rage",
+       "effect": "Replaces Rage: enter Rage and increase in size. Rage damage bonus +2 (+3 at barbarian level 9) for weapon/unarmed attacks, and doubled for throw attacks: +4 (+6 at level 9).",
+       "source": "https://bg3.wiki/wiki/Giant's_Rage"
+      },
+      {
+       "level": 3,
+       "name": "Thaumaturgy",
+       "effect": "Free cantrip (Advantage on Intimidation and Performance).",
+       "source": "https://bg3.wiki/wiki/Giant_(barbarian_subclass)"
+      },
+      {
+       "level": 5,
+       "name": "Boot of the Giants",
+       "effect": "Bonus action kick that pushes a target away (Athletics based); works like a Shove that also deals damage.",
+       "source": "https://bg3.wiki/wiki/Giant_(barbarian_subclass)",
+       "unverified": true,
+       "unverified_reason": "damage amount of the kick not stated on the pages read"
+      },
+      {
+       "level": 6,
+       "name": "Elemental Cleaver",
+       "effect": "While Enraged (no action cost): your weapon deals 1d6 additional Acid, Cold, Fire, Lightning or Thunder damage until rage ends and gains the Thrown property (returns to hand). Stacks with Elemental Weapon. Extra elemental damage on a thrown cleaver weapon is non-magical.",
+       "source": "https://bg3.wiki/wiki/Elemental_Cleaver"
+      },
+      {
+       "level": 10,
+       "name": "Mighty Impel",
+       "effect": "While Enraged, bonus action: throw a Medium or smaller creature or object 9 m; heavier creatures deal more damage.",
+       "source": "https://bg3.wiki/wiki/Mighty_Impel"
+      }
+     ]
+    },
+    "Wild Magic": {
+     "source": "https://bg3.wiki/wiki/Wild_Magic_(barbarian_subclass)",
+     "patch8": false,
+     "features": [
+      {
+       "level": 3,
+       "name": "Rage: Wild Magic",
+       "effect": "Rage that also triggers a random Wild Magic effect: Bolt of Light (bonus action each turn, 1d6 Radiant + Blind on failed DC 12 CON), Dark Tendrils (1d12 Necrotic to each creature within 9 m on failed DC 12 CON, you gain 1d12 temp HP), Intangible Spirit (bonus action flumph, 1d6 Force within 4.5 m on failed DEX), Magic Retribution (attackers that hit you take 1d6 Force), Protective Lights (+1 AC to you and allies within 3 m), Teleport (bonus action 18 m), Vine Growth (difficult terrain), Weapon Infusion (weapon deals +1d6 Force and gains Light and Thrown).",
+       "source": "https://bg3.wiki/wiki/Wild_Magic_(barbarian_subclass)"
+      },
+      {
+       "level": 3,
+       "name": "Magic Awareness",
+       "effect": "Allies within range add 1d4 to saving throws (short rest).",
+       "source": "https://bg3.wiki/wiki/Wild_Magic_(barbarian_subclass)"
+      },
+      {
+       "level": 6,
+       "name": "Bolstering Magic: Boon",
+       "effect": "You or an ally gain +1d4 to attack rolls and ability checks for 10 turns (long rest). Separate once-per-long-rest options recover a level 1 or level 2 spell slot (level 3 slot from level 9).",
+       "source": "https://bg3.wiki/wiki/Wild_Magic_(barbarian_subclass)"
+      },
+      {
+       "level": 10,
+       "name": "Unstable Backlash",
+       "effect": "While raging, when you take damage or fail a save, trigger another Wild Magic effect (replaces the current one).",
+       "source": "https://bg3.wiki/wiki/Wild_Magic_(barbarian_subclass)"
+      }
+     ]
+    },
+    "Wildheart": {
+     "source": "https://bg3.wiki/wiki/Wildheart",
+     "patch8": false,
+     "features": [
+      {
+       "level": 3,
+       "name": "Rage: Bear Heart",
+       "effect": "Rage (+2/+3 damage) with Resistance to all damage except Psychic (resistance not impeded by heavy armour); grants Unrelenting Ferocity (action, heal 1d8 + CON once per rage).",
+       "source": "https://bg3.wiki/wiki/Rage:_Bear_Heart"
+      },
+      {
+       "level": 3,
+       "name": "Rage: Eagle Heart",
+       "effect": "Rage; grants Diving Strike (action, leap onto a foe at least 1.5 m below: normal weapon damage + Prone, no fall damage); Disadvantage on opportunity attacks against you; Dash as a bonus action.",
+       "source": "https://bg3.wiki/wiki/Diving_Strike"
+      },
+      {
+       "level": 3,
+       "name": "Rage: Elk Heart",
+       "effect": "Rage; +4.5 m movement; grants Primal Stampede (action + movement, 9 m line, 1d4 + STR Bludgeoning to every non-ally in the path, Prone on failed STR save DC 10 + STR mod; triggers Extra Attack).",
+       "source": "https://bg3.wiki/wiki/Primal_Stampede"
+      },
+      {
+       "level": 3,
+       "name": "Rage: Tiger Heart",
+       "effect": "Rage (+2/+3 damage); jump distance +4.5 m; grants Tiger's Bloodlust (action: attack up to 3 enemies in a 2 m cone for half normal weapon damage each and Bleeding: 2 Slashing per turn for 2 turns, no save; Rage and GWM bonuses are not halved).",
+       "source": "https://bg3.wiki/wiki/Rage:_Tiger_Heart"
+      },
+      {
+       "level": 3,
+       "name": "Rage: Wolf Heart",
+       "effect": "Rage (+2/+3 damage); allies have Advantage on melee attack rolls against enemies within 2 m of you (not the barbarian itself); grants Inciting Howl (allies +3 m movement).",
+       "source": "https://bg3.wiki/wiki/Rage:_Wolf_Heart"
+      },
+      {
+       "level": 6,
+       "name": "Aspect of the Beast: Tiger",
+       "effect": "Animal Aspect option: add your Strength modifier an additional time to attack rolls against Bleeding or Poisoned targets (applies twice if both); Survival proficiency.",
+       "source": "https://bg3.wiki/wiki/Aspect_of_the_Beast:_Tiger"
+      },
+      {
+       "level": 6,
+       "name": "Aspect of the Beast: Wolverine",
+       "effect": "Animal Aspect option: attacking a Bleeding or Poisoned target inflicts Maimed.",
+       "source": "https://bg3.wiki/wiki/Wildheart"
+      },
+      {
+       "level": 10,
+       "name": "Additional Animal Aspect",
+       "effect": "Choose a second Animal Aspect.",
+       "source": "https://bg3.wiki/wiki/Wildheart"
+      }
+     ]
+    }
+   }
+  },
+  "bard": {
+   "source": "https://bg3.wiki/wiki/Bard",
+   "hit_points": {
+    "level_1": "8 + CON modifier",
+    "per_level": "5 + CON modifier"
+   },
+   "feat_levels": [
+    4,
+    8,
+    12
+   ],
+   "extra_attack_level": null,
+   "improved_extra_attack_level": null,
+   "extra_attack_note": "College of Swords and College of Valour gain Extra Attack at bard level 6.",
+   "fighting_style": null,
+   "spellcasting": "full",
+   "spell_ability": "charisma",
+   "weapon_proficiencies": [
+    "Simple weapons",
+    "Hand Crossbows",
+    "Rapiers",
+    "Longswords",
+    "Shortswords"
+   ],
+   "progression": {
+    "1": {
+     "proficiency_bonus": 2,
+     "bardic_inspirations": 3,
+     "cantrips_known": 2,
+     "spells_known": 4,
+     "spell_slots_level_1": 2,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0,
+     "bardic_inspiration_die": "1d6"
+    },
+    "2": {
+     "proficiency_bonus": 2,
+     "bardic_inspirations": 3,
+     "cantrips_known": 2,
+     "spells_known": 5,
+     "spell_slots_level_1": 3,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0,
+     "bardic_inspiration_die": "1d6"
+    },
+    "3": {
+     "proficiency_bonus": 2,
+     "bardic_inspirations": 3,
+     "cantrips_known": 2,
+     "spells_known": 6,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 2,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0,
+     "bardic_inspiration_die": "1d6"
+    },
+    "4": {
+     "proficiency_bonus": 2,
+     "bardic_inspirations": 3,
+     "cantrips_known": 3,
+     "spells_known": 7,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0,
+     "bardic_inspiration_die": "1d6"
+    },
+    "5": {
+     "proficiency_bonus": 3,
+     "bardic_inspirations": 4,
+     "cantrips_known": 3,
+     "spells_known": 8,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 2,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0,
+     "bardic_inspiration_die": "1d8"
+    },
+    "6": {
+     "proficiency_bonus": 3,
+     "bardic_inspirations": 4,
+     "cantrips_known": 3,
+     "spells_known": 9,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0,
+     "bardic_inspiration_die": "1d8"
+    },
+    "7": {
+     "proficiency_bonus": 3,
+     "bardic_inspirations": 4,
+     "cantrips_known": 3,
+     "spells_known": 10,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 1,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0,
+     "bardic_inspiration_die": "1d8"
+    },
+    "8": {
+     "proficiency_bonus": 3,
+     "bardic_inspirations": 5,
+     "cantrips_known": 3,
+     "spells_known": 11,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 2,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0,
+     "bardic_inspiration_die": "1d8"
+    },
+    "9": {
+     "proficiency_bonus": 4,
+     "bardic_inspirations": 5,
+     "cantrips_known": 3,
+     "spells_known": 12,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 1,
+     "spell_slots_level_6": 0,
+     "bardic_inspiration_die": "1d8"
+    },
+    "10": {
+     "proficiency_bonus": 4,
+     "bardic_inspirations": 5,
+     "cantrips_known": 4,
+     "spells_known": 13,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 2,
+     "spell_slots_level_6": 0,
+     "bardic_inspiration_die": "1d10"
+    },
+    "11": {
+     "proficiency_bonus": 4,
+     "bardic_inspirations": 5,
+     "cantrips_known": 4,
+     "spells_known": 14,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 2,
+     "spell_slots_level_6": 1,
+     "bardic_inspiration_die": "1d10"
+    },
+    "12": {
+     "proficiency_bonus": 4,
+     "bardic_inspirations": 5,
+     "cantrips_known": 4,
+     "spells_known": 15,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 2,
+     "spell_slots_level_6": 1,
+     "bardic_inspiration_die": "1d10"
+    }
+   },
+   "progression_notes": "bardic_inspirations recharge on long rest, and also on short rest from level 5 (Font of Inspiration).",
+   "features": [
+    {
+     "level": 1,
+     "name": "Bardic Inspiration",
+     "effect": "Bonus action + 1 Bardic Inspiration: an ally within 18 m adds 1d6 (1d8 at bard level 5, 1d10 at 10) to its next attack roll, ability check or saving throw.",
+     "source": "https://bg3.wiki/wiki/Bardic_Inspiration_(class_action)"
+    },
+    {
+     "level": 5,
+     "name": "Font of Inspiration",
+     "effect": "Regain all Bardic Inspirations on a short or long rest.",
+     "source": "https://bg3.wiki/wiki/Bardic_Inspiration_(resource)"
+    },
+    {
+     "level": 10,
+     "name": "Magical Secrets",
+     "effect": "Learn 2 non-Bard spells from a restricted Magical Secrets list (e.g. Hunter's Mark, Eldritch Blast, Hex are on it).",
+     "source": "https://bg3.wiki/wiki/Bard"
+    }
+   ],
+   "subclasses": {
+    "College of Glamour": {
+     "source": "https://bg3.wiki/wiki/College_of_Glamour",
+     "patch8": true,
+     "features": [
+      {
+       "level": 3,
+       "name": "Mantle of Inspiration",
+       "effect": "Bonus action + Bardic Inspiration: 2 allies (3 at level 6, 4 at level 10) gain 5 temp HP (8 at 6, 11 at 10); melee attackers that hit them become Charmed. No direct damage.",
+       "source": "https://bg3.wiki/wiki/Mantle_of_Inspiration"
+      },
+      {
+       "level": 6,
+       "name": "Mantle of Majesty: Command",
+       "effect": "Command a creature; Charmed targets automatically fail the save (long rest).",
+       "source": "https://bg3.wiki/wiki/College_of_Glamour"
+      }
+     ]
+    },
+    "College of Lore": {
+     "source": "https://bg3.wiki/wiki/College_of_Lore",
+     "patch8": false,
+     "features": [
+      {
+       "level": 3,
+       "name": "Cutting Words",
+       "effect": "Reaction + Bardic Inspiration: target gets -1d6 (-1d8 at 5, -1d10 at 10) on an attack roll, ability check or saving throw. Unlike 5e it cannot reduce damage rolls.",
+       "source": "https://bg3.wiki/wiki/Cutting_Words"
+      },
+      {
+       "level": 6,
+       "name": "Magical Secrets",
+       "effect": "Learn 2 non-Bard spells of level 3 or lower from the Magical Secrets list.",
+       "source": "https://bg3.wiki/wiki/College_of_Lore"
+      }
+     ]
+    },
+    "College of Swords": {
+     "source": "https://bg3.wiki/wiki/College_of_Swords",
+     "patch8": false,
+     "fighting_style": {
+      "level": 3,
+      "options": [
+       "Duelling",
+       "Two-Weapon Fighting"
+      ]
+     },
+     "features": [
+      {
+       "level": 3,
+       "name": "Slashing Flourish (Melee)",
+       "effect": "Action, Bardic Inspiration spent on hit: attack up to 2 enemies in a 2 m cone (separate attack rolls), normal weapon damage + 1d6 (1d8 at bard 5, 1d10 at 10). Ranged version: two attacks, can be the same target. Not limited to once per turn.",
+       "source": "https://bg3.wiki/wiki/Slashing_Flourish_(Melee)"
+      },
+      {
+       "level": 3,
+       "name": "Defensive Flourish (Melee)",
+       "effect": "Action, Bardic Inspiration spent on hit: normal weapon damage + 1d6/1d8/1d10 and +4 AC for 1 turn.",
+       "source": "https://bg3.wiki/wiki/Defensive_Flourish_(Melee)"
+      },
+      {
+       "level": 3,
+       "name": "Mobile Flourish (Melee)",
+       "effect": "Action, Bardic Inspiration spent on hit: normal weapon damage + 1d6/1d8/1d10, push 6 m, can teleport to the target.",
+       "source": "https://bg3.wiki/wiki/Mobile_Flourish_(Melee)"
+      },
+      {
+       "level": 3,
+       "name": "Fighting Style",
+       "effect": "Choose Duelling or Two-Weapon Fighting.",
+       "source": "https://bg3.wiki/wiki/College_of_Swords"
+      },
+      {
+       "level": 6,
+       "name": "Extra Attack",
+       "effect": "One additional attack after an Action attack.",
+       "source": "https://bg3.wiki/wiki/Extra_Attack"
+      }
+     ]
+    },
+    "College of Valour": {
+     "source": "https://bg3.wiki/wiki/College_of_Valour",
+     "patch8": false,
+     "features": [
+      {
+       "level": 3,
+       "name": "Combat Inspiration",
+       "effect": "Bonus action + Bardic Inspiration: ally adds 1d6 (1d8 at 5, 1d10 at 10) to its next attack roll, ability check, save, weapon damage roll, or AC against one attack. Also Medium Armour, Shields, Martial weapons proficiency.",
+       "source": "https://bg3.wiki/wiki/Combat_Inspiration"
+      },
+      {
+       "level": 6,
+       "name": "Extra Attack",
+       "effect": "One additional attack after an Action attack.",
+       "source": "https://bg3.wiki/wiki/Extra_Attack"
+      }
+     ]
+    }
+   }
+  },
+  "cleric": {
+   "source": "https://bg3.wiki/wiki/Cleric",
+   "hit_points": {
+    "level_1": "8 + CON modifier",
+    "per_level": "5 + CON modifier"
+   },
+   "feat_levels": [
+    4,
+    8,
+    12
+   ],
+   "extra_attack_level": null,
+   "improved_extra_attack_level": null,
+   "fighting_style": null,
+   "spellcasting": "full",
+   "spell_ability": "wisdom",
+   "progression": {
+    "1": {
+     "proficiency_bonus": 2,
+     "channel_divinity_charges": 0,
+     "cantrips_known": 3,
+     "spell_slots_level_1": 2,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "2": {
+     "proficiency_bonus": 2,
+     "channel_divinity_charges": 1,
+     "cantrips_known": 3,
+     "spell_slots_level_1": 3,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "3": {
+     "proficiency_bonus": 2,
+     "channel_divinity_charges": 1,
+     "cantrips_known": 3,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 2,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "4": {
+     "proficiency_bonus": 2,
+     "channel_divinity_charges": 1,
+     "cantrips_known": 4,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "5": {
+     "proficiency_bonus": 3,
+     "channel_divinity_charges": 1,
+     "cantrips_known": 4,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 2,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "6": {
+     "proficiency_bonus": 3,
+     "channel_divinity_charges": 2,
+     "cantrips_known": 4,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "7": {
+     "proficiency_bonus": 3,
+     "channel_divinity_charges": 2,
+     "cantrips_known": 4,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 1,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "8": {
+     "proficiency_bonus": 3,
+     "channel_divinity_charges": 2,
+     "cantrips_known": 4,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 2,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "9": {
+     "proficiency_bonus": 4,
+     "channel_divinity_charges": 2,
+     "cantrips_known": 4,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 1,
+     "spell_slots_level_6": 0
+    },
+    "10": {
+     "proficiency_bonus": 4,
+     "channel_divinity_charges": 2,
+     "cantrips_known": 5,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 2,
+     "spell_slots_level_6": 0
+    },
+    "11": {
+     "proficiency_bonus": 4,
+     "channel_divinity_charges": 2,
+     "cantrips_known": 5,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 2,
+     "spell_slots_level_6": 1
+    },
+    "12": {
+     "proficiency_bonus": 4,
+     "channel_divinity_charges": 2,
+     "cantrips_known": 5,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 2,
+     "spell_slots_level_6": 1
+    }
+   },
+   "progression_notes": "Channel Divinity charges recharge on short or long rest (1 from level 2, 2 from level 6).",
+   "features": [
+    {
+     "level": 2,
+     "name": "Channel Divinity",
+     "effect": "1 charge at level 2, 2 at level 6, short rest. Turn Undead plus a domain action.",
+     "source": "https://bg3.wiki/wiki/Channel_Divinity_Charge"
+    },
+    {
+     "level": 5,
+     "name": "Destroy Undead",
+     "effect": "Successfully Turned undead also take 4d6 Radiant (non-scaling).",
+     "source": "https://bg3.wiki/wiki/Cleric"
+    },
+    {
+     "level": 10,
+     "name": "Divine Intervention",
+     "effect": "Once per playthrough; Sunder the Heretical deals a large amount of Radiant damage to all enemies nearby.",
+     "source": "https://bg3.wiki/wiki/D&D_5e_class_changes",
+     "unverified": true,
+     "unverified_reason": "Sunder the Heretical damage dice not read"
+    }
+   ],
+   "weapon_proficiencies": [
+    "Simple weapons",
+    "Flails",
+    "Morningstars"
+   ],
+   "subclasses": {
+    "Death Domain": {
+     "source": "https://bg3.wiki/wiki/Death_Domain",
+     "patch8": true,
+     "features": [
+      {
+       "level": 1,
+       "name": "Reaper",
+       "effect": "Necromancy cantrips that target one creature (Bone Chill, Bursting Sinew, Toll the Dead) can target an additional creature. Martial weapon proficiency. Domain cantrip choice: Bone Chill, Bursting Sinew or Toll the Dead.",
+       "source": "https://bg3.wiki/wiki/Reaper"
+      },
+      {
+       "level": 2,
+       "name": "Channel Divinity: Touch of Death",
+       "effect": "When you hit with a melee attack (including melee spell attacks), spend a Channel Divinity charge to deal 5 + 2 x cleric level Necrotic.",
+       "source": "https://bg3.wiki/wiki/Channel_Divinity:_Touch_of_Death"
+      },
+      {
+       "level": 6,
+       "name": "Inescapable Destruction",
+       "effect": "All Necrotic damage you deal ignores Necrotic resistance.",
+       "source": "https://bg3.wiki/wiki/Inescapable_Destruction"
+      },
+      {
+       "level": 8,
+       "name": "Divine Strike: Necrotic",
+       "effect": "Once per turn (as an attack action or free post-strike reaction), a weapon hit deals +1d8 Necrotic. Works with melee and ranged weapons in BG3 (not unarmed or thrown). Bug: the action and reaction versions have separate cooldowns, so it can apply twice per turn.",
+       "source": "https://bg3.wiki/wiki/Divine_Strike"
+      }
+     ]
+    },
+    "Knowledge Domain": {
+     "source": "https://bg3.wiki/wiki/Knowledge_Domain",
+     "patch8": false,
+     "features": [
+      {
+       "level": 8,
+       "name": "Potent Spellcasting",
+       "effect": "Add WIS modifier to damage of Cleric cantrips (Produce Flame, Sacred Flame, Bursting Sinew, Toll the Dead).",
+       "source": "https://bg3.wiki/wiki/Potent_Spellcasting"
+      }
+     ]
+    },
+    "Life Domain": {
+     "source": "https://bg3.wiki/wiki/Life_Domain",
+     "patch8": false,
+     "features": [
+      {
+       "level": 1,
+       "name": "Disciple of Life",
+       "effect": "Healing spells heal an additional 2 + spell level. Heavy Armour proficiency.",
+       "source": "https://bg3.wiki/wiki/Life_Domain"
+      },
+      {
+       "level": 8,
+       "name": "Divine Strike: Radiant",
+       "effect": "Once per turn (as an attack action or free post-strike reaction), a weapon hit deals +1d8 Radiant. Works with melee and ranged weapons in BG3 (not unarmed or thrown). Bug: the action and reaction versions have separate cooldowns, so it can apply twice per turn.",
+       "source": "https://bg3.wiki/wiki/Divine_Strike"
+      }
+     ]
+    },
+    "Light Domain": {
+     "source": "https://bg3.wiki/wiki/Light_Domain",
+     "patch8": false,
+     "features": [
+      {
+       "level": 2,
+       "name": "Radiance of the Dawn",
+       "effect": "Action + Channel Divinity: 2d10 + character level Radiant to enemies within 9 m, CON save for half.",
+       "source": "https://bg3.wiki/wiki/Radiance_of_the_Dawn"
+      },
+      {
+       "level": 8,
+       "name": "Potent Spellcasting",
+       "effect": "Add WIS modifier to damage of Cleric cantrips (Produce Flame, Sacred Flame, Bursting Sinew, Toll the Dead).",
+       "source": "https://bg3.wiki/wiki/Potent_Spellcasting"
+      }
+     ]
+    },
+    "Nature Domain": {
+     "source": "https://bg3.wiki/wiki/Nature_Domain",
+     "patch8": false,
+     "features": [
+      {
+       "level": 1,
+       "name": "Acolyte of Nature",
+       "effect": "Learn a Druid cantrip (Poison Spray, Produce Flame, Shillelagh, Thorn Whip options). Heavy Armour proficiency.",
+       "source": "https://bg3.wiki/wiki/Nature_Domain"
+      },
+      {
+       "level": 8,
+       "name": "Divine Strike: Elemental Fury",
+       "effect": "Once per turn (as an attack action or free post-strike reaction), a weapon hit deals +1d8 Cold, Fire or Lightning (choice). Works with melee and ranged weapons in BG3 (not unarmed or thrown). Bug: the action and reaction versions have separate cooldowns, so it can apply twice per turn.",
+       "source": "https://bg3.wiki/wiki/Divine_Strike"
+      }
+     ]
+    },
+    "Tempest Domain": {
+     "source": "https://bg3.wiki/wiki/Tempest_Domain",
+     "patch8": false,
+     "features": [
+      {
+       "level": 1,
+       "name": "Wrath of the Storm",
+       "effect": "Reaction when a nearby enemy attacks you: 2d8 Lightning or Thunder, save for half. Unlimited uses in BG3. Heavy Armour and Martial weapon proficiency.",
+       "source": "https://bg3.wiki/wiki/Tempest_Domain"
+      },
+      {
+       "level": 2,
+       "name": "Destructive Wrath",
+       "effect": "Channel Divinity: when you roll Thunder or Lightning damage, deal maximum damage instead (only actions flagged with that damage type; prompt comes before the attack roll).",
+       "source": "https://bg3.wiki/wiki/Destructive_Wrath"
+      },
+      {
+       "level": 6,
+       "name": "Thunderbolt Strike",
+       "effect": "Thunder or Lightning damage pushes Large or smaller creatures 3 m.",
+       "source": "https://bg3.wiki/wiki/Tempest_Domain"
+      },
+      {
+       "level": 8,
+       "name": "Divine Strike: Thunder",
+       "effect": "Once per turn (as an attack action or free post-strike reaction), a weapon hit deals +1d8 Thunder. Works with melee and ranged weapons in BG3 (not unarmed or thrown). Bug: the action and reaction versions have separate cooldowns, so it can apply twice per turn.",
+       "source": "https://bg3.wiki/wiki/Divine_Strike"
+      }
+     ]
+    },
+    "Trickery Domain": {
+     "source": "https://bg3.wiki/wiki/Trickery_Domain",
+     "patch8": false,
+     "features": [
+      {
+       "level": 2,
+       "name": "Invoke Duplicity",
+       "effect": "Action + Channel Divinity, concentration, 10 turns: an illusion; you and allies have Advantage on attack rolls when both attacker and target are within 3 m of it.",
+       "source": "https://bg3.wiki/wiki/Invoke_Duplicity"
+      },
+      {
+       "level": 8,
+       "name": "Divine Strike: Poison",
+       "effect": "Once per turn (as an attack action or free post-strike reaction), a weapon hit deals +1d8 Poison. Works with melee and ranged weapons in BG3 (not unarmed or thrown). Bug: the action and reaction versions have separate cooldowns, so it can apply twice per turn.",
+       "source": "https://bg3.wiki/wiki/Divine_Strike"
+      }
+     ]
+    },
+    "War Domain": {
+     "source": "https://bg3.wiki/wiki/War_Domain",
+     "patch8": false,
+     "resources": {
+      "war_priest_charges": {
+       "1": 3,
+       "5": 4,
+       "8": 5,
+       "11": 6,
+       "recharge": "long rest"
+      }
+     },
+     "features": [
+      {
+       "level": 1,
+       "name": "War Priest",
+       "effect": "After an unarmed or weapon attack, spend a War Priest Charge to make an additional attack as a Bonus Action. Charges: 3 at cleric level 1, 4 at 5, 5 at 8, 6 at 11 (long rest). Heavy Armour and Martial weapon proficiency.",
+       "source": "https://bg3.wiki/wiki/War_Priest"
+      },
+      {
+       "level": 2,
+       "name": "Guided Strike",
+       "effect": "Channel Divinity (reaction): +10 to an attack roll.",
+       "source": "https://bg3.wiki/wiki/Guided_Strike"
+      },
+      {
+       "level": 6,
+       "name": "War God's Blessing",
+       "effect": "Channel Divinity reaction: +10 to an ally's attack roll.",
+       "source": "https://bg3.wiki/wiki/Channel_Divinity_Charge"
+      },
+      {
+       "level": 8,
+       "name": "Divine Strike: Weapon",
+       "effect": "Once per turn (as an attack action or free post-strike reaction), a weapon hit deals +1d8 damage of the main-hand weapon's type. Works with melee and ranged weapons in BG3 (not unarmed or thrown). Bug: the action and reaction versions have separate cooldowns, so it can apply twice per turn.",
+       "source": "https://bg3.wiki/wiki/Divine_Strike"
+      }
+     ]
+    }
+   }
+  },
+  "druid": {
+   "source": "https://bg3.wiki/wiki/Druid",
+   "hit_points": {
+    "level_1": "8 + CON modifier",
+    "per_level": "5 + CON modifier"
+   },
+   "feat_levels": [
+    4,
+    8,
+    12
+   ],
+   "extra_attack_level": null,
+   "improved_extra_attack_level": null,
+   "extra_attack_note": "Wild Strike (level 5) and Improved Wild Strike (level 10) give 1 and 2 extra attacks, but only while in an animal Wild Shape.",
+   "fighting_style": null,
+   "spellcasting": "full",
+   "spell_ability": "wisdom",
+   "progression": {
+    "1": {
+     "proficiency_bonus": 2,
+     "cantrips_known": 2,
+     "spell_slots_level_1": 2,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0,
+     "wild_shape_charges": 0
+    },
+    "2": {
+     "proficiency_bonus": 2,
+     "cantrips_known": 2,
+     "spell_slots_level_1": 3,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0,
+     "wild_shape_charges": 2
+    },
+    "3": {
+     "proficiency_bonus": 2,
+     "cantrips_known": 2,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 2,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0,
+     "wild_shape_charges": 2
+    },
+    "4": {
+     "proficiency_bonus": 2,
+     "cantrips_known": 3,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0,
+     "wild_shape_charges": 2
+    },
+    "5": {
+     "proficiency_bonus": 3,
+     "cantrips_known": 3,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 2,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0,
+     "wild_shape_charges": 2
+    },
+    "6": {
+     "proficiency_bonus": 3,
+     "cantrips_known": 3,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0,
+     "wild_shape_charges": 2
+    },
+    "7": {
+     "proficiency_bonus": 3,
+     "cantrips_known": 3,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 1,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0,
+     "wild_shape_charges": 2
+    },
+    "8": {
+     "proficiency_bonus": 3,
+     "cantrips_known": 3,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 2,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0,
+     "wild_shape_charges": 2
+    },
+    "9": {
+     "proficiency_bonus": 4,
+     "cantrips_known": 3,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 1,
+     "spell_slots_level_6": 0,
+     "wild_shape_charges": 2
+    },
+    "10": {
+     "proficiency_bonus": 4,
+     "cantrips_known": 4,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 2,
+     "spell_slots_level_6": 0,
+     "wild_shape_charges": 2
+    },
+    "11": {
+     "proficiency_bonus": 4,
+     "cantrips_known": 4,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 2,
+     "spell_slots_level_6": 1,
+     "wild_shape_charges": 2
+    },
+    "12": {
+     "proficiency_bonus": 4,
+     "cantrips_known": 4,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 2,
+     "spell_slots_level_6": 1,
+     "wild_shape_charges": 2
+    }
+   },
+   "progression_notes": "wild_shape_charges: 2 from level 2, never increases, recharge on short or long rest (Wild Shape Charge page).",
+   "features": [
+    {
+     "level": 2,
+     "name": "Wild Shape",
+     "effect": "Action + Wild Shape Charge (bonus action for Moon). Take on a beast's STR/DEX/CON, HP and AC. Beast attack damage dice gain extra damage at druid level 4 (1d4 or 1d6 depending on attack) and that die grows one size at levels 8 and 12 (Wild Shape Improvement). Special attack DC 8 + proficiency + WIS.",
+     "source": "https://bg3.wiki/wiki/Wild_Shape"
+    },
+    {
+     "level": 5,
+     "name": "Wild Strike",
+     "effect": "One additional attack roll after an Unarmed Strike (in practice any attack-roll Wild Shape action) while in an animal Wild Shape (not Starry Form, not Symbiotic Entity).",
+     "source": "https://bg3.wiki/wiki/Wild_Strike"
+    },
+    {
+     "level": 10,
+     "name": "Improved Wild Strike",
+     "effect": "Two additional attack rolls after an Unarmed Strike while in an animal Wild Shape.",
+     "source": "https://bg3.wiki/wiki/Improved_Wild_Strike"
+    }
+   ],
+   "weapon_proficiencies": [
+    "Clubs",
+    "Daggers",
+    "Javelins",
+    "Maces",
+    "Quarterstaves",
+    "Scimitars",
+    "Sickles",
+    "Spears"
+   ],
+   "subclasses": {
+    "Circle of the Land": {
+     "source": "https://bg3.wiki/wiki/Circle_of_the_Land",
+     "patch8": false,
+     "features": [
+      {
+       "level": 2,
+       "name": "Natural Recovery",
+       "effect": "Out of combat, restore spell slots; charges = combined slot levels (1 at 2, 2 at 3, 3 at 5, 4 at 7, 5 at 9, 6 at 11), long rest. Bonus cantrip. Circle spells by land type at 3/5/7/9 (e.g. Mountain: Lightning Bolt; Arctic: Cone of Cold).",
+       "source": "https://bg3.wiki/wiki/Circle_of_the_Land"
+      }
+     ]
+    },
+    "Circle of the Moon": {
+     "source": "https://bg3.wiki/wiki/Circle_of_the_Moon",
+     "patch8": false,
+     "features": [
+      {
+       "level": 2,
+       "name": "Combat Wild Shape",
+       "effect": "Wild Shape as a bonus action; extra forms Bear (2), Dire Raven (4), Sabre-Toothed Tiger (8), Air/Earth/Fire/Water Myrmidons (10, cost 2 Wild Shape charges).",
+       "source": "https://bg3.wiki/wiki/Combat_Wild_Shape"
+      },
+      {
+       "level": 6,
+       "name": "Primal Strike",
+       "effect": "Beast-form attacks count as magical for overcoming resistance/immunity.",
+       "source": "https://bg3.wiki/wiki/Circle_of_the_Moon"
+      }
+     ]
+    },
+    "Circle of the Spores": {
+     "source": "https://bg3.wiki/wiki/Circle_of_the_Spores",
+     "patch8": false,
+     "features": [
+      {
+       "level": 2,
+       "name": "Halo of Spores",
+       "effect": "Reaction, 6 m: 1d4 Necrotic (1d6 at level 6, 1d8 at level 10), CON save.",
+       "source": "https://bg3.wiki/wiki/Halo_of_Spores"
+      },
+      {
+       "level": 2,
+       "name": "Symbiotic Entity",
+       "effect": "Action + Wild Shape Charge: 4 temp HP per druid level; while you have them, weapon or unarmed attacks deal +1d6 Necrotic (ranged too, per bugs note) and Halo of Spores deals double damage. Does not count as Wild Shape for Wild Strike.",
+       "source": "https://bg3.wiki/wiki/Symbiotic_Entity"
+      },
+      {
+       "level": 10,
+       "name": "Spreading Spores",
+       "effect": "Area that deals 2d8 Necrotic per turn to creatures inhaling it (not allies).",
+       "source": "https://bg3.wiki/wiki/Circle_of_the_Spores"
+      }
+     ]
+    },
+    "Circle of the Stars": {
+     "source": "https://bg3.wiki/wiki/Circle_of_the_Stars",
+     "patch8": true,
+     "resources": {
+      "star_maps": {
+       "2": 2,
+       "5": 3,
+       "9": 4,
+       "recharge": "long rest"
+      },
+      "cosmic_omens": {
+       "6": 3,
+       "9": 4,
+       "recharge": "long rest"
+      }
+     },
+     "features": [
+      {
+       "level": 2,
+       "name": "Starry Form: Archer",
+       "effect": "Bonus action + Wild Shape Charge, until long rest. Each turn, bonus action Luminous Arrow: spell attack, 1d8 + spellcasting modifier Radiant (2d8 + mod from level 10). Bug: uses the spellcasting modifier of the most recent spellcasting class.",
+       "source": "https://bg3.wiki/wiki/Starry_Form:_Archer"
+      },
+      {
+       "level": 2,
+       "name": "Starry Form: Dragon",
+       "effect": "Concentration save rolls of 9 or lower count as 10. Bonus action Dazzling Breath: 5 m cone, 2d6 + spellcasting modifier Radiant (3d6 at 5, 4d6 at 10), DEX save for half, DC 8 + CON modifier + proficiency. Hover/fly at level 10.",
+       "source": "https://bg3.wiki/wiki/Dazzling_Breath"
+      },
+      {
+       "level": 2,
+       "name": "Star Map: Guiding Bolt",
+       "effect": "Cast Guiding Bolt without a spell slot using Star Maps (2 at level 2, 3 at 5, 4 at 9, long rest). Guidance cantrip.",
+       "source": "https://bg3.wiki/wiki/Circle_of_the_Stars"
+      },
+      {
+       "level": 6,
+       "name": "Cosmic Omen",
+       "effect": "Weal: +1d6 to an attack roll or save (or ally ability check); Woe: -1d6 to an attack roll or save. 3 uses (4 at level 9), long rest.",
+       "source": "https://bg3.wiki/wiki/Circle_of_the_Stars"
+      },
+      {
+       "level": 10,
+       "name": "Twinkling Constellations",
+       "effect": "Switch Starry Form once per turn as a free action; Luminous Arrow 2d8 + mod, Dazzling Breath 4d6 + mod.",
+       "source": "https://bg3.wiki/wiki/Circle_of_the_Stars"
+      }
+     ]
+    }
+   }
+  },
+  "fighter": {
+   "source": "https://bg3.wiki/wiki/Fighter",
+   "hit_points": {
+    "level_1": "10 + CON modifier",
+    "per_level": "6 + CON modifier"
+   },
+   "feat_levels": [
+    4,
+    6,
+    8,
+    12
+   ],
+   "extra_attack_level": 5,
+   "improved_extra_attack_level": 11,
+   "fighting_style": {
+    "level": 1,
+    "options": [
+     "Archery",
+     "Defence",
+     "Duelling",
+     "Great Weapon Fighting",
+     "Protection",
+     "Two-Weapon Fighting"
+    ]
+   },
+   "spellcasting": null,
+   "spell_ability": null,
+   "item_spellcasting_ability": "intelligence",
+   "spellcasting_note": "Eldritch Knight subclass is a one-third caster using Intelligence.",
+   "weapon_proficiencies": [
+    "Simple weapons",
+    "Martial weapons"
+   ],
+   "progression": {
+    "1": {
+     "proficiency_bonus": 2
+    },
+    "2": {
+     "proficiency_bonus": 2
+    },
+    "3": {
+     "proficiency_bonus": 2
+    },
+    "4": {
+     "proficiency_bonus": 2
+    },
+    "5": {
+     "proficiency_bonus": 3
+    },
+    "6": {
+     "proficiency_bonus": 3
+    },
+    "7": {
+     "proficiency_bonus": 3
+    },
+    "8": {
+     "proficiency_bonus": 3
+    },
+    "9": {
+     "proficiency_bonus": 4
+    },
+    "10": {
+     "proficiency_bonus": 4
+    },
+    "11": {
+     "proficiency_bonus": 4
+    },
+    "12": {
+     "proficiency_bonus": 4
+    }
+   },
+   "features": [
+    {
+     "level": 2,
+     "name": "Action Surge",
+     "effect": "Free: gain an extra Action this turn (short rest). Attacks from the surged action also trigger Extra Attack.",
+     "source": "https://bg3.wiki/wiki/Action_Surge"
+    },
+    {
+     "level": 5,
+     "name": "Extra Attack",
+     "effect": "One additional attack after an Action attack.",
+     "source": "https://bg3.wiki/wiki/Extra_Attack"
+    },
+    {
+     "level": 11,
+     "name": "Improved Extra Attack",
+     "effect": "Two additional attacks after an Action attack (3 attacks per Attack action).",
+     "source": "https://bg3.wiki/wiki/Improved_Extra_Attack"
+    }
+   ],
+   "subclasses": {
+    "Arcane Archer": {
+     "source": "https://bg3.wiki/wiki/Arcane_Archer",
+     "patch8": true,
+     "resources": {
+      "arcane_arrows": {
+       "3": 4,
+       "7": 7,
+       "10": 10,
+       "recharge": "short rest"
+      },
+      "arcane_shots_known": {
+       "3": 3,
+       "7": 4,
+       "10": 5
+      }
+     },
+     "features": [
+      {
+       "level": 3,
+       "name": "Arcane Shots",
+       "effect": "Action + Arcane Arrow (4 at level 3, 7 at 7, 10 at 10; short rest). Save DC 8 + proficiency + INT. Options: Banishing Arrow (normal damage, Banished, CHA save); Beguiling Arrow (+2d6 Psychic, Charmed, WIS); Bursting Arrow (+2d6 Force in 5 m radius, no save, refunded on miss); Enfeebling Arrow (+2d6 Necrotic, Feeble, CON); Grasping Arrow (+2d6 Poison, +2d6 Slashing per turn when moving, STR); Piercing Arrow (10 m line, DEX save, normal damage + 1d6 weapon type, half on save, works with Extra Attack); Seeking Arrow (always hits, +1d6 Force, Faerie Fire on failed DEX); Shadow Arrow (+2d6 Psychic, Blinded, WIS). Bug: the arcane shot bonus damage is not doubled on critical hits.",
+       "source": "https://bg3.wiki/wiki/Arcane_Shots"
+      },
+      {
+       "level": 7,
+       "name": "Curving Shot",
+       "effect": "Once per turn, when a magical ranged attack misses, bonus action to repeat the same attack against the enemy closest to the original target.",
+       "source": "https://bg3.wiki/wiki/Curving_Shot"
+      },
+      {
+       "level": 7,
+       "name": "Magic Arrow",
+       "effect": "All ranged attacks count as magical for overcoming resistance.",
+       "source": "https://bg3.wiki/wiki/Magic_Arrow"
+      }
+     ]
+    },
+    "Battle Master": {
+     "source": "https://bg3.wiki/wiki/Battle_Master",
+     "patch8": false,
+     "resources": {
+      "superiority_dice": {
+       "3": 4,
+       "7": 5,
+       "recharge": "short rest"
+      },
+      "superiority_die_size": {
+       "3": "d8",
+       "10": "d10"
+      },
+      "manoeuvres_known": {
+       "3": 3,
+       "7": 5,
+       "10": 7
+      }
+     },
+     "features": [
+      {
+       "level": 3,
+       "name": "Superiority Dice",
+       "effect": "4 d8 Superiority Dice at level 3, 5 at level 7, d10 from level 10 (Improved Combat Superiority). Recharge short rest. Manoeuvre save DC 8 + proficiency + higher of STR/DEX.",
+       "source": "https://bg3.wiki/wiki/Superiority_Die"
+      },
+      {
+       "level": 3,
+       "name": "Manoeuvres",
+       "effect": "Choose 3 (+2 at 7, +2 at 10). Attack manoeuvres (Action, weapon attack): Disarming, Distracting (allies get Advantage on next attack), Goading, Manoeuvring, Menacing, Pushing, Trip Attack: Normal weapon damage + Superiority Die (d8, d10 from level 10); die only spent on hit. Feinting Attack: Action + Bonus Action, attack with Advantage, + die. Precision Attack: add die to a weapon attack roll. Riposte: reaction when missed in melee, attack + die (spends die even on miss). Sweeping Attack: action, 2 m cone, deals only the Superiority Die (most bonuses don't apply). Commander's Strike, Evasive Footwork, Rally (8 temp HP). Manoeuvres cannot be used with bonus action attacks.",
+       "source": "https://bg3.wiki/wiki/Superiority_Die"
+      }
+     ]
+    },
+    "Champion": {
+     "source": "https://bg3.wiki/wiki/Champion",
+     "patch8": false,
+     "fighting_style": {
+      "level": 10,
+      "options": [
+       "Archery",
+       "Defence",
+       "Duelling",
+       "Great Weapon Fighting",
+       "Protection",
+       "Two-Weapon Fighting"
+      ],
+      "note": "additional style"
+     },
+     "features": [
+      {
+       "level": 3,
+       "name": "Improved Critical Hit",
+       "effect": "Critical hit threshold reduced by 1 (crit on 19-20); stacks with other reductions.",
+       "source": "https://bg3.wiki/wiki/Improved_Critical_Hit"
+      },
+      {
+       "level": 7,
+       "name": "Remarkable Athlete",
+       "effect": "+3 m jump; half proficiency to non-proficient STR/DEX/CON checks.",
+       "source": "https://bg3.wiki/wiki/Champion"
+      },
+      {
+       "level": 10,
+       "name": "Fighting Style",
+       "effect": "Choose an additional fighting style.",
+       "source": "https://bg3.wiki/wiki/Champion"
+      }
+     ]
+    },
+    "Eldritch Knight": {
+     "source": "https://bg3.wiki/wiki/Eldritch_Knight",
+     "patch8": false,
+     "spellcasting": "third",
+     "spell_ability": "intelligence",
+     "features": [
+      {
+       "level": 3,
+       "name": "Spellcasting",
+       "effect": "One-third caster (Wizard list, mostly Abjuration/Evocation). Slots: L3 2x1st, L4 3x1st, L7 4x1st + 2x2nd, L10 4x1st + 3x2nd. Cantrips: 2, 3 from level 10.",
+       "source": "https://bg3.wiki/wiki/Eldritch_Knight"
+      },
+      {
+       "level": 7,
+       "name": "War Magic",
+       "effect": "After casting an Action cantrip, make a weapon attack as a Bonus Action (once per round; up to two attacks with multiple bonus actions). Does not trigger Extra Attack.",
+       "source": "https://bg3.wiki/wiki/War_Magic"
+      },
+      {
+       "level": 10,
+       "name": "Eldritch Strike",
+       "effect": "A weapon hit gives the target Disadvantage on its next save against your spell before the end of your next turn.",
+       "source": "https://bg3.wiki/wiki/Eldritch_Knight"
+      }
+     ]
+    }
+   }
+  },
+  "monk": {
+   "source": "https://bg3.wiki/wiki/Monk",
+   "hit_points": {
+    "level_1": "8 + CON modifier",
+    "per_level": "5 + CON modifier"
+   },
+   "feat_levels": [
+    4,
+    8,
+    12
+   ],
+   "extra_attack_level": 5,
+   "improved_extra_attack_level": null,
+   "fighting_style": null,
+   "spellcasting": null,
+   "spell_ability": null,
+   "item_spellcasting_ability": "wisdom",
+   "weapon_proficiencies": [
+    "Simple weapons",
+    "Shortswords"
+   ],
+   "progression": {
+    "1": {
+     "proficiency_bonus": 2,
+     "ki_points": 2,
+     "martial_arts_die": "1d4"
+    },
+    "2": {
+     "proficiency_bonus": 2,
+     "ki_points": 3,
+     "martial_arts_die": "1d4"
+    },
+    "3": {
+     "proficiency_bonus": 2,
+     "ki_points": 4,
+     "martial_arts_die": "1d6"
+    },
+    "4": {
+     "proficiency_bonus": 2,
+     "ki_points": 5,
+     "martial_arts_die": "1d6"
+    },
+    "5": {
+     "proficiency_bonus": 3,
+     "ki_points": 6,
+     "martial_arts_die": "1d6"
+    },
+    "6": {
+     "proficiency_bonus": 3,
+     "ki_points": 7,
+     "martial_arts_die": "1d6"
+    },
+    "7": {
+     "proficiency_bonus": 3,
+     "ki_points": 8,
+     "martial_arts_die": "1d6"
+    },
+    "8": {
+     "proficiency_bonus": 3,
+     "ki_points": 9,
+     "martial_arts_die": "1d6"
+    },
+    "9": {
+     "proficiency_bonus": 4,
+     "ki_points": 10,
+     "martial_arts_die": "1d8"
+    },
+    "10": {
+     "proficiency_bonus": 4,
+     "ki_points": 11,
+     "martial_arts_die": "1d8"
+    },
+    "11": {
+     "proficiency_bonus": 4,
+     "ki_points": 12,
+     "martial_arts_die": "1d8"
+    },
+    "12": {
+     "proficiency_bonus": 4,
+     "ki_points": 13,
+     "martial_arts_die": "1d8"
+    }
+   },
+   "progression_notes": "ki_points = monk level + 1, recharge on short rest. martial_arts_die is the minimum damage die for monk weapons and unarmed strikes (1d4, 1d6 at 3, 1d8 at 9).",
+   "features": [
+    {
+     "level": 1,
+     "name": "Martial Arts: Dextrous Attacks",
+     "effect": "Monk weapons and unarmed attacks use DEX instead of STR if higher. Monk weapons = any proficient weapon without Two-Handed (Versatile counts).",
+     "source": "https://bg3.wiki/wiki/Monk"
+    },
+    {
+     "level": 1,
+     "name": "Martial Arts: Deft Strikes",
+     "effect": "Monk weapons and unarmed attacks deal 1d4 (1d6 at monk 3, 1d8 at monk 9) unless their normal damage is higher; keeps the weapon's damage type.",
+     "source": "https://bg3.wiki/wiki/Martial_Arts:_Deft_Strikes"
+    },
+    {
+     "level": 1,
+     "name": "Martial Arts: Bonus Unarmed Strike",
+     "effect": "After a melee monk-weapon or unarmed attack, make one unarmed attack as a Bonus Action. Also enabled by all Four Elements disciplines.",
+     "source": "https://bg3.wiki/wiki/Martial_Arts:_Bonus_Unarmed_Strike"
+    },
+    {
+     "level": 1,
+     "name": "Flurry of Blows",
+     "effect": "Bonus Action + 1 Ki: two unarmed strikes. Does not need a prior attack; does not trigger Extra Attack.",
+     "source": "https://bg3.wiki/wiki/Flurry_of_Blows"
+    },
+    {
+     "level": 5,
+     "name": "Extra Attack",
+     "effect": "One additional attack after an Action attack.",
+     "source": "https://bg3.wiki/wiki/Extra_Attack"
+    },
+    {
+     "level": 5,
+     "name": "Stunning Strike (Melee)",
+     "effect": "Action, 1 Ki on hit: normal weapon (or unarmed) damage and Stun on failed CON save (DC 8 + proficiency + STR or DEX). Stunned: attack rolls against it have Advantage, auto-fail STR/DEX saves.",
+     "source": "https://bg3.wiki/wiki/Stunning_Strike_(Melee)"
+    },
+    {
+     "level": 6,
+     "name": "Ki-Empowered Strikes",
+     "effect": "Unarmed attacks count as magical vs physical resistance/immunity.",
+     "source": "https://bg3.wiki/wiki/Ki-Empowered_Strikes"
+    }
+   ],
+   "subclasses": {
+    "Way of the Drunken Master": {
+     "source": "https://bg3.wiki/wiki/Way_of_the_Drunken_Master",
+     "patch8": true,
+     "features": [
+      {
+       "level": 3,
+       "name": "Drunken Technique",
+       "effect": "Replaces Flurry of Blows: Bonus Action + 1 Ki, two unarmed strikes, +3 m movement and Disengage.",
+       "source": "https://bg3.wiki/wiki/Drunken_Technique"
+      },
+      {
+       "level": 3,
+       "name": "Cheeky Tipple",
+       "effect": "Immune to Drunk penalties; once per long rest drinking alcohol restores half your Ki (rounded down).",
+       "source": "https://bg3.wiki/wiki/Way_of_the_Drunken_Master"
+      },
+      {
+       "level": 4,
+       "name": "Intoxicating Strike",
+       "effect": "Action (bonus action variant too) + 1 Ki: unarmed strike; on hit target may become Drunk (CON save) and you gain Life of the Party.",
+       "source": "https://bg3.wiki/wiki/Intoxicating_Strike"
+      },
+      {
+       "level": 4,
+       "name": "Life of the Party",
+       "effect": "For 1 turn: +1 AC and + WIS modifier to attack rolls against Drunk targets.",
+       "source": "https://bg3.wiki/wiki/Life_of_the_Party"
+      },
+      {
+       "level": 6,
+       "name": "Redirect Attack",
+       "effect": "Reaction + 1 Ki when missed by a melee attack within 2 m: unarmed attack against the attacker.",
+       "source": "https://bg3.wiki/wiki/Redirect_Attack"
+      },
+      {
+       "level": 9,
+       "name": "Sobering Realisation",
+       "effect": "Action + 1 Ki vs a Drunk target: unarmed damage + 2d8 + WIS modifier Psychic, removes Drunk and your Life of the Party. Bug: 1d8 in Honour mode.",
+       "source": "https://bg3.wiki/wiki/Sobering_Realisation"
+      },
+      {
+       "level": 11,
+       "name": "Drunkard's Luck",
+       "effect": "Spend 2 Ki to negate Disadvantage on an attack roll, ability check or save.",
+       "source": "https://bg3.wiki/wiki/Way_of_the_Drunken_Master"
+      }
+     ]
+    },
+    "Way of the Four Elements": {
+     "source": "https://bg3.wiki/wiki/Way_of_the_Four_Elements",
+     "patch8": false,
+     "features": [
+      {
+       "level": 3,
+       "name": "Elemental Disciplines",
+       "effect": "Choose 3 (DC 8 + proficiency + WIS; not true spells, no metamagic/Spell Sniper). Damage (ki cost where the wiki lists it): Blade of Rime 2 ki 1d10 Piercing + 2d6 Cold; Chill of the Mountain 1d10 Cold; Fangs of the Fire Snake unarmed + 1d10 Fire, 6 m reach, next melee attacks +1d4 Fire, counts as unarmed attack (works with Extra Attack); Fist of Four Thunders 2 ki 2d8 Thunder; Fist of Unbroken Air 2 ki 3d10 Bludgeoning; Sphere of Elemental Balance 2 ki 3d8; Sweeping Cinder Strike 2 ki 3d6 Fire; Touch of the Storm 1d10 Lightning; Water Whip 2 ki 3d10 Bludgeoning. Level 6: Clench of the North Wind 3 ki, Embrace of the Inferno 3 ki 2d6 Fire per ray, Gong of the Summit 3 ki 3d8 Thunder. Level 11: Flames of the Phoenix 4 ki 8d6 Fire.",
+       "source": "https://bg3.wiki/wiki/Elemental_Disciplines",
+       "unverified": true,
+       "unverified_parts": "Ki cost of Chill of the Mountain, Fangs of the Fire Snake, Touch of the Storm and Shaping of the Ice shown only as an icon (presumably 1); Sphere of Elemental Balance is 3d8 on the Elemental Disciplines page but 2d8 (3d8 thunder) on the Ki Point page."
+      },
+      {
+       "level": 3,
+       "name": "Harmony of Fire and Water",
+       "effect": "Out of combat, regain half your Ki (rounded down), long rest.",
+       "source": "https://bg3.wiki/wiki/Way_of_the_Four_Elements"
+      },
+      {
+       "level": 9,
+       "name": "Improved Elemental Casting",
+       "effect": "+1 damage die: Chill of the Mountain 2d10, Fist of Four Thunders 3d8, Fist of Unbroken Air 4d10, Gong of the Summit 4d8, Sweeping Cinder Strike 4d6, Touch of the Storm 2d10, Water Whip 4d10; Embrace of the Inferno +1 ray; Clench holds +1 creature.",
+       "source": "https://bg3.wiki/wiki/Improved_Elemental_Casting"
+      }
+     ]
+    },
+    "Way of the Open Hand": {
+     "source": "https://bg3.wiki/wiki/Way_of_the_Open_Hand",
+     "patch8": false,
+     "features": [
+      {
+       "level": 3,
+       "name": "Flurry of Blows: Topple",
+       "effect": "Bonus Action + 1 Ki: two unarmed strikes; second hit forces DEX save (weapon action DC) or Prone. Variants: Stagger (no reactions), Push (5 m, STR save).",
+       "source": "https://bg3.wiki/wiki/Flurry_of_Blows:_Topple"
+      },
+      {
+       "level": 6,
+       "name": "Manifestation of Body",
+       "effect": "Toggle (one of Body/Mind/Soul active): unarmed attacks deal +1d4 + WIS modifier Necrotic (Mind: Psychic, Soul: Radiant).",
+       "source": "https://bg3.wiki/wiki/Manifestation_of_Body"
+      },
+      {
+       "level": 6,
+       "name": "Wholeness of Body",
+       "effect": "Action, long rest: heal 3 x monk level, regain half Ki, then for 3 turns +1 Ki per turn and an extra Bonus Action (two Flurries per turn).",
+       "source": "https://bg3.wiki/wiki/Wholeness_of_Body"
+      },
+      {
+       "level": 9,
+       "name": "Ki Resonation: Blast",
+       "effect": "1 Ki, once per turn: detonate a Resonating creature (marked by Ki Resonation: Punch): 3d6 Force to it and non-party creatures within 5 m, DEX save half; chain reaction on other Resonating creatures.",
+       "source": "https://bg3.wiki/wiki/Ki_Resonation:_Blast"
+      },
+      {
+       "level": 11,
+       "name": "Tranquillity",
+       "effect": "Sanctuary after long rest until you attack.",
+       "source": "https://bg3.wiki/wiki/Way_of_the_Open_Hand"
+      }
+     ]
+    },
+    "Way of Shadow": {
+     "source": "https://bg3.wiki/wiki/Way_of_Shadow",
+     "patch8": false,
+     "features": [
+      {
+       "level": 3,
+       "name": "Shadow Arts",
+       "effect": "Spend 2 Ki for Darkness, Pass Without Trace, Darkvision, Silence; Shadow Arts: Hide as a bonus action; Minor Illusion.",
+       "source": "https://bg3.wiki/wiki/Way_of_Shadow"
+      },
+      {
+       "level": 5,
+       "name": "Cloak of Shadows",
+       "effect": "Become Invisible while obscured.",
+       "source": "https://bg3.wiki/wiki/Way_of_Shadow"
+      },
+      {
+       "level": 6,
+       "name": "Shadow Step",
+       "effect": "Bonus action teleport 18 m between obscured areas, then Advantage on your next melee attack roll.",
+       "source": "https://bg3.wiki/wiki/Shadow_Step"
+      },
+      {
+       "level": 11,
+       "name": "Shadow Strike",
+       "effect": "Action + 3 Ki, must be Invisible or Sneaking: teleport 9 m and melee attack, normal weapon (or unarmed) damage + 3d8 Psychic.",
+       "source": "https://bg3.wiki/wiki/Shadow_Strike"
+      }
+     ]
+    }
+   }
+  },
+  "paladin": {
+   "source": "https://bg3.wiki/wiki/Paladin",
+   "hit_points": {
+    "level_1": "10 + CON modifier",
+    "per_level": "6 + CON modifier"
+   },
+   "feat_levels": [
+    4,
+    8,
+    12
+   ],
+   "extra_attack_level": 5,
+   "improved_extra_attack_level": null,
+   "fighting_style": {
+    "level": 2,
+    "options": [
+     "Defence",
+     "Duelling",
+     "Great Weapon Fighting",
+     "Protection"
+    ]
+   },
+   "spellcasting": "half",
+   "spell_ability": "charisma",
+   "weapon_proficiencies": [
+    "Simple weapons",
+    "Martial weapons"
+   ],
+   "progression": {
+    "1": {
+     "proficiency_bonus": 2,
+     "spell_slots_level_1": 0,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0,
+     "channel_oath_charges": 1,
+     "lay_on_hands_charges": 3
+    },
+    "2": {
+     "proficiency_bonus": 2,
+     "spell_slots_level_1": 2,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0,
+     "channel_oath_charges": 1,
+     "lay_on_hands_charges": 3
+    },
+    "3": {
+     "proficiency_bonus": 2,
+     "spell_slots_level_1": 3,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0,
+     "channel_oath_charges": 1,
+     "lay_on_hands_charges": 3
+    },
+    "4": {
+     "proficiency_bonus": 2,
+     "spell_slots_level_1": 3,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0,
+     "channel_oath_charges": 1,
+     "lay_on_hands_charges": 4
+    },
+    "5": {
+     "proficiency_bonus": 3,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 2,
+     "spell_slots_level_3": 0,
+     "channel_oath_charges": 1,
+     "lay_on_hands_charges": 4
+    },
+    "6": {
+     "proficiency_bonus": 3,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 2,
+     "spell_slots_level_3": 0,
+     "channel_oath_charges": 1,
+     "lay_on_hands_charges": 4
+    },
+    "7": {
+     "proficiency_bonus": 3,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 0,
+     "channel_oath_charges": 1,
+     "lay_on_hands_charges": 4
+    },
+    "8": {
+     "proficiency_bonus": 3,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 0,
+     "channel_oath_charges": 1,
+     "lay_on_hands_charges": 4
+    },
+    "9": {
+     "proficiency_bonus": 4,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 2,
+     "channel_oath_charges": 1,
+     "lay_on_hands_charges": 4
+    },
+    "10": {
+     "proficiency_bonus": 4,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 2,
+     "channel_oath_charges": 1,
+     "lay_on_hands_charges": 5
+    },
+    "11": {
+     "proficiency_bonus": 4,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "channel_oath_charges": 1,
+     "lay_on_hands_charges": 5
+    },
+    "12": {
+     "proficiency_bonus": 4,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "channel_oath_charges": 1,
+     "lay_on_hands_charges": 5
+    }
+   },
+   "progression_notes": "Subclass is chosen at level 1. channel_oath_charges is always 1, recharged on short or long rest (Channel Oath Charge page).",
+   "features": [
+    {
+     "level": 1,
+     "name": "Divine Sense",
+     "effect": "Bonus action (short rest): Advantage on attack rolls against celestials, fiends and undead until end of next turn.",
+     "source": "https://bg3.wiki/wiki/Paladin"
+    },
+    {
+     "level": 2,
+     "name": "Divine Smite",
+     "effect": "On a melee weapon hit (action or free post-strike reaction, no reaction resource), expend a spell slot: +2d8 Radiant, +1d8 per slot level above 1st, capped at 5d8 (slots above 4th add nothing); +1d8 vs fiends or undead. Not a spell. Dice doubled on crit; slot not spent on miss.",
+     "source": "https://bg3.wiki/wiki/Divine_Smite"
+    },
+    {
+     "level": 5,
+     "name": "Extra Attack",
+     "effect": "One additional attack after an Action attack.",
+     "source": "https://bg3.wiki/wiki/Extra_Attack"
+    },
+    {
+     "level": 6,
+     "name": "Aura of Protection",
+     "effect": "You and nearby allies add your CHA modifier to saving throws.",
+     "source": "https://bg3.wiki/wiki/Paladin"
+    },
+    {
+     "level": 11,
+     "name": "Improved Divine Smite",
+     "effect": "Melee weapon attacks deal an additional 1d8 Radiant (stacks with everything).",
+     "source": "https://bg3.wiki/wiki/Improved_Divine_Smite"
+    }
+   ],
+   "subclasses": {
+    "Oath of Devotion": {
+     "source": "https://bg3.wiki/wiki/Oath_of_Devotion",
+     "patch8": false,
+     "features": [
+      {
+       "level": 1,
+       "name": "Holy Rebuke",
+       "effect": "Channel Oath: target's melee attackers take 1d4 Radiant when they hit it (2 turns).",
+       "source": "https://bg3.wiki/wiki/Holy_Rebuke"
+      },
+      {
+       "level": 3,
+       "name": "Sacred Weapon",
+       "effect": "Action + Channel Oath, 10 turns: add CHA modifier to attack rolls with the weapon; weapon becomes magical.",
+       "source": "https://bg3.wiki/wiki/Sacred_Weapon"
+      }
+     ]
+    },
+    "Oath of the Ancients": {
+     "source": "https://bg3.wiki/wiki/Oath_of_the_Ancients",
+     "patch8": false,
+     "features": [
+      {
+       "level": 3,
+       "name": "Nature's Wrath",
+       "effect": "Action + Channel Oath: STR save or Restrained 10 turns; attack rolls against it have Advantage.",
+       "source": "https://bg3.wiki/wiki/Nature's_Wrath"
+      },
+      {
+       "level": 7,
+       "name": "Aura of Warding",
+       "effect": "You and nearby allies take half damage from spells.",
+       "source": "https://bg3.wiki/wiki/Oath_of_the_Ancients"
+      }
+     ]
+    },
+    "Oath of the Crown": {
+     "source": "https://bg3.wiki/wiki/Oath_of_the_Crown",
+     "patch8": true,
+     "features": [
+      {
+       "level": 1,
+       "name": "Righteous Clarity",
+       "effect": "Bonus action + Channel Oath, 10 turns: you or an ally add proficiency bonus to attack rolls (again).",
+       "source": "https://bg3.wiki/wiki/Righteous_Clarity"
+      },
+      {
+       "level": 3,
+       "name": "Champion Challenge",
+       "effect": "Bonus action + Channel Oath, 9 m: WIS save or enemies have Disadvantage attacking anyone but you.",
+       "source": "https://bg3.wiki/wiki/Champion_Challenge"
+      },
+      {
+       "level": 7,
+       "name": "Divine Allegiance",
+       "effect": "Reaction when an adjacent ally takes damage: heal them 2 x paladin level, take 2 x paladin level Radiant yourself.",
+       "source": "https://bg3.wiki/wiki/Oath_of_the_Crown"
+      }
+     ]
+    },
+    "Oath of Vengeance": {
+     "source": "https://bg3.wiki/wiki/Oath_of_Vengeance",
+     "patch8": false,
+     "features": [
+      {
+       "level": 1,
+       "name": "Inquisitor's Might",
+       "effect": "Bonus action + Channel Oath, 2 turns: you or an ally's weapon attacks deal + paladin's CHA modifier Radiant (minimum 1) and Daze for 1 turn (no save).",
+       "source": "https://bg3.wiki/wiki/Inquisitor's_Might"
+      },
+      {
+       "level": 3,
+       "name": "Vow of Enmity",
+       "effect": "Bonus action + Channel Oath, 10 turns: Advantage on attack rolls against one enemy. Bug: can be cast on yourself for Advantage against all targets.",
+       "source": "https://bg3.wiki/wiki/Vow_of_Enmity"
+      },
+      {
+       "level": 3,
+       "name": "Oath Spells",
+       "effect": "Hunter's Mark and Bane always prepared (Haste at 9).",
+       "source": "https://bg3.wiki/wiki/Oath_of_Vengeance"
+      }
+     ]
+    },
+    "Oathbreaker": {
+     "source": "https://bg3.wiki/wiki/Oathbreaker",
+     "patch8": false,
+     "features": [
+      {
+       "level": 1,
+       "name": "Spiteful Suffering",
+       "effect": "Action + Channel Oath, 3 turns: target takes 1d4 + CHA modifier Necrotic each turn and attack rolls against it have Advantage (CHA save, re-save each turn).",
+       "source": "https://bg3.wiki/wiki/Spiteful_Suffering"
+      },
+      {
+       "level": 7,
+       "name": "Aura of Hate",
+       "effect": "You and fiends/undead within 3 m (including enemies) add your CHA modifier to melee weapon damage.",
+       "source": "https://bg3.wiki/wiki/Aura_of_Hate"
+      }
+     ]
+    }
+   }
+  },
+  "ranger": {
+   "source": "https://bg3.wiki/wiki/Ranger",
+   "feat_levels": [
+    4,
+    8,
+    12
+   ],
+   "extra_attack_level": 5,
+   "improved_extra_attack_level": null,
+   "fighting_style": {
+    "level": 2,
+    "options": [
+     "Archery",
+     "Defence",
+     "Duelling",
+     "Two-Weapon Fighting"
+    ]
+   },
+   "spellcasting": "half",
+   "spell_ability": "wisdom",
+   "progression": {
+    "1": {
+     "proficiency_bonus": 2,
+     "spells_known": 0,
+     "spell_slots_level_1": 0,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0
+    },
+    "2": {
+     "proficiency_bonus": 2,
+     "spells_known": 2,
+     "spell_slots_level_1": 2,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0
+    },
+    "3": {
+     "proficiency_bonus": 2,
+     "spells_known": 3,
+     "spell_slots_level_1": 3,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0
+    },
+    "4": {
+     "proficiency_bonus": 2,
+     "spells_known": 3,
+     "spell_slots_level_1": 3,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0
+    },
+    "5": {
+     "proficiency_bonus": 3,
+     "spells_known": 4,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 2,
+     "spell_slots_level_3": 0
+    },
+    "6": {
+     "proficiency_bonus": 3,
+     "spells_known": 4,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 2,
+     "spell_slots_level_3": 0
+    },
+    "7": {
+     "proficiency_bonus": 3,
+     "spells_known": 5,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 0
+    },
+    "8": {
+     "proficiency_bonus": 3,
+     "spells_known": 5,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 0
+    },
+    "9": {
+     "proficiency_bonus": 4,
+     "spells_known": 6,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 2
+    },
+    "10": {
+     "proficiency_bonus": 4,
+     "spells_known": 6,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 2
+    },
+    "11": {
+     "proficiency_bonus": 4,
+     "spells_known": 7,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3
+    },
+    "12": {
+     "proficiency_bonus": 4,
+     "spells_known": 7,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 4
+    }
+   },
+   "progression_notes": "Ranger level 12 has 4 level-3 slots, which the wiki notes differs from 5e.",
+   "features": [
+    {
+     "level": 1,
+     "name": "Favoured Enemy",
+     "effect": "Choose at levels 1, 6 and 10. Damage relevant: Mage Breaker (True Strike cantrip), Sanctified Stalker (Sacred Flame cantrip), Bounty Hunter (targets hit by Ensnaring Strike have Disadvantage on the save).",
+     "source": "https://bg3.wiki/wiki/Favoured_Enemy"
+    },
+    {
+     "level": 5,
+     "name": "Extra Attack",
+     "effect": "One additional attack after an Action attack (wiki ranger page words it as attack twice with the Attack action).",
+     "source": "https://bg3.wiki/wiki/Extra_Attack"
+    },
+    {
+     "level": 10,
+     "name": "Hide in Plain Sight",
+     "effect": "Become Invisible with +10 Stealth while standing still.",
+     "source": "https://bg3.wiki/wiki/Ranger"
+    }
+   ],
+   "hit_points": {
+    "level_1": "10 + CON modifier",
+    "per_level": "6 + CON modifier"
+   },
+   "weapon_proficiencies": [
+    "Simple weapons",
+    "Martial weapons"
+   ],
+   "subclasses": {
+    "Beast Master": {
+     "source": "https://bg3.wiki/wiki/Beast_Master",
+     "patch8": false,
+     "features": [
+      {
+       "level": 3,
+       "name": "Ranger's Companion",
+       "effect": "Summon Bear, Boar, Dire Raven, Wolf or Wolf Spider companion (short rest). Companions have Prey's Scent: +1d6 Physical vs your Hunter's Mark target.",
+       "source": "https://bg3.wiki/wiki/Beast_Master",
+       "unverified": true,
+       "unverified_reason": "companion attack stats not read"
+      },
+      {
+       "level": 5,
+       "name": "Companion's Bond",
+       "effect": "Companion adds its proficiency bonus to AC and damage (bug: companion's own PB, and +2/+3 attack bump from bugged proficiency progression).",
+       "source": "https://bg3.wiki/wiki/Companion's_Bond"
+      },
+      {
+       "level": 11,
+       "name": "Bestial Fury",
+       "effect": "Companions gain an extra attack.",
+       "source": "https://bg3.wiki/wiki/Bestial_Fury"
+      }
+     ]
+    },
+    "Gloom Stalker": {
+     "source": "https://bg3.wiki/wiki/Gloom_Stalker",
+     "patch8": false,
+     "features": [
+      {
+       "level": 3,
+       "name": "Dread Ambusher",
+       "effect": "+3 Initiative. First turn of each combat: +3 m movement and one extra free weapon attack (Dread Ambusher (Melee)/(Ranged) action) dealing +1d8 weapon damage.",
+       "source": "https://bg3.wiki/wiki/Dread_Ambusher"
+      },
+      {
+       "level": 3,
+       "name": "Umbral Shroud",
+       "effect": "Become Invisible while obscured (short rest).",
+       "source": "https://bg3.wiki/wiki/Gloom_Stalker"
+      },
+      {
+       "level": 11,
+       "name": "Stalker's Flurry",
+       "effect": "Once per turn, when you miss with a weapon attack, make another one for free.",
+       "source": "https://bg3.wiki/wiki/Stalker's_Flurry"
+      }
+     ]
+    },
+    "Hunter": {
+     "source": "https://bg3.wiki/wiki/Hunter",
+     "patch8": false,
+     "features": [
+      {
+       "level": 3,
+       "name": "Colossus Slayer",
+       "effect": "Hunter's Prey option: once per turn a weapon attack deals +1d8 (Physical, DRS) if the target is below its HP maximum.",
+       "source": "https://bg3.wiki/wiki/Colossus_Slayer"
+      },
+      {
+       "level": 3,
+       "name": "Horde Breaker (Melee)",
+       "effect": "Hunter's Prey option: Action attack (triggers Extra Attack); marks creatures within 2 m of the target and grants one free follow-up attack against a marked creature. Once per turn.",
+       "source": "https://bg3.wiki/wiki/Horde_Breaker_(Melee)"
+      },
+      {
+       "level": 3,
+       "name": "Giant Killer",
+       "effect": "Hunter's Prey option: reaction melee attack when a Large or bigger creature attacks you.",
+       "source": "https://bg3.wiki/wiki/Hunter"
+      },
+      {
+       "level": 11,
+       "name": "Volley",
+       "effect": "Action: ranged weapon attack against every non-ally in a 3 m radius (can hit friendly NPCs).",
+       "source": "https://bg3.wiki/wiki/Volley"
+      },
+      {
+       "level": 11,
+       "name": "Whirlwind Attack",
+       "effect": "Action: melee weapon attack against every enemy within 2 m (separate attack rolls).",
+       "source": "https://bg3.wiki/wiki/Whirlwind_Attack"
+      }
+     ]
+    },
+    "Swarmkeeper": {
+     "source": "https://bg3.wiki/wiki/Swarmkeeper",
+     "patch8": true,
+     "resources": {
+      "writhing_currents": {
+       "7": 3,
+       "9": 4,
+       "recharge": "long rest"
+      }
+     },
+     "features": [
+      {
+       "level": 3,
+       "name": "Gathered Swarm",
+       "effect": "Once per round after you hit an enemy, the swarm can: deal 1d6 extra damage to the same target (Cloud of Jellyfish: Lightning, Flurry of Moths: Psychic, Legion of Bees: Piercing), or Shock/Blind/push 5 m, or teleport you. Faerie Fire and Mage Hand always prepared.",
+       "source": "https://bg3.wiki/wiki/Cloud_of_Jellyfish:_Attack"
+      },
+      {
+       "level": 3,
+       "name": "Prey's Scent (Swarmkeeper)",
+       "effect": "Swarm damage option deals +1d6 (same type) against your Hunter's Mark target. Stays 1d6 after Mighty Swarm and is not doubled on crits.",
+       "source": "https://bg3.wiki/wiki/Prey's_Scent_(Swarmkeeper)"
+      },
+      {
+       "level": 7,
+       "name": "Writhing Tide",
+       "effect": "Fly 9 m, immune to surfaces (3 Writhing Currents, 4 at level 9).",
+       "source": "https://bg3.wiki/wiki/Swarmkeeper"
+      },
+      {
+       "level": 11,
+       "name": "Mighty Swarm",
+       "effect": "Swarm attack damage becomes 1d8; utility option adds Prone/Disarm/Slow; teleport gives +2 AC for the round.",
+       "source": "https://bg3.wiki/wiki/Mighty_Swarm"
+      }
+     ]
+    }
+   }
+  },
+  "rogue": {
+   "source": "https://bg3.wiki/wiki/Rogue",
+   "hit_points": {
+    "level_1": "8 + CON modifier",
+    "per_level": "5 + CON modifier"
+   },
+   "feat_levels": [
+    4,
+    8,
+    10,
+    12
+   ],
+   "extra_attack_level": null,
+   "improved_extra_attack_level": null,
+   "fighting_style": null,
+   "spellcasting": null,
+   "spell_ability": null,
+   "item_spellcasting_ability": "intelligence",
+   "spellcasting_note": "Arcane Trickster subclass is a one-third caster using Intelligence.",
+   "weapon_proficiencies": [
+    "Simple weapons",
+    "Hand Crossbows",
+    "Longswords",
+    "Rapiers",
+    "Shortswords"
+   ],
+   "progression": {
+    "1": {
+     "proficiency_bonus": 2,
+     "sneak_attack_damage": "1d6"
+    },
+    "2": {
+     "proficiency_bonus": 2,
+     "sneak_attack_damage": "1d6"
+    },
+    "3": {
+     "proficiency_bonus": 2,
+     "sneak_attack_damage": "2d6"
+    },
+    "4": {
+     "proficiency_bonus": 2,
+     "sneak_attack_damage": "2d6"
+    },
+    "5": {
+     "proficiency_bonus": 3,
+     "sneak_attack_damage": "3d6"
+    },
+    "6": {
+     "proficiency_bonus": 3,
+     "sneak_attack_damage": "3d6"
+    },
+    "7": {
+     "proficiency_bonus": 3,
+     "sneak_attack_damage": "4d6"
+    },
+    "8": {
+     "proficiency_bonus": 3,
+     "sneak_attack_damage": "4d6"
+    },
+    "9": {
+     "proficiency_bonus": 4,
+     "sneak_attack_damage": "5d6"
+    },
+    "10": {
+     "proficiency_bonus": 4,
+     "sneak_attack_damage": "5d6"
+    },
+    "11": {
+     "proficiency_bonus": 4,
+     "sneak_attack_damage": "6d6"
+    },
+    "12": {
+     "proficiency_bonus": 4,
+     "sneak_attack_damage": "6d6"
+    }
+   },
+   "features": [
+    {
+     "level": 1,
+     "name": "Sneak Attack (Melee)",
+     "effect": "Once per round (refreshes after the rogue's turn, can be used on an enemy turn e.g. opportunity attack), with a finesse melee weapon or any ranged weapon: +1d6 weapon damage, +1d6 every 2 rogue levels (2d6 at 3, 3d6 at 5, 4d6 at 7, 5d6 at 9, 6d6 at 11). Requires Advantage, or an ally within 1.5 m of the target and no Disadvantage. Not usable with main-hand unarmed attacks; not applied to off-hand attack actions. Can be applied as a post-strike reaction (no reaction cost); dice doubled on crit.",
+     "source": "https://bg3.wiki/wiki/Sneak_Attack_(Melee)"
+    },
+    {
+     "level": 1,
+     "name": "Sneak Attack (Ranged)",
+     "effect": "Ranged version, same dice and conditions.",
+     "source": "https://bg3.wiki/wiki/Sneak_Attack_(Ranged)"
+    },
+    {
+     "level": 2,
+     "name": "Cunning Action",
+     "effect": "Dash, Disengage or Hide as a bonus action.",
+     "source": "https://bg3.wiki/wiki/Rogue"
+    },
+    {
+     "level": 5,
+     "name": "Uncanny Dodge",
+     "effect": "Reaction: halve the damage of an attack that hits you.",
+     "source": "https://bg3.wiki/wiki/Rogue"
+    }
+   ],
+   "subclasses": {
+    "Arcane Trickster": {
+     "source": "https://bg3.wiki/wiki/Arcane_Trickster",
+     "patch8": false,
+     "spellcasting": "third",
+     "spell_ability": "intelligence",
+     "features": [
+      {
+       "level": 3,
+       "name": "Spellcasting",
+       "effect": "One-third caster (Wizard list, mostly Enchantment/Illusion). Slots: L3 2x1st, L4 3x1st, L7 4x1st + 2x2nd, L10 6x1st + 2x2nd. Cantrips: Mage Hand + 2 (+3 from level 10).",
+       "source": "https://bg3.wiki/wiki/Arcane_Trickster"
+      },
+      {
+       "level": 9,
+       "name": "Magical Ambush",
+       "effect": "While Hiding, targets have Disadvantage on saves against your spells.",
+       "source": "https://bg3.wiki/wiki/Magical_Ambush"
+      }
+     ]
+    },
+    "Assassin": {
+     "source": "https://bg3.wiki/wiki/Assassin",
+     "patch8": false,
+     "features": [
+      {
+       "level": 3,
+       "name": "Assassinate: Initiative",
+       "effect": "Advantage on attack rolls against creatures that haven't taken a turn yet in combat.",
+       "source": "https://bg3.wiki/wiki/Assassinate:_Initiative"
+      },
+      {
+       "level": 3,
+       "name": "Assassinate: Ambush",
+       "effect": "Any successful attack roll against a Surprised creature is a critical hit.",
+       "source": "https://bg3.wiki/wiki/Assassinate:_Ambush"
+      },
+      {
+       "level": 3,
+       "name": "Assassin's Alacrity",
+       "effect": "Restore your Action and Bonus Action at the start of combat (once per combat).",
+       "source": "https://bg3.wiki/wiki/Assassin's_Alacrity"
+      }
+     ]
+    },
+    "Swashbuckler": {
+     "source": "https://bg3.wiki/wiki/Swashbuckler",
+     "patch8": true,
+     "features": [
+      {
+       "level": 3,
+       "name": "Rakish Sneak Attack (Melee)",
+       "effect": "Replaces Sneak Attack (same dice: 2d6 at 3, 3d6 at 5, 4d6 at 7, 5d6 at 9, 6d6 at 11). Usable with Advantage, or without Advantage if no other combatants are within 1.5 m (tooltip says 2 m) of you/target, or with an adjacent ally; never with Disadvantage.",
+       "source": "https://bg3.wiki/wiki/Rakish_Sneak_Attack_(Melee)"
+      },
+      {
+       "level": 3,
+       "name": "Rakish Audacity",
+       "effect": "Initiative bonus +2 at rogue level 3, +3 at level 5, +4 later.",
+       "source": "https://bg3.wiki/wiki/Rakish_Audacity",
+       "unverified": true,
+       "unverified_reason": "Rakish Audacity page says +4 at rogue level 10, D&D 5e class changes page says +4 at level 9"
+      },
+      {
+       "level": 3,
+       "name": "Fancy Footwork",
+       "effect": "A target you melee attack can't make opportunity attacks against you this turn.",
+       "source": "https://bg3.wiki/wiki/Swashbuckler"
+      },
+      {
+       "level": 4,
+       "name": "Dirty Trick: Flick o' the Wrist",
+       "effect": "Bonus action, finesse weapon: melee weapon attack, normal weapon damage, possible Disarm (DEX save vs CHA spell DC); on hit gain Dirty Advantage (Advantage on your next attack, 2 turns).",
+       "source": "https://bg3.wiki/wiki/Dirty_Trick:_Flick_o'_the_Wrist"
+      },
+      {
+       "level": 4,
+       "name": "Dirty Trick: Sand Toss",
+       "effect": "Bonus action: melee attack, 1d6 Bludgeoning, possible Blind (CON save vs DEX-based spell DC); on hit gain Dirty Advantage.",
+       "source": "https://bg3.wiki/wiki/Dirty_Trick:_Sand_Toss"
+      },
+      {
+       "level": 4,
+       "name": "Dirty Trick: Vicious Mockery",
+       "effect": "Bonus action cantrip: 1d4 Psychic (2d4 at character level 5, 3d4 at 10), WIS save, target Disadvantage on next attack; gain Dirty Advantage.",
+       "source": "https://bg3.wiki/wiki/Dirty_Trick:_Vicious_Mockery"
+      },
+      {
+       "level": 9,
+       "name": "Panache",
+       "effect": "Persuasion vs Insight: enemies get Panache: Disadvantage.",
+       "source": "https://bg3.wiki/wiki/Swashbuckler"
+      }
+     ]
+    },
+    "Thief": {
+     "source": "https://bg3.wiki/wiki/Thief",
+     "patch8": false,
+     "features": [
+      {
+       "level": 3,
+       "name": "Fast Hands",
+       "effect": "An extra Bonus Action every turn, usable for any bonus action (e.g. a second off-hand attack).",
+       "source": "https://bg3.wiki/wiki/Fast_Hands"
+      }
+     ]
+    }
+   }
+  },
+  "sorcerer": {
+   "source": "https://bg3.wiki/wiki/Sorcerer",
+   "feat_levels": [
+    4,
+    8,
+    12
+   ],
+   "extra_attack_level": null,
+   "improved_extra_attack_level": null,
+   "fighting_style": null,
+   "spellcasting": "full",
+   "spell_ability": "charisma",
+   "progression": {
+    "1": {
+     "proficiency_bonus": 2,
+     "sorcery_points": 0,
+     "cantrips_known": 4,
+     "spells_known": 2,
+     "spell_slots_level_1": 2,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "2": {
+     "proficiency_bonus": 2,
+     "sorcery_points": 2,
+     "cantrips_known": 4,
+     "spells_known": 3,
+     "spell_slots_level_1": 3,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "3": {
+     "proficiency_bonus": 2,
+     "sorcery_points": 3,
+     "cantrips_known": 4,
+     "spells_known": 4,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 2,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "4": {
+     "proficiency_bonus": 2,
+     "sorcery_points": 4,
+     "cantrips_known": 5,
+     "spells_known": 5,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "5": {
+     "proficiency_bonus": 3,
+     "sorcery_points": 5,
+     "cantrips_known": 5,
+     "spells_known": 6,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 2,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "6": {
+     "proficiency_bonus": 3,
+     "sorcery_points": 6,
+     "cantrips_known": 5,
+     "spells_known": 7,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "7": {
+     "proficiency_bonus": 3,
+     "sorcery_points": 7,
+     "cantrips_known": 5,
+     "spells_known": 8,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 1,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "8": {
+     "proficiency_bonus": 3,
+     "sorcery_points": 8,
+     "cantrips_known": 5,
+     "spells_known": 9,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 2,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "9": {
+     "proficiency_bonus": 4,
+     "sorcery_points": 9,
+     "cantrips_known": 5,
+     "spells_known": 10,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 1,
+     "spell_slots_level_6": 0
+    },
+    "10": {
+     "proficiency_bonus": 4,
+     "sorcery_points": 10,
+     "cantrips_known": 6,
+     "spells_known": 11,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 2,
+     "spell_slots_level_6": 0
+    },
+    "11": {
+     "proficiency_bonus": 4,
+     "sorcery_points": 11,
+     "cantrips_known": 6,
+     "spells_known": 12,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 2,
+     "spell_slots_level_6": 1
+    },
+    "12": {
+     "proficiency_bonus": 4,
+     "sorcery_points": 12,
+     "cantrips_known": 6,
+     "spells_known": 13,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 2,
+     "spell_slots_level_6": 1
+    }
+   },
+   "progression_notes": "sorcery_points equal sorcerer level from level 2, long rest; the pool can exceed this by converting slots.",
+   "features": [
+    {
+     "level": 2,
+     "name": "Create Spell Slot",
+     "effect": "Sorcery Points to slot: 2 -> 1st, 3 -> 2nd, 5 -> 3rd, 6 -> 4th, 7 -> 5th. Create Sorcery Points: a slot gives points equal to its level.",
+     "source": "https://bg3.wiki/wiki/Sorcery_Point"
+    },
+    {
+     "level": 2,
+     "name": "Metamagic: Twinned Spell",
+     "effect": "Single-target spell targets one more creature; 1 Sorcery Point per slot level (cantrips 1). Not for Eldritch Blast after level 5, Magic Missile, AoE spells (except Hail of Thorns, Lightning Arrow), Chain Lightning, summons, self spells.",
+     "source": "https://bg3.wiki/wiki/Metamagic:_Twinned_Spell"
+    },
+    {
+     "level": 3,
+     "name": "Metamagic: Quickened Spell",
+     "effect": "3 Sorcery Points: a spell that costs an Action costs a Bonus Action instead.",
+     "source": "https://bg3.wiki/wiki/Metamagic:_Quickened_Spell"
+    },
+    {
+     "level": 3,
+     "name": "Metamagic: Heightened Spell",
+     "effect": "3 Sorcery Points: targets have Disadvantage on their first save (all targets in BG3).",
+     "source": "https://bg3.wiki/wiki/Sorcery_Point"
+    },
+    {
+     "level": 2,
+     "name": "Metamagic choices",
+     "effect": "2 Metamagic at level 2 (Careful, Distant, Extended, Twinned available), +1 at level 3 (Heightened, Quickened, Subtle unlocked), +1 at level 10.",
+     "source": "https://bg3.wiki/wiki/Sorcerer"
+    }
+   ],
+   "hit_points": {
+    "level_1": "6 + CON modifier",
+    "per_level": "4 + CON modifier"
+   },
+   "weapon_proficiencies": [
+    "Daggers",
+    "Quarterstaves",
+    "Light Crossbows"
+   ],
+   "subclasses": {
+    "Draconic Bloodline": {
+     "source": "https://bg3.wiki/wiki/Draconic_Bloodline",
+     "patch8": false,
+     "features": [
+      {
+       "level": 1,
+       "name": "Draconic Ancestry",
+       "effect": "Choose dragon colour: Black/Copper Acid, Blue/Bronze Lightning, Brass/Gold/Red Fire, Green Poison, Silver/White Cold; grants a bonus spell. Draconic Resilience: unarmoured AC 13, +1 HP per sorcerer level.",
+       "source": "https://bg3.wiki/wiki/Draconic_Bloodline"
+      },
+      {
+       "level": 6,
+       "name": "Elemental Affinity: Damage",
+       "effect": "Spells dealing your ancestry's damage type add your CHA modifier to the damage.",
+       "source": "https://bg3.wiki/wiki/Elemental_Affinity:_Damage"
+      }
+     ]
+    },
+    "Shadow Magic": {
+     "source": "https://bg3.wiki/wiki/Shadow_Magic",
+     "patch8": true,
+     "features": [
+      {
+       "level": 1,
+       "name": "Strength of the Grave",
+       "effect": "On reaching 0 HP, regain 1 HP instead of being downed (automatic). Eyes of the Dark: 24 m darkvision.",
+       "source": "https://bg3.wiki/wiki/Shadow_Magic"
+      },
+      {
+       "level": 3,
+       "name": "Eyes of the Dark: Darkness",
+       "effect": "Darkness for 2 Sorcery Points; you can see through all magical darkness.",
+       "source": "https://bg3.wiki/wiki/Shadow_Magic"
+      },
+      {
+       "level": 6,
+       "name": "Hound of Ill Omen",
+       "effect": "Bonus action + 3 Sorcery Points (short rest): summon Nimbus (33 HP, AC 18) with Ominous Bite, Umbral Tangle, etc.",
+       "source": "https://bg3.wiki/wiki/Hound_of_Ill_Omen",
+       "unverified": true,
+       "unverified_reason": "Nimbus attack damage not read"
+      },
+      {
+       "level": 11,
+       "name": "Shadow Walk",
+       "effect": "Bonus action teleport 18 m to an obscured spot; next spell that turn gets free Distant Spell (stacks with other metamagic).",
+       "source": "https://bg3.wiki/wiki/Shadow_Walk"
+      }
+     ]
+    },
+    "Storm Sorcery": {
+     "source": "https://bg3.wiki/wiki/Storm_Sorcery",
+     "patch8": false,
+     "features": [
+      {
+       "level": 1,
+       "name": "Tempestuous Magic",
+       "effect": "After casting a level 1+ spell, fly 9 m as a bonus action without opportunity attacks.",
+       "source": "https://bg3.wiki/wiki/Storm_Sorcery"
+      },
+      {
+       "level": 6,
+       "name": "Heart of the Storm",
+       "effect": "Casting a level 1+ spell that deals Lightning or Thunder damage deals (sorcerer level / 2, rounded down) Lightning or Thunder to all enemies within 6 m. Also resistance to Lightning and Thunder. Bug: also triggers on cantrips.",
+       "source": "https://bg3.wiki/wiki/Heart_of_the_Storm"
+      },
+      {
+       "level": 11,
+       "name": "Storm's Fury (passive feature)",
+       "effect": "Reaction when hit by a melee attack: deal sorcerer level Lightning to the attacker and possibly push it.",
+       "source": "https://bg3.wiki/wiki/Storm's_Fury_(passive_feature)"
+      }
+     ]
+    },
+    "Wild Magic": {
+     "source": "https://bg3.wiki/wiki/Wild_Magic_(sorcerer_subclass)",
+     "patch8": false,
+     "features": [
+      {
+       "level": 1,
+       "name": "Tides of Chaos",
+       "effect": "1 charge per short rest: Advantage on next attack roll, ability check or save; next levelled spell has 50% surge chance (normal 5%).",
+       "source": "https://bg3.wiki/wiki/Tides_of_Chaos"
+      },
+      {
+       "level": 1,
+       "name": "Wild Magic Surge",
+       "effect": "5% chance after level 1+ spells; e.g. Enchant Weapons (next attack of creatures within 6 m is a critical hit, +1d4 Force), Action Surge.",
+       "source": "https://bg3.wiki/wiki/Wild_Magic_(sorcerer_subclass)"
+      },
+      {
+       "level": 6,
+       "name": "Bend Luck",
+       "effect": "Reaction, 2 Sorcery Points: +/-1d4 to a creature's attack roll, check or save.",
+       "source": "https://bg3.wiki/wiki/Wild_Magic_(sorcerer_subclass)"
+      },
+      {
+       "level": 11,
+       "name": "Controlled Chaos",
+       "effect": "Reaction: trigger a Wild Magic surge on a nearby enemy spellcaster.",
+       "source": "https://bg3.wiki/wiki/Wild_Magic_(sorcerer_subclass)"
+      }
+     ]
+    }
+   }
+  },
+  "warlock": {
+   "source": "https://bg3.wiki/wiki/Warlock",
+   "feat_levels": [
+    4,
+    8,
+    12
+   ],
+   "extra_attack_level": null,
+   "improved_extra_attack_level": null,
+   "extra_attack_note": "Pact of the Blade warlocks get an Extra Attack with the pact weapon at level 5 (Deepened Pact); outside Honour mode it stacks with other Extra Attack sources.",
+   "fighting_style": null,
+   "spellcasting": "pact",
+   "spell_ability": "charisma",
+   "progression": {
+    "1": {
+     "proficiency_bonus": 2,
+     "invocations_known": 0,
+     "cantrips_known": 2,
+     "spells_known": 2,
+     "pact_slots": 1,
+     "pact_slot_level": 1,
+     "mystic_arcanum_level_6": 0
+    },
+    "2": {
+     "proficiency_bonus": 2,
+     "invocations_known": 2,
+     "cantrips_known": 2,
+     "spells_known": 3,
+     "pact_slots": 2,
+     "pact_slot_level": 1,
+     "mystic_arcanum_level_6": 0
+    },
+    "3": {
+     "proficiency_bonus": 2,
+     "invocations_known": 2,
+     "cantrips_known": 2,
+     "spells_known": 4,
+     "pact_slots": 2,
+     "pact_slot_level": 2,
+     "mystic_arcanum_level_6": 0
+    },
+    "4": {
+     "proficiency_bonus": 2,
+     "invocations_known": 2,
+     "cantrips_known": 3,
+     "spells_known": 5,
+     "pact_slots": 2,
+     "pact_slot_level": 2,
+     "mystic_arcanum_level_6": 0
+    },
+    "5": {
+     "proficiency_bonus": 3,
+     "invocations_known": 3,
+     "cantrips_known": 3,
+     "spells_known": 6,
+     "pact_slots": 2,
+     "pact_slot_level": 3,
+     "mystic_arcanum_level_6": 0
+    },
+    "6": {
+     "proficiency_bonus": 3,
+     "invocations_known": 3,
+     "cantrips_known": 3,
+     "spells_known": 7,
+     "pact_slots": 2,
+     "pact_slot_level": 3,
+     "mystic_arcanum_level_6": 0
+    },
+    "7": {
+     "proficiency_bonus": 3,
+     "invocations_known": 4,
+     "cantrips_known": 3,
+     "spells_known": 8,
+     "pact_slots": 2,
+     "pact_slot_level": 4,
+     "mystic_arcanum_level_6": 0
+    },
+    "8": {
+     "proficiency_bonus": 3,
+     "invocations_known": 4,
+     "cantrips_known": 3,
+     "spells_known": 9,
+     "pact_slots": 2,
+     "pact_slot_level": 4,
+     "mystic_arcanum_level_6": 0
+    },
+    "9": {
+     "proficiency_bonus": 4,
+     "invocations_known": 5,
+     "cantrips_known": 3,
+     "spells_known": 10,
+     "pact_slots": 2,
+     "pact_slot_level": 5,
+     "mystic_arcanum_level_6": 0
+    },
+    "10": {
+     "proficiency_bonus": 4,
+     "invocations_known": 5,
+     "cantrips_known": 4,
+     "spells_known": 11,
+     "pact_slots": 2,
+     "pact_slot_level": 5,
+     "mystic_arcanum_level_6": 0
+    },
+    "11": {
+     "proficiency_bonus": 4,
+     "invocations_known": 5,
+     "cantrips_known": 4,
+     "spells_known": 12,
+     "pact_slots": 3,
+     "pact_slot_level": 5,
+     "mystic_arcanum_level_6": 1
+    },
+    "12": {
+     "proficiency_bonus": 4,
+     "invocations_known": 6,
+     "cantrips_known": 4,
+     "spells_known": 13,
+     "pact_slots": 3,
+     "pact_slot_level": 5,
+     "mystic_arcanum_level_6": 1
+    }
+   },
+   "progression_notes": "pact_slots are always cast at pact_slot_level and recharge on short rest. Mystic Arcanum: one 6th level spell once per long rest from level 11.",
+   "features": [
+    {
+     "level": 1,
+     "name": "Eldritch Blast",
+     "effect": "Cantrip: 1d10 Force per beam, spell attack, 18 m; 2 beams at character level 5, 3 at 10. Invocations and Hex apply per beam.",
+     "source": "https://bg3.wiki/wiki/Eldritch_Blast"
+    },
+    {
+     "level": 2,
+     "name": "Agonising Blast",
+     "effect": "Eldritch Invocation: add CHA modifier to Eldritch Blast damage (each beam), unless negative.",
+     "source": "https://bg3.wiki/wiki/Agonising_Blast"
+    },
+    {
+     "level": 2,
+     "name": "Repelling Blast",
+     "effect": "Eldritch Invocation: Eldritch Blast pushes 4.5 m (once per cast).",
+     "source": "https://bg3.wiki/wiki/Eldritch_Invocation"
+    },
+    {
+     "level": 3,
+     "name": "Pact of the Blade",
+     "effect": "Summon (battleaxe, glaive, greatsword, rapier, trident, warhammer; Hexblade also flail, maul, sickle) or bind a weapon: proficient, magical, uses CHA for attack and damage rolls (weapon action DC still STR/DEX).",
+     "source": "https://bg3.wiki/wiki/Pact_of_the_Blade"
+    },
+    {
+     "level": 5,
+     "name": "Deepened Pact",
+     "effect": "Blade: Extra Attack with the pact weapon (also Hexed weapon). Chain: familiar gains Extra Attack. Tome: Animate Dead, Haste, Call Lightning once per long rest.",
+     "source": "https://bg3.wiki/wiki/Deepened_Pact"
+    },
+    {
+     "level": 12,
+     "name": "Lifedrinker",
+     "effect": "Eldritch Invocation (level 12): melee weapon attacks deal additional Necrotic damage equal to CHA modifier (DRS). Does not require Pact of the Blade in BG3.",
+     "source": "https://bg3.wiki/wiki/Lifedrinker"
+    }
+   ],
+   "hit_points": {
+    "level_1": "8 + CON modifier",
+    "per_level": "5 + CON modifier"
+   },
+   "weapon_proficiencies": [
+    "Simple weapons"
+   ],
+   "subclasses": {
+    "The Archfey": {
+     "source": "https://bg3.wiki/wiki/The_Archfey",
+     "patch8": false,
+     "features": [
+      {
+       "level": 1,
+       "name": "Fey Presence",
+       "effect": "Charm or Frighten nearby foes (short rest).",
+       "source": "https://bg3.wiki/wiki/The_Archfey"
+      }
+     ]
+    },
+    "The Fiend": {
+     "source": "https://bg3.wiki/wiki/The_Fiend",
+     "patch8": false,
+     "features": [
+      {
+       "level": 1,
+       "name": "Dark One's Blessing",
+       "effect": "Reducing a hostile creature to 0 HP gives CHA modifier + warlock level temp HP. Expanded spells: Burning Hands, Command, Scorching Ray, Fireball, etc.",
+       "source": "https://bg3.wiki/wiki/The_Fiend"
+      }
+     ]
+    },
+    "The Great Old One": {
+     "source": "https://bg3.wiki/wiki/The_Great_Old_One",
+     "patch8": false,
+     "features": [
+      {
+       "level": 1,
+       "name": "Mortal Reminder",
+       "effect": "On a critical hit, the creature and enemies within 3 m make a WIS save or are Frightened until end of their next turn.",
+       "source": "https://bg3.wiki/wiki/Mortal_Reminder"
+      },
+      {
+       "level": 6,
+       "name": "Entropic Ward",
+       "effect": "Reaction: impose Disadvantage on an attack against you; if it misses, Advantage on your next attack against the attacker.",
+       "source": "https://bg3.wiki/wiki/The_Great_Old_One"
+      }
+     ]
+    },
+    "The Hexblade": {
+     "source": "https://bg3.wiki/wiki/The_Hexblade",
+     "patch8": true,
+     "features": [
+      {
+       "level": 1,
+       "name": "Hex Warrior",
+       "effect": "Medium armour, shields, martial weapons proficiency; Bind Hexed Weapon lets proficient weapon attacks use CHA (even if lower).",
+       "source": "https://bg3.wiki/wiki/Hex_Warrior"
+      },
+      {
+       "level": 1,
+       "name": "Bind Hexed Weapon",
+       "effect": "Action: bind main-hand weapon, magical, uses CHA; on attack, fixed 20% chance (d20 >= 17, unmodified) to apply Hexblade's Curse to a target not already cursed.",
+       "source": "https://bg3.wiki/wiki/Bind_Hexed_Weapon"
+      },
+      {
+       "level": 1,
+       "name": "Hexblade's Curse",
+       "effect": "Bonus action, short rest, 10 turns: add your proficiency bonus to damage rolls against the target and your critical threshold against it is reduced by 1; heal warlock level + CHA modifier if it dies.",
+       "source": "https://bg3.wiki/wiki/Hexblade's_Curse"
+      },
+      {
+       "level": 6,
+       "name": "Accursed Spectre",
+       "effect": "Once per long rest, raise a spectre from a creature slain while cursed (size determines Feeble/Mundane/Primordial spectre).",
+       "source": "https://bg3.wiki/wiki/Accursed_Spectre",
+       "unverified": true,
+       "unverified_reason": "spectre damage not read"
+      },
+      {
+       "level": 10,
+       "name": "Armour of Hexes",
+       "effect": "Attacks from your cursed target have a 50% chance to be nullified.",
+       "source": "https://bg3.wiki/wiki/The_Hexblade"
+      }
+     ]
+    }
+   }
+  },
+  "wizard": {
+   "source": "https://bg3.wiki/wiki/Wizard",
+   "feat_levels": [
+    4,
+    8,
+    12
+   ],
+   "extra_attack_level": null,
+   "improved_extra_attack_level": null,
+   "extra_attack_note": "Bladesinging gains Extra Attack at wizard level 6 (cannot replace an attack with a cantrip).",
+   "fighting_style": null,
+   "spellcasting": "full",
+   "spell_ability": "intelligence",
+   "progression": {
+    "1": {
+     "proficiency_bonus": 2,
+     "arcane_recovery_charges": 1,
+     "cantrips_known": 3,
+     "spells_learned": 6,
+     "spell_slots_level_1": 2,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "2": {
+     "proficiency_bonus": 2,
+     "arcane_recovery_charges": 1,
+     "cantrips_known": 3,
+     "spells_learned": 8,
+     "spell_slots_level_1": 3,
+     "spell_slots_level_2": 0,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "3": {
+     "proficiency_bonus": 2,
+     "arcane_recovery_charges": 2,
+     "cantrips_known": 3,
+     "spells_learned": 10,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 2,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "4": {
+     "proficiency_bonus": 2,
+     "arcane_recovery_charges": 2,
+     "cantrips_known": 4,
+     "spells_learned": 12,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 0,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "5": {
+     "proficiency_bonus": 3,
+     "arcane_recovery_charges": 3,
+     "cantrips_known": 4,
+     "spells_learned": 14,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 2,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "6": {
+     "proficiency_bonus": 3,
+     "arcane_recovery_charges": 3,
+     "cantrips_known": 4,
+     "spells_learned": 16,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 0,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "7": {
+     "proficiency_bonus": 3,
+     "arcane_recovery_charges": 4,
+     "cantrips_known": 4,
+     "spells_learned": 18,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 1,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "8": {
+     "proficiency_bonus": 3,
+     "arcane_recovery_charges": 4,
+     "cantrips_known": 4,
+     "spells_learned": 20,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 2,
+     "spell_slots_level_5": 0,
+     "spell_slots_level_6": 0
+    },
+    "9": {
+     "proficiency_bonus": 4,
+     "arcane_recovery_charges": 5,
+     "cantrips_known": 4,
+     "spells_learned": 22,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 1,
+     "spell_slots_level_6": 0
+    },
+    "10": {
+     "proficiency_bonus": 4,
+     "arcane_recovery_charges": 5,
+     "cantrips_known": 5,
+     "spells_learned": 24,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 2,
+     "spell_slots_level_6": 0
+    },
+    "11": {
+     "proficiency_bonus": 4,
+     "arcane_recovery_charges": 6,
+     "cantrips_known": 5,
+     "spells_learned": 26,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 2,
+     "spell_slots_level_6": 1
+    },
+    "12": {
+     "proficiency_bonus": 4,
+     "arcane_recovery_charges": 6,
+     "cantrips_known": 5,
+     "spells_learned": 28,
+     "spell_slots_level_1": 4,
+     "spell_slots_level_2": 3,
+     "spell_slots_level_3": 3,
+     "spell_slots_level_4": 3,
+     "spell_slots_level_5": 2,
+     "spell_slots_level_6": 1
+    }
+   },
+   "progression_notes": "arcane_recovery_charges = combined slot levels restorable once per day out of combat (no slots above 5th).",
+   "features": [
+    {
+     "level": 1,
+     "name": "Arcane Recovery",
+     "effect": "Out of combat, once per day, recover expended spell slots totalling arcane_recovery_charges levels (max 5th level slots).",
+     "source": "https://bg3.wiki/wiki/Wizard"
+    }
+   ],
+   "hit_points": {
+    "level_1": "6 + CON modifier",
+    "per_level": "4 + CON modifier"
+   },
+   "weapon_proficiencies": [
+    "Daggers",
+    "Quarterstaves",
+    "Light Crossbows"
+   ],
+   "subclasses": {
+    "Abjuration School": {
+     "source": "https://bg3.wiki/wiki/Abjuration_School",
+     "patch8": false,
+     "features": [
+      {
+       "level": 2,
+       "name": "Arcane Ward",
+       "effect": "Ward blocks damage equal to its intensity, then loses 1; starts at wizard level after long rest, +spell level per Abjuration spell, max 2x wizard level; +wizard level on short rest from level 10.",
+       "source": "https://bg3.wiki/wiki/Abjuration_School"
+      }
+     ]
+    },
+    "Bladesinging": {
+     "source": "https://bg3.wiki/wiki/Bladesinging",
+     "patch8": true,
+     "resources": {
+      "bladesong_power": {
+       "2": 2,
+       "5": 3,
+       "9": 4,
+       "recharge": "long rest"
+      }
+     },
+     "features": [
+      {
+       "level": 2,
+       "name": "Training in War and Song",
+       "effect": "Light armour, Performance, and Dagger, Longsword, Rapier, Scimitar, Shortsword, Sickle proficiency.",
+       "source": "https://bg3.wiki/wiki/Training_in_War_and_Song"
+      },
+      {
+       "level": 2,
+       "name": "Bladesong",
+       "effect": "Costs Bladesong Power (2 at level 2, 3 at 5, 4 at 9; long rest), 10 turns: +2 AC and +2 CON saves (+3 at 5, +4 at 9), +3 m movement, Advantage on Acrobatics. Requires main-hand dagger/longsword/rapier/scimitar/shortsword/sickle, no medium/heavy armour or shield. Casting level 1+ spells (not weapon attacks) builds Bladesong Damage Charges; weapon attacks build Healing Charges.",
+       "source": "https://bg3.wiki/wiki/Bladesong"
+      },
+      {
+       "level": 2,
+       "name": "Bladesong Climax",
+       "effect": "Bonus action + 3 m movement, ends Bladesong: jump 9 m, 1d6 Force + 1d6 per Damage Charge in 3 m radius, INT save for half; heals 1d6 + 1d6 per Healing Charge.",
+       "source": "https://bg3.wiki/wiki/Bladesong_Climax"
+      },
+      {
+       "level": 6,
+       "name": "Extra Attack",
+       "effect": "One additional attack after an Action attack.",
+       "source": "https://bg3.wiki/wiki/Extra_Attack"
+      },
+      {
+       "level": 10,
+       "name": "Song of Defence",
+       "effect": "While Bladesinging, expend a spell slot to reduce damage taken by 5 per slot level.",
+       "source": "https://bg3.wiki/wiki/Bladesinging"
+      }
+     ]
+    },
+    "Conjuration School": {
+     "source": "https://bg3.wiki/wiki/Conjuration_School",
+     "patch8": false,
+     "features": [
+      {
+       "level": 10,
+       "name": "Focused Conjuration",
+       "effect": "Damage doesn't break concentration on Conjuration spells.",
+       "source": "https://bg3.wiki/wiki/Conjuration_School"
+      }
+     ]
+    },
+    "Divination School": {
+     "source": "https://bg3.wiki/wiki/Divination_School",
+     "patch8": false,
+     "features": [
+      {
+       "level": 2,
+       "name": "Portent",
+       "effect": "Two Portent dice after long rest (three from level 6); reaction to replace an attack roll or save near you.",
+       "source": "https://bg3.wiki/wiki/Divination_School"
+      }
+     ]
+    },
+    "Enchantment School": {
+     "source": "https://bg3.wiki/wiki/Enchantment_School",
+     "patch8": false,
+     "features": [
+      {
+       "level": 10,
+       "name": "Split Enchantment",
+       "effect": "Single-target Enchantment spells can target 2 creatures.",
+       "source": "https://bg3.wiki/wiki/Enchantment_School"
+      }
+     ]
+    },
+    "Evocation School": {
+     "source": "https://bg3.wiki/wiki/Evocation_School",
+     "patch8": false,
+     "features": [
+      {
+       "level": 2,
+       "name": "Sculpt Spells",
+       "effect": "Allies automatically succeed saves against your Evocation spells and take no damage.",
+       "source": "https://bg3.wiki/wiki/Evocation_School"
+      },
+      {
+       "level": 6,
+       "name": "Potent Cantrip",
+       "effect": "Creatures that succeed on a save against your damaging cantrip take half damage (Acid Splash, Bursting Sinew, Poison Spray, Psychic Rend, Sacred Flame, Toll the Dead, Vicious Mockery).",
+       "source": "https://bg3.wiki/wiki/Potent_Cantrip"
+      },
+      {
+       "level": 10,
+       "name": "Empowered Evocation",
+       "effect": "Add INT modifier to damage rolls of all Evocation spells, including each Magic Missile dart, each Scorching Ray, each Eldritch Blast beam and Evocation cantrips such as Fire Bolt.",
+       "source": "https://bg3.wiki/wiki/Empowered_Evocation"
+      }
+     ]
+    },
+    "Illusion School": {
+     "source": "https://bg3.wiki/wiki/Illusion_School",
+     "patch8": false,
+     "features": [
+      {
+       "level": 10,
+       "name": "Illusory Self",
+       "effect": "Make an attack against you miss.",
+       "source": "https://bg3.wiki/wiki/Illusion_School"
+      }
+     ]
+    },
+    "Necromancy School": {
+     "source": "https://bg3.wiki/wiki/Necromancy_School",
+     "patch8": false,
+     "features": [
+      {
+       "level": 2,
+       "name": "Grim Harvest",
+       "effect": "Once per turn, killing a creature with a spell heals 2 x slot level (3 x for Necromancy).",
+       "source": "https://bg3.wiki/wiki/Necromancy_School"
+      },
+      {
+       "level": 6,
+       "name": "Undead Thralls: Better Summons",
+       "effect": "Animate Dead creatures get + wizard level HP and add your proficiency bonus to damage (and use it for attack rolls); raise an additional corpse.",
+       "source": "https://bg3.wiki/wiki/Undead_Thralls:_Better_Summons"
+      }
+     ]
+    },
+    "Transmutation School": {
+     "source": "https://bg3.wiki/wiki/Transmutation_School",
+     "patch8": false,
+     "features": [
+      {
+       "level": 6,
+       "name": "Transmuter's Stone",
+       "effect": "Create a stone granting CON save proficiency, darkvision, speed or an elemental resistance.",
+       "source": "https://bg3.wiki/wiki/Transmutation_School"
+      }
+     ]
+    }
+   }
+  }
+ },
+ "fighting_styles": {
+  "Archery": {
+   "source": "https://bg3.wiki/wiki/Archery",
+   "effect": "+2 bonus to attack rolls with ranged weapons."
+  },
+  "Defence": {
+   "source": "https://bg3.wiki/wiki/Fighting_Style",
+   "effect": "+1 bonus to Armour Class while wearing armour."
+  },
+  "Duelling": {
+   "source": "https://bg3.wiki/wiki/Duelling",
+   "effect": "Wielding a melee weapon that is not Two-Handed in one hand and no weapon in the other: +2 damage with that weapon. A shield in the free hand still allows the bonus."
+  },
+  "Great Weapon Fighting": {
+   "source": "https://bg3.wiki/wiki/Great_Weapon_Fighting",
+   "effect": "When you roll a 1 or 2 on a damage die for an attack with a Two-Handed melee weapon (also Versatile with empty off-hand), that die is rerolled once. Unlike 5e, added damage dice (Superiority Die, Divine Smite, coatings) are also rerolled."
+  },
+  "Protection": {
+   "source": "https://bg3.wiki/wiki/Fighting_Style",
+   "effect": "With a shield, use a reaction to impose Disadvantage on an enemy attacking an ally within 1.5 m (5 ft)."
+  },
+  "Two-Weapon Fighting": {
+   "source": "https://bg3.wiki/wiki/Two-Weapon_Fighting",
+   "effect": "Add your ability score modifier to the damage of off-hand attacks. Gives no benefit to thrown weapons (BG3 already adds the modifier to throws)."
+  },
+  "_overview_source": "https://bg3.wiki/wiki/Fighting_Style"
+ },
+ "races": {
+  "Human": {
+   "source": "https://bg3.wiki/wiki/Human",
+   "damage_traits": [
+    "Civil Militia proficiencies only (no damage trait); Human Versatility: one extra skill, +25% carrying capacity"
+   ],
+   "weapon_proficiencies": [
+    "Spears",
+    "Pikes",
+    "Halberds",
+    "Glaives"
+   ],
+   "armour_proficiencies": [
+    "Light Armour",
+    "Shields"
+   ]
+  },
+  "High Elf": {
+   "source": "https://bg3.wiki/wiki/Elf",
+   "damage_traits": [
+    "One Wizard cantrip of choice (e.g. Fire Bolt); racial cantrips from elf/half-elf always use Intelligence",
+    "Fey Ancestry, Darkvision 12 m"
+   ],
+   "weapon_proficiencies": [
+    "Shortswords",
+    "Longswords",
+    "Shortbows",
+    "Longbows"
+   ]
+  },
+  "Wood Elf": {
+   "source": "https://bg3.wiki/wiki/Elf",
+   "damage_traits": [
+    "Fleet of Foot: base speed 10.5 m",
+    "Fey Ancestry, Darkvision 12 m"
+   ],
+   "weapon_proficiencies": [
+    "Shortswords",
+    "Longswords",
+    "Shortbows",
+    "Longbows"
+   ]
+  },
+  "Lolth-Sworn Drow": {
+   "source": "https://bg3.wiki/wiki/Drow",
+   "damage_traits": [
+    "Drow Magic: Dancing Lights (level 1), Faerie Fire (level 3, long rest; Advantage on attacks vs affected), Darkness (level 5, long rest)",
+    "Superior Darkvision 24 m"
+   ],
+   "weapon_proficiencies": [
+    "Rapiers",
+    "Shortswords",
+    "Hand Crossbows"
+   ]
+  },
+  "Seldarine Drow": {
+   "source": "https://bg3.wiki/wiki/Drow",
+   "damage_traits": [
+    "Same mechanics as Lolth-Sworn Drow (differences are dialogue and cleric deities only)"
+   ],
+   "weapon_proficiencies": [
+    "Rapiers",
+    "Shortswords",
+    "Hand Crossbows"
+   ]
+  },
+  "High Half-Elf": {
+   "source": "https://bg3.wiki/wiki/Half-Elf",
+   "damage_traits": [
+    "One Wizard cantrip of choice (uses Intelligence)",
+    "Darkvision 12 m"
+   ],
+   "weapon_proficiencies": [
+    "Spears",
+    "Pikes",
+    "Halberds",
+    "Glaives"
+   ],
+   "armour_proficiencies": [
+    "Light Armour",
+    "Shields"
+   ]
+  },
+  "Wood Half-Elf": {
+   "source": "https://bg3.wiki/wiki/Half-Elf",
+   "damage_traits": [
+    "Fleet of Foot: base speed 10.5 m"
+   ],
+   "weapon_proficiencies": [
+    "Spears",
+    "Pikes",
+    "Halberds",
+    "Glaives"
+   ],
+   "armour_proficiencies": [
+    "Light Armour",
+    "Shields"
+   ]
+  },
+  "Drow Half-Elf": {
+   "source": "https://bg3.wiki/wiki/Half-Elf",
+   "damage_traits": [
+    "Drow Magic: Dancing Lights (1), Faerie Fire (3), Darkness (5), Charisma based"
+   ],
+   "weapon_proficiencies": [
+    "Spears",
+    "Pikes",
+    "Halberds",
+    "Glaives"
+   ],
+   "armour_proficiencies": [
+    "Light Armour",
+    "Shields"
+   ]
+  },
+  "Half-Orc": {
+   "source": "https://bg3.wiki/wiki/Half-Orc",
+   "damage_traits": [
+    "Savage Attacks: on a melee weapon critical hit, roll one extra weapon damage die (one die even for 2d6 weapons; also off-hand; not unarmed or Wild Shape; outside Honour mode also adds a second extra die to Divine Smite and reaction Sneak Attack crits). Stacks with Brutal Critical.",
+    "Relentless Endurance: drop to 1 HP instead of downed, once per long rest",
+    "Darkvision 12 m"
+   ],
+   "weapon_proficiencies": [],
+   "source_savage_attacks": "https://bg3.wiki/wiki/Savage_Attacks"
+  },
+  "Lightfoot Halfling": {
+   "source": "https://bg3.wiki/wiki/Halfling",
+   "damage_traits": [
+    "Halfling Luck: when you roll a 1 on an attack roll, ability check or save, reroll and use the new roll (with Advantage, each 1 is rerolled)",
+    "Naturally Stealthy: Advantage on Stealth"
+   ],
+   "weapon_proficiencies": [],
+   "source_halfling_luck": "https://bg3.wiki/wiki/Halfling_Luck"
+  },
+  "Strongheart Halfling": {
+   "source": "https://bg3.wiki/wiki/Halfling",
+   "damage_traits": [
+    "Halfling Luck (see Lightfoot)",
+    "Strongheart Resilience: Advantage vs Poisoned, Resistance to Poison"
+   ],
+   "weapon_proficiencies": []
+  },
+  "Gold Dwarf": {
+   "source": "https://bg3.wiki/wiki/Dwarf",
+   "damage_traits": [
+    "Dwarven Toughness: +1 max HP per level",
+    "Dwarven Resilience: Advantage vs Poisoned, Resistance to Poison",
+    "Darkvision 12 m"
+   ],
+   "weapon_proficiencies": [
+    "Battleaxes",
+    "Handaxes",
+    "Light Hammers",
+    "Warhammers"
+   ]
+  },
+  "Shield Dwarf": {
+   "source": "https://bg3.wiki/wiki/Dwarf",
+   "damage_traits": [
+    "Dwarven Armour Training (light and medium armour)",
+    "Dwarven Resilience: Advantage vs Poisoned, Resistance to Poison"
+   ],
+   "weapon_proficiencies": [
+    "Battleaxes",
+    "Handaxes",
+    "Light Hammers",
+    "Warhammers"
+   ],
+   "armour_proficiencies": [
+    "Light Armour",
+    "Medium Armour"
+   ]
+  },
+  "Duergar": {
+   "source": "https://bg3.wiki/wiki/Dwarf",
+   "damage_traits": [
+    "Duergar Magic: Enlarge (level 3, long rest, no concentration) and Invisibility (level 5, per combat)",
+    "Dwarven Resilience: Resistance to Poison",
+    "Superior Darkvision 24 m"
+   ],
+   "weapon_proficiencies": [
+    "Battleaxes",
+    "Handaxes",
+    "Light Hammers",
+    "Warhammers"
+   ],
+   "unverified": true,
+   "unverified_parts": "Enlarge's damage effect was not read"
+  },
+  "Forest Gnome": {
+   "source": "https://bg3.wiki/wiki/Gnome",
+   "damage_traits": [
+    "Gnome Cunning: Advantage on INT/WIS/CHA saves",
+    "Speak with Animals at will"
+   ],
+   "weapon_proficiencies": []
+  },
+  "Deep Gnome": {
+   "source": "https://bg3.wiki/wiki/Gnome",
+   "damage_traits": [
+    "Gnome Cunning",
+    "Superior Darkvision 24 m",
+    "Stone Camouflage: Advantage on Stealth"
+   ],
+   "weapon_proficiencies": []
+  },
+  "Rock Gnome": {
+   "source": "https://bg3.wiki/wiki/Gnome",
+   "damage_traits": [
+    "Gnome Cunning",
+    "Expertise in History"
+   ],
+   "weapon_proficiencies": []
+  },
+  "Asmodeus Tiefling": {
+   "source": "https://bg3.wiki/wiki/Tiefling",
+   "damage_traits": [
+    "Hellish Resistance: Resistance to Fire",
+    "Infernal Legacy: Produce Flame (level 1, uses Wisdom), Hellish Rebuke (level 3, cast as a level 2 slot, long rest), Darkness (level 5)"
+   ],
+   "weapon_proficiencies": []
+  },
+  "Mephistopheles Tiefling": {
+   "source": "https://bg3.wiki/wiki/Tiefling",
+   "damage_traits": [
+    "Hellish Resistance: Resistance to Fire",
+    "Legacy of Cania: Mage Hand (1), Burning Hands (3, cast as level 2 slot, long rest), Flame Blade (5, long rest), Charisma based"
+   ],
+   "weapon_proficiencies": []
+  },
+  "Zariel Tiefling": {
+   "source": "https://bg3.wiki/wiki/Tiefling",
+   "damage_traits": [
+    "Hellish Resistance: Resistance to Fire",
+    "Legacy of Avernus: Thaumaturgy (1), Searing Smite (3, cast as level 2 slot, long rest), Branding Smite (5, long rest), Charisma based"
+   ],
+   "weapon_proficiencies": []
+  },
+  "Githyanki": {
+   "source": "https://bg3.wiki/wiki/Githyanki",
+   "damage_traits": [
+    "Githyanki Psionics: Mage Hand (1), Jump (3), Misty Step (5)",
+    "Astral Knowledge"
+   ],
+   "weapon_proficiencies": [
+    "Shortswords",
+    "Longswords",
+    "Greatswords"
+   ],
+   "armour_proficiencies": [
+    "Light Armour",
+    "Medium Armour"
+   ]
+  },
+  "Black Dragonborn": {
+   "source": "https://bg3.wiki/wiki/Dragonborn",
+   "damage_traits": [
+    "Acid Breath: action, 5 m line, 2d6 Acid (3d6 at character level 6, 4d6 at 11), DEX save half, DC 8 + CON modifier + proficiency, recharge short rest",
+    "Draconic Ancestry: Resistance to Acid"
+   ],
+   "weapon_proficiencies": [],
+   "source_breath": "https://bg3.wiki/wiki/Acid_Breath"
+  },
+  "Copper Dragonborn": {
+   "source": "https://bg3.wiki/wiki/Dragonborn",
+   "damage_traits": [
+    "Acid Breath: action, 5 m line, 2d6 Acid (3d6 at character level 6, 4d6 at 11), DEX save half, DC 8 + CON modifier + proficiency, recharge short rest",
+    "Draconic Ancestry: Resistance to Acid"
+   ],
+   "weapon_proficiencies": [],
+   "source_breath": "https://bg3.wiki/wiki/Acid_Breath"
+  },
+  "Blue Dragonborn": {
+   "source": "https://bg3.wiki/wiki/Dragonborn",
+   "damage_traits": [
+    "Lightning Breath: action, 5 m line, 2d6 Lightning (3d6 at character level 6, 4d6 at 11), DEX save half, DC 8 + CON modifier + proficiency, recharge short rest",
+    "Draconic Ancestry: Resistance to Lightning"
+   ],
+   "weapon_proficiencies": [],
+   "source_breath": "https://bg3.wiki/wiki/Lightning_Breath"
+  },
+  "Bronze Dragonborn": {
+   "source": "https://bg3.wiki/wiki/Dragonborn",
+   "damage_traits": [
+    "Lightning Breath: action, 5 m line, 2d6 Lightning (3d6 at character level 6, 4d6 at 11), DEX save half, DC 8 + CON modifier + proficiency, recharge short rest",
+    "Draconic Ancestry: Resistance to Lightning"
+   ],
+   "weapon_proficiencies": [],
+   "source_breath": "https://bg3.wiki/wiki/Lightning_Breath"
+  },
+  "Brass Dragonborn": {
+   "source": "https://bg3.wiki/wiki/Dragonborn",
+   "damage_traits": [
+    "Fire Breath (Line): action, 5 m line, 2d6 Fire (3d6 at character level 6, 4d6 at 11), DEX save half, DC 8 + CON modifier + proficiency, recharge short rest",
+    "Draconic Ancestry: Resistance to Fire"
+   ],
+   "weapon_proficiencies": [],
+   "source_breath": "https://bg3.wiki/wiki/Fire_Breath_(Line)"
+  },
+  "Gold Dragonborn": {
+   "source": "https://bg3.wiki/wiki/Dragonborn",
+   "damage_traits": [
+    "Fire Breath (Cone): action, 5 m cone, 2d6 Fire (3d6 at character level 6, 4d6 at 11), DEX save half, DC 8 + CON modifier + proficiency, recharge short rest",
+    "Draconic Ancestry: Resistance to Fire"
+   ],
+   "weapon_proficiencies": [],
+   "source_breath": "https://bg3.wiki/wiki/Fire_Breath_(Cone)"
+  },
+  "Red Dragonborn": {
+   "source": "https://bg3.wiki/wiki/Dragonborn",
+   "damage_traits": [
+    "Fire Breath (Cone): action, 5 m cone, 2d6 Fire (3d6 at character level 6, 4d6 at 11), DEX save half, DC 8 + CON modifier + proficiency, recharge short rest",
+    "Draconic Ancestry: Resistance to Fire"
+   ],
+   "weapon_proficiencies": [],
+   "source_breath": "https://bg3.wiki/wiki/Fire_Breath_(Cone)"
+  },
+  "Green Dragonborn": {
+   "source": "https://bg3.wiki/wiki/Dragonborn",
+   "damage_traits": [
+    "Poison Breath: action, 5 m cone, 2d6 Poison (3d6 at character level 6, 4d6 at 11), DEX save half, DC 8 + CON modifier + proficiency, recharge short rest",
+    "Draconic Ancestry: Resistance to Poison"
+   ],
+   "weapon_proficiencies": [],
+   "source_breath": "https://bg3.wiki/wiki/Poison_Breath"
+  },
+  "Silver Dragonborn": {
+   "source": "https://bg3.wiki/wiki/Dragonborn",
+   "damage_traits": [
+    "Frost Breath: action, 5 m cone, 2d6 Cold (3d6 at character level 6, 4d6 at 11), DEX save half, DC 8 + CON modifier + proficiency, recharge short rest",
+    "Draconic Ancestry: Resistance to Cold"
+   ],
+   "weapon_proficiencies": [],
+   "source_breath": "https://bg3.wiki/wiki/Frost_Breath"
+  },
+  "White Dragonborn": {
+   "source": "https://bg3.wiki/wiki/Dragonborn",
+   "damage_traits": [
+    "Frost Breath: action, 5 m cone, 2d6 Cold (3d6 at character level 6, 4d6 at 11), DEX save half, DC 8 + CON modifier + proficiency, recharge short rest",
+    "Draconic Ancestry: Resistance to Cold"
+   ],
+   "weapon_proficiencies": [],
+   "source_breath": "https://bg3.wiki/wiki/Frost_Breath"
+  },
+  "_note": "Every race gets +2 to one ability and +1 to another, freely assigned (Races page). Racial spells are once per long rest unless noted."
+ },
+ "feats": {
+  "Ability Improvement": {
+   "source": "https://bg3.wiki/wiki/Feats#Ability_Improvement",
+   "effect": "+2 to one ability score or +1 to two, max 20."
+  },
+  "Actor": {
+   "source": "https://bg3.wiki/wiki/Feats#Actor",
+   "effect": "+1 CHA (max 20); expertise in Deception and Performance.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Actor"
+   ]
+  },
+  "Alert": {
+   "source": "https://bg3.wiki/wiki/Feats#Alert",
+   "effect": "+5 Initiative; can't be Surprised.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Alert"
+   ]
+  },
+  "Athlete": {
+   "source": "https://bg3.wiki/wiki/Feats#Athlete",
+   "effect": "+1 STR or DEX (max 20); standing up from Prone uses much less movement; jump distance +50%.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Athlete:_Standing_Up"
+   ]
+  },
+  "Charger": {
+   "source": "https://bg3.wiki/wiki/Feats#Charger",
+   "effect": "Charger: Weapon Attack (Action + Bonus Action): charge up to 9 m without provoking opportunity attacks and make a melee weapon attack dealing normal weapon damage + 5 to the first creature in the path; benefits from Extra Attack. Charger: Shove variant.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Charger:_Weapon_Attack"
+   ]
+  },
+  "Crossbow Expert": {
+   "source": "https://bg3.wiki/wiki/Feats#Crossbow_Expert",
+   "effect": "Point-Blank: crossbow attacks in melee range have no Disadvantage (only helps with a single adjacent enemy). Wounding: Piercing Shot's Gaping Wounds last twice as long. No bonus-action hand crossbow attack in BG3.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Crossbow_Expert:_Point-Blank",
+    "https://bg3.wiki/wiki/Crossbow_Expert:_Wounding"
+   ]
+  },
+  "Defensive Duellist": {
+   "source": "https://bg3.wiki/wiki/Feats#Defensive_Duellist",
+   "effect": "Reaction when hit in melee with a proficient finesse weapon: + proficiency bonus to AC. (Feats table: requires DEX 13; 5e changes page says the prerequisite is ignored.)",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Defensive_Duellist"
+   ]
+  },
+  "Dual Wielder": {
+   "source": "https://bg3.wiki/wiki/Feats#Dual_Wielder",
+   "effect": "Two-Weapon Fighting with non-Light one-handed weapons (not Two-Handed); +1 AC while wielding a melee weapon in each hand. Does not add the ability modifier to off-hand damage (that needs the Two-Weapon Fighting style).",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Dual_Wielder",
+    "https://bg3.wiki/wiki/Dual_Wielder:_Bonus_Armour_Class"
+   ]
+  },
+  "Dungeon Delver": {
+   "source": "https://bg3.wiki/wiki/Feats#Dungeon_Delver",
+   "effect": "Advantage on Perception to find hidden objects; resistance to trap damage."
+  },
+  "Durable": {
+   "source": "https://bg3.wiki/wiki/Feats#Durable",
+   "effect": "+1 CON (max 20); regain full HP on short rest.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Durable"
+   ]
+  },
+  "Elemental Adept": {
+   "source": "https://bg3.wiki/wiki/Feats#Elemental_Adept",
+   "effect": "Choose Acid, Cold, Lightning, Fire or Thunder: your spells and attacks ignore resistance to that type, and damage dice of that type from spells can't roll a 1 (1 counts as 2; bug: also non-spell attacks of that type such as breath weapons). No spellcaster requirement.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Elemental_Adept:_Fire"
+   ]
+  },
+  "Great Weapon Master": {
+   "source": "https://bg3.wiki/wiki/Feats#Great_Weapon_Master",
+   "effect": "Bonus Attack: after a melee weapon critical hit or kill, make a melee weapon attack as a Bonus Action that turn (any melee weapon; can trigger multiple times per turn but not from itself). All In (toggle): with a proficient melee weapon held in both hands (Two-Handed or Versatile), -5 to attack rolls and +10 damage.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Great_Weapon_Master:_All_In",
+    "https://bg3.wiki/wiki/Great_Weapon_Master:_Bonus_Attack"
+   ]
+  },
+  "Heavily Armoured": {
+   "source": "https://bg3.wiki/wiki/Feats#Heavily_Armoured",
+   "effect": "+1 STR (max 20); Heavy Armour proficiency. Requires Medium Armour proficiency.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Heavily_Armoured"
+   ]
+  },
+  "Heavy Armour Master": {
+   "source": "https://bg3.wiki/wiki/Feats#Heavy_Armour_Master",
+   "effect": "+1 STR (max 20); while wearing heavy armour incoming non-magical damage reduced by 3 (bug: all physical damage). Requires Heavy Armour proficiency.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Heavy_Armour_Master"
+   ]
+  },
+  "Lightly Armoured": {
+   "source": "https://bg3.wiki/wiki/Feats#Lightly_Armoured",
+   "effect": "+1 STR or DEX (max 20); Light Armour proficiency.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Lightly_Armoured"
+   ]
+  },
+  "Lucky": {
+   "source": "https://bg3.wiki/wiki/Feats#Lucky",
+   "effect": "3 Luck Points per long rest: spend one to gain Advantage on your next ability check, or (reaction) Advantage on an attack roll or saving throw, or make an enemy reroll its attack roll. Advantage is gained before the roll, so it enables Sneak Attack.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Lucky_(reactions)",
+    "https://bg3.wiki/wiki/Lucky_(ability_check)",
+    "https://bg3.wiki/wiki/Luck_Point"
+   ]
+  },
+  "Mage Slayer": {
+   "source": "https://bg3.wiki/wiki/Feats#Mage_Slayer",
+   "effect": "Advantage on saves vs spells cast within melee range; reaction attack against a creature casting a spell within 1.5 m (2 m in practice); enemies you hit have Disadvantage on concentration saves.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Mage_Slayer:_Attack_Caster"
+   ]
+  },
+  "Magic Initiate: Bard": {
+   "source": "https://bg3.wiki/wiki/Feats#Magic_Initiate:_Bard",
+   "effect": "2 Bard cantrips and a 1st-level Bard spell (once per long rest), Charisma."
+  },
+  "Magic Initiate: Cleric": {
+   "source": "https://bg3.wiki/wiki/Feats#Magic_Initiate:_Cleric",
+   "effect": "2 Cleric cantrips and a 1st-level Cleric spell (once per long rest), Wisdom. Bug: medium armour DEX cap +3."
+  },
+  "Magic Initiate: Druid": {
+   "source": "https://bg3.wiki/wiki/Feats#Magic_Initiate:_Druid",
+   "effect": "2 Druid cantrips and a 1st-level Druid spell (once per long rest), Wisdom."
+  },
+  "Magic Initiate: Sorcerer": {
+   "source": "https://bg3.wiki/wiki/Feats#Magic_Initiate:_Sorcerer",
+   "effect": "2 Sorcerer cantrips and a 1st-level Sorcerer spell (once per long rest), Charisma."
+  },
+  "Magic Initiate: Warlock": {
+   "source": "https://bg3.wiki/wiki/Feats#Magic_Initiate:_Warlock",
+   "effect": "2 Warlock cantrips (e.g. Eldritch Blast) and a 1st-level Warlock spell (e.g. Hex, once per long rest), Charisma.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Magic_Initiate:_Warlock"
+   ]
+  },
+  "Magic Initiate: Wizard": {
+   "source": "https://bg3.wiki/wiki/Feats#Magic_Initiate:_Wizard",
+   "effect": "2 Wizard cantrips and a 1st-level Wizard spell (once per long rest), Intelligence."
+  },
+  "Martial Adept": {
+   "source": "https://bg3.wiki/wiki/Feats#Martial_Adept",
+   "effect": "Learn two Battle Master manoeuvres and gain 1 (additional) Superiority Die, recharge short or long rest.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Martial_Adept"
+   ],
+   "unverified": true,
+   "unverified_parts": "die size for non-Battle Masters not stated on the pages read (presumably d8)"
+  },
+  "Medium Armour Master": {
+   "source": "https://bg3.wiki/wiki/Feats#Medium_Armour_Master",
+   "effect": "No Stealth Disadvantage in medium armour; DEX AC cap +3 in medium armour.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Medium_Armour_Master"
+   ]
+  },
+  "Mobile": {
+   "source": "https://bg3.wiki/wiki/Feats#Mobile",
+   "effect": "+3 m movement; Dash ignores difficult terrain; no opportunity attack from a creature you made a melee attack against.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Mobile"
+   ]
+  },
+  "Moderately Armoured": {
+   "source": "https://bg3.wiki/wiki/Feats#Moderately_Armoured",
+   "effect": "+1 STR or DEX (max 20); Medium Armour and Shields proficiency. Requires Light Armour proficiency.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Moderately_Armoured"
+   ]
+  },
+  "Performer": {
+   "source": "https://bg3.wiki/wiki/Feats#Performer",
+   "effect": "+1 CHA (max 20); instrument proficiency.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Performer"
+   ]
+  },
+  "Polearm Master": {
+   "source": "https://bg3.wiki/wiki/Feats#Polearm_Master",
+   "effect": "Bonus Attack: after attacking with a glaive, halberd, pike, quarterstaff or spear, bonus action butt attack for 1d4 + STR or DEX (higher) Bludgeoning, once per turn, only in turn-based mode. Opportunity Attack when a creature enters your reach.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Polearm_Master:_Bonus_Attack",
+    "https://bg3.wiki/wiki/Polearm_Master:_Opportunity_Attack"
+   ]
+  },
+  "Resilient": {
+   "source": "https://bg3.wiki/wiki/Feats#Resilient",
+   "effect": "+1 to an ability (max 20) and proficiency in its saving throws."
+  },
+  "Ritual Caster": {
+   "source": "https://bg3.wiki/wiki/Feats#Ritual_Caster",
+   "effect": "Learn two of: Speak with Dead, Find Familiar, Longstrider, Enhance Leap, Disguise Self, Speak with Animals."
+  },
+  "Savage Attacker": {
+   "source": "https://bg3.wiki/wiki/Feats#Savage_Attacker",
+   "effect": "Melee weapon attacks roll damage dice twice and use the higher (each die independently; not limited to once per turn). Also applies to damage riders such as Divine Smite and, since Patch 7, Sneak Attack, Blade Flourishes and Manoeuvres. Great Weapon Fighting rerolls are applied first.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Savage_Attacker"
+   ]
+  },
+  "Sentinel": {
+   "source": "https://bg3.wiki/wiki/Feats#Sentinel",
+   "effect": "Reaction weapon attack when an enemy in melee range attacks an ally (not one with Sentinel); creatures hit by your opportunity attack can't move; Advantage on opportunity attacks.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Sentinel:_Vengeance",
+    "https://bg3.wiki/wiki/Sentinel:_Opportunity_Advantage"
+   ]
+  },
+  "Sharpshooter": {
+   "source": "https://bg3.wiki/wiki/Feats#Sharpshooter",
+   "effect": "All In (toggle): ranged weapon attacks with proficient weapons -5 to hit, +10 damage (outside Honour mode added to every damage instance of the attack). Low Ground: no high-ground penalty on ranged weapon attacks.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Sharpshooter:_All_In",
+    "https://bg3.wiki/wiki/Sharpshooter:_Low_Ground"
+   ]
+  },
+  "Shield Master": {
+   "source": "https://bg3.wiki/wiki/Feats#Shield_Master",
+   "effect": "+2 DEX saves with a shield; reaction to reduce DEX-save spell damage.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Shield_Master"
+   ]
+  },
+  "Skilled": {
+   "source": "https://bg3.wiki/wiki/Feats#Skilled",
+   "effect": "Proficiency in 3 skills.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Skilled"
+   ]
+  },
+  "Spell Sniper": {
+   "source": "https://bg3.wiki/wiki/Feats#Spell_Sniper",
+   "effect": "Learn a cantrip (Bone Chill, Eldritch Blast, Fire Bolt, Ray of Frost, Shocking Grasp or Thorn Whip, using your spellcasting ability); critical threshold of spell attack rolls reduced by 1 (stacks). Not for weapon-attack spells like Booming Blade.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Spell_Sniper"
+   ]
+  },
+  "Tavern Brawler": {
+   "source": "https://bg3.wiki/wiki/Feats#Tavern_Brawler",
+   "effect": "+1 STR or CON (max 20). Unarmed attacks, improvised weapons and throws add your Strength modifier an additional time to attack and damage rolls (always STR, even for DEX-based unarmed strikes). Applies in Wild Shape (not Fire/Water/Air Myrmidon). Honour mode: improvised melee attacks get the attack bonus but not the extra damage.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Tavern_Brawler"
+   ]
+  },
+  "Tough": {
+   "source": "https://bg3.wiki/wiki/Feats#Tough",
+   "effect": "+2 max HP per level.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Tough"
+   ]
+  },
+  "War Caster": {
+   "source": "https://bg3.wiki/wiki/Feats#War_Caster",
+   "effect": "Advantage on concentration saves; reaction Shocking Grasp at a creature leaving melee range.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/War_Caster:_Concentration",
+    "https://bg3.wiki/wiki/War_Caster:_Opportunity_Spell"
+   ]
+  },
+  "Weapon Master": {
+   "source": "https://bg3.wiki/wiki/Feats#Weapon_Master",
+   "effect": "+1 STR or DEX (max 20); proficiency with four weapon types.",
+   "passive_sources": [
+    "https://bg3.wiki/wiki/Weapon_Master"
+   ]
+  },
+  "_note": "All classes pick a feat at class levels 4, 8 and 12; Fighters also at 6 and Rogues at 10 (Feats page). Feat ability increases are capped at 20."
+ },
+ "point_buy": {
+  "source": "https://bg3.wiki/wiki/Character_creation",
+  "points": 27,
+  "min": 8,
+  "max": 15,
+  "costs": {
+   "8": 0,
+   "9": 1,
+   "10": 2,
+   "11": 3,
+   "12": 4,
+   "13": 5,
+   "14": 7,
+   "15": 9
+  },
+  "costs_note": "Derived from the stated rule: each increase up to 13 costs 1 point, 14 and 15 cost 2 points each.",
+  "background_bonus": "+2 to one ability score and +1 to a different ability score, freely assigned at character creation (not tied to race or background; the Races page lists it as the racial bonus). Max starting score 17.",
+  "bonus_source": "https://bg3.wiki/wiki/Races",
+  "ability_modifier": "floor((score - 10) / 2)",
+  "ability_source": "https://bg3.wiki/wiki/Abilities"
+ },
+ "notes": [
+  {
+   "note": "Patch 8 (15 April 2025, final major patch; latest hotfix listed is Hotfix 36) added exactly one subclass per class: Giant (Path of Giants) barbarian, College of Glamour, Death Domain, Circle of the Stars, Arcane Archer, Way of the Drunken Master, Oath of the Crown, Swarmkeeper, Swashbuckler, Shadow Magic, The Hexblade, Bladesinging. It also added Booming Blade, Bursting Sinew, Shadow Blade, Staggering Smite and Toll the Dead.",
+   "source": "https://bg3.wiki/wiki/Patch_notes/Patch_8"
+  },
+  {
+   "note": "Level cap 12. Proficiency bonus follows character level (+2 at 1-4, +3 at 5-8, +4 at 9-12), not class level.",
+   "source": "https://bg3.wiki/wiki/Barbarian"
+  },
+  {
+   "note": "Initiative is d4 + DEX in BG3, so flat initiative bonuses (Alert +5, Feral Instinct +3, Dread Ambusher +3, Rakish Audacity) are much stronger than in 5e.",
+   "source": "https://bg3.wiki/wiki/D&D_5e_feat_changes"
+  },
+  {
+   "note": "Extra Attack sources do not stack, except Warlock Pact of the Blade's Deepened Pact outside Honour mode. Extra Attack only triggers from attacks that cost an Action; extra actions from Haste/Elixir of Bloodlust also allow it outside Honour mode (only Action Surge in Honour mode).",
+   "source": "https://bg3.wiki/wiki/Extra_Attack"
+  },
+  {
+   "note": "Critical hits double all damage dice (including smites, sneak attack, manoeuvres), not flat modifiers. Critical threshold reductions stack (Champion, Hexblade's Curse, Spell Sniper for spells). Paralysed/Sleeping targets and Hold Person/Hold Monster give guaranteed crits on melee-range attacks.",
+   "source": "https://bg3.wiki/wiki/Critical_Hit"
+  },
+  {
+   "note": "Sneak Attack is once per round (not once per turn), refreshing after the rogue's turn, and is never applied to Off-Hand Attack actions.",
+   "source": "https://bg3.wiki/wiki/D&D_5e_class_changes"
+  },
+  {
+   "note": "Divine Smite is not a spell, can be triggered as a free post-strike reaction (no reaction cost) on any melee weapon hit, damage caps at 5d8 (+1d8 vs undead/fiends).",
+   "source": "https://bg3.wiki/wiki/Divine_Smite"
+  },
+  {
+   "note": "Rage damage in BG3 applies to finesse/Dexterity melee attacks, unarmed strikes and throws as well as STR melee.",
+   "source": "https://bg3.wiki/wiki/Rage"
+  },
+  {
+   "note": "Monk: Ki = monk level + 1 (2 at level 1), Martial Arts die 1d4 (1-2), 1d6 (3-8), 1d8 (9-12); most ki abilities use the better of STR/DEX for DCs (Four Elements uses WIS).",
+   "source": "https://bg3.wiki/wiki/Monk"
+  },
+  {
+   "note": "Paladin subclass chosen at level 1, with a single Channel Oath charge that recharges on short rest (never increases).",
+   "source": "https://bg3.wiki/wiki/Channel_Oath_Charge"
+  },
+  {
+   "note": "Arcane Trickster has 6 level-1 slots from rogue level 10; Ranger 12 has 4 level-3 slots. Both differ from 5e.",
+   "source": "https://bg3.wiki/wiki/Arcane_Trickster"
+  },
+  {
+   "note": "Hunter's Mark (ranger level 2, Vengeance oath spell): bonus action + level 1 slot, concentration, +1d6 weapon damage per weapon hit; upcasting gives nothing; does not apply to unarmed attacks in BG3. Hex (warlock): +1d6 Necrotic per attack-roll hit, including each Eldritch Blast beam.",
+   "source": "https://bg3.wiki/wiki/Hunter's_Mark",
+   "source2": "https://bg3.wiki/wiki/Hex"
+  },
+  {
+   "note": "Great Weapon Fighting in BG3 rerolls 1s and 2s on all damage dice of the attack (smites, superiority dice, coatings), unlike 5e. Savage Attacker also rerolls rider dice and is not once per turn.",
+   "source": "https://bg3.wiki/wiki/Great_Weapon_Fighting"
+  },
+  {
+   "note": "Tavern Brawler adds STR to both attack and damage of unarmed/improvised/thrown attacks; the wiki calls it one of the strongest feats. Its throw damage has no damage type and can't be resisted (bug).",
+   "source": "https://bg3.wiki/wiki/Tavern_Brawler"
+  },
+  {
+   "note": "Warlock Lifedrinker (level 12) needs no Pact of the Blade; Pact weapons and Hexed weapons use CHA for attack and damage.",
+   "source": "https://bg3.wiki/wiki/D&D_5e_class_changes"
+  },
+  {
+   "note": "Bladesong adds a flat +2/+3/+4 (levels 2/5/9) to AC and CON saves instead of the INT modifier, and adds Bladesong Climax (Force damage scaling with spells cast).",
+   "source": "https://bg3.wiki/wiki/Bladesong"
+  },
+  {
+   "note": "Wiki inconsistencies found: Swarmkeeper upgraded swarm table still shows 1d6 while Mighty Swarm and Cloud of Jellyfish: Attack pages say 1d8 (1d8 used). Sphere of Elemental Balance is 3d8 on Elemental Disciplines but 2d8 (non-thunder) on the Ki Point page. Rakish Audacity +4 initiative at rogue level 10 (feature page) vs 9 (5e changes page). Feats table says Defensive Duellist needs DEX 13, 5e changes says the prerequisite is ignored.",
+   "source": "https://bg3.wiki/wiki/Mighty_Swarm"
+  },
+  {
+   "note": "Several Honour-mode-only differences exist (DRS/damage-rider rules): e.g. Sharpshooter's +10 applies to each damage instance only outside Honour mode, Sobering Realisation deals 1d8 instead of 2d8 in Honour mode, Savage Attacks' second extra die on smites/sneak attack is disabled in Honour mode.",
+   "source": "https://bg3.wiki/wiki/Sharpshooter:_All_In"
+  },
+  {
+   "note": "Not captured (would need more pages): companion/summon stat blocks (Beast Master companions, Nimbus, Accursed Spectres, Animate Dead), Wild Shape form attacks, spell damage tables, weapon tables (repo already has items).",
+   "source": "https://bg3.wiki/wiki/Wild_Shape"
+  }
+ ]
+}

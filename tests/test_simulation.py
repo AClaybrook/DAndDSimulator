@@ -1,4 +1,5 @@
 """ Validates the numerical simulation against exact analytic expectations """
+from bg3.character import Bg3Character, compile_character
 import numpy as np
 import pytest
 
@@ -30,12 +31,19 @@ CASES = {
     "sneak_attack_ranged_only": Character(level=5, dexterity=18, once_per_turn_die_mod_list=["3d6"],
                                           attacks=[Attack(ability_stat="dexterity", once_per_turn_eligible=False), Attack(type="weapon (ranged)", ability_stat="dexterity", damage="1d8")]),
     "disadvantage": Character(strength=16, disadvantage=True, bonus_crit_die_mod_list=["1d8"], attacks=[greatsword()]),
+    "bg3_savage_attacker_per_die": Character(level=5, strength=18, savage_attacker=True, savage_attacker_per_die=True, GWF=True, attacks=[greatsword()] * 2),
+    "raging_monk_unarmed": Character(level=5, strength=16, raging=True, tavern_brawler=True, attacks=[Attack(type="unarmed", damage="1d6", damage_type="bludgeoning")] * 3),
+    "typed_extra_damage": Character(level=5, strength=18, advantage=True, attacks=[greatsword(extra_damage_list=["1d4 fire", "2 acid"])] * 2),
+    "typed_extra_vs_immune_and_vulnerable": Character(level=5, strength=18, attacks=[greatsword(extra_damage_list=["1d6 poison", "1d4 radiant"])] * 2),
 }
+
+# Poison immune and radiant vulnerable, the main slashing damage is unaffected
+RIDER_ENEMY = {"immunities": ["poison"], "vulnerabilities": ["radiant"]}
 
 @pytest.mark.parametrize("name", CASES)
 def test_simulation_matches_analytic(name):
     character = CASES[name]
-    enemy = Enemy(armor_class=16, dexterity_save=2)
+    enemy = Enemy(armor_class=16, dexterity_save=2, **(RIDER_ENEMY if name == "typed_extra_vs_immune_and_vulnerable" else {}))
     expected = expected_damage_per_round(character, enemy)
     # Half damage on a save rounds down in the simulation
     tolerance = 0.02 * expected + (0.3 if name == "fireball" else 0.05)
@@ -127,6 +135,10 @@ FIGHT_CASES = {
     "limited_fireball_and_sneak": (5, Character(level=5, dexterity=18, intelligence=18, once_per_turn_die_mod_list=["3d6"], once_per_turn_uses_per_fight=2,
                                                 attacks=[Attack(ability_stat="dexterity"), Attack(type="spell", ability_stat="intelligence", damage="8d6", saving_throw=True,
                                                                                                     saving_throw_success_multiplier=0.5, uses_per_fight=1)])),
+    # BG3 builder: Heart of the Storm damage on hits and misses, Star Map Guiding Bolts falling back to a cantrip plus Luminous Arrow
+    "storm_sorcerer_lightning_bolt": (4, compile_character(Bg3Character(classes=[["sorcerer", "Storm Sorcery", 12]], routine="cantrip",
+                                                                         cantrip="Shocking Grasp", spell="Lightning Bolt"), 8)[0]),
+    "circle_of_stars": (4, compile_character(Bg3Character(classes=[["druid", "Circle of Stars", 12]], routine="cantrip", cantrip="Produce Flame"), 5)[0]),
 }
 
 @pytest.mark.parametrize("name", FIGHT_CASES)
@@ -135,7 +147,7 @@ def test_fight_simulation_matches_analytic(name):
     enemy = Enemy(armor_class=16, dexterity_save=2)
     expected = expected_damage_per_round(character, enemy, rounds_per_fight)
     _, df_by_rounds, _ = simulate_rounds_from_characters([character], enemy, num_rounds=FIGHT_ROUNDS, rng=set_seed(11), rounds_per_fight=rounds_per_fight)
-    tolerance = 0.02 * expected + (0.3 if "fireball" in name else 0.05)
+    tolerance = 0.02 * expected + (0.3 if "fireball" in name or "lightning_bolt" in name else 0.05)
     assert df_by_rounds[0]["Damage"].mean() == pytest.approx(expected, abs=tolerance)
     # Limits only lower damage compared to unlimited resources
     assert expected <= expected_damage_per_round(character, enemy) + 1e-9
@@ -182,7 +194,7 @@ def test_fallback_and_first_round_match_analytic(name):
     enemy = Enemy(armor_class=15, dexterity_save=2)
     expected = expected_damage_per_round(character, enemy, rounds_per_fight)
     _, df_by_rounds, _ = simulate_rounds_from_characters([character], enemy, num_rounds=FIGHT_ROUNDS, rng=set_seed(5), rounds_per_fight=rounds_per_fight)
-    tolerance = 0.02 * expected + (0.3 if "fireball" in name else 0.05)
+    tolerance = 0.02 * expected + (0.3 if "fireball" in name or "lightning_bolt" in name else 0.05)
     assert df_by_rounds[0]["Damage"].mean() == pytest.approx(expected, abs=tolerance)
 
 def test_fallback_attacks():
@@ -203,3 +215,36 @@ def test_first_round_conditions_front_load():
     rounds_per_fight, character = FALLBACK_CASES["assassin"]
     by_round = fight_damage(character, Enemy(armor_class=15), 20_000, rounds_per_fight, rng=set_seed(2)).mean(axis=1)
     assert by_round[0] > 1.5 * by_round[1]
+
+def test_typed_extra_damage_resistance_is_separate():
+    """ Fire resistance halves only the fire part of a flaming greatsword """
+    character = Character(strength=16, attacks=[greatsword(extra_damage_list=["1d6 fire"])])
+    plain = expected_damage_per_round(Character(strength=16, attacks=[greatsword()]), Enemy(armor_class=10))
+    fire = expected_damage_per_round(character, Enemy(armor_class=10)) - plain
+    resistant = expected_damage_per_round(character, Enemy(armor_class=10, resistances=["fire"]))
+    assert resistant == pytest.approx(plain + fire / 2)
+    assert simulated_mean(character, Enemy(armor_class=10, resistances=["fire"])) == pytest.approx(resistant, abs=0.35) # fire rounds down
+
+def test_per_attack_damage_reroll_matches_great_weapon_fighting():
+    """ A weapon that rerolls 1s and 2s (BG3 items) is the same as Great Weapon Fighting on that weapon """
+    gwf = Character(strength=16, GWF=True, attacks=[greatsword()])
+    item = Character(strength=16, attacks=[greatsword(damage_reroll_on=2)])
+    enemy = Enemy(armor_class=12)
+    assert expected_damage_per_round(item, enemy) == pytest.approx(expected_damage_per_round(gwf, enemy))
+    assert simulated_mean(item, enemy) == pytest.approx(expected_damage_per_round(item, enemy), abs=0.1)
+
+def test_per_die_savage_attacker_beats_whole_set():
+    """ Keeping the higher of each die is better than the higher total of the set (2d6: 8.94 vs 8.37) """
+    from computations.analytic import expected_dice
+    assert expected_dice([2], [6], advantage=True, per_die=True) == pytest.approx(2 * 161 / 36)
+    assert expected_dice([2], [6], advantage=True, per_die=True) > expected_dice([2], [6], advantage=True)
+
+def test_hits_crit_matches_analytic():
+    """ Melee attacks against a paralysed target: advantage and every hit is a crit """
+    character = Character(level=5, strength=18, attacks=[Attack(damage="2d6", advantage=True, hits_crit=True)] * 2)
+    enemy = Enemy(armor_class=16)
+    expected = expected_damage_per_round(character, enemy)
+    _, df_by_rounds, _ = simulate_rounds_from_characters([character], enemy, num_rounds=200_000, rng=set_seed(5))
+    assert df_by_rounds[0]["Damage"].mean() == pytest.approx(expected, rel=0.02)
+    plain = Character(level=5, strength=18, attacks=[Attack(damage="2d6", advantage=True)] * 2)
+    assert expected > expected_damage_per_round(plain, enemy) * 1.4

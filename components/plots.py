@@ -1,7 +1,6 @@
 """ Plotting and tables for the app """
 # Themes here: https://plotly.com/python/templates/
 
-import warnings
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
@@ -14,45 +13,121 @@ from computations.numerical_simulation import describe
 # Color Palette
 COLORS = px.colors.qualitative.Plotly
 
+# Histograms are binned here and only the bar heights and box statistics go to the browser, so every simulated round is plotted
+MAX_BINS = 200
+
 def calc_opacity(num_categories, o_init=0.75, o_slope=0.2, o_min=0.25, per_category=5):
     """ Plotly slows down with too many overlapping histograms, so this function reduces the opacity as the number of categories increases"""
     reduction = (num_categories // per_category)*o_slope
     opacity = max([o_init - reduction, o_min])
-    # print(f"Reduction: {reduction}")
-    # print(f"Opacity: {opacity}")
     return opacity
 
-def generate_plot_data(characters, df_by_rounds, template='plotly_dark',**kwargs):
-    """ Generates the plot data for the DPR Distribution Histogram"""
-    data = pd.concat([pd.DataFrame({'Damage': df_by_round["Damage"], 'Type': c.name}) for c, df_by_round in zip(characters,df_by_rounds)]).reset_index(drop=True)
-    # Converting types saves about 10x the memory
-    data["Damage"] = data["Damage"].astype('int32')
-    data["Type"] = data["Type"].astype('category')
-    # For memory debugging
-    # print(f"Plot data (deep): {data.memory_usage(deep=True).sum()/1000000} MB")
-    # print(f"Plot data : {data.memory_usage(deep=False).sum()/1000000} MB")
-    # print(f"df_by_rounds (deep): {sum([d.memory_usage(deep=True).sum() for d in df_by_rounds])/1000000} MB")
-    # print(f"df_by_rounds : {sum([d.memory_usage(deep=False).sum() for d in df_by_rounds])/1000000} MB")
-    fig = generate_histogram(data, x="Damage", color="Type", marginal='box', opacity=calc_opacity(len(characters)),template=template,**kwargs)
+def generate_plot_data(characters, df_by_rounds, template='plotly_dark', title=None, enemy=None, rounds_per_fight=None, **kwargs):
+    """ Generates the plot data for the DPR Distribution Histogram. With the enemy, each histogram gets its exact distribution as a line """
+    groups = {c.name: df["Damage"].to_numpy() for c, df in zip(characters, df_by_rounds)}
+    exact = {}
+    if enemy is not None:
+        from computations.exact import damage_per_round # pylint: disable=import-outside-toplevel
+        for c in characters:
+            try:
+                exact[c.name] = damage_per_round(c, enemy, rounds_per_fight)
+            except Exception: # pylint: disable=broad-exception-caught
+                pass # The smooth fit stands in
+    return generate_histogram(groups, opacity=calc_opacity(len(characters)), template=template, title=title, exact=exact, **kwargs)
 
-    return fig
+def box_stats(values):
+    """ Tukey box plot statistics: quartiles, whiskers at the furthest values within 1.5 IQR, and the mean """
+    q1, median, q3 = np.percentile(values, [25, 50, 75])
+    iqr = q3 - q1
+    inside = values[(values >= q1 - 1.5 * iqr) & (values <= q3 + 1.5 * iqr)]
+    return {"q1": [q1], "median": [median], "q3": [q3], "lowerfence": [inside.min()], "upperfence": [inside.max()], "mean": [values.mean()]}
 
-def generate_histogram(data, x, color, marginal='violin', histnorm='percent', barmode='overlay', opacity=0.75, **kwargs):
-    """ Generic histogram helper function with marginal plot"""
-    with warnings.catch_warnings():
-        warnings.simplefilter(action='ignore', category=FutureWarning)
-        fig = px.histogram(
-            data,
-            x=x,
-            color=color,
-            marginal=marginal,
-            histnorm=histnorm,
-            barmode=barmode,
-            opacity=opacity,
-            **kwargs
-        )
+def smooth_curve(counts, width, values):
+    """ A smooth fit of a binned distribution when the exact one isn't known: a Gaussian kernel density estimate of the counts, in the same
+        units as the bars. The bandwidth is chosen by leave-one-out cross-validation (the width whose curve, built without each value, gives
+        the values the highest likelihood), so a hump per number of hits keeps its peak. Rounds where everything missed (exactly 0) are a
+        spike no smooth curve can follow, they are left to their bar. Returns (bin offsets, heights as a share of all values per bin) """
+    n = len(values)
+    counts = counts.astype(float).copy()
+    zeros = int((values == 0).sum())
+    if values.min() == 0:
+        counts[0] -= zeros
+    m = counts.sum()
+    rest = values[values != 0] if zeros else values
+    if m < 2 or rest.std() == 0:
+        return np.arange(len(counts)), counts / n
+    spread = min(rest.std(), (np.percentile(rest, 75) - np.percentile(rest, 25)) / 1.34 or rest.std())
+    silverman = 1.06 * spread * m ** -0.2 / width # In bins
+    best = None
+    for factor in (0.1, 0.15, 0.2, 0.3, 0.4, 0.5): # Wider never helped: it flattens the hit-count peaks
+        bandwidth = max(factor * silverman, 0.6)
+        reach = int(np.ceil(4 * bandwidth))
+        kernel = np.exp(-0.5 * (np.arange(-reach, reach + 1) / bandwidth) ** 2)
+        kernel /= kernel.sum()
+        smoothed = np.convolve(counts, kernel, mode="full")[reach:reach + len(counts)]
+        leave_out = (smoothed - kernel[reach] * counts) / (m - 1)
+        seen = counts > 0
+        likelihood = float(np.sum(counts[seen] * np.log(np.maximum(leave_out[seen], 1e-12))))
+        if best is None or likelihood > best[0]:
+            best = (likelihood, smoothed)
+    return np.arange(len(counts)), best[1] / n
 
-    fig.update_layout(yaxis_title=histnorm.capitalize())
+def distribution_summary(values):
+    """ Mean, standard deviation and skew of a distribution, the shape of a fit in three numbers """
+    mean, sd = float(np.mean(values)), float(np.std(values))
+    skew = float(np.mean(((values - mean) / sd) ** 3)) if sd else 0.0
+    return mean, sd, skew
+
+def generate_histogram(groups, colors=None, histnorm='percent', opacity=0.75, x_title="Damage", template='plotly_dark', title=None, fit=True, exact=None,
+                       **kwargs):
+    """ Overlaid histograms of integer values with a box plot of each group above, from {name: values}.
+        Bins are one damage wide, or wider so there are at most MAX_BINS. fit adds a curve over each histogram: the exact distribution
+        when exact has one for the group ({name: probabilities indexed by damage}, computations.exact), else a smooth kernel density fit.
+        Hover it for the mean, standard deviation and skew """
+    from plotly.subplots import make_subplots # pylint: disable=import-outside-toplevel
+    groups = {name: np.asarray(v) for name, v in groups.items() if len(v)}
+    colors = colors or {name: COLORS[ii % len(COLORS)] for ii, name in enumerate(groups)}
+    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, row_heights=[0.2, 0.8], vertical_spacing=0.03)
+    if groups:
+        low = int(min(v.min() for v in groups.values()))
+        high = int(max(v.max() for v in groups.values()))
+        width = max(1, -(-(high - low + 1) // MAX_BINS))
+        for name, values in groups.items():
+            counts = np.bincount(((values - low) // width).astype(np.int64))
+            heights = counts / len(values) * (100 if histnorm == "percent" else 1)
+            starts = low + width * np.arange(len(counts))
+            keep = counts > 0
+            label = "%{x}" if width == 1 else "%{customdata[0]} to %{customdata[1]}"
+            fig.add_trace(go.Bar(x=starts[keep] + (width - 1) / 2, y=heights[keep], width=width, name=name, legendgroup=name, opacity=opacity,
+                                 marker={"color": colors[name], "line": {"width": 0}}, customdata=np.stack([starts[keep], starts[keep] + width - 1], axis=1),
+                                 hovertemplate=f"{name}<br>{x_title} {label}: %{{y:.2f}}{'%' if histnorm == 'percent' else ''}<extra></extra>"),
+                          row=2, col=1)
+            scale = 100 if histnorm == "percent" else 1
+            if fit and (exact or {}).get(name) is not None:
+                from computations.exact import binned # pylint: disable=import-outside-toplevel
+                probs = np.asarray(exact[name])
+                curve = binned(probs, low, width, len(counts))
+                damage = np.arange(len(probs))
+                mean = float(damage @ probs)
+                sd = float(np.sqrt(((damage - mean) ** 2) @ probs))
+                skew = float((((damage - mean) / sd) ** 3) @ probs) if sd else 0.0
+                fig.add_trace(go.Scatter(x=starts + (width - 1) / 2, y=curve * scale, mode="lines", name=f"{name} (exact)", legendgroup=name,
+                                         showlegend=False, line={"color": colors[name], "width": 2},
+                                         hovertemplate=f"{name} exact: %{{y:.2f}}{'%' if histnorm == 'percent' else ''}<br>mean {mean:.1f}, "
+                                                       f"sd {sd:.1f}, skew {skew:+.2f}, all miss {probs[0]:.1%}<extra></extra>"), row=2, col=1)
+            elif fit and len(values) > 30 and values.std() > 0:
+                offsets, curve = smooth_curve(counts, width, values)
+                mean, sd, skew = distribution_summary(values)
+                keep_curve = (low + width * offsets) > 0 if (values == 0).any() else np.ones(len(offsets), dtype=bool)
+                fig.add_trace(go.Scatter(x=(low + width * offsets + (width - 1) / 2)[keep_curve], y=(curve * scale)[keep_curve], mode="lines",
+                                         name=f"{name} (fit)", legendgroup=name, showlegend=False, line={"color": colors[name], "width": 2},
+                                         hovertemplate=f"{name} fit<br>mean {mean:.1f}, sd {sd:.1f}, skew {skew:+.2f}<extra></extra>"), row=2, col=1)
+            fig.add_trace(go.Box(y=[name], orientation="h", name=name, legendgroup=name, showlegend=False, marker={"color": colors[name]},
+                                 boxmean=True, **box_stats(values)), row=1, col=1)
+    fig.update_layout(barmode="overlay", bargap=0, template=template, title=title, legend={"tracegroupgap": 0}, **kwargs)
+    fig.update_yaxes(title_text=histnorm.capitalize(), row=2, col=1)
+    fig.update_yaxes(showticklabels=False, autorange="reversed", row=1, col=1) # Boxes in legend order, top down
+    fig.update_xaxes(title_text=x_title, row=2, col=1)
     return fig
 
 def generate_distplot(groups, labels, **kwargs):
@@ -193,27 +268,14 @@ def generate_line_plots(df_acs, groupby='Character', template='plotly_dark', ord
     )
     return fig
 
-def generate_damage_per_attack_histogram(characters, dfs ,template='plotly_dark', **kwargs):
-    """ Generates a histogram of damage per attack, used by DPA Distribution"""
-    attacks = []
-    attack_color_map = {}
-    for ii, (c, df_c_temp) in enumerate(zip(characters,dfs)):
-        df_c = df_c_temp[["Damage","Attack"]].copy()
-        df_c['Type'] = c.name + "-" + df_c['Attack'].astype(str)
-        df_c = df_c.drop('Attack',axis=1)
-        attacks.append(df_c)
-        for a in df_c['Type'].unique():
-            attack_color_map[a] = COLORS[ii].lower()
-
-    df_attacks = pd.concat(attacks).reset_index(drop=True)
-    df_attacks["Damage"] = df_attacks["Damage"].astype('int16') # This plot is very memory sensitive, need to reduce the size as much as possible
-    df_attacks["Type"] = df_attacks["Type"].astype('category')
-    fig = generate_histogram(df_attacks, x="Damage", color="Type", marginal='box',opacity=calc_opacity(len(df_attacks["Type"].unique()),o_slope=0.25), template=template,**kwargs)
-    # Manually override colors
-    for data in fig.data:
-        data.marker.color = attack_color_map[data.legendgroup]
-
-    return fig
+def generate_damage_per_attack_histogram(characters, dfs, template='plotly_dark', title=None, **kwargs):
+    """ Generates a histogram of damage per attack, used by DPA Distribution. Attacks share their character's color """
+    groups, colors = {}, {}
+    for ii, (c, df) in enumerate(zip(characters, dfs)):
+        for attack, values in df.groupby("Attack", observed=True, sort=False)["Damage"]:
+            name = f"{c.name}-{attack}"
+            groups[name], colors[name] = values.to_numpy(), COLORS[ii % len(COLORS)]
+    return generate_histogram(groups, colors=colors, opacity=calc_opacity(len(groups), o_slope=0.25), template=template, title=title, **kwargs)
 
 def color_header(name, ii):
     return html.Span("\u25CF ", style={'color': COLORS[ii % len(COLORS)]}), name

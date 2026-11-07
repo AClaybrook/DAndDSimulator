@@ -1,0 +1,59 @@
+""" Act 1 map: data, calibration and figures """
+from bg3.build_map import MAPS, WAYPOINTS, opaque_check, to_pixel
+from components.bg3_map import DATA, DEFAULT_RARITIES, POINTS, details, figure, groups, visible
+
+def test_waypoints_land_on_the_map():
+    on_map = opaque_check()
+    for name, (map_key, x, y) in WAYPOINTS.items():
+        assert on_map(map_key, x, y), name
+
+def test_points_are_placed():
+    assert len(POINTS) > 200
+    for p in POINTS:
+        assert p["map"] in MAPS
+        if MAPS[p["map"]]["image"]:
+            assert (p["px"], p["py"]) == to_pixel(p["map"], p["x"], p["y"])
+    names = {p["name"] for p in POINTS}
+    for item in ["Phalar Aluve", "Sword of Justice", "Caustic Band", "Auntie Ethel's Hair", "The Blood of Lathander"]:
+        assert item in names
+
+def test_filters():
+    rare = next(p for p in POINTS if p["rarity"] == "Rare" and not p["builds"])
+    assert visible(rare, DEFAULT_RARITIES, [], [])
+    assert not visible(rare, ["Legendary"], [], [])
+    assert not visible(rare, DEFAULT_RARITIES, ["builds"], [])
+    assert visible(rare, ["Legendary"], [], [rare["name"]]) # Searched items always show
+    common = [p for p in POINTS if p["rarity"] == "Common"]
+    assert all(not visible(p, DEFAULT_RARITIES, [], []) for p in common)
+
+def test_figures_and_details():
+    for map_key in MAPS:
+        fig = figure(map_key, [*DEFAULT_RARITIES, "Uncommon", "Common"], [], [])
+        assert fig.data, map_key
+        assert bool(fig.layout.images) == bool(MAPS[map_key]["image"])
+    spot, points = groups("wilderness", DEFAULT_RARITIES, [], [])[0]
+    assert details(points)
+    assert DATA["unplaced"]
+
+def test_party_gear_layer():
+    from components.bg3_map import party_checklist, party_gear
+    from components.bg3_planner import DEFAULT_PARTY
+    gear = party_gear(DEFAULT_PARTY, "1")
+    assert "bg3:caustic_band" in gear and len(gear["bg3:caustic_band"]) == 2 # Lae'zel and Karlach both wear it
+    assert {o["value"] for o in party_checklist(DEFAULT_PARTY, "1")} == set(gear)
+    # Party gear shows whatever the rarity filter, with a ring trace, until it's ticked as collected
+    fig = figure("underdark", [], ["party_only"], [], party=gear)
+    assert any(t.name == "Party gear to collect" for t in fig.data)
+    fig = figure("underdark", [], ["party_only"], [], party=gear, collected=list(gear))
+    assert not fig.data
+
+def test_missables():
+    from components.bg3_map import figure
+    missable = {p["name"]: p["missable"] for p in POINTS if p.get("missable")}
+    assert "Story choice" in missable["Sussur Greatsword"] and "Story choice" in missable["The Sparky Points"]
+    assert "Phalar Aluve" in missable and "Svartlebee's Woundseeker" in missable
+    assert not any(p.get("missable") for p in POINTS if p["rarity"] == "Common" and p["map"] == "nautiloid" and not p.get("tip"))
+    names = [t.name for t in figure("wilderness", DEFAULT_RARITIES, ["missables"], []).data]
+    assert "Missable" in names
+    only = figure("underdark", [], ["only_missables"], [])
+    assert all("Missable" in (t.name or "") or t.name for t in only.data)

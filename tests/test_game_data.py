@@ -127,7 +127,7 @@ def test_resource_limits_per_fight():
     battle_master = build_character("fighter_battle_master", 7)
     assert battle_master.once_per_turn_uses_per_fight == 3.75 # 5 superiority dice per short rest
     monk = build_character("monk_open_hand", 6)
-    assert [a.name for a in monk.attacks].count("Flurry of Blows") == 1 and monk.attacks[-1].uses_per_fight == 4.5
+    assert [a.name for a in monk.attacks].count("Flurry of Blows") == 1 and monk.attacks[-1].uses_per_fight == 5.25 # BG3 ki: level + 1
 
 def test_multiclass_builds():
     sorlock = build_character("sorlock", 6)
@@ -165,3 +165,14 @@ def test_more_multiclass_builds():
     # Paladin 6 / Sorcerer 4: caster level 7 (4, 3, 3, 1 slots), smiting with a 4th level slot
     assert sorcadin.once_per_turn_die_mod_list == ["5d8"] and sorcadin.once_per_turn_uses_per_fight == 2.75
     assert build_character("sorcadin", 6).once_per_turn_uses_per_fight == build_character("paladin_smite", 6).once_per_turn_uses_per_fight
+
+def test_bg3_rules_on_presets():
+    """ BG3 (Patch 8): per die Savage Attacker, no Sneak Attack on off-hand attacks, the BG3 Martial Arts die """
+    fighter = build_character("fighter_gwm", 12) # Savage Attacker is its fourth feat
+    assert fighter.savage_attacker and fighter.savage_attacker_per_die
+    assert not build_character("fighter_gwm", 12, "5e").savage_attacker_per_die
+    rogue = build_character("rogue_dual_wield", 5)
+    assert [a.once_per_turn_eligible for a in rogue.attacks] == [True, False]
+    assert build_character("monk_open_hand", 3).attacks[0].damage == "1d6"
+    assert build_character("monk_open_hand", 9).attacks[0].damage == "1d8"
+    assert build_character("monk_open_hand", 3, "5e").attacks[0].damage == "1d4"

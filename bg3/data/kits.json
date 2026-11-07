@@ -1,0 +1,403 @@
+{
+ "_note": "Curated Act 1 item kits (docs/act1_item_kits.md). slots: planner slot -> item keys, best first",
+ "kits": [
+  {
+   "key": "thunder",
+   "name": "Thunder / Reverberation",
+   "theme": "damage",
+   "act": 1,
+   "trigger": "Thunder damage every turn: Booming Blade, Thunderwave, Thunderous Smite (the gloves also trigger on lightning and radiant)",
+   "fits": "Bladesinger, Hexblade, Eldritch Knight, Tempest Cleric, Swords Bard",
+   "synergy": "Reverberation lowers STR/DEX/CON saves (Hold Person, Command); 5 stacks: 1d4 thunder and a CON save or Prone (melee advantage)",
+   "slots": {
+    "gloves": [
+     "bg3:gloves_of_belligerent_skies"
+    ],
+    "boots": [
+     "bg3:boots_of_stormy_clamour"
+    ],
+    "amulet": [
+     "bg3:necklace_of_elemental_augmentation"
+    ],
+    "ring_2": [
+     "bg3:ring_of_elemental_infusion",
+     "bg3:ring_of_absolute_force"
+    ]
+   }
+  },
+  {
+   "key": "lightning",
+   "name": "Lightning Charges (Sparky set)",
+   "theme": "damage",
+   "act": 1,
+   "trigger": "Lightning Charges from the items themselves: hits, Dash, spells",
+   "fits": "Any martial or caster; Storm Sorcerer and Tempest Cleric best",
+   "synergy": "Wet enemies (Create Water) take double lightning damage",
+   "notes": "Florrick's reward is one of The Sparky Points, The Joltshooter or The Spellsparkler",
+   "slots": {
+    "melee_main": [
+     "bg3:the_sparky_points"
+    ],
+    "ranged_main": [
+     "bg3:the_joltshooter"
+    ],
+    "gloves": [
+     "bg3:the_sparkle_hands"
+    ],
+    "boots": [
+     "bg3:the_speedy_lightfeet",
+     "bg3:the_watersparkers"
+    ],
+    "armour": [
+     "bg3:the_protecty_sparkswall",
+     "bg3:the_jolty_vest"
+    ],
+    "helmet": [
+     "bg3:the_lifebringer"
+    ]
+   }
+  },
+  {
+   "key": "arcane_synergy",
+   "name": "Arcane Synergy gish",
+   "theme": "damage",
+   "act": 1,
+   "trigger": "Inflict conditions or deal cantrip damage, then hit with a weapon",
+   "fits": "Bladesinger, Hexblade, Eldritch Knight, Sorcadin, Swords Bard",
+   "synergy": "The Diadem and the Ring are separate items, so two gishes can split them",
+   "slots": {
+    "helmet": [
+     "bg3:diadem_of_arcane_synergy"
+    ],
+    "ring_1": [
+     "bg3:ring_of_arcane_synergy",
+     "bg3:strange_conduit_ring"
+    ],
+    "ring_2": [
+     "bg3:strange_conduit_ring",
+     "bg3:caustic_band"
+    ],
+    "melee_off": [
+     "bg3:knife_of_the_undermountain_king"
+    ],
+    "boots": [
+     "bg3:boots_of_stormy_clamour"
+    ]
+   }
+  },
+  {
+   "key": "fire",
+   "name": "Fire / Burning blaster",
+   "theme": "damage",
+   "act": 1,
+   "trigger": "Fire spells and cantrips (Fire Bolt, Scorching Ray)",
+   "fits": "Evoker, Draconic Sorcerer, Sorlock",
+   "synergy": "Burning targets take extra damage from Dragon's Grasp and Firestoker",
+   "slots": {
+    "melee_main": [
+     "bg3:gold_wyrmling_staff"
+    ],
+    "helmet": [
+     "bg3:circlet_of_blasting"
+    ],
+    "gloves": [
+     "bg3:gloves_of_cinder_and_sizzle"
+    ],
+    "amulet": [
+     "bg3:necklace_of_elemental_augmentation"
+    ],
+    "ring_1": [
+     "bg3:ring_of_elemental_infusion"
+    ],
+    "boots": [
+     "bg3:boots_of_elemental_momentum",
+     "bg3:cinder_shoes"
+    ]
+   }
+  },
+  {
+   "key": "cold",
+   "name": "Cold",
+   "theme": "damage",
+   "act": 1,
+   "trigger": "Cold spells and cantrips (Ray of Frost)",
+   "fits": "Wizard, Sorcerer",
+   "synergy": "Wet enemies take double cold damage",
+   "slots": {
+    "melee_main": [
+     "bg3:mourning_frost"
+    ],
+    "gloves": [
+     "bg3:winter_s_clutches"
+    ],
+    "armour": [
+     "bg3:robe_of_summer"
+    ],
+    "amulet": [
+     "bg3:necklace_of_elemental_augmentation"
+    ]
+   }
+  },
+  {
+   "key": "psychic",
+   "name": "Psychic weapons",
+   "theme": "damage",
+   "act": 1,
+   "trigger": "Psychic weapon damage",
+   "fits": "Gish, Githyanki fighters",
+   "synergy": "Doubled by the Resonance Stone from late Act 2",
+   "slots": {
+    "melee_main": [
+     "bg3:soulbreaker_greatsword",
+     "bg3:githyanki_greatsword_psionic",
+     "bg3:sword_of_screams"
+    ],
+    "ring_1": [
+     "bg3:strange_conduit_ring"
+    ]
+   }
+  },
+  {
+   "key": "gwm",
+   "name": "Two-handed / Great Weapon Master",
+   "theme": "style",
+   "act": 1,
+   "trigger": "Two-handed melee weapon attacks",
+   "fits": "Berserker, Paladin (Sorcadin), GWM Fighter, Hexblade",
+   "notes": "Berserkers want Great Weapon Master, not Polearm Master: both bonus action attacks need the one bonus action",
+   "slots": {
+    "melee_main": [
+     "bg3:soulbreaker_greatsword",
+     "bg3:svartlebee_s_woundseeker",
+     "bg3:monster_slayer_glaive",
+     "bg3:sorrow",
+     "bg3:everburn_blade"
+    ],
+    "gloves": [
+     "bg3:gloves_of_the_growling_underdog"
+    ],
+    "helmet": [
+     "bg3:haste_helm",
+     "bg3:cap_of_wrath"
+    ],
+    "boots": [
+     "bg3:linebreaker_boots",
+     "bg3:springstep_boots"
+    ],
+    "armour": [
+     "bg3:bloodguzzler_garb"
+    ],
+    "ring_1": [
+     "bg3:caustic_band"
+    ],
+    "ring_2": [
+     "bg3:the_whispering_promise",
+     "bg3:crusher_s_ring"
+    ]
+   }
+  },
+  {
+   "key": "throwing",
+   "name": "Throwing",
+   "theme": "style",
+   "act": 1,
+   "trigger": "Thrown weapon attacks (Tavern Brawler)",
+   "fits": "Berserker (Enraged Throw), Giant Barbarian, Tavern Brawler Monk",
+   "buffs": [
+    "elixir:elixir_of_hill_giant_strength"
+   ],
+   "slots": {
+    "melee_main": [
+     "bg3:returning_pike"
+    ],
+    "ring_1": [
+     "bg3:ring_of_flinging"
+    ],
+    "gloves": [
+     "bg3:gloves_of_uninhibited_kushigo"
+    ],
+    "ring_2": [
+     "bg3:caustic_band"
+    ]
+   }
+  },
+  {
+   "key": "dual_wield",
+   "name": "Dual wield / finesse",
+   "theme": "style",
+   "act": 1,
+   "trigger": "Two light weapons, DEX",
+   "fits": "Swashbuckler, Swords Bard, Gloom Stalker, Godblade off hand",
+   "slots": {
+    "melee_main": [
+     "bg3:sword_of_screams",
+     "bg3:larethian_s_wrath",
+     "bg3:shortsword_of_first_blood",
+     "bg3:speedy_reply"
+    ],
+    "melee_off": [
+     "bg3:knife_of_the_undermountain_king",
+     "bg3:hunter_s_dagger",
+     "bg3:shortsword_of_first_blood"
+    ],
+    "gloves": [
+     "bg3:gloves_of_dexterity"
+    ],
+    "ring_1": [
+     "bg3:caustic_band"
+    ]
+   }
+  },
+  {
+   "key": "archer",
+   "name": "Archer",
+   "theme": "style",
+   "act": 1,
+   "trigger": "Bows; Sharpshooter once Bless or advantage is up",
+   "fits": "Arcane Archer, Gloom Stalker, Ranger",
+   "slots": {
+    "ranged_main": [
+     "bg3:bow_of_the_banshee",
+     "bg3:titanstring_bow",
+     "bg3:hunting_shortbow",
+     "bg3:bow_of_awareness"
+    ],
+    "gloves": [
+     "bg3:gloves_of_archery"
+    ],
+    "melee_main": [
+     "bg3:club_of_hill_giant_strength"
+    ]
+   }
+  },
+  {
+   "key": "hand_crossbows",
+   "name": "Two hand crossbows",
+   "theme": "style",
+   "act": 1,
+   "trigger": "Hand crossbows in both hands",
+   "fits": "Gloom Stalker, Swords Bard, Rogue",
+   "slots": {
+    "ranged_main": [
+     "bg3:hand_crossbow_1"
+    ],
+    "ranged_off": [
+     "bg3:firestoker"
+    ],
+    "gloves": [
+     "bg3:gloves_of_dexterity"
+    ]
+   }
+  },
+  {
+   "key": "healer",
+   "name": "Healer / support",
+   "theme": "role",
+   "act": 1,
+   "trigger": "Healing other creatures (Healing Word)",
+   "fits": "Life or Light Cleric, Druid, Bard",
+   "synergy": "Hellrider's Pride and The Whispering Promise turn each heal into resistance or +1d4 to attacks and saves",
+   "slots": {
+    "amulet": [
+     "bg3:amulet_of_restoration"
+    ],
+    "helmet": [
+     "bg3:wapira_s_crown"
+    ],
+    "gloves": [
+     "bg3:hellrider_s_pride"
+    ],
+    "boots": [
+     "bg3:boots_of_aid_and_comfort"
+    ],
+    "ring_1": [
+     "bg3:the_whispering_promise"
+    ],
+    "ring_2": [
+     "bg3:ring_of_salving"
+    ],
+    "armour": [
+     "bg3:slippery_chain_shirt"
+    ],
+    "melee_main": [
+     "bg3:staff_of_arcane_blessing"
+    ]
+   }
+  },
+  {
+   "key": "bard",
+   "name": "Bard / inspiration",
+   "theme": "role",
+   "act": 1,
+   "trigger": "Bardic Inspiration",
+   "fits": "Any Bard",
+   "slots": {
+    "gloves": [
+     "bg3:wondrous_gloves"
+    ],
+    "helmet": [
+     "bg3:cap_of_curing"
+    ],
+    "armour": [
+     "bg3:blazer_of_benevolence"
+    ],
+    "melee_main": [
+     "bg3:phalar_aluve"
+    ]
+   }
+  },
+  {
+   "key": "tank_unarmoured",
+   "name": "High AC, unarmoured (Mage Armour)",
+   "theme": "role",
+   "act": 1,
+   "trigger": "No armour or shield: Mage Armour, Bladesong, Monk",
+   "fits": "Bladesinger, Sorcerer, Monk",
+   "notes": "With Mage Armour and Bladesong at DEX 19: AC 23, 25 with Shield of Faith, 27 with Haste",
+   "slots": {
+    "gloves": [
+     "bg3:bracers_of_defence"
+    ],
+    "ring_1": [
+     "bg3:ring_of_protection"
+    ],
+    "armour": [
+     "bg3:bloodguzzler_garb",
+     "bg3:the_graceful_cloth"
+    ]
+   },
+   "buffs": [
+    "mage_armour"
+   ]
+  },
+  {
+   "key": "tank_heavy",
+   "name": "Tank, heavy armour",
+   "theme": "role",
+   "act": 1,
+   "trigger": "Heavy armour and a shield",
+   "fits": "Paladin, Fighter, War or Life Cleric",
+   "notes": "The Adamantine Forge makes two items per playthrough",
+   "slots": {
+    "armour": [
+     "bg3:adamantine_splint_armour",
+     "bg3:adamantine_scale_mail"
+    ],
+    "melee_off": [
+     "bg3:adamantine_shield",
+     "bg3:safeguard_shield"
+    ],
+    "helmet": [
+     "bg3:grymskull_helm",
+     "bg3:holy_lance_helm"
+    ],
+    "melee_main": [
+     "bg3:defender_flail"
+    ],
+    "ring_1": [
+     "bg3:ring_of_protection"
+    ]
+   }
+  }
+ ]
+}

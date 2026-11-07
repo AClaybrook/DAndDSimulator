@@ -35,22 +35,26 @@ def adv_dis_pmf(pmf, advantage=False, disadvantage=False):
         new_cdf = 1 - (1 - cdf)**2
     return np.diff(np.concatenate([[0], new_cdf]))
 
-def dice_sum_pmf(num_die, die_size, reroll_on=0):
-    """ Probability mass function of a sum of dice, index i is a total of i """
+def dice_sum_pmf(num_die, die_size, reroll_on=0, advantage=False, disadvantage=False):
+    """ Probability mass function of a sum of dice, index i is a total of i. Advantage/disadvantage here is per die """
     pmf = np.array([1.0])
     for nd, ds in zip(num_die, die_size):
-        single = np.concatenate([[0], die_pmf(ds, reroll_on)])
+        single = np.concatenate([[0], adv_dis_pmf(die_pmf(ds, reroll_on), advantage, disadvantage)])
         for _ in range(nd):
             pmf = np.convolve(pmf, single)
     return pmf
 
-def expected_dice(num_die, die_size, reroll_on=0, advantage=False, disadvantage=False):
-    """ Expected total of a set of dice, optionally rolling the whole set twice and keeping the higher/lower total """
-    pmf = adv_dis_pmf(dice_sum_pmf(num_die, die_size, reroll_on), advantage, disadvantage)
+def expected_dice(num_die, die_size, reroll_on=0, advantage=False, disadvantage=False, per_die=False):
+    """ Expected total of a set of dice, optionally rolling the whole set twice and keeping the higher/lower total,
+        or with per_die, keeping the higher/lower of two rolls for each die """
+    if per_die:
+        pmf = dice_sum_pmf(num_die, die_size, reroll_on, advantage, disadvantage)
+    else:
+        pmf = adv_dis_pmf(dice_sum_pmf(num_die, die_size, reroll_on), advantage, disadvantage)
     return float(np.dot(np.arange(len(pmf)), pmf))
 
 def hit_and_crit_chance(num_die=(), die_size=(), modifier=0, difficulty_class=15, crit_on=20, advantage=False, disadvantage=False,
-                        reroll_on=0, saving_throw=False, always_hit=False, always_crit=False, **_):
+                        reroll_on=0, saving_throw=False, always_hit=False, always_crit=False, hits_crit=False, **_):
     """ Exact probability to hit (including crits) and to crit for an attack roll or a saving throw (hit = failed save) """
     if always_crit:
         return 1.0, 1.0
@@ -74,7 +78,7 @@ def hit_and_crit_chance(num_die=(), die_size=(), modifier=0, difficulty_class=15
             p_crit += p_face
             continue
         p_hit += p_face * bonus[max(needed, 0):].sum()
-    return float(p_hit), float(p_crit)
+    return float(p_hit), float(p_hit if hits_crit else p_crit)
 
 def expected_attack_damage(attack_context, damage_context, p_first_hit=None, auto_crit=False):
     """ Expected damage of a single attack (before damage reduction, resistances are applied linearly)
@@ -87,8 +91,9 @@ def expected_attack_damage(attack_context, damage_context, p_first_hit=None, aut
         p_crit = p_hit
     p_miss = 1 - p_hit
 
-    base = expected_dice(d["num_die"], d["die_size"], d["reroll_on"], d["advantage"], d["disadvantage"]) + d["modifier"]
-    crit_extra = expected_dice(d["num_die"], d["die_size"], d["reroll_on"], d["advantage"], d["disadvantage"]) \
+    per_die = d.get("per_die_advantage", False)
+    base = expected_dice(d["num_die"], d["die_size"], d["reroll_on"], d["advantage"], d["disadvantage"], per_die) + d["modifier"]
+    crit_extra = expected_dice(d["num_die"], d["die_size"], d["reroll_on"], d["advantage"], d["disadvantage"], per_die) \
         + expected_dice(d["crit_num_die"], d["crit_damage_die"], d["reroll_on"]) + d["crit_damage_modifier"]
     miss = expected_dice(d["miss_num_die"], d["miss_damage_die"]) + d["miss_damage_modifier"] + d["save_success_multiplier"] * base
 
@@ -98,7 +103,12 @@ def expected_attack_damage(attack_context, damage_context, p_first_hit=None, aut
         once = expected_dice(d["once_num_die"], d["once_die_size"], d["reroll_on"])
         # Given that this is the first trigger, the chance it was a crit is p_crit/p_trigger
         expected += p_first_hit * (once + d["once_modifier"] + p_crit / p_trigger * once)
-    return expected * d["damage_multiplier"]
+    expected *= d["damage_multiplier"]
+    # Extra damage of other types on a hit, dice doubled on a crit
+    for n, s, m, mult in zip(d.get("rider_num_die") or [], d.get("rider_die_size") or [], d.get("rider_modifier") or [], d.get("rider_multiplier") or []):
+        dice = expected_dice(n, s)
+        expected += (p_hit * (dice + m) + p_crit * dice) * mult
+    return expected
 
 def _uses_realizations(averages):
     """ Every combination of integer uses for average uses per fight (None = unlimited), with its probability.
@@ -216,6 +226,18 @@ def attacks_per_round(character, rounds_per_fight=None):
 def expected_damage_per_round(character, enemy, rounds_per_fight=None):
     """ Expected (mean) damage per round, ignoring damage reduction and rounding """
     return float(expected_by_attack(character, enemy, rounds_per_fight).sum())
+
+def enemies_hit(attack, enemies):
+    """ How many of a group of identical enemies an attack damages: single target attacks one, areas and auras up to their size """
+    if enemies < max(attack.min_enemies, 1):
+        return 0
+    return min(max(attack.targets, 1), enemies)
+
+def expected_damage_vs_enemies(character, enemy, rounds_per_fight=None, enemies=1):
+    """ Expected damage per round summed over a group of identical enemies. Single target attacks count once (the damage doesn't spill over
+        to a second enemy), area spells and auras once per enemy they reach. With one enemy this is expected_damage_per_round """
+    expected = expected_by_attack(character, enemy, rounds_per_fight)
+    return float(sum(e * enemies_hit(a, enemies) for a, e in zip(character.attacks, expected)))
 
 POWER_ATTACK_FEATS = {"GWM": ("Great Weapon Master", lambda a: a.type == "weapon (melee)" and a.heavy),
                       "sharpshooter": ("Sharpshooter", lambda a: a.type == "weapon (ranged)")}

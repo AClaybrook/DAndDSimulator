@@ -34,6 +34,7 @@ Live here: https://d-and-d-damage-simulator-745953dd5908.herokuapp.com/
 See [CHANGELOG.md](CHANGELOG.md) for what changed in 2.0.
 
 ## Using the Dashboard
+0. **BG3 Party Planner** (top of the page): up to four characters, each a class preset or a custom character (race, point buy, classes in order, subclasses, feats, fighting styles), with gear and buffs for each act checkpoint (End of Act 1 at level 5, Act 2 at 8, Act 3 at 12, editable per character). An empty gear cell keeps the item from the act before. The planner shows the exact expected damage per round of every character at every act, lists equipment conflicts (a unique item wanted by more than one character in the same act, a unique item in two slots, a two-handed weapon with an off hand, items found in a later act) and highlights the conflicting cells. "Add to simulator" adds the party at an act, or one character at every act, as cards for the full simulation.
 1. **Characters**: add presets (Preset, Level, +), which level up like the real class, or blank characters, then tweak them. Each card shows its exact expected damage per round against the current enemy, updated as you edit. Card sections expand when the character uses them, attacks are edited by clicking one, changing it and pressing Save.
 2. **Enemy**: load a monster or a CR baseline, or type in armor class, hit points, saves and resistances.
 3. **Simulate**: pick what you want to know (each graph type says what it answers) and press Simulate, the floating button works from anywhere. Results start with a one line summary.
@@ -50,6 +51,10 @@ Sessions: every simulation saves the session in your browser, after a reload you
 
 # Technical Notes/Features:
 
+Kits and variants: in the planner, "Quick gear" fills a curated item kit's slots (docs/act1_item_kits.md) and "Variants" compares the selected character with a kit, buffs or advantage, without changing its own gear.
+
+Act 1 Map (sidebar, or `/map`): where to find the notable Act 1 gear and key pickups, on the game's minimap images with in-game coordinates, filters by rarity and a search. Item locations from bg3.wiki; map images © Larian Studios via bg3.wiki.
+
 ## Project Layout
 * `computations/`: the generic simulator
     * `models.py`: Character, Enemy and Attack dataclasses, and the translation of class features into attack/damage contexts
@@ -58,6 +63,15 @@ Sessions: every simulation saves the session in your browser, after a reload you
 * `game_data/`: the optional game database, everything it produces is a plain Character/Enemy/Attack that can still be edited
     * `weapons.json`, `spells.json`, `monsters.json`: SRD weapons, spells, and monster defenses
     * `classes.py`: prebuilt characters that level up (attacks, feats/ASIs, subclass features, cantrip scaling, spell slots) for the BG3 and 5e rulesets
+* `bg3/`: Baldur's Gate 3 planning, builds compile to plain Characters so the simulator is unchanged
+    * `checkpoints.py`: act checkpoints and their levels
+    * `items.py`, `data/items.json`: items, their modelled effects (with conditional toggles), and base weapons
+    * `buffs.py`: buffs during fights (Bless, Haste, Hex, Divine Favour)
+    * `build.py`: a build (class preset + gear, buffs and conditions per act) and compiling it at an act
+    * `party.py`: equipment conflicts in a party
+    * `scrape_wiki.py`, `scrape_sheet.py`, `build_items.py`: export the Patch 8 item pages from bg3.wiki and the community checklist sheet, and build `data/items.json` (hand checked fixes in `data/effect_overrides.json`)
+    * `presets.py`: example builds with gear per act
+    * `character.py`, `abilities.py`: the character builder (race, point buy, classes, subclasses, feats) compiled to a Character from the Patch 8 rules in `data/rules.json`
 * `components/`: Dash layout and callbacks
 * `tests/`, `benchmarks/`
 
@@ -114,6 +128,21 @@ Rough priority order, the first items have the most impact for the least work.
 
 ### Done in 2.6
 * Copy with a change from the card (variants for quick what-if comparisons) and live expected damage per round on each card
+
+### Done in 2.7 (in progress)
+* BG3 Party Planner: act checkpoints, gear and buffs per act, equipment conflicts, expected damage per act, send to the simulator
+* Act 1 item map
+* Damage leaderboard: every example build, gear variants (max damage, max AC, best score) and your party ranked by act under the same conditions, against 1 to 4 enemies, with no buffs, reliable buffs or a max nova round (docs/leaderboard.md). Runs and build specs are saved in a local SQLite database (local_data/bg3.sqlite, personal: gitignore it before making the repository public)
+* Typed extra damage on hits (i.e. 1d4 fire on a slashing weapon), resisted separately
+
+* Patch 8 item database from bg3.wiki (911 items, 311 with modelled effects), cross-checked with the community unique item checklist sheet, example builds with gear per act
+
+### Next (BG3)
+* Arcane Acuity, Lightning Charges and other stacking item effects, per-weapon rerolls (Twist of Fortune)
+* Data driven character builder: race, class levels and subclasses (including the Patch 8 subclasses), point buy, feats
+* Elixirs and camp buffs, party buffs from one caster's concentration
+* Story-exclusive items (one path or the other) in the conflict report
+* Illithid powers
 
 ### Next
 * Conditional damage: GWM bonus attack on a crit/kill, Colossus Slayer only on damaged targets, Toll the Dead d12 vs damaged targets

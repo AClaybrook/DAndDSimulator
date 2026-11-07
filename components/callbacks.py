@@ -1,6 +1,7 @@
 """ Callbacks for the app, which are registered in app.py. Clientside callbacks are located in assets/callbacks.js"""
 import json
 import base64
+from copy import deepcopy
 import pandas as pd
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
@@ -24,8 +25,23 @@ from components.character_card import (generate_character_card, set_attack_from_
                                        label_value_rows, validation_errors, character_dict_from_labels)
 from components.enemy_card import extract_enemy_ui_values, generate_enemy_card_body, enemy_dict_from_labels
 from components.variants import make_variant
+from components.static_html import static
 from components.sweeps import SWEEP_PARAMETERS, run_sweep
 from components.session import SETTINGS_IDS, describe_session, make_session, parse_session
+from components.bg3_planner import (DEFAULT_PARTY, MAX_PARTY_SIZE, CUSTOM, conditional_options, conflicts_list, dpr_chart, dpr_table, gear_highlights,
+                                    inherited_placeholders, item_values_table, suggestions_table, fields_from_character, character_from_fields,
+                                    subclass_options, builder_summary, toggle_options, roles_table,
+                                    synergy_table, party_fight_summary, fight_chart, kit_info, variants_table, ac_table, score_table,
+                                    leaderboard_entries, leaderboard_table)
+from bg3.kits import QUICK_VARIANTS, apply_kit, kits, taken_by_others, variant_build, variant_damage
+from bg3.items import SLOT_LABELS, catalog
+from bg3.character import Bg3Character
+from bg3.analysis import item_values, shared_item_gains, slot_suggestions
+from bg3.build import ACT_KEYS, Bg3Build, compile_build
+from bg3.checkpoints import ACTS, act_level
+from bg3.party import party_conflicts
+from bg3.presets import examples
+from game_data.classes import BUILDS
 
 MAX_CHARACTERS = min(8, len(COLORS)) # There are 10 colors and 4 characters fit per row, so 8 is a good max
 ARMOR_CLASSES = range(10, 26)
@@ -91,6 +107,11 @@ def dpa_vs_ac_tables(df_acs, order, x_col='Armor Class'):
     return data_summary
 
 # Note: Intellisense is not recognizing the callbacks as being accessed
+def unchanged(values, old):
+    """ no_update for each value equal to what the browser already has """
+    old = old or [None] * len(values)
+    return [no_update if v == o else v for v, o in zip(values, old)]
+
 def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: disable=too-many-statements
     """ Registers all callbacks for the app"""
     if sidebar:
@@ -468,12 +489,13 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             State("character_row", "children"),
             State({"type": "attack_store", "index": ALL}, "data"),
             State("enemy-card-body", "children"),
+            State("bg3-party", "data"),
             *SETTINGS_STATES,
             prevent_initial_call=True
     )
     @timeit
-    def export_session(clicked, characters_ui, attack_stores, enemy_card_body, *settings):
-        """ Exports the characters, enemy and simulator settings to a json file that Import loads back """
+    def export_session(clicked, characters_ui, attack_stores, enemy_card_body, bg3_party, *settings):
+        """ Exports the characters, enemy, simulator settings and the BG3 planner party to a json file that Import loads back """
         if not clicked:
             raise PreventUpdate
 
@@ -482,12 +504,13 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             c_dict = extract_character_ui_values(c)
             c_dict["attacks"] = json.loads(attack_stores[ii])
             c_dicts.append(c_dict)
-        session = make_session(c_dicts, extract_enemy_ui_values(enemy_card_body), dict(zip(SETTINGS_IDS, settings)))
+        session = make_session(c_dicts, extract_enemy_ui_values(enemy_card_body), dict(zip(SETTINGS_IDS, settings)), bg3_party)
         return dict(content=json.dumps(session, indent=4), filename="dnd_session.json")
 
     @app.callback(
             *SESSION_OUTPUTS,
             Output('character-alerts', 'children'),
+            Output("bg3-party", "data", allow_duplicate=True),
             Input('upload-button', 'contents'),
             State("active_ids", "data"),
             prevent_initial_call=True
@@ -500,23 +523,25 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
 
         content_type, content_string = contents.split(',')
         if 'json' not in content_type:
-            return *NO_SESSION_CHANGE, alert("Import Failed. Only json files are supported")
+            return *NO_SESSION_CHANGE, alert("Import Failed. Only json files are supported"), no_update
         try:
             data = json.loads(base64.b64decode(content_string).decode('utf-8'))
         except Exception as e:
             print(e)
-            return *NO_SESSION_CHANGE, alert("Import Failed. Cannot parse json file")
+            return *NO_SESSION_CHANGE, alert("Import Failed. Cannot parse json file"), no_update
 
         characters, enemy, settings, error = parse_session(data)
+        # The BG3 planner party, when the session has one
+        party = data.get("bg3_party") if isinstance(data, dict) and isinstance(data.get("bg3_party"), list) else no_update
         if isinstance(data, dict) and "characters" in data:
             if not characters:
-                return *NO_SESSION_CHANGE, alert(error or "Import Failed. The session has no characters")
+                return *NO_SESSION_CHANGE, alert(error or "Import Failed. The session has no characters"), party
             message = alert(error, color="warning") if error else alert(f"Loaded session: {describe_session(data)}", color="success")
-            return *session_outputs(characters, enemy, settings), message
+            return *session_outputs(characters, enemy, settings), message, party
 
         # Older exports are a list of characters, which are added to the current ones
         patched_children, active_ids, warning = append_cards(characters, active_ids_json)
-        return patched_children, active_ids, *NO_SESSION_CHANGE[2:], (alert(error) if error else warning)
+        return patched_children, active_ids, *NO_SESSION_CHANGE[2:], (alert(error) if error else warning), no_update
 
     @app.callback(
         Output("restore-banner", "is_open"),
@@ -639,7 +664,8 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             leaderboard = build_leaderboard(characters, df_by_rounds, rounds_per_fight)
             summary = results_summary({c.name: df["Damage"].mean() for c, df in zip(characters, df_by_rounds)}, "damage per round", context=f"against {enemy.name}.")
             if simulate_type == "DPR Distribution":
-                fig = generate_plot_data(characters, df_by_rounds, template=template, title="Damage Per Round Distribution")
+                fig = generate_plot_data(characters, df_by_rounds, template=template, title="Damage Per Round Distribution", enemy=enemy,
+                                         rounds_per_fight=rounds_per_fight)
                 tables = leaderboard + add_tables(df_by_rounds, characters, by_round=True, width=3) + breakdown
             elif simulate_type == "DPA Distribution":
                 fig = generate_damage_per_attack_histogram(characters, dfs, template=template, title="Damage Per Attack Distribution")
@@ -682,7 +708,7 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             fig = generate_fight_plot(fights, template=template)
             tables = fight_summary(fights) + breakdown
             summary = results_summary({name: damage.sum(axis=0).mean() for name, damage in fights.items()}, f"damage per {rounds_per_fight} round fight", context=f"against {enemy.name}.")
-        return fig, tables, None, spinner, summary, session
+        return fig, static(tables), None, spinner, summary, session
 
 
     # Resimulate since storing data is very memory intensive. Could implment client side callbacks, but this is sufficient for now
@@ -764,3 +790,450 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
         # Export to csv
         export = dcc.send_data_frame(pd.concat(dfs).to_csv, f"{export_type}.csv")
         return export, None, spinner
+
+    ## BG3 Party Planner
+
+    clientside_callback(
+        ClientsideFunction(namespace="clientside", function_name="gear_options"),
+        Output({"type": "bg3-gear", "slot": ALL, "act": ALL, "group": ALL}, "options"),
+        Input("bg3-item-options", "data"),
+    )
+
+    @app.callback(
+        Output("bg3-party", "data"),
+        Output("bg3-member-tabs", "children"),
+        Output("bg3-member-tabs", "active_tab"),
+        Output("bg3-name", "value"),
+        Output("bg3-preset", "value"),
+        Output({"type": "bg3-level", "act": ALL}, "value"),
+        Output({"type": "bg3-gear", "slot": ALL, "act": ALL, "group": ALL}, "value"),
+        Output({"type": "bg3-gear", "slot": ALL, "act": ALL, "group": ALL}, "className"),
+        Output({"type": "bg3-gear", "slot": ALL, "act": ALL, "group": ALL}, "placeholder"),
+        Output({"type": "bg3-buffs", "act": ALL}, "value"),
+        Output("bg3-conditions", "options"),
+        Output("bg3-conditions", "value"),
+        Output("bg3-conflicts", "children"),
+        Output("bg3-dpr", "children"),
+        Output({"type": "bg3-cb", "field": ALL}, "value"),
+        Output({"type": "bg3-cb-sub", "row": ALL}, "options"),
+        Output({"type": "bg3-cb-sub", "row": ALL}, "value"),
+        Output("bg3-custom", "is_open"),
+        Output("bg3-cb-summary", "children"),
+        Output({"type": "bg3-cb", "field": "toggles"}, "options"),
+        Input("bg3-member-tabs", "active_tab"),
+        Input("bg3-add-member", "n_clicks"),
+        Input("bg3-remove-member", "n_clicks"),
+        Input("bg3-load", "n_clicks"),
+        Input("bg3-name", "value"),
+        Input("bg3-preset", "value"),
+        Input({"type": "bg3-level", "act": ALL}, "value"),
+        Input({"type": "bg3-gear", "slot": ALL, "act": ALL, "group": ALL}, "value"),
+        Input({"type": "bg3-buffs", "act": ALL}, "value"),
+        Input("bg3-conditions", "value"),
+        Input("enemy-values", "data"),
+        Input("rounds-per-fight", "value"),
+        Input({"type": "bg3-cb", "field": ALL}, "value"),
+        Input({"type": "bg3-cb-sub", "row": ALL}, "value"),
+        Input("bg3-party", "data"), # Imported sessions replace the party
+        Input("bg3-enemies", "value"),
+        State("bg3-load-preset", "value"),
+        State({"type": "bg3-gear", "slot": ALL, "act": ALL, "group": ALL}, "className"),
+        State({"type": "bg3-gear", "slot": ALL, "act": ALL, "group": ALL}, "placeholder"),
+        State("bg3-member-tabs", "children"),
+        State("bg3-conditions", "options"),
+    )
+    def sync_planner(active_tab, _add, _remove, _load, name, preset, levels, gear, buffs, conditions, enemy_dict, rounds_per_fight, cb_values, cb_subs,
+                     party, enemies, example, old_classes, old_placeholders, old_tabs, old_conditions): # pylint: disable=too-many-locals
+        """ Keeps the party store and the member editor in sync. Editing updates the selected member, switching members loads them """
+        party = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)] or [Bg3Build.from_dict(DEFAULT_PARTY[0])]
+        selected = min(int(active_tab or 0), len(party) - 1)
+        triggered = ctx.triggered_id
+        level_ids = [i["id"] for i in ctx.inputs_list[6]]
+        gear_ids = [i["id"] for i in ctx.inputs_list[7]]
+        buff_ids = [i["id"] for i in ctx.inputs_list[8]]
+        cb_ids = [i["id"] for i in ctx.inputs_list[12]]
+        trigger_type = triggered.get("type") if isinstance(triggered, dict) else None
+        builder_changed = trigger_type in ("bg3-cb", "bg3-cb-sub")
+        editor_changed = triggered in ("bg3-name", "bg3-preset", "bg3-conditions") or trigger_type in ("bg3-level", "bg3-gear", "bg3-buffs") or builder_changed
+
+        if triggered == "bg3-add-member" and len(party) < MAX_PARTY_SIZE:
+            party.append(Bg3Build(f"Character {len(party) + 1}", "fighter_gwm"))
+            selected = len(party) - 1
+        elif triggered == "bg3-load" and example in examples():
+            party[selected] = deepcopy(examples()[example])
+        elif triggered == "bg3-remove-member" and len(party) > 1:
+            del party[selected]
+            selected = min(selected, len(party) - 1)
+        elif editor_changed:
+            # Save the editor into the selected member
+            member = party[selected]
+            member.name = name or f"Character {selected + 1}"
+            if preset == CUSTOM:
+                # Switching to a custom character starts from the defaults, then the builder fields edit it
+                if builder_changed and member.character:
+                    # A subclass that doesn't belong to its row's class (the class just changed) falls back to the class's first subclass
+                    row_classes = {fid["field"]: v for fid, v in zip(cb_ids, cb_values)}
+                    subs_ok = [sub if sub in {o["value"] for o in subclass_options(row_classes.get(f"class:{row}"))}
+                               else next((o["value"] for o in subclass_options(row_classes.get(f"class:{row}"))), "")
+                               for row, sub in enumerate(cb_subs)]
+                    member.character = character_from_fields(cb_ids, cb_values, subs_ok, member.name).to_dict()
+                elif not member.character:
+                    member.character = Bg3Character(name=member.name).to_dict()
+            else:
+                member.character = None
+                member.preset = preset if preset in BUILDS else member.preset
+            member.levels = {gid["act"]: int(v) for gid, v in zip(level_ids, levels) if v and int(v) != ACTS[int(gid["act"])][1]}
+            member.equipment = {}
+            for gid, value in zip(gear_ids, gear):
+                if value:
+                    member.equipment.setdefault(gid["act"], {})[gid["slot"]] = value
+            member.buffs = {bid["act"]: list(v or []) for bid, v in zip(buff_ids, buffs) if v}
+            member.conditions = list(conditions or [])
+
+        member = party[selected]
+        conflicts = party_conflicts(party)
+        enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
+        rounds = max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)
+        gains = {(c.act, c.item): shared_item_gains(party, c, enemy, rounds) for c in conflicts if c.kind == "shared"}
+        # Every output prop sent is a store update in the browser, so unchanged ones are skipped
+        old_labels = [(t.get("props", {}).get("label"), t.get("props", {}).get("tab_id")) for t in (old_tabs or []) if isinstance(t, dict)]
+        tabs = [dbc.Tab(label=b.name, tab_id=str(ii)) for ii, b in enumerate(party)]
+        if old_labels == [(b.name, str(ii)) for ii, b in enumerate(party)]:
+            tabs = no_update
+        conditions_now = conditional_options(member)
+        outputs_from_member = not editor_changed
+        # Builder fields: loaded when switching members or to a custom character, left alone while they are being edited
+        custom = Bg3Character.from_dict(member.character) if member.character else None
+        load_builder = custom is not None and not builder_changed
+        cb_out = fields_from_character(custom, cb_ids) if load_builder else [no_update] * len(cb_ids)
+        classes_now = [r[0] for r in custom.classes] + ["", "", ""] if custom else ["", "", ""]
+        sub_options = [subclass_options(classes_now[row]) for row in range(3)]
+        if load_builder:
+            sub_values = [custom.classes[row][1] if row < len(custom.classes) else None for row in range(3)]
+        else:
+            sub_values = [v if v in {o["value"] for o in opts} else (opts[0]["value"] if opts else None) for v, opts in zip(cb_subs, sub_options)]
+        levels_now = [act_level(a, member.levels) for a in ACT_KEYS]
+        return (
+            [b.to_dict() for b in party],
+            tabs,
+            str(selected) if str(selected) != str(active_tab) else no_update,
+            member.name if outputs_from_member and member.name != name else no_update,
+            (CUSTOM if member.character else member.preset) if outputs_from_member and (CUSTOM if member.character else member.preset) != preset else no_update,
+            unchanged([act_level(gid["act"], member.levels) for gid in level_ids], levels) if outputs_from_member else [no_update] * len(level_ids),
+            unchanged([member.equipment.get(gid["act"], {}).get(gid["slot"]) for gid in gear_ids], gear) if outputs_from_member else [no_update] * len(gear_ids),
+            unchanged(gear_highlights(member, conflicts, gear_ids), old_classes),
+            unchanged(inherited_placeholders(member, gear_ids), old_placeholders),
+            unchanged([member.buffs.get(bid["act"], []) for bid in buff_ids], [b or [] for b in buffs]) if outputs_from_member else [no_update] * len(buff_ids),
+            conditions_now if conditions_now != old_conditions else no_update,
+            [c for c in member.conditions if c in {o["value"] for o in conditions_now}] if outputs_from_member else no_update,
+            static(conflicts_list(conflicts, gains)),
+            static(dpr_table(party, enemy, rounds, int(enemies or 1))),
+            unchanged(cb_out, cb_values) if load_builder else cb_out,
+            sub_options,
+            unchanged(sub_values, cb_subs),
+            custom is not None,
+            static(builder_summary(custom, levels_now)) if custom else None,
+            toggle_options(custom.classes) if custom else [],
+        )
+
+    @app.callback(
+        Output("bg3-ac", "children"),
+        Output("bg3-score", "children"),
+        Output("bg3-dpr-chart", "figure"),
+        Input("bg3-party", "data"),
+        Input("enemy-values", "data"),
+        Input("rounds-per-fight", "value"),
+        Input("bg3-enemy-attack", "value"),
+        Input("bg3-enemies", "value"),
+    )
+    def party_summaries(party, enemy_dict, rounds_per_fight, attack_bonus, enemies):
+        """ Armour class, overall score and the damage chart of the party. One callback: each callback costs the browser a round of
+            store updates over the whole page """
+        builds = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)]
+        enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
+        rounds = max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)
+        chart = dpr_chart(builds, enemy, rounds, int(enemies or 1))
+        if ctx.triggered_id == "bg3-enemies":
+            return no_update, no_update, chart
+        return (static(ac_table(builds, enemy, attack_bonus)),
+                static(score_table(builds, enemy, rounds, int(attack_bonus if attack_bonus is not None else 6))), chart)
+
+    @app.callback(Output("bg3-kit-info", "children"), Input("bg3-kit", "value"))
+    def show_kit(kit_key):
+        return static(kit_info(kit_key))
+
+    @app.callback(
+        Output("bg3-party", "data", allow_duplicate=True),
+        Output("bg3-kit-result", "children"),
+        Input("bg3-kit-apply", "n_clicks"),
+        Input("bg3-var-add", "n_clicks"),
+        Input({"type": "bg3-var-quick", "key": ALL}, "n_clicks"),
+        Input("bg3-var-del", "n_clicks"),
+        Input("bg3-var-use", "n_clicks"),
+        State("bg3-party", "data"),
+        State("bg3-member-tabs", "active_tab"),
+        State("bg3-kit", "value"),
+        State("bg3-kit-act", "value"),
+        State("bg3-kit-options", "value"),
+        State("bg3-var-name", "value"),
+        State("bg3-var-kit", "value"),
+        State("bg3-var-buffs", "value"),
+        State("bg3-var-adv", "value"),
+        State("bg3-var-pick", "value"),
+        prevent_initial_call=True,
+    )
+    def kits_and_variants(*args):
+        """ Quick gear from a kit, and adding, deleting or using variants of the selected character. Manual gear editing is untouched:
+            a kit only fills its own slots, and variants live next to the gear """
+        party, active_tab, kit_key, kit_act, kit_opts, var_name, var_kit, var_buffs, var_adv, picked = args[5:]
+        # Only real clicks count (n_clicks of None comes from a button being created)
+        if not party or not ctx.triggered or not ctx.triggered[0]["value"]:
+            raise PreventUpdate
+        builds = [Bg3Build.from_dict(b) for b in party]
+        selected = min(int(active_tab or 0), len(builds) - 1)
+        member = builds[selected]
+        triggered = ctx.triggered_id
+        message = no_update
+        if triggered == "bg3-kit-apply":
+            if kit_key not in kits():
+                return no_update, alert("Pick a kit first", color="warning")
+            act = kit_act or "1"
+            taken = taken_by_others(builds, selected, act) if "skip" in (kit_opts or []) else ()
+            member, placed, blocked = apply_kit(member, kit_key, act, taken, only_empty="only_empty" in (kit_opts or []))
+            items = catalog()
+            done = ", ".join(items[k].name for k in placed.values()) or "nothing (every kit slot already had an item)"
+            message = html.Div([html.Span(f"{kits()[kit_key]['name']} at {ACTS[int(act)][0]}: {done}."),
+                                html.Span(f" Taken by another character: {', '.join(SLOT_LABELS.get(s, s) for s in blocked)}." if blocked else "",
+                                          className="text-warning")])
+        elif triggered == "bg3-var-add":
+            variant = {"name": var_name or (kits()[var_kit]["name"] if var_kit in kits() else "Variant"), "kit": var_kit or None,
+                       "buffs": list(var_buffs or []), "toggles": {"advantage": True} if "advantage" in (var_adv or []) else {}}
+            member.variants = [*member.variants, variant]
+        elif isinstance(triggered, dict) and triggered.get("type") == "bg3-var-quick":
+            member.variants = [*member.variants, dict(QUICK_VARIANTS[triggered["key"]])]
+        elif triggered in ("bg3-var-del", "bg3-var-use"):
+            index = int(picked) if picked not in (None, "") else -1
+            if not 0 <= index < len(member.variants):
+                return no_update, alert("Pick a variant first", color="warning")
+            if triggered == "bg3-var-del":
+                member.variants = [v for ii, v in enumerate(member.variants) if ii != index]
+            else:
+                used = variant_build(member, member.variants[index])
+                used.name, used.variants = member.name, [v for ii, v in enumerate(member.variants) if ii != index]
+                member = used
+        else:
+            raise PreventUpdate
+        builds[selected] = member
+        return [b.to_dict() for b in builds], message
+
+    @app.callback(
+        Output("bg3-variants", "children"),
+        Output("bg3-var-pick", "options"),
+        Output("bg3-var-pick", "value"),
+        Input("bg3-party", "data"),
+        Input("bg3-member-tabs", "active_tab"),
+        Input("enemy-values", "data"),
+        Input("rounds-per-fight", "value"),
+        Input("bg3-enemies", "value"),
+        State("bg3-var-pick", "value"),
+    )
+    def show_variants(party, active_tab, enemy_dict, rounds_per_fight, enemies, picked):
+        if not party:
+            raise PreventUpdate
+        builds = [Bg3Build.from_dict(b) for b in party]
+        member = builds[min(int(active_tab or 0), len(builds) - 1)]
+        enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
+        rows = variant_damage(member, enemy, max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1), int(enemies or 1))
+        options = [{"label": name, "value": str(ii)} for ii, (name, *_) in enumerate(rows[1:])]
+        return static(variants_table(rows, enemy)), options, picked if picked in {o["value"] for o in options} else None
+
+    @app.callback(
+        Output("bg3-synergies", "options"),
+        Output("bg3-synergies", "value"),
+        Output("bg3-roles", "children"),
+        Output("bg3-synergy-dpr", "children"),
+        Output("bg3-fight", "children"),
+        Output("bg3-fight-chart", "figure"),
+        Input("bg3-party", "data"),
+        Input("bg3-party-act", "value"),
+        Input("bg3-synergies", "value"),
+        Input("enemy-values", "data"),
+        Input("rounds-per-fight", "value"),
+        Input("bg3-fight-hp", "value"),
+    )
+    def party_combat(party, act, active, enemy_dict, rounds_per_fight, hit_points):
+        """ Roles, synergies and a simulated fight for the whole party at one act """
+        from bg3 import synergy # pylint: disable=import-outside-toplevel
+        from bg3.roles import party_roles # pylint: disable=import-outside-toplevel
+        builds = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)]
+        act = act or "2"
+        enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
+        if hit_points:
+            enemy.hit_points = max(int(hit_points), 1)
+        rounds = max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)
+        descriptions = synergy.describe(builds, act, enemy)
+        options = [{"label": text, "value": key} for key, text in descriptions.items()]
+        if active is None or ctx.triggered_id != "bg3-synergies" and not set(active) & set(descriptions):
+            active = synergy.default_active(builds, act)
+        active = [k for k in active if k in descriptions]
+        result = synergy.simulate_party_fight(builds, act, enemy, rounds, active)
+        return (options, active, static(roles_table(*party_roles(builds, act))), static(synergy_table(synergy.party_damage(builds, act, enemy, rounds, active))),
+                party_fight_summary(result), fight_chart(result))
+
+    @app.callback(
+        Output("bg3-item-values", "children"),
+        Output("bg3-suggestions", "children"),
+        Input("bg3-party", "data"),
+        Input("bg3-member-tabs", "active_tab"),
+        Input("bg3-advice-act", "value"),
+        Input("bg3-advice-slot", "value"),
+        Input("enemy-values", "data"),
+        Input("rounds-per-fight", "value"),
+    )
+    def gear_advice(party, active_tab, act, slot, enemy_dict, rounds_per_fight):
+        """ What the selected character's items add at an act, and the best items for a slot """
+        if not party:
+            raise PreventUpdate
+        builds = [Bg3Build.from_dict(b) for b in party]
+        member = builds[min(int(active_tab or 0), len(builds) - 1)]
+        enemy = Enemy.from_dict(enemy_dict) if enemy_dict else Enemy()
+        rounds = max(int(rounds_per_fight or DEFAULT_ROUNDS_PER_FIGHT), 1)
+        act = act or "1"
+        return (static(item_values_table(item_values(member, act, enemy, rounds))),
+                static(suggestions_table(slot_suggestions(member, act, slot or "melee_main", enemy, rounds, party=builds))))
+
+    @app.callback(
+        Output("bg3-lb-collapse", "is_open"),
+        Output("bg3-lb-toggle", "children"),
+        Input("bg3-lb-toggle", "n_clicks"),
+        State("bg3-lb-collapse", "is_open"),
+        prevent_initial_call=True,
+    )
+    def toggle_leaderboard(_, is_open):
+        return not is_open, "Hide" if not is_open else "Show"
+
+    @app.callback(
+        Output("bg3-leaderboard", "children"),
+        Output("bg3-lb-scenario-note", "children"),
+        Input("bg3-lb-collapse", "is_open"),
+        Input("bg3-lb-scenario", "value"),
+        Input("bg3-lb-enemies", "value"),
+        Input("bg3-lb-sort", "value"),
+        Input("bg3-lb-sources", "value"),
+        Input("bg3-lb-variants", "value"),
+        Input("bg3-lb-search", "value"),
+        Input("bg3-lb-compare", "value"),
+        Input("bg3-party", "data"),
+        Input("bg3-lb-refresh", "data"),
+    )
+    def show_leaderboard(is_open, scenario, enemies, sort, sources, variants, search, compare_run, party, _refresh):
+        """ Computed only while open. The example builds come from the latest database run, the party is computed (cached by spec) """
+        if not is_open:
+            raise PreventUpdate
+        from bg3 import db # pylint: disable=import-outside-toplevel
+        from bg3.leaderboard import SCENARIO_NOTES, key # pylint: disable=import-outside-toplevel
+        entries = leaderboard_entries([Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)])
+        compare_to = {key(e): e for e in db.load_run(int(compare_run))} if compare_run else None
+        scenario = scenario or "reliable"
+        return (static(leaderboard_table(entries, scenario, enemies or 1, sort or "overall", sources, variants, search, compare_to)),
+                SCENARIO_NOTES[scenario])
+
+    @app.callback(
+        Output("bg3-lb-compare", "options"),
+        Output("bg3-lb-compare", "value"),
+        Input("bg3-lb-collapse", "is_open"),
+        Input("bg3-lb-refresh", "data"),
+        State("bg3-lb-compare", "value"),
+    )
+    def leaderboard_runs(is_open, _refresh, current):
+        """ Saved runs to compare with; by default the newest saved party, else the run before the latest examples run """
+        if not is_open:
+            raise PreventUpdate
+        from bg3 import db # pylint: disable=import-outside-toplevel
+        found = db.runs()
+        options = [{"label": "Nothing", "value": ""}] + [
+            {"label": f"#{r['id']} {r['created'][:16].replace('T', ' ')} {'party' if r['kind'] == 'party' else 'all builds'}"
+                      f"{': ' + r['label'] if r['label'] else ''} ({r['count']} rows)", "value": str(r["id"])} for r in found]
+        if current and current in {o["value"] for o in options}:
+            return options, current
+        party_runs = [r for r in found if r["kind"] == "party"]
+        example_runs = [r for r in found if r["kind"] == "examples"]
+        default = str(party_runs[0]["id"]) if party_runs else str(example_runs[1]["id"]) if len(example_runs) > 1 else ""
+        return options, default
+
+    @app.callback(
+        Output("bg3-lb-refresh", "data"),
+        Output("bg3-lb-saved-info", "children"),
+        Input("bg3-lb-save", "n_clicks"),
+        Input("bg3-lb-optimise", "n_clicks"),
+        State("bg3-party", "data"),
+        State("bg3-lb-label", "value"),
+        State("bg3-lb-refresh", "data"),
+        prevent_initial_call=True,
+    )
+    def save_leaderboard(save_clicks, optimise_clicks, party, label, refresh):
+        """ Saves the party (planned gear, or with gear variants found by search) as a run in the local database """
+        if not (save_clicks or optimise_clicks):
+            raise PreventUpdate
+        from bg3 import db # pylint: disable=import-outside-toplevel
+        from bg3.leaderboard import cached_entry, entries_for, fingerprint # pylint: disable=import-outside-toplevel
+        builds = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)]
+        entries, specs = [], {}
+        for b in builds:
+            if ctx.triggered_id == "bg3-lb-optimise":
+                rows, prints = entries_for(b.name, b, "Your party")
+            else:
+                rows, prints = [{**cached_entry(b.name, b, "Your party"), "base": fingerprint(b)}], {fingerprint(b): b}
+            entries += rows
+            specs.update(prints)
+        what = "party with gear variants" if ctx.triggered_id == "bg3-lb-optimise" else "party"
+        run_id = db.save_run(entries, specs, "party", label or what)
+        return (refresh or 0) + 1, f"Saved run #{run_id}: {what}, {len(entries)} rows, in local_data/bg3.sqlite"
+
+    @app.callback(
+        Output("bg3-lb-download", "data"),
+        Input("bg3-lb-download-button", "n_clicks"),
+        State("bg3-party", "data"),
+        prevent_initial_call=True,
+    )
+    def download_leaderboard(n_clicks, party):
+        """ Every row with its full build spec, so it can be reproduced or compared later """
+        if not n_clicks:
+            raise PreventUpdate
+        from bg3 import db # pylint: disable=import-outside-toplevel
+        from bg3.leaderboard import REFERENCE_ENEMIES, ROUNDS_PER_FIGHT, SCENARIOS, fingerprint # pylint: disable=import-outside-toplevel
+        builds = [Bg3Build.from_dict(b) for b in (party or DEFAULT_PARTY)]
+        mine = {fingerprint(b): b.to_dict() for b in builds}
+        entries = leaderboard_entries(builds)
+        data = {"scenarios": SCENARIOS, "enemies": REFERENCE_ENEMIES, "rounds_per_fight": ROUNDS_PER_FIGHT,
+                "entries": [{**e, "build": mine.get(e["fingerprint"]) or db.build_by_fingerprint(e["fingerprint"])} for e in entries]}
+        return {"content": json.dumps(data, ensure_ascii=False), "filename": "bg3_leaderboard.json"}
+
+    @app.callback(
+        Output("character_row", "children", allow_duplicate=True),
+        Output("active_ids", "data", allow_duplicate=True),
+        Output("character-alerts", "children", allow_duplicate=True),
+        Input("bg3-send", "n_clicks"),
+        State("bg3-send-act", "value"),
+        State("bg3-party", "data"),
+        State("bg3-member-tabs", "active_tab"),
+        State("character_row", "children"),
+        State("active_ids", "data"),
+        prevent_initial_call=True
+    )
+    def send_party_to_simulator(n_clicks, which, party, active_tab, cards, active_ids_json):
+        """ Adds the planner's characters, compiled at a checkpoint, as cards for the simulator """
+        if not n_clicks or not party:
+            raise PreventUpdate
+        builds = [Bg3Build.from_dict(b) for b in party]
+        if which == "member":
+            member = builds[min(int(active_tab or 0), len(builds) - 1)]
+            characters = [compile_build(member, act) for act in ACT_KEYS]
+        else:
+            characters = [compile_build(b, which) for b in builds]
+        existing = {extract_character_ui_values(c)["name"] for c in cards}
+        for c in characters:
+            if c.name in existing:
+                c.name = unique_name(c.name, existing)
+            existing.add(c.name)
+        return append_cards(characters, active_ids_json)

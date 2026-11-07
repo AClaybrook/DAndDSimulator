@@ -1,0 +1,680 @@
+[
+    {
+        "name": "Oath of Vengeance Paladin L1",
+        "level": 1,
+        "strength": 16,
+        "dexterity": 10,
+        "constitution": 14,
+        "intelligence": 8,
+        "wisdom": 8,
+        "charisma": 16,
+        "description": "Race: Variant Human \nClass: Paladin 1\nFeats: Pole Arm Master",
+        "crit_on": 20,
+        "advantage": false,
+        "disadvantage": false,
+        "bonus_attack_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_damage_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_crit_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_miss_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "GWM": false,
+        "savage_attacker": false,
+        "sharpshooter": false,
+        "tavern_brawler": false,
+        "GWF": false,
+        "archery": false,
+        "dueling": false,
+        "TWF": false,
+        "raging": false,
+        "brutal_critical": false,
+        "divine_smite": false,
+        "divine_smite_level": 1,
+        "improved_divine_smite": false,
+        "empowered_evocation": false,
+        "agonizing_blast": false,
+        "lifedrinker": false,
+        "elemental_affinity": false,
+        "savage_attacks_half_orc": false,
+        "attacks": [
+            {
+                "name": "Halberd",
+                "bonus_attack_die_mod_list": [
+                    ""
+                ],
+                "bonus_damage_die_mod_list": [
+                    ""
+                ],
+                "proficient": true,
+                "type": "weapon (melee)",
+                "ability_stat": "strength",
+                "damage": "1d10",
+                "advantage": false,
+                "disadvantage": false,
+                "always_hit": false,
+                "always_crit": false,
+                "crit_on": 20,
+                "weapon_enhancement": 0,
+                "offhand": false,
+                "two_handed": true,
+                "saving_throw": false,
+                "saving_throw_stat": "dexterity",
+                "saving_throw_success_multiplier": 0.5,
+                "damage_type": "slashing",
+                "bonus_crit_die_mod_list": [
+                    ""
+                ],
+                "bonus_miss_die_mod_list": [
+                    ""
+                ]
+            },
+            {
+                "name": "Halberd (Blunt End)",
+                "bonus_attack_die_mod_list": [
+                    ""
+                ],
+                "bonus_damage_die_mod_list": [
+                    ""
+                ],
+                "proficient": true,
+                "type": "weapon (melee)",
+                "ability_stat": "strength",
+                "damage": "1d4",
+                "advantage": false,
+                "disadvantage": false,
+                "always_hit": false,
+                "always_crit": false,
+                "crit_on": 20,
+                "weapon_enhancement": 0,
+                "offhand": false,
+                "two_handed": true,
+                "saving_throw": false,
+                "saving_throw_stat": "dexterity",
+                "saving_throw_success_multiplier": 0.5,
+                "damage_type": "slashing",
+                "bonus_crit_die_mod_list": [
+                    ""
+                ],
+                "bonus_miss_die_mod_list": [
+                    ""
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Oath of Vengeance Paladin L2",
+        "level": 2,
+        "strength": 16,
+        "dexterity": 10,
+        "constitution": 14,
+        "intelligence": 8,
+        "wisdom": 8,
+        "charisma": 16,
+        "description": "Race: Variant Human \nClass: Paladin 2\nFeats: Pole Arm Master\nOther: Bless (1d4 on attack rolls), divine smite (2d8)",
+        "crit_on": 20,
+        "advantage": false,
+        "disadvantage": false,
+        "bonus_attack_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_damage_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_crit_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_miss_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "GWM": false,
+        "savage_attacker": false,
+        "sharpshooter": false,
+        "tavern_brawler": false,
+        "GWF": false,
+        "archery": false,
+        "dueling": false,
+        "TWF": false,
+        "raging": false,
+        "brutal_critical": false,
+        "divine_smite": false,
+        "divine_smite_level": 1,
+        "improved_divine_smite": false,
+        "empowered_evocation": false,
+        "agonizing_blast": false,
+        "lifedrinker": false,
+        "elemental_affinity": false,
+        "savage_attacks_half_orc": false,
+        "attacks": [
+            {
+                "name": "Halberd (Divine Smite)",
+                "type": "weapon (melee)",
+                "ability_stat": "strength",
+                "damage": "1d10",
+                "weapon_enhancement": 0,
+                "offhand": false,
+                "two_handed": true,
+                "saving_throw": false,
+                "saving_throw_stat": "dexterity",
+                "saving_throw_success_multiplier": 0.5,
+                "bonus_attack_die_mod_list": [
+                    "1d4"
+                ],
+                "bonus_damage_die_mod_list": [
+                    "2d8"
+                ],
+                "bonus_crit_die_mod_list": [
+                    ""
+                ],
+                "bonus_miss_die_mod_list": [
+                    ""
+                ]
+            },
+            {
+                "name": "Halberd (Blunt End Divine Smite)",
+                "type": "weapon (melee)",
+                "ability_stat": "strength",
+                "damage": "1d4",
+                "weapon_enhancement": 0,
+                "offhand": false,
+                "two_handed": true,
+                "saving_throw": false,
+                "saving_throw_stat": "dexterity",
+                "saving_throw_success_multiplier": 0.5,
+                "bonus_attack_die_mod_list": [
+                    "1d4"
+                ],
+                "bonus_damage_die_mod_list": [
+                    "2d8"
+                ],
+                "bonus_crit_die_mod_list": [
+                    ""
+                ],
+                "bonus_miss_die_mod_list": [
+                    ""
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Oath of Vengeance Paladin L3",
+        "level": 3,
+        "strength": 16,
+        "dexterity": 10,
+        "constitution": 14,
+        "intelligence": 8,
+        "wisdom": 8,
+        "charisma": 16,
+        "description": "Race: Variant Human \nClass: Paladin 2\nSubclass: Oath of Vengeance\nFeats: Pole Arm Master\nOther: Bless (1d4 on attack rolls), divine smite (2d8), Vow of Enmity (Advantage)",
+        "crit_on": 20,
+        "advantage": true,
+        "disadvantage": false,
+        "bonus_attack_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_damage_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_crit_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_miss_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "GWM": false,
+        "savage_attacker": false,
+        "sharpshooter": false,
+        "tavern_brawler": false,
+        "GWF": false,
+        "archery": false,
+        "dueling": false,
+        "TWF": false,
+        "raging": false,
+        "brutal_critical": false,
+        "divine_smite": false,
+        "divine_smite_level": 1,
+        "improved_divine_smite": false,
+        "empowered_evocation": false,
+        "agonizing_blast": false,
+        "lifedrinker": false,
+        "elemental_affinity": false,
+        "savage_attacks_half_orc": false,
+        "attacks": [
+            {
+                "name": "Halberd (Divine Smite)",
+                "type": "weapon (melee)",
+                "ability_stat": "strength",
+                "damage": "1d10",
+                "weapon_enhancement": 0,
+                "offhand": false,
+                "two_handed": true,
+                "saving_throw": false,
+                "saving_throw_stat": "dexterity",
+                "saving_throw_success_multiplier": 0.5,
+                "bonus_attack_die_mod_list": [
+                    "1d4"
+                ],
+                "bonus_damage_die_mod_list": [
+                    "2d8"
+                ],
+                "bonus_crit_die_mod_list": [
+                    ""
+                ],
+                "bonus_miss_die_mod_list": [
+                    ""
+                ]
+            },
+            {
+                "name": "Halberd (Blunt End Divine Smite)",
+                "type": "weapon (melee)",
+                "ability_stat": "strength",
+                "damage": "1d4",
+                "weapon_enhancement": 0,
+                "offhand": false,
+                "two_handed": true,
+                "saving_throw": false,
+                "saving_throw_stat": "dexterity",
+                "saving_throw_success_multiplier": 0.5,
+                "bonus_attack_die_mod_list": [
+                    "1d4"
+                ],
+                "bonus_damage_die_mod_list": [
+                    "2d8"
+                ],
+                "bonus_crit_die_mod_list": [
+                    ""
+                ],
+                "bonus_miss_die_mod_list": [
+                    ""
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Oath of Vengeance Paladin L4",
+        "level": 4,
+        "strength": 16,
+        "dexterity": 10,
+        "constitution": 14,
+        "intelligence": 8,
+        "wisdom": 8,
+        "charisma": 16,
+        "description": "Race: Variant Human \nClass: Paladin 2\nSubclass: Oath of Vengeance\nFeats: Pole Arm Master, GWM\nOther: Bless (1d4 on attack rolls), divine smite (2d8), Vow of Enmity (Advantage)",
+        "crit_on": 20,
+        "advantage": true,
+        "disadvantage": false,
+        "bonus_attack_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_damage_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_crit_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_miss_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "GWM": true,
+        "savage_attacker": false,
+        "sharpshooter": false,
+        "tavern_brawler": false,
+        "GWF": false,
+        "archery": false,
+        "dueling": false,
+        "TWF": false,
+        "raging": false,
+        "brutal_critical": false,
+        "divine_smite": false,
+        "divine_smite_level": 1,
+        "improved_divine_smite": false,
+        "empowered_evocation": false,
+        "agonizing_blast": false,
+        "lifedrinker": false,
+        "elemental_affinity": false,
+        "savage_attacks_half_orc": false,
+        "attacks": [
+            {
+                "name": "Halberd (Divine Smite)",
+                "type": "weapon (melee)",
+                "ability_stat": "strength",
+                "damage": "1d10",
+                "weapon_enhancement": 0,
+                "offhand": false,
+                "two_handed": true,
+                "saving_throw": false,
+                "saving_throw_stat": "dexterity",
+                "saving_throw_success_multiplier": 0.5,
+                "bonus_attack_die_mod_list": [
+                    "1d4"
+                ],
+                "bonus_damage_die_mod_list": [
+                    "2d8"
+                ],
+                "bonus_crit_die_mod_list": [
+                    ""
+                ],
+                "bonus_miss_die_mod_list": [
+                    ""
+                ]
+            },
+            {
+                "name": "Halberd (Blunt End Divine Smite)",
+                "type": "weapon (melee)",
+                "ability_stat": "strength",
+                "damage": "1d4",
+                "weapon_enhancement": 0,
+                "offhand": false,
+                "two_handed": true,
+                "saving_throw": false,
+                "saving_throw_stat": "dexterity",
+                "saving_throw_success_multiplier": 0.5,
+                "bonus_attack_die_mod_list": [
+                    "1d4"
+                ],
+                "bonus_damage_die_mod_list": [
+                    ""
+                ],
+                "bonus_crit_die_mod_list": [
+                    ""
+                ],
+                "bonus_miss_die_mod_list": [
+                    ""
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Oath of Vengeance Paladin L5",
+        "level": 5,
+        "strength": 16,
+        "dexterity": 10,
+        "constitution": 14,
+        "intelligence": 8,
+        "wisdom": 8,
+        "charisma": 16,
+        "description": "Race: Variant Human \nClass: Paladin 2\nSubclass: Oath of Vengeance\nFeats: Pole Arm Master, GWM\nOther: Bless (1d4 on attack rolls), L2 divine smite (3d8), Vow of Enmity (Advantage), extra attack",
+        "crit_on": 20,
+        "advantage": true,
+        "disadvantage": false,
+        "bonus_attack_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_damage_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_crit_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_miss_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "GWM": true,
+        "savage_attacker": false,
+        "sharpshooter": false,
+        "tavern_brawler": false,
+        "GWF": false,
+        "archery": false,
+        "dueling": false,
+        "TWF": false,
+        "raging": false,
+        "brutal_critical": false,
+        "divine_smite": false,
+        "divine_smite_level": 1,
+        "improved_divine_smite": false,
+        "empowered_evocation": false,
+        "agonizing_blast": false,
+        "lifedrinker": false,
+        "elemental_affinity": false,
+        "savage_attacks_half_orc": false,
+        "attacks": [
+            {
+                "name": "Halberd (L2 Divine Smite)",
+                "bonus_attack_die_mod_list": [
+                    "1d4"
+                ],
+                "bonus_damage_die_mod_list": [
+                    "3d8"
+                ],
+                "proficient": true,
+                "type": "weapon (melee)",
+                "ability_stat": "strength",
+                "damage": "1d10",
+                "advantage": false,
+                "disadvantage": false,
+                "always_hit": false,
+                "always_crit": false,
+                "crit_on": 20,
+                "weapon_enhancement": 0,
+                "offhand": false,
+                "two_handed": true,
+                "saving_throw": false,
+                "saving_throw_stat": "dexterity",
+                "saving_throw_success_multiplier": 0.5,
+                "damage_type": "slashing",
+                "bonus_crit_die_mod_list": [
+                    ""
+                ],
+                "bonus_miss_die_mod_list": [
+                    ""
+                ]
+            },
+            {
+                "name": "Halberd (Blunt End Divine Smite)",
+                "type": "weapon (melee)",
+                "ability_stat": "strength",
+                "damage": "1d4",
+                "weapon_enhancement": 0,
+                "offhand": false,
+                "two_handed": true,
+                "saving_throw": false,
+                "saving_throw_stat": "dexterity",
+                "saving_throw_success_multiplier": 0.5,
+                "bonus_attack_die_mod_list": [
+                    "1d4"
+                ],
+                "bonus_damage_die_mod_list": [
+                    "2d8"
+                ],
+                "bonus_crit_die_mod_list": [
+                    ""
+                ],
+                "bonus_miss_die_mod_list": [
+                    ""
+                ]
+            },
+            {
+                "name": "Halberd (L2 Divine Smite)",
+                "type": "weapon (melee)",
+                "ability_stat": "strength",
+                "damage": "1d10",
+                "weapon_enhancement": 0,
+                "offhand": false,
+                "two_handed": true,
+                "saving_throw": false,
+                "saving_throw_stat": "dexterity",
+                "saving_throw_success_multiplier": 0.5,
+                "bonus_attack_die_mod_list": [
+                    "1d4"
+                ],
+                "bonus_damage_die_mod_list": [
+                    "3d8"
+                ],
+                "bonus_crit_die_mod_list": [
+                    ""
+                ],
+                "bonus_miss_die_mod_list": [
+                    ""
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Oath of Vengeance Paladin L6",
+        "level": 6,
+        "strength": 16,
+        "dexterity": 10,
+        "constitution": 14,
+        "intelligence": 8,
+        "wisdom": 8,
+        "charisma": 16,
+        "description": "Race: Variant Human \nClass: Paladin 2\nSubclass: Oath of Vengeance\nFeats: Pole Arm Master, GWM\nOther: Bless (1d4 on attack rolls), L2 divine smite (3d8), Vow of Enmity (Advantage), extra attack",
+        "crit_on": 20,
+        "advantage": true,
+        "disadvantage": false,
+        "bonus_attack_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_damage_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_crit_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "bonus_miss_die_mod_list": [
+            "0d4",
+            "0"
+        ],
+        "GWM": true,
+        "savage_attacker": false,
+        "sharpshooter": false,
+        "tavern_brawler": false,
+        "GWF": false,
+        "archery": false,
+        "dueling": false,
+        "TWF": false,
+        "raging": false,
+        "brutal_critical": false,
+        "divine_smite": false,
+        "divine_smite_level": 1,
+        "improved_divine_smite": false,
+        "empowered_evocation": false,
+        "agonizing_blast": false,
+        "lifedrinker": false,
+        "elemental_affinity": false,
+        "savage_attacks_half_orc": false,
+        "attacks": [
+            {
+                "name": "Halberd (L2 Divine Smite)",
+                "bonus_attack_die_mod_list": [
+                    "1d4"
+                ],
+                "bonus_damage_die_mod_list": [
+                    "3d8"
+                ],
+                "proficient": true,
+                "type": "weapon (melee)",
+                "ability_stat": "strength",
+                "damage": "1d10",
+                "advantage": false,
+                "disadvantage": false,
+                "always_hit": false,
+                "always_crit": false,
+                "crit_on": 20,
+                "weapon_enhancement": 0,
+                "offhand": false,
+                "two_handed": true,
+                "saving_throw": false,
+                "saving_throw_stat": "dexterity",
+                "saving_throw_success_multiplier": 0.5,
+                "damage_type": "slashing",
+                "bonus_crit_die_mod_list": [
+                    ""
+                ],
+                "bonus_miss_die_mod_list": [
+                    ""
+                ]
+            },
+            {
+                "name": "Halberd (L2 Divine Smite)",
+                "bonus_attack_die_mod_list": [
+                    "1d4"
+                ],
+                "bonus_damage_die_mod_list": [
+                    "3d8"
+                ],
+                "proficient": true,
+                "type": "weapon (melee)",
+                "ability_stat": "strength",
+                "damage": "1d10",
+                "advantage": false,
+                "disadvantage": false,
+                "always_hit": false,
+                "always_crit": false,
+                "crit_on": 20,
+                "weapon_enhancement": 0,
+                "offhand": false,
+                "two_handed": true,
+                "saving_throw": false,
+                "saving_throw_stat": "dexterity",
+                "saving_throw_success_multiplier": 0.5,
+                "damage_type": "slashing",
+                "bonus_crit_die_mod_list": [
+                    ""
+                ],
+                "bonus_miss_die_mod_list": [
+                    ""
+                ]
+            },
+            {
+                "name": "Halberd (Blunt End L1 Divine Smite)",
+                "bonus_attack_die_mod_list": [
+                    "1d4"
+                ],
+                "bonus_damage_die_mod_list": [
+                    "2d8"
+                ],
+                "proficient": true,
+                "type": "weapon (melee)",
+                "ability_stat": "strength",
+                "damage": "1d4",
+                "advantage": false,
+                "disadvantage": false,
+                "always_hit": false,
+                "always_crit": false,
+                "crit_on": 20,
+                "weapon_enhancement": 0,
+                "offhand": false,
+                "two_handed": true,
+                "saving_throw": false,
+                "saving_throw_stat": "dexterity",
+                "saving_throw_success_multiplier": 0.5,
+                "damage_type": "slashing",
+                "bonus_crit_die_mod_list": [
+                    ""
+                ],
+                "bonus_miss_die_mod_list": [
+                    ""
+                ]
+            }
+        ]
+    }
+]

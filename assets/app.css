@@ -126,6 +126,14 @@ input:invalid {
   margin-bottom: 0;
 }
 
+/* The input is the row's second column itself, keep the gutter a wrapping column used to give */
+.label-row > .form-control,
+.label-row > .form-select,
+.label-row > .form-check {
+  margin-left: calc(var(--bs-gutter-x) * 0.5);
+  margin-right: calc(var(--bs-gutter-x) * 0.5);
+}
+
 /* Two columns of fields for the enemy card on wider screens */
 @media (min-width: 36em) {
   .enemy-grid {
@@ -176,4 +184,17 @@ input:invalid {
 .dpr-badge {
     min-height: 1.2rem;
     margin-top: 0.15rem;
+}
+
+/* BG3 planner gear table */
+.bg3-gear-table .Select-control, .bg3-gear .Select-control {
+    min-height: 28px;
+}
+.bg3-gear {
+    font-size: 0.8rem;
+    color: #222;
+}
+.bg3-conflict .Select-control, .bg3-conflict > div {
+    border: 2px solid #f39c12 !important;
+    border-radius: 4px;
 }

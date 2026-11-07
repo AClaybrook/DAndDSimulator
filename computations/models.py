@@ -50,10 +50,23 @@ def multiple_die_and_mod_from_list(die_list):
         total_mod += m
     return num_die, die_sizes, total_mod
 
+# Old field name: new field name, so json files saved before a rename still load
+RENAMED_FIELDS = {"proficent": "proficient", "saving_throw_proficent": "saving_throw_proficient"}
+
 def from_dict(cls, data):
     """ Builds a dataclass from a dictionary, ignoring unknown keys so older/newer json files still load """
     names = {f.name for f in fields(cls) if f.init}
+    data = {RENAMED_FIELDS.get(k, k): v for k, v in data.items()}
     return cls(**{k: v for k, v in data.items() if k in names})
+
+def typed_damage_from_str(damage_str):
+    """ '1d4 fire' -> ([1], [4], 0, 'fire'), '2d6+1 cold' -> ([2], [6], 1, 'cold'), '2 acid' -> ([], [], 2, 'acid').
+        Without a damage type the type is '' (the attack's own type) """
+    parts = str(damage_str).strip().lower().split()
+    damage_type = parts[-1] if len(parts) > 1 and parts[-1] in DAMAGE_TYPES else ""
+    dice = "".join(parts[:-1] if damage_type else parts)
+    num_die, die_sizes, modifier = multiple_die_and_mod_from_list([dice])
+    return num_die, die_sizes, modifier, damage_type
 
 ### Classes ###
 
@@ -64,7 +77,7 @@ class Attack:
     bonus_attack_die_mod_list: list[str | int] = field(default_factory=list) # Format is ['1d6', 2]
     bonus_damage_die_mod_list: list[str | int] = field(default_factory=list) # Format is ['1d6', 2]
 
-    proficent: bool = True
+    proficient: bool = True
     type: Literal["weapon (melee)", "weapon (ranged)", "spell", "unarmed", "thrown"] = 'weapon (melee)'
     ability_stat: Stat = 'strength'
     damage: str = '1d6' # Used by all attacks, can include a flat modifier i.e. '1d4+1'
@@ -74,6 +87,7 @@ class Attack:
     disadvantage: bool = False
     always_hit: bool = False
     always_crit: bool = False
+    hits_crit: bool = False # Every hit is a crit, i.e. melee attacks against paralysed targets
     crit_on: int = 20
     # Weapon Specific
     weapon_enhancement: int = 0
@@ -93,6 +107,14 @@ class Attack:
     # Extra damage dice on a crit (i.e. brutal critical) and damage on a miss/successful save (i.e. graze)
     bonus_crit_die_mod_list: list[str | int] = field(default_factory=list) # Format is ['1d6', 2]
     bonus_miss_die_mod_list: list[str | int] = field(default_factory=list) # Format is ['1d6', 2]
+    # Extra damage on a hit with its own damage type, so resistances apply to it separately, i.e. ['1d4 fire', '2 acid'] (BG3 items)
+    extra_damage_list: list[str] = field(default_factory=list)
+    # Reroll damage dice at or below this, for this attack only (i.e. BG3 weapons like Twist of Fortune), like Great Weapon Fighting
+    damage_reroll_on: int = 0
+    # Several enemies (BG3 planner): an area spell or aura hits up to this many of them; an attack that needs a second enemy (Horde Breaker)
+    # only counts with at least min_enemies. The simulator and single target numbers use one enemy
+    targets: int = 1
+    min_enemies: int = 1
 
     def __post_init__(self):
         if self.heavy is None:
@@ -118,7 +140,7 @@ class Creature:
     resistance: bool = False # Resistant to all damage
     vulnerability: bool = False # Vulnerable to all damage
     attacks: list[Attack] = field(default_factory=list)
-    saving_throw_proficent: bool = False
+    saving_throw_proficient: bool = False
     # Stats
     strength: int = 10
     dexterity: int = 10
@@ -213,6 +235,7 @@ class Character(Creature):
     name: str = 'Character'
     # Feats/Abilities
     savage_attacker: bool = False # roll weapon damage dice twice and take the higher total
+    savage_attacker_per_die: bool = False # BG3 Savage Attacker: keep the higher of two rolls for each die separately
     tavern_brawler: bool = False # strength modifier added to attack and damage rolls
     GWM: bool = False # -5 to hit, +10 to damage, TODO: bonus action attack on crit or kill
     sharpshooter: bool = False # -5 to hit, +10 to damage with ranged weapons
@@ -227,6 +250,7 @@ class Character(Creature):
     TWF: bool = False
     # Barbarian
     raging: bool = False
+    barbarian_level: int = 0 # For multiclass characters, rage damage follows the barbarian level (0 uses the character level)
     brutal_critical: bool = False
     #Paladin
     divine_smite: bool = False # 2d8+1d8 per spell level above 1st, max 5d8, applied to every melee hit
@@ -244,9 +268,10 @@ class Character(Creature):
 
     @property
     def rage_damage(self):
-        if self.level >= 16:
+        barbarian_level = self.barbarian_level or self.level
+        if barbarian_level >= 16:
             return 4
-        if self.level >= 9:
+        if barbarian_level >= 9:
             return 3
         return 2
 
@@ -271,7 +296,7 @@ class Enemy(Creature):
     armor_class: int = 15
     hit_points: int = 71
     challenge_rating: float = 0
-    # Saving throw modifiers, None means derived from the ability score (and proficiency if saving_throw_proficent)
+    # Saving throw modifiers, None means derived from the ability score (and proficiency if saving_throw_proficient)
     strength_save: int | None = None
     dexterity_save: int | None = None
     constitution_save: int | None = None
@@ -294,17 +319,18 @@ class Enemy(Creature):
         explicit = getattr(self, f"{stat}_save")
         if explicit is not None:
             return explicit
-        return self.ability_modifier(stat) + (self.proficiency_bonus if self.saving_throw_proficent else 0)
+        return self.ability_modifier(stat) + (self.proficiency_bonus if self.saving_throw_proficient else 0)
 
-    def damage_multiplier(self, attack: Attack):
-        """ Multiplier from resistances, vulnerabilities and immunities for a given attack """
+    def damage_multiplier(self, attack: Attack, damage_type=None):
+        """ Multiplier from resistances, vulnerabilities and immunities for a given attack, or for extra damage of another type """
+        damage_type = damage_type or attack.damage_type
         def matches(entries):
             for entry in entries:
                 entry = entry.strip().lower()
                 if entry.endswith(NONMAGICAL_SUFFIX):
-                    if attack.is_weapon and not attack.is_magical and entry[:-len(NONMAGICAL_SUFFIX)] == attack.damage_type:
+                    if attack.is_weapon and not attack.is_magical and entry[:-len(NONMAGICAL_SUFFIX)] == damage_type:
                         return True
-                elif entry == attack.damage_type:
+                elif entry == damage_type:
                     return True
             return False
 
@@ -337,6 +363,7 @@ class AttackContext:
     # Special cases
     always_hit: bool = False
     always_crit: bool = False
+    hits_crit: bool = False
 
 @dataclass
 class DamageContext:
@@ -349,6 +376,7 @@ class DamageContext:
     damage_reduction: int = 0
     advantage: bool = False # roll the damage dice twice and keep the higher total
     disadvantage: bool = False
+    per_die_advantage: bool = False # with advantage, keep the higher of two rolls for each die rather than the higher total
     reroll_on: int = 0
     # Bonus Crit Damage, beyond the standard 2x die rolls
     crit_num_die: list[int] = field(default_factory=list)
@@ -374,6 +402,11 @@ class DamageContext:
     # First round of a fight (attack rolls only)
     first_round_advantage: bool = False
     first_round_auto_crit: bool = False
+    # Extra damage of other types on a hit (dice doubled on a crit), each with its own resistance multiplier
+    rider_num_die: list[list[int]] = field(default_factory=list)
+    rider_die_size: list[list[int]] = field(default_factory=list)
+    rider_modifier: list[int] = field(default_factory=list)
+    rider_multiplier: list[float] = field(default_factory=list)
 
 def calculate_attack_and_damage_context(character, enemy):
     """ Extracts the attack and damage contexts for a given character and enemy """
@@ -394,13 +427,14 @@ def calculate_attack_and_damage_context(character, enemy):
         # Attack Roll
         attack_modifier = ability_modifier
         ## Proficiency, Spellcasting and unarmed attacks always add proficiency bonus
-        if attack.proficent or attack.type in ['spell', 'unarmed']:
+        if attack.proficient or attack.type in ['spell', 'unarmed']:
             attack_modifier += character.proficiency_bonus
         # Damage
         damage_modifier = 0
         damage_adv = False
+        per_die_advantage = False
         damage_dis = False
-        damage_reroll_on = character.damage_reroll_on
+        damage_reroll_on = max(character.damage_reroll_on, attack.damage_reroll_on or 0)
 
         # Attack Specific
         attack_num_die, attack_die_sizes, bonus_attack_mod = multiple_die_and_mod_from_list(attack.bonus_attack_die_mod_list)
@@ -444,6 +478,7 @@ def calculate_attack_and_damage_context(character, enemy):
                 damage_modifier += 10
             if character.savage_attacker:
                 damage_adv = True
+                per_die_advantage = character.savage_attacker_per_die
             if character.dueling and not attack.two_handed and not attack.offhand:
                 damage_modifier += 2
             if character.GWF and attack.two_handed:
@@ -479,6 +514,8 @@ def calculate_attack_and_damage_context(character, enemy):
             if character.tavern_brawler:
                 attack_modifier += character.strength_ability_modifier
                 damage_modifier += character.strength_ability_modifier
+            if character.raging:
+                damage_modifier += character.rage_damage
         elif attack.type == 'thrown': # TODO: Implement improvised thrown weapons
             if character.tavern_brawler:
                 attack_modifier += character.strength_ability_modifier
@@ -495,6 +532,8 @@ def calculate_attack_and_damage_context(character, enemy):
 
         # Enemy Specific
         damage_multiplier = enemy.damage_multiplier(attack) if isinstance(enemy, Enemy) else 1
+        riders = [typed_damage_from_str(r) for r in attack.extra_damage_list or []]
+        riders = [(n, d, m, enemy.damage_multiplier(attack, t) if isinstance(enemy, Enemy) else 1) for n, d, m, t in riders if n or m]
 
         # Difficulty Class
         difficulty_class = enemy.armor_class
@@ -525,6 +564,7 @@ def calculate_attack_and_damage_context(character, enemy):
             saving_throw=saving_throw,
             always_hit=attack.always_hit,
             always_crit=attack.always_crit,
+            hits_crit=attack.hits_crit and not saving_throw,
         )
         damage_context = DamageContext(
             num_die=damage_num_die,
@@ -533,6 +573,7 @@ def calculate_attack_and_damage_context(character, enemy):
             damage_multiplier=damage_multiplier,
             damage_reduction=enemy.damage_reduction,
             advantage=damage_adv,
+            per_die_advantage=per_die_advantage,
             disadvantage=damage_dis,
             reroll_on=damage_reroll_on,
             save_success_multiplier=save_success_multiplier,
@@ -552,6 +593,10 @@ def calculate_attack_and_damage_context(character, enemy):
             fallback_index=attack_names.index(attack.fallback_for) if attack.fallback_for in attack_names and attack.fallback_for != attack.name else -1,
             first_round_advantage=character.first_round_advantage and not saving_throw,
             first_round_auto_crit=character.first_round_auto_crit and not saving_throw and not attack.always_hit,
+            rider_num_die=[r[0] for r in riders],
+            rider_die_size=[r[1] for r in riders],
+            rider_modifier=[r[2] for r in riders],
+            rider_multiplier=[r[3] for r in riders],
         )
 
         attack_contexts.append(attack_context)

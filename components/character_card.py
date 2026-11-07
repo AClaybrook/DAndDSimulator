@@ -46,7 +46,7 @@ A_LABEL_TO_VAL = {
     "Damage Type": "damage_type",
     "Weapon Enhancement": "weapon_enhancement",
     "Crit on": "crit_on",
-    "Proficient": "proficent",
+    "Proficient": "proficient",
     "Advantage": "advantage",
     "Disadvantage": "disadvantage",
     "Always Hit": "always_hit",
@@ -63,7 +63,9 @@ A_LABEL_TO_VAL = {
     "Bonus Attack Mod": "bonus_attack_die_mod_list",
     "Bonus Damage Mod": "bonus_damage_die_mod_list",
     "Bonus Crit Damage": "bonus_crit_die_mod_list",
-    "Bonus Miss Damage": "bonus_miss_die_mod_list"
+    "Bonus Miss Damage": "bonus_miss_die_mod_list",
+    "Extra Typed Damage": "extra_damage_list",
+    "Reroll Damage Dice At or Below": "damage_reroll_on",
 }
 A_LABELS = {v: k for k, v in A_LABEL_TO_VAL.items()}
 DIE_MOD_LISTS = ["bonus_attack_die_mod_list", "bonus_damage_die_mod_list", "bonus_crit_die_mod_list", "bonus_miss_die_mod_list", "once_per_turn_die_mod_list"]
@@ -83,12 +85,11 @@ def _children(component):
     return [children] if isinstance(children, dict) else []
 
 def _is_label_row(component):
-    """ A row made by label_row: a column with a Label and a column with an input """
+    """ A row made by label_row: a Label and an input """
     if not isinstance(component, dict) or component.get('type') != 'Row':
         return False
     columns = component['props'].get('children')
-    return (isinstance(columns, list) and len(columns) == 2
-            and isinstance(columns[0].get('props', {}).get('children'), dict) and columns[0]['props']['children'].get('type') == 'Label')
+    return isinstance(columns, list) and len(columns) == 2 and isinstance(columns[0], dict) and columns[0].get('type') == 'Label'
 
 def label_value_rows(component):
     """ Yields (label, value) for every label/input row inside a (serialized) component tree, used to read values back from the UI.
@@ -97,8 +98,8 @@ def label_value_rows(component):
     while stack:
         node = stack.pop(0)
         if _is_label_row(node):
-            label_col, value_col = node['props']['children']
-            yield label_col['props']['children']['props']['children'], value_col['props']['children']['props'].get('value')
+            label, field = node['props']['children']
+            yield label['props']['children'], field['props'].get('value')
         elif isinstance(node, (dict, list)):
             stack[:0] = _children(node)
 
@@ -119,7 +120,7 @@ def extract_attack_ui_values(attack_ui_list):
     # Replace labels with internal dictionary keys and extract num attacks
     num_attacks = attack_ui_values.pop(COPIES_LABEL, 1) or 1
     attack_ui_values = {A_LABEL_TO_VAL[k]: v for k, v in attack_ui_values.items() if k in A_LABEL_TO_VAL}
-    for key in DIE_MOD_LISTS:
+    for key in [*DIE_MOD_LISTS, "extra_damage_list"]:
         if key in attack_ui_values:
             attack_ui_values[key] = to_list(attack_ui_values[key])
 
@@ -153,6 +154,8 @@ C_LABEL_TO_DICT_MAP = {
     "First Round Hits Are Crits": "first_round_auto_crit",
     "Great Weapon Master": "GWM",
     "Savage Attacker": "savage_attacker",
+    "Savage Attacker Per Die (BG3)": "savage_attacker_per_die",
+    "Spell Save DC Bonus": "additional_spell_dc",
     "Sharpshooter": "sharpshooter",
     "Tavern Brawler": "tavern_brawler",
     "Great Weapon Fighting": "GWF",
@@ -160,6 +163,7 @@ C_LABEL_TO_DICT_MAP = {
     "Dueling": "dueling",
     "Two Weapon Fighting": "TWF",
     "Raging": "raging",
+    "Barbarian Level (0 = character level)": "barbarian_level",
     "Brutal Critical": "brutal_critical",
     "Divine Smite": "divine_smite",
     "Divine Smite Level": "divine_smite_level",
@@ -202,8 +206,10 @@ def characters_from_ui(characters_list, attack_stores):
     return characters
 
 def label_row(label, component):
-    """ A row with a label on the left and an input on the right, the structure is used to read values back """
-    return dbc.Row([dbc.Col(dbc.Label(label, style=LABEL_STYLE)), dbc.Col(component)], class_name="label-row")
+    """ A row with a label on the left and an input on the right, the structure is used to read values back. The label and the input are
+        the row's columns, no Col around them: 3 components a field instead of 5, and the browser checks every component on each update """
+    component.class_name = f"{getattr(component, 'class_name', None) or ''} col".strip()
+    return dbc.Row([dbc.Label(label, style=LABEL_STYLE, class_name="col"), component], class_name="label-row")
 
 def number_row(label, value, min_, max_, step=1, **kwargs):
     return label_row(label, dbc.Input(type="number", value=value, min=min_, max=max_, step=step, style=INPUT_STYLE, size="sm", **kwargs))
@@ -222,9 +228,9 @@ def tag_fields(component, id_type, **keys):
         so callbacks can react to any field changing (i.e. the expected damage badge) """
     children = getattr(component, "children", None)
     if isinstance(component, dbc.Row) and getattr(component, "class_name", None) == "label-row":
-        label_col, input_col = children
-        if getattr(input_col.children, "id", None) is None:
-            input_col.children.id = {"type": id_type, "field": label_col.children.children, **keys}
+        label, field = children
+        if getattr(field, "id", None) is None:
+            field.id = {"type": id_type, "field": label.children, **keys}
     elif isinstance(children, (list, tuple)):
         for child in children:
             tag_fields(child, id_type, **keys)
@@ -254,7 +260,7 @@ def set_attack_from_values(avals, i, index, num_attacks=1):
     sections = [
         ("Roll Modifiers", [
             number_row(A_LABELS["crit_on"], a["crit_on"], 2, 20),
-            check_row(A_LABELS["proficent"], a["proficent"]),
+            check_row(A_LABELS["proficient"], a["proficient"]),
             check_row(A_LABELS["advantage"], a["advantage"]),
             check_row(A_LABELS["disadvantage"], a["disadvantage"]),
             check_row(A_LABELS["always_hit"], a["always_hit"]),
@@ -265,6 +271,7 @@ def set_attack_from_values(avals, i, index, num_attacks=1):
             check_row(A_LABELS["offhand"], a["offhand"]),
             check_row(A_LABELS["two_handed"], a["two_handed"]),
             check_row(A_LABELS["heavy"], a["heavy"]),
+            number_row(A_LABELS["damage_reroll_on"], a["damage_reroll_on"], 0, 11),
         ]),
         ("Spell Saving Throw", [
             check_row(A_LABELS["saving_throw"], a["saving_throw"]),
@@ -276,6 +283,8 @@ def set_attack_from_values(avals, i, index, num_attacks=1):
             text_row(A_LABELS["bonus_damage_die_mod_list"], to_str(a["bonus_damage_die_mod_list"]), DICE_PLACEHOLDER),
             text_row(A_LABELS["bonus_crit_die_mod_list"], to_str(a["bonus_crit_die_mod_list"]), DICE_PLACEHOLDER),
             text_row(A_LABELS["bonus_miss_die_mod_list"], to_str(a["bonus_miss_die_mod_list"]), DICE_PLACEHOLDER),
+            # Resisted separately, i.e. an item adding fire damage to a slashing weapon
+            text_row(A_LABELS["extra_damage_list"], to_str(a["extra_damage_list"]), "i.e. 1d4 fire, 2 acid"),
         ]),
         ("Limits Per Fight", [
             check_row(A_LABELS["once_per_turn_eligible"], a["once_per_turn_eligible"]),
@@ -284,10 +293,10 @@ def set_attack_from_values(avals, i, index, num_attacks=1):
         ]),
     ]
     open_sections = changed_sections(a, defaults, {
-        "Roll Modifiers": ["crit_on", "proficent", "advantage", "disadvantage", "always_hit", "always_crit"],
-        "Weapon": ["weapon_enhancement", "offhand", "two_handed", "heavy"] if a["type"] != "spell" else [],
+        "Roll Modifiers": ["crit_on", "proficient", "advantage", "disadvantage", "always_hit", "always_crit"],
+        "Weapon": ["weapon_enhancement", "offhand", "two_handed", "heavy", "damage_reroll_on"] if a["type"] != "spell" else [],
         "Spell Saving Throw": ["saving_throw"],
-        "Extra Dice": DIE_MOD_LISTS[:4],
+        "Extra Dice": [*DIE_MOD_LISTS[:4], "extra_damage_list"],
         "Limits Per Fight": ["once_per_turn_eligible", "uses_per_fight", "fallback_for"],
     })
     return [
@@ -344,13 +353,15 @@ def generate_character_card(character_name, character=None, color="", index=1):
 
     # Bonuses, Feats and abilities tab, in collapsible sections (sections the character uses start expanded)
     bonus_sections = [
-        ("Roll Modifiers", ["crit_on", "advantage", "disadvantage", "attack_reroll_on", "bonus_attack_die_mod_list", "bonus_damage_die_mod_list"], [
+        ("Roll Modifiers", ["crit_on", "advantage", "disadvantage", "attack_reroll_on", "bonus_attack_die_mod_list", "bonus_damage_die_mod_list",
+                            "additional_spell_dc"], [
             number_row(C_LABELS["crit_on"], c.crit_on, 2, 20),
             check_row(C_LABELS["advantage"], c.advantage),
             check_row(C_LABELS["disadvantage"], c.disadvantage),
             number_row(C_LABELS["attack_reroll_on"], c.attack_reroll_on, 0, 19),
             text_row(C_LABELS["bonus_attack_die_mod_list"], to_str(c.bonus_attack_die_mod_list), "i.e. 1d4 (bless)"),
             text_row(C_LABELS["bonus_damage_die_mod_list"], to_str(c.bonus_damage_die_mod_list), "i.e. 1d6 (hex), 2"),
+            number_row(C_LABELS["additional_spell_dc"], c.additional_spell_dc, -5, 10),
         ]),
         ("Crit and Miss Damage", ["bonus_crit_die_mod_list", "bonus_miss_die_mod_list"], [
             text_row(C_LABELS["bonus_crit_die_mod_list"], to_str(c.bonus_crit_die_mod_list), DICE_PLACEHOLDER),
@@ -365,9 +376,10 @@ def generate_character_card(character_name, character=None, color="", index=1):
             check_row(C_LABELS["first_round_advantage"], c.first_round_advantage),
             check_row(C_LABELS["first_round_auto_crit"], c.first_round_auto_crit),
         ]),
-        ("Feats", ["GWM", "savage_attacker", "sharpshooter", "tavern_brawler"], [
+        ("Feats", ["GWM", "savage_attacker", "savage_attacker_per_die", "sharpshooter", "tavern_brawler"], [
             check_row(C_LABELS["GWM"], c.GWM),
             check_row(C_LABELS["savage_attacker"], c.savage_attacker),
+            check_row(C_LABELS["savage_attacker_per_die"], c.savage_attacker_per_die),
             check_row(C_LABELS["sharpshooter"], c.sharpshooter),
             check_row(C_LABELS["tavern_brawler"], c.tavern_brawler),
         ]),
@@ -377,10 +389,11 @@ def generate_character_card(character_name, character=None, color="", index=1):
             check_row(C_LABELS["dueling"], c.dueling),
             check_row(C_LABELS["TWF"], c.TWF),
         ]),
-        ("Class and Race Features", ["raging", "brutal_critical", "divine_smite", "divine_smite_level", "improved_divine_smite", "empowered_evocation",
+        ("Class and Race Features", ["raging", "barbarian_level", "brutal_critical", "divine_smite", "divine_smite_level", "improved_divine_smite", "empowered_evocation",
                                      "agonizing_blast", "lifedrinker", "elemental_affinity", "savage_attacks_half_orc"], [
             section("Barbarian"),
             check_row(C_LABELS["raging"], c.raging),
+            number_row(C_LABELS["barbarian_level"], c.barbarian_level, 0, 20),
             check_row(C_LABELS["brutal_critical"], c.brutal_critical),
             section("Paladin"),
             check_row(C_LABELS["divine_smite"], c.divine_smite),
@@ -439,8 +452,8 @@ def generate_character_card(character_name, character=None, color="", index=1):
     xs=12, md=6, xl=3, id={"type": "character card", "index": index}, class_name="mb-2")
 
 # Fields that must be numbers, everything else can be blank
-NUMERIC_CHARACTER_FIELDS = ["level", "strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma", "crit_on", "attack_reroll_on", "divine_smite_level"]
-NUMERIC_ATTACK_FIELDS = ["crit_on", "weapon_enhancement", "saving_throw_success_multiplier"]
+NUMERIC_CHARACTER_FIELDS = ["barbarian_level", "additional_spell_dc", "level", "strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma", "crit_on", "attack_reroll_on", "divine_smite_level"]
+NUMERIC_ATTACK_FIELDS = ["crit_on", "weapon_enhancement", "saving_throw_success_multiplier", "damage_reroll_on"]
 
 def _dice_problems(values, label):
     try:
@@ -448,6 +461,18 @@ def _dice_problems(values, label):
         return []
     except (ValueError, AttributeError):
         return [f"{label} '{to_str(values)}' should be dice or numbers like 1d6, 2"]
+
+def _typed_damage_problems(values):
+    """ Each entry needs dice and/or a number, optionally followed by a damage type, i.e. '1d4 fire' """
+    problems = []
+    for v in values or []:
+        parts = str(v).strip().lower().split()
+        dice = parts[:-1] if len(parts) > 1 else parts
+        if len(parts) > 1 and parts[-1] not in DAMAGE_TYPES:
+            problems.append(f"{A_LABELS['extra_damage_list']}: unknown damage type '{parts[-1]}'")
+        else:
+            problems += _dice_problems(["".join(dice)], A_LABELS["extra_damage_list"])
+    return problems
 
 def validation_errors(character_dict, attacks):
     """ Readable problems with a character's values, i.e. "Strength is empty", empty if everything can be simulated """
@@ -461,4 +486,5 @@ def validation_errors(character_dict, attacks):
         problems += [f"attack '{name}': {A_LABELS[f]} is empty" for f in NUMERIC_ATTACK_FIELDS if f in a and a[f] is None]
         problems += [f"attack '{name}': {p}" for key in DIE_MOD_LISTS[:4] for p in _dice_problems(a.get(key), A_LABELS[key])]
         problems += [f"attack '{name}': {p}" for p in _dice_problems([a.get("damage") or ""], A_LABELS["damage"])]
+        problems += [f"attack '{name}': {p}" for p in _typed_damage_problems(a.get("extra_damage_list"))]
     return problems

@@ -14,17 +14,20 @@ SETTINGS_IDS = {
     "ruleset": "ruleset",
 }
 
-def make_session(characters, enemy, settings):
-    """ A json serializable session from character and enemy dictionaries (or dataclasses) and simulator settings """
+def make_session(characters, enemy, settings, bg3_party=None):
+    """ A json serializable session from character and enemy dictionaries (or dataclasses), simulator settings and the BG3 planner party """
     def as_dict(x):
         return x if isinstance(x, dict) else asdict(x)
-    return {
+    session = {
         "version": SESSION_VERSION,
         "saved_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "characters": [as_dict(c) for c in characters],
         "enemy": as_dict(enemy) if enemy is not None else None,
         "settings": {k: v for k, v in settings.items() if k in SETTINGS_IDS and v is not None},
     }
+    if bg3_party:
+        session["bg3_party"] = bg3_party
+    return session
 
 def parse_session(data):
     """ Characters, enemy and settings from a session, or from an older export that only has a list of characters.

@@ -41,15 +41,23 @@ def roll_dice(num_rolls, num_die, die_size, reroll_on=0, rng=RNG):
             total += roll(num_rolls, die_size=ds, reroll_on=reroll_on, rng=rng)
     return total
 
-def roll_damage_dice(num_rolls, num_die, die_size, advantage=False, disadvantage=False, reroll_on=0, rng=RNG):
-    """ Roll a set of damage dice, optionally rolling the whole set twice and keeping the higher (savage attacker) or lower total """
+def roll_damage_dice(num_rolls, num_die, die_size, advantage=False, disadvantage=False, reroll_on=0, rng=RNG, per_die=False):
+    """ Roll a set of damage dice, optionally rolling the whole set twice and keeping the higher (savage attacker) or lower total.
+        With per_die, each die keeps the higher (or lower) of its own two rolls (BG3 Savage Attacker) """
+    if per_die and advantage != disadvantage:
+        keep = np.maximum if advantage else np.minimum
+        total = np.zeros(num_rolls, dtype='int32')
+        for nd, ds in zip(num_die, die_size):
+            for _ in range(nd):
+                total += keep(roll(num_rolls, die_size=ds, reroll_on=reroll_on, rng=rng), roll(num_rolls, die_size=ds, reroll_on=reroll_on, rng=rng))
+        return total
     total = roll_dice(num_rolls, num_die, die_size, reroll_on=reroll_on, rng=rng)
     if advantage != disadvantage:
         second = roll_dice(num_rolls, num_die, die_size, reroll_on=reroll_on, rng=rng)
         total = np.maximum(total, second) if advantage else np.minimum(total, second)
     return total
 
-def attack_roll(num_rolls, num_die=None, die_size=None, modifier=0, difficulty_class=15, crit_on=20, always_hit=False, always_crit=False,
+def attack_roll(num_rolls, num_die=None, die_size=None, modifier=0, difficulty_class=15, crit_on=20, always_hit=False, always_crit=False, hits_crit=False,
                 saving_throw=False, advantage=False, disadvantage=False, reroll_on=0, rng=RNG):
     """ Roll an attack roll with num_rolls dice, adding attack_modifier to each roll, tracking hits and crits"""
     # Special cases
@@ -73,18 +81,21 @@ def attack_roll(num_rolls, num_die=None, die_size=None, modifier=0, difficulty_c
     # Crit on crit_on or higher and crits automatically hit
     crit = np.logical_and(rolls >= crit_on, rolls != 1)
     hit[crit] = True
+    if hits_crit:
+        crit = hit.copy()
     return attack_rolls, rolls, hit, crit
 
 def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multiplier=1, damage_reduction=0,
                 advantage=False, disadvantage=False, reroll_on=0,
                 miss_num_die=None, miss_damage_die=None, miss_damage_modifier=0, save_success_multiplier=0,
                 crit_num_die=None, crit_damage_die=None, crit_damage_modifier=0,
-                once_num_die=None, once_die_size=None, once_modifier=0, once_mask=None, rng=RNG, **_):
+                once_num_die=None, once_die_size=None, once_modifier=0, once_mask=None,
+                rider_num_die=None, rider_die_size=None, rider_modifier=None, rider_multiplier=None, per_die_advantage=False, rng=RNG, **_):
     """ Roll damage for each hit, crit and miss.
         Resistances/vulnerabilities and damage reduction are applied to the total damage of the attack (rounded down)"""
     num_die = num_die or []
     die_size = die_size or []
-    dice_kwargs = {"advantage": advantage, "disadvantage": disadvantage, "reroll_on": reroll_on, "rng": rng}
+    dice_kwargs = {"advantage": advantage, "disadvantage": disadvantage, "reroll_on": reroll_on, "rng": rng, "per_die": per_die_advantage}
 
     num_rolls = len(hit)
     miss = ~hit
@@ -125,12 +136,28 @@ def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multi
         np.maximum(total_damage, 0, out=total_damage)
     if damage_multiplier != 1:
         total_damage = np.floor(total_damage * damage_multiplier).astype('int32')
-    if damage_reduction:
-        total_damage = np.maximum(total_damage - damage_reduction, 0)
     if damage_multiplier != 1:
         hit_damage = np.floor(hit_damage * damage_multiplier).astype('int32')
         crit_damage = np.floor(crit_damage * damage_multiplier).astype('int32')
         miss_damage = np.floor(miss_damage * damage_multiplier).astype('int32')
+
+    # Extra damage of other types on a hit, each rounded down with its own resistance multiplier
+    for r_num_die, r_die_size, r_modifier, r_multiplier in zip(rider_num_die or [], rider_die_size or [], rider_modifier or [], rider_multiplier or []):
+        r_hit = np.zeros(num_rolls, dtype='int32')
+        r_hit[hit] = np.maximum(roll_dice(num_hits, r_num_die, r_die_size, rng=rng) + r_modifier, 0)
+        r_crit = np.zeros(num_rolls, dtype='int32')
+        r_crit[crit] = roll_dice(num_crits, r_num_die, r_die_size, rng=rng)
+        r_total = r_hit + r_crit
+        if r_multiplier != 1:
+            r_total = np.floor(r_total * r_multiplier).astype('int32')
+            r_hit = np.floor(r_hit * r_multiplier).astype('int32')
+            r_crit = r_total - r_hit
+        total_damage = total_damage + r_total
+        hit_damage = hit_damage + r_hit
+        crit_damage = crit_damage + r_crit
+
+    if damage_reduction:
+        total_damage = np.maximum(total_damage - damage_reduction, 0)
     return total_damage, hit_damage, crit_damage, miss_damage
 
 def attack(num_rolls, attack_context, damage_context, rng=RNG, once_mask=None):

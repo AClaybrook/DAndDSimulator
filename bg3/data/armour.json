@@ -1,0 +1,678 @@
+{
+"_source": "Armour types, base AC and AC bonuses from bg3.wiki (CC BY-NC-SA 4.0)",
+"items": {
+"bg3:adamantine_scale_mail": {
+"type": "medium",
+"ac": 16
+},
+"bg3:adamantine_splint_armour": {
+"type": "heavy",
+"ac": 18
+},
+"bg3:armour_of_uninhibited_kushigo": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:bandit_s_armour": {
+"type": "light",
+"ac": 11
+},
+"bg3:barbarian_clothes": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:blazer_of_benevolence": {
+"type": "light",
+"ac": 11
+},
+"bg3:bloodguzzler_garb": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:breastplate": {
+"type": "medium",
+"ac": 14
+},
+"bg3:breastplate_1": {
+"type": "medium",
+"ac": 15
+},
+"bg3:broken_padded_armour": {
+"type": "light",
+"ac": 11
+},
+"bg3:chain_mail": {
+"type": "heavy",
+"ac": 16
+},
+"bg3:chain_mail_1": {
+"type": "heavy",
+"ac": 17
+},
+"bg3:chain_shirt": {
+"type": "medium",
+"ac": 13
+},
+"bg3:chain_shirt_1": {
+"type": "medium",
+"ac": 14
+},
+"bg3:chain_shirt_2": {
+"type": "medium",
+"ac": 15
+},
+"bg3:damaged_dark_justiciar_armour": {
+"type": "medium",
+"ac": 13
+},
+"bg3:dark_justiciar_mail": {
+"type": "medium",
+"ac": 13
+},
+"bg3:dreamwalker_plate": {
+"type": "medium",
+"ac": 15
+},
+"bg3:drow_studded_leather_armour": {
+"type": "light",
+"ac": 12
+},
+"bg3:druid_leather_armour": {
+"type": "light",
+"ac": 11
+},
+"bg3:faded_drow_leather_armour": {
+"type": "light",
+"ac": 12
+},
+"bg3:githyanki_half_plate": {
+"type": "medium",
+"ac": 15
+},
+"bg3:half_plate_armour": {
+"type": "medium",
+"ac": 15
+},
+"bg3:half_plate_armour_1": {
+"type": "medium",
+"ac": 16
+},
+"bg3:hedge_wanderer_armour": {
+"type": "medium",
+"ac": 13
+},
+"bg3:hide_armour_1": {
+"type": "medium",
+"ac": 13
+},
+"bg3:hide_armour_2": {
+"type": "medium",
+"ac": 14
+},
+"bg3:infernal_robe": {
+"type": "clothing",
+"bonus": 1
+},
+"bg3:leather_armour": {
+"type": "light",
+"ac": 11
+},
+"bg3:leather_armour_1": {
+"type": "light",
+"ac": 12
+},
+"bg3:luminous_armour": {
+"type": "medium",
+"ac": 15
+},
+"bg3:monastic_robes": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:padded_armour": {
+"type": "light",
+"ac": 11
+},
+"bg3:padded_armour_1": {
+"type": "light",
+"ac": 12
+},
+"bg3:padded_armour_2": {
+"type": "light",
+"ac": 13
+},
+"bg3:plate_armour": {
+"type": "heavy",
+"ac": 18
+},
+"bg3:poisoner_s_robe": {
+"type": "clothing"
+},
+"bg3:ring_mail_armour": {
+"type": "heavy",
+"ac": 14
+},
+"bg3:ring_mail_armour_1": {
+"type": "heavy",
+"ac": 15
+},
+"bg3:ring_mail_armour_2": {
+"type": "heavy",
+"ac": 16
+},
+"bg3:robe_of_summer": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:scale_mail": {
+"type": "medium",
+"ac": 14
+},
+"bg3:scale_mail_1": {
+"type": "medium",
+"ac": 15
+},
+"bg3:scale_mail_armour_1": {
+"type": "medium",
+"ac": 15
+},
+"bg3:scale_mail_of_devotion": {
+"type": "medium",
+"ac": 14
+},
+"bg3:scale_mail_of_vengeance": {
+"type": "medium",
+"ac": 14
+},
+"bg3:scale_mail_of_the_ancients": {
+"type": "medium",
+"ac": 14
+},
+"bg3:scale_mail_of_the_crown": {
+"type": "medium",
+"ac": 14
+},
+"bg3:simple_jerkin": {
+"type": "light",
+"ac": 11
+},
+"bg3:simple_robe": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:slippery_chain_shirt": {
+"type": "medium",
+"ac": 13
+},
+"bg3:sorcerer_robe": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:spidersilk_armour": {
+"type": "light",
+"ac": 12
+},
+"bg3:splint_armour": {
+"type": "heavy",
+"ac": 17
+},
+"bg3:studded_leather_armour": {
+"type": "light",
+"ac": 12
+},
+"bg3:the_graceful_cloth": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:the_jolty_vest": {
+"type": "medium",
+"ac": 14
+},
+"bg3:the_oak_father_s_embrace": {
+"type": "medium",
+"ac": 13
+},
+"bg3:the_protecty_sparkswall": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:wondrous_gloves": {
+"bonus": 1
+},
+"bg3:ring_of_protection": {
+"bonus": 1
+},
+"bg3:absolute_s_warboard": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:adamantine_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:fossilised_shell": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:glowing_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:metal_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:organic_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:safeguard_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:shield_item": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:spiked_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:studded_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:the_real_sparky_sparkswall": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:training_shield": {
+"type": "shield",
+"bonus": 1
+},
+"bg3:wood_woad_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:defender_flail": {
+"bonus": 1
+},
+"bg3:armour_of_devotion": {
+"type": "heavy",
+"ac": 18
+},
+"bg3:barkskin_armour": {
+"type": "medium",
+"ac": 12
+},
+"bg3:bided_time": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:chain_mail_2": {
+"type": "heavy",
+"ac": 18
+},
+"bg3:dark_justiciar_half_plate_rare": {
+"type": "medium",
+"ac": 16
+},
+"bg3:dark_justiciar_half_plate_very_rare": {
+"type": "medium",
+"ac": 17
+},
+"bg3:dwarven_splintmail": {
+"type": "heavy",
+"ac": 19
+},
+"bg3:enraging_heart_garb": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:flawed_helldusk_armour": {
+"type": "heavy",
+"ac": 18
+},
+"bg3:icebite_robe": {
+"type": "clothing"
+},
+"bg3:leather_armour_2": {
+"type": "light",
+"ac": 13
+},
+"bg3:moon_devotion_robe": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:obsidian_laced_robe": {
+"type": "clothing"
+},
+"bg3:penumbral_armour": {
+"type": "light",
+"ac": 12
+},
+"bg3:potent_robe": {
+"type": "clothing",
+"ac": 10,
+"bonus": 1
+},
+"bg3:protective_plate": {
+"type": "heavy",
+"ac": 18
+},
+"bg3:psionic_ward_armour": {
+"type": "medium",
+"ac": 15
+},
+"bg3:reaper_s_embrace": {
+"type": "heavy",
+"ac": 19
+},
+"bg3:rippling_force_mail": {
+"type": "heavy",
+"ac": 17
+},
+"bg3:robe_of_exquisite_focus": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:scale_mail_2": {
+"type": "medium",
+"ac": 16
+},
+"bg3:selunite_robe": {
+"type": "light",
+"ac": 11
+},
+"bg3:shadeclinger_armour": {
+"type": "light",
+"ac": 12
+},
+"bg3:sharpened_snare_cuirass": {
+"type": "medium",
+"ac": 14
+},
+"bg3:splint_armour_1": {
+"type": "heavy",
+"ac": 18
+},
+"bg3:studded_leather_armour_1": {
+"type": "light",
+"ac": 13
+},
+"bg3:studded_leather_armour_2": {
+"type": "light",
+"ac": 14
+},
+"bg3:the_mighty_cloth": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:yuan_ti_scale_mail": {
+"type": "medium",
+"ac": 15
+},
+"bg3:evasive_shoes": {
+"bonus": 1
+},
+"bg3:cloak_of_protection": {
+"bonus": 1
+},
+"bg3:absolute_s_protector": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:broken_shield": {
+"type": "shield",
+"bonus": 1
+},
+"bg3:gloomstrand_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:iron_banded_shield_1": {
+"type": "shield",
+"bonus": 3
+},
+"bg3:ironvine_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:justiciar_s_greatshield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:ketheric_s_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:sentinel_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:shield_of_devotion": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:shield_of_scorching_reprisal": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:watcher_s_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:1_breastplate": {
+"type": "medium",
+"ac": 14
+},
+"bg3:armour_of_agility": {
+"type": "medium",
+"ac": 17
+},
+"bg3:armour_of_landfall": {
+"type": "light",
+"ac": 13
+},
+"bg3:armour_of_moonbasking": {
+"type": "light",
+"ac": 11
+},
+"bg3:armour_of_persistence": {
+"type": "heavy",
+"ac": 20
+},
+"bg3:armour_of_the_sporekeeper": {
+"type": "light",
+"ac": 13
+},
+"bg3:bhaalist_armour": {
+"type": "light",
+"ac": 14
+},
+"bg3:blackguard_s_plate": {
+"type": "heavy",
+"ac": 19
+},
+"bg3:bonespike_garb": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:breastplate_2": {
+"type": "medium",
+"ac": 16
+},
+"bg3:cerebral_citadel_armour": {
+"type": "heavy",
+"ac": 18
+},
+"bg3:cloth_armour": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:cloth_of_authority": {
+"type": "clothing",
+"ac": 10,
+"bonus": 1
+},
+"bg3:clothes": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:drunken_cloth": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:elegant_studded_leather": {
+"type": "light",
+"ac": 14
+},
+"bg3:elven_chain": {
+"type": "medium",
+"ac": 14
+},
+"bg3:emblazoned_plate_of_the_marshal": {
+"type": "heavy",
+"ac": 19
+},
+"bg3:flame_enamelled_armour": {
+"type": "medium",
+"ac": 16
+},
+"bg3:garb_of_the_land_and_sky": {
+"type": "clothing",
+"bonus": 1
+},
+"bg3:half_plate_armour_2": {
+"type": "medium",
+"ac": 17
+},
+"bg3:helldusk_armour": {
+"type": "heavy",
+"ac": 21
+},
+"bg3:mutilated_carapace": {
+"type": "clothing",
+"ac": 10,
+"bonus": 1
+},
+"bg3:plate_armour_1": {
+"type": "heavy",
+"ac": 19
+},
+"bg3:plate_armour_2": {
+"type": "heavy",
+"ac": 20
+},
+"bg3:robe_of_supreme_defences": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:robe_of_the_weave": {
+"type": "clothing",
+"ac": 10,
+"bonus": 2
+},
+"bg3:scarlet_leather_armour": {
+"type": "light",
+"ac": 12
+},
+"bg3:shelter_of_athkatla": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:splint_armour_2": {
+"type": "heavy",
+"ac": 19
+},
+"bg3:unwanted_masterwork_scalemail": {
+"type": "medium",
+"ac": 16
+},
+"bg3:veil_of_the_morning": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:vest_of_soul_rejuvenation": {
+"type": "clothing",
+"ac": 10,
+"bonus": 2
+},
+"bg3:viconia_s_priestess_robe": {
+"type": "clothing",
+"ac": 10,
+"bonus": 1
+},
+"bg3:wavemother_s_robe": {
+"type": "clothing",
+"ac": 10,
+"bonus": 1
+},
+"bg3:abdel_s_trusted_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:rusty_studded_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:shield_1": {
+"type": "shield",
+"bonus": 3
+},
+"bg3:shield_of_shielding": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:shield_of_the_undevout": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:studded_shield_1": {
+"type": "shield",
+"bonus": 3
+},
+"bg3:swires_sledboard": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:viconia_s_walking_fortress": {
+"type": "shield",
+"bonus": 3
+},
+"bg3:bloodthirst": {
+"bonus": 1
+},
+"bg3:cold_snap": {
+"bonus": 1
+},
+"bg3:druidic_armour": {
+"type": "light",
+"ac": 11
+},
+"bg3:hide_armour": {
+"type": "medium",
+"ac": 12
+},
+"bg3:robe": {
+"type": "clothing",
+"ac": 10
+},
+"bg3:iron_banded_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:scrapwood_shield": {
+"type": "shield",
+"bonus": 2
+},
+"bg3:shield_hope": {
+"type": "shield",
+"bonus": 4
+},
+"bg3:wooden_shield": {
+"type": "shield",
+"bonus": 2
+}
+}
+}
