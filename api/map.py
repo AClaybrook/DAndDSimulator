@@ -46,14 +46,15 @@ def data():
     }
 
 def party_gear(party_dicts, act):
-    """ The party's planned gear at an act: [{key, name, users, where, missable, placed}], items on the maps first """
+    """ The party's planned gear at an act: [{key, name, users, members, where, missable, placed}], items on the maps first """
     items = catalog()
-    users = {}
+    users, members = {}, {}
     for raw in party_dicts or []:
         build = Bg3Build.from_dict(raw)
         for slot, key in equipment_at(build, str(act)).items():
             if key and not key.startswith("base:"):
                 users.setdefault(key, []).append(f"{build.name} ({SLOT_LABELS.get(slot, slot)})")
+                members.setdefault(key, []).append(build.name)
     rows = []
     for key, who in users.items():
         spots = [p for p in POINTS if p["key"] == key]
@@ -62,6 +63,6 @@ def party_gear(party_dicts, act):
         where = "; ".join(sorted({f"{p['location']} ({MAPS[p['map']]['label']})" for p in spots})) or \
             ((unplaced["where"] or unplaced["location"]) if unplaced else "") or "not on the Act 1 or 2 maps"
         missable = next((p["missable"] for p in [*spots, *([unplaced] if unplaced else [])] if p.get("missable")), "")
-        rows.append({"key": key, "name": items[key].name if key in items else key, "users": who, "where": where, "missable": missable,
+        rows.append({"key": key, "name": items[key].name if key in items else key, "users": who, "members": sorted(set(members[key])), "where": where, "missable": missable,
                      "placed": bool(spots), "maps": sorted({p["map"] for p in spots})})
     return sorted(rows, key=lambda r: (not r["placed"], r["name"]))

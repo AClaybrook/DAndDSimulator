@@ -211,7 +211,7 @@ export interface MapData {
   partyColor: string
   missableColor: string
 }
-export interface PartyGear { key: string; name: string; users: string[]; where: string; missable: string; placed: boolean; maps: string[] }
+export interface PartyGear { key: string; name: string; users: string[]; members: string[]; where: string; missable: string; placed: boolean; maps: string[] }
 
 const strip = (party: Build[]) => party.map(({ uid: _uid, ...b }) => b)
 
@@ -235,6 +235,7 @@ export const bg3 = {
   run: (id: number) => call<LeaderboardEntry[]>(`/leaderboard/runs/${id}`),
   saveRun: (party: Build[], label: string, withVariants: boolean) =>
     call<{ id: number; rows: number }>('/leaderboard/save', { party: strip(party), label, with_variants: withVariants }),
+  importDoc: (source: string) => call<{ builds?: { name: string; notes: string[] }[]; problems?: string[] }>('/planner/import-doc', { source }),
   toSimulator: (party: Build[], act: string | null, selected: number | null) =>
     call<Character[]>('/planner/to-simulator', { party: strip(party), act, selected }),
   mapData: () => call<MapData>('/map/data'),

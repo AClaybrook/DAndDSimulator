@@ -15,6 +15,13 @@
 - **Redesign:** navigation moved to the top bar, a refined dark theme, every page built from the same parts (a header with its controls,
   headline numbers, titled cards). Less to open by hand: results are tabs instead of folded sections, editors show every field group,
   attacks are a list with the selected one's fields beside it, and the enemy is a summary with a side panel editor.
+- **Act 2 item map:** the Shadow-Cursed Lands minimap (Last Light Inn, Reithwin, Moonrise Towers, the Ruined Battlefield) with every Act 2
+  item spot from bg3.wiki, plus the Gauntlet of Shar, the Shadowfell and the Mind Flayer Colony on coordinate grids. An Act switch on the
+  map page picks the regions, the party gear checklist (now filterable by member) and the items with no spot. Missable items carry a ⚠ in
+  the planner's gear lists.
+- **Smaller additions:** re-import the build doc from the planner; overlay example builds on the planner's damage chart; leaderboard and
+  map settings kept in the URL; keyboard shortcuts (1-4 pages, t theme, r simulate again, ? list); a light theme; a browser smoke test
+  of every page in CI.
 - **The Dash app is gone:** its last features moved over (session export/import with the BG3 party in one file, "To simulator" from the
   planner, the copy-with-a-change menu on simulator characters, CSV downloads of every table and of the raw simulated data), then
   `app.py`, `components/` and the Dash and gunicorn dependencies were removed. `Procfile` serves `uvicorn api.main:app`.

@@ -68,14 +68,30 @@ OPTION_GROUPS = {"melee_main": "melee", "melee_off": "melee+shield", "ranged_mai
 def option_group(slot):
     return OPTION_GROUPS.get(slot, slot)
 
+def _missable():
+    """ {item key: why it can be missed}, from the item maps (story choices, one-of rewards, time limits) """
+    from api.map import DATA
+    reasons = {}
+    for p in [*DATA["points"], *DATA["unplaced"]]:
+        if p.get("key") and p.get("missable"):
+            reasons.setdefault(p["key"], p["missable"])
+    return reasons
+
 def grouped_item_options():
-    """ {group: options} with every item's act, sent to the browser once instead of in every dropdown """
+    """ {group: options} with every item's act, sent to the browser once instead of in every dropdown.
+        Missable items get a ⚠ and the reason in their hover text """
+    missable = _missable()
+    def mark(o):
+        reason = missable.get(o["value"])
+        if not reason:
+            return o
+        return {**o, "label": f"{o['label']} ⚠", "title": f"{o['title']}\n⚠ Missable: {reason}"}
     groups = {}
     for slot, _, _ in SLOTS:
         group = option_group(slot)
         if "+" not in group and group not in groups:
-            groups[group] = [{**o, "act": catalog()[o["value"]].act} for o in item_options(slot, 3, include_unknown=True)]
-    groups["shield"] = [{**o, "act": catalog()[o["value"]].act} for o in item_options("melee_off", 3) if catalog()[o["value"]].slot == "shield"]
+            groups[group] = [mark({**o, "act": catalog()[o["value"]].act}) for o in item_options(slot, 3, include_unknown=True)]
+    groups["shield"] = [mark({**o, "act": catalog()[o["value"]].act}) for o in item_options("melee_off", 3) if catalog()[o["value"]].slot == "shield"]
     return groups
 
 def conditional_options(build):
@@ -241,3 +257,20 @@ def to_simulator(party_dicts, act=None, selected=None):
     else:
         characters = [compile_build(b, act or "1") for b in builds]
     return [c.to_dict() for c in characters]
+
+def import_doc(source):
+    """ Re-imports the example builds from a build reference document link (bg3.doc_import), replacing bg3/data/doc_builds.json.
+        Returns {builds: [{name, notes}]} or {problems} """
+    import json
+    import urllib.error
+    from bg3.doc_import import OUT, fetch_text, import_text
+    if not source.startswith(("https://", "http://")):
+        return {"problems": ["Paste a link to the document (https://...)"]}
+    try:
+        builds = import_text(fetch_text(source))
+    except (urllib.error.URLError, TimeoutError, ValueError) as e:
+        return {"problems": [f"Couldn't read the document: {e}"]}
+    if not builds:
+        return {"problems": ["No 'Build N: Title' sections found in the document"]}
+    OUT.write_text(json.dumps(builds, indent=1, ensure_ascii=False), encoding="utf-8")
+    return {"builds": [{"name": b["build"]["name"], "notes": b.get("notes", [])} for b in builds]}

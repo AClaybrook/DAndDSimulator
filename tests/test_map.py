@@ -28,6 +28,7 @@ def test_browser_data():
 def test_party_gear():
     gear = {r["key"]: r for r in party_gear([PRESETS[name].to_dict() for name in DEFAULT_PARTY], "1")}
     assert len(gear["bg3:caustic_band"]["users"]) == 2 # Lae'zel and Karlach both wear it
+    assert len(gear["bg3:caustic_band"]["members"]) == 2
     assert gear["bg3:caustic_band"]["placed"] and gear["bg3:caustic_band"]["maps"]
 
 def test_missables():

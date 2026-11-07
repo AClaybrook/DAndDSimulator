@@ -1,5 +1,6 @@
-import { ActionIcon, Button, Group, Menu, Modal, Paper, Select, SimpleGrid, Stack, Text, Tooltip } from '@mantine/core'
-import { IconPlus, IconTrash, IconUserPlus } from '@tabler/icons-react'
+import { ActionIcon, Button, Collapse, Group, Menu, Modal, Paper, Select, SimpleGrid, Stack, Text, TextInput, Tooltip } from '@mantine/core'
+import { IconFileImport, IconPlus, IconTrash, IconUserPlus } from '@tabler/icons-react'
+import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { bg3, type Evaluation, type PlannerOptions } from '../../api'
 import { ACTS, useParty } from '../../party'
@@ -12,6 +13,28 @@ export function PartyStrip({ options, evaluation, enemies }: { options: PlannerO
   const [adding, setAdding] = useState<'example' | 'preset' | null>(null)
   const [choice, setChoice] = useState<string | null>(null)
   const full = party.length >= options.maxPartySize
+  const queryClient = useQueryClient()
+  const [importOpen, setImportOpen] = useState(false)
+  const [docUrl, setDocUrl] = useState('')
+  const [importing, setImporting] = useState(false)
+  const [imported, setImported] = useState<string | null>(null)
+
+  // Replaces the "Doc:" example builds with the document's current builds, then reloads the example list
+  const importDoc = async () => {
+    setImporting(true)
+    try {
+      const result = await bg3.importDoc(docUrl)
+      if (result.problems) setImported(result.problems.join('; '))
+      else {
+        const notes = (result.builds ?? []).reduce((n, b) => n + b.notes.length, 0)
+        setImported(`Imported ${result.builds?.length} builds${notes ? `, ${notes} notes on guessed or unmatched details (in each build's notes)` : ''}`)
+        await queryClient.invalidateQueries({ queryKey: ['planner-options'] })
+        await queryClient.invalidateQueries({ queryKey: ['leaderboard'] })
+      }
+    } catch (e) {
+      setImported(String(e))
+    } finally { setImporting(false) }
+  }
 
   const addChosen = async () => {
     if (!choice) return
@@ -74,6 +97,21 @@ export function PartyStrip({ options, evaluation, enemies }: { options: PlannerO
           <Select searchable label={adding === 'example' ? 'Build' : 'Class preset'} value={choice} onChange={setChoice}
             data={adding === 'example' ? options.examples.map((e) => ({ value: e.name, label: e.name })) : options.presets.map((p) => ({ value: p.key, label: p.label }))} />
           <Button leftSection={<IconPlus size={14} />} onClick={addChosen} disabled={!choice}>Add</Button>
+          {adding === 'example' && (
+            <>
+              <Button variant="subtle" size="xs" leftSection={<IconFileImport size={14} />} onClick={() => setImportOpen((o) => !o)}>
+                Re-import builds from the build doc
+              </Button>
+              <Collapse expanded={importOpen}>
+                <Stack gap="xs">
+                  <TextInput size="xs" label="Document link" description="A Google Doc shared by link, with 'Build N: Title' sections (docs/bg3_build_format.md). Read only"
+                    placeholder="https://docs.google.com/document/d/..." value={docUrl} onChange={(e) => setDocUrl(e.currentTarget.value)} />
+                  <Button size="xs" variant="light" loading={importing} disabled={!docUrl} onClick={importDoc}>Import</Button>
+                  {imported && <Text size="xs" c={imported.startsWith('Imported') ? 'teal' : 'red'}>{imported}</Text>}
+                </Stack>
+              </Collapse>
+            </>
+          )}
         </Stack>
       </Modal>
     </>

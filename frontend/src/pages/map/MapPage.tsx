@@ -7,6 +7,7 @@ import { bg3, type MapData, type MapPoint } from '../../api'
 import { PageHeader, Section } from '../../components/Layout'
 import { Plot, type PlotClick } from '../../components/Plot'
 import { useParty } from '../../party'
+import { useUrlState } from '../../urlState'
 
 const RANK = (data: MapData, rarity: string) => (data.rarities.includes(rarity) ? data.rarities.indexOf(rarity) : data.rarities.length)
 const LABELLED = new Set(['Key', 'Legendary', 'Very Rare', 'Story'])
@@ -40,8 +41,8 @@ function spotsOf(data: MapData, mapKey: string, f: Filters, search: string[], pa
 export function MapPage() {
   const data = useQuery({ queryKey: ['map'], queryFn: bg3.mapData, staleTime: Infinity })
   const { party, collected, toggleCollected } = useParty()
-  const [mapKey, setMapKey] = useState('wilderness')
-  const [act, setActState] = useState('1')
+  const [mapKey, setMapKey] = useUrlState('region', 'wilderness')
+  const [act, setActState] = useUrlState('act', '1')
   const [search, setSearch] = useState<string[]>([])
   const [selected, setSelected] = useState<string | null>(null)
   const [tab, setTab] = useState<string | null>('party')
@@ -49,7 +50,10 @@ export function MapPage() {
     rarities: ['Key', 'Legendary', 'Story', 'Very Rare', 'Rare'], missables: true, onlyMissables: false, names: false, partyOnly: false, builds: false, noTraders: false, noInside: false,
   })
   const gear = useQuery({ queryKey: ['party-gear', party, act], queryFn: () => bg3.partyGear(party, act), enabled: party.length > 0 })
-  const wanted = useMemo(() => new Set((gear.data ?? []).filter((g) => !collected.includes(g.key)).map((g) => g.key)), [gear.data, collected])
+  // Party members whose gear is marked; all of them until some are unticked
+  const [hiddenMembers, setHiddenMembers] = useState<string[]>([])
+  const shownGear = useMemo(() => (gear.data ?? []).filter((g) => g.members.some((m) => !hiddenMembers.includes(m))), [gear.data, hiddenMembers])
+  const wanted = useMemo(() => new Set(shownGear.filter((g) => !collected.includes(g.key)).map((g) => g.key)), [shownGear, collected])
   const users = useMemo(() => Object.fromEntries((gear.data ?? []).map((g) => [g.key, g.users])), [gear.data])
   const set = (change: Partial<Filters>) => setFilters((f) => ({ ...f, ...change }))
   // The act picks the regions shown, the party's gear and the items with no spot
@@ -91,7 +95,7 @@ export function MapPage() {
               </Chip.Group>
               <MultiSelect size="xs" placeholder="Find items on any map..." data={names} value={search} onChange={setSearch} searchable clearable style={{ flex: 1, minWidth: 220 }} />
             </Group>
-            <Plot figure={figure} height="72vh" onClick={onClick} config={MAP_CONFIG} />
+            <Plot figure={figure} height="72vh" onClick={onClick} config={MAP_CONFIG} keepColors />
             <Group gap="md" px={4} pb={4}>
               <Switch size="xs" label="Mark missables" checked={filters.missables} onChange={(e) => set({ missables: e.currentTarget.checked })} />
               <Switch size="xs" label="Only missables" checked={filters.onlyMissables} onChange={(e) => set({ onlyMissables: e.currentTarget.checked })} />
@@ -116,9 +120,15 @@ export function MapPage() {
               <ScrollArea h="68vh" mt="xs" offsetScrollbars>
                 <Tabs.Panel value="party">
                   <Text size="xs" c="dimmed" mb="xs">Gold rings: gear your planner party wears at Act {act}. Tick items as you collect them.</Text>
+                  {party.length > 1 && (
+                    <Chip.Group multiple value={party.map((b) => b.name).filter((n) => !hiddenMembers.includes(n))}
+                      onChange={(shown) => setHiddenMembers(party.map((b) => b.name).filter((n) => !shown.includes(n)))}>
+                      <Group gap={4} mb="sm">{party.map((b) => <Chip key={b.uid} value={b.name} size="xs">{b.name.split(' (')[0]}</Chip>)}</Group>
+                    </Chip.Group>
+                  )}
                   {!party.length && <Text size="sm" c="dimmed">Add characters in the Party planner to see their gear here.</Text>}
                   <Stack gap={8}>
-                    {(gear.data ?? []).map((g) => (
+                    {shownGear.map((g) => (
                       <Checkbox key={g.key} size="xs" checked={collected.includes(g.key)} onChange={() => toggleCollected(g.key)}
                         label={<div><Text size="sm" fw={500} td={collected.includes(g.key) ? 'line-through' : undefined}>{g.name}</Text>
                           <Text size="xs" c="dimmed">{g.users.join(', ')}</Text><Text size="xs">{g.where}</Text>
@@ -251,7 +261,7 @@ function mapFigure(data: MapData, mapKey: string, spots: { id: string; points: M
       xaxis: { range: [0, m.width], visible: false, constrain: 'domain' }, yaxis: { range: [m.height, 0], visible: false, scaleanchor: 'x' }, plot_bgcolor: '#000',
     })
   } else {
-    Object.assign(layout, { xaxis: { title: { text: 'Minimap X' }, gridcolor: '#333' }, yaxis: { title: { text: 'Minimap Y' }, scaleanchor: 'x', gridcolor: '#333' } })
+    Object.assign(layout, { plot_bgcolor: '#14151c', xaxis: { title: { text: 'Minimap X' }, gridcolor: '#333' }, yaxis: { title: { text: 'Minimap Y' }, scaleanchor: 'x', gridcolor: '#333' } })
   }
   if (!spots.length) Object.assign(layout, { annotations: [{ text: 'Nothing on this map matches the filters', showarrow: false, xref: 'paper', yref: 'paper', x: 0.5, y: 0.5, font: { size: 16 } }] })
   return { data: traces, layout }

@@ -19,4 +19,5 @@
 ## Checks
 
 - `uv run ruff check .` and `uv run pytest` (CI runs both, plus `uv run python -m benchmarks.benchmark`).
-- Front end: `cd frontend && npm run build` (type checks) and `npm run lint` when present.
+- Front end: `cd frontend && npm run build` (type checks) and `npm run lint`; `npm run smoke` clicks through every page with the app
+  running (`uv run python -m api`). CI runs all three.

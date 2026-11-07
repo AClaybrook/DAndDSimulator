@@ -103,3 +103,14 @@ def test_party_to_simulator():
     assert len(at_act) == 4 and all(c["attacks"] for c in at_act)
     every_act = client.post("/api/planner/to-simulator", json={"party": party, "selected": 0}).json()
     assert len(every_act) == 3 and len({c["name"] for c in every_act}) == 3
+
+def test_build_doc_import(monkeypatch, tmp_path):
+    import bg3.doc_import as doc_import
+    assert client.post("/api/planner/import-doc", json={"source": "/etc/passwd"}).json()["problems"] # Links only, never local files
+    text = "Build 1: Test Champion\nClass Split: Fighter (Champion) 12\nAbility Scores: STR 17, DEX 14, CON 16, INT 8, WIS 12, CHA 8\n"
+    monkeypatch.setattr(doc_import, "fetch_text", lambda source: text)
+    monkeypatch.setattr(doc_import, "OUT", tmp_path / "doc_builds.json")
+    result = client.post("/api/planner/import-doc", json={"source": "https://docs.google.com/document/d/x/edit"}).json()
+    assert [b["name"] for b in result["builds"]] == ["1. Test Champion"] and (tmp_path / "doc_builds.json").exists()
+    monkeypatch.setattr(doc_import, "fetch_text", lambda source: "nothing here")
+    assert client.post("/api/planner/import-doc", json={"source": "https://example.com"}).json()["problems"]

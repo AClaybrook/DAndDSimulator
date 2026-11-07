@@ -81,7 +81,7 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
           </Table.Tbody>
         </Table>
       </Table.ScrollContainer>
-      <Text size="xs" c="dimmed">Empty cells keep the item from the act before (↳). Red cells are in a conflict, see Conflicts. ✦ items have modelled effects.</Text>
+      <Text size="xs" c="dimmed">Empty cells keep the item from the act before (↳). Red cells are in a conflict, see Conflicts. ✦ items have modelled effects, ⚠ items can be missed (hover for why).</Text>
     </Stack>
   )
 }

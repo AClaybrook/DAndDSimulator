@@ -22,7 +22,7 @@ Live here: https://d-and-d-damage-simulator-745953dd5908.herokuapp.com/
 * Download or git clone the repo from: https://github.com/AClaybrook/DAndDSimulator
 * Install [uv](https://docs.astral.sh/uv/getting-started/installation/) (it installs the right Python version for you)
 * `uv sync` to create the virtual environment and install the dependencies
-* The app (React front end over a FastAPI backend: Party planner, Leaderboard, Act 1 map and Simulator):
+* The app (React front end over a FastAPI backend: Party planner, Leaderboard, Item map (Acts 1 and 2) and Simulator):
     * Once: `cd frontend && npm install && npm run build` (needs Node 22)
     * `uv run python -m api`, then open http://localhost:8000
     * For front end work: `uv run python -m api` and, in `frontend/`, `npm run dev` (http://localhost:5173, reloads as you edit)
@@ -30,7 +30,7 @@ Live here: https://d-and-d-damage-simulator-745953dd5908.herokuapp.com/
     * `uv run pytest` to run the tests (the simulation is validated against exact analytic results)
     * `uv run ruff check .` to lint
     * `uv run python -m benchmarks.benchmark` to time the simulation, run it before and after changing `computations/`
-    * `cd frontend && npm run lint && npm run build` to check the front end
+    * `cd frontend && npm run lint && npm run build` to check the front end, and `npm run smoke` (with the app running) to click through every page in a browser
 
 See [CHANGELOG.md](CHANGELOG.md) for what changed in 2.0.
 
@@ -54,7 +54,7 @@ Sessions: everything is kept in your browser. The save icon at the top right exp
 
 Kits and variants: in the planner, "Quick gear" fills a curated item kit's slots (docs/act1_item_kits.md) and "Variants" compares the selected character with a kit, buffs or advantage, without changing its own gear.
 
-Act 1 map (top bar, or `#/map`): where to find the notable Act 1 gear and key pickups, on the game's minimap images with in-game coordinates, filters by rarity and a search. Item locations from bg3.wiki; map images © Larian Studios via bg3.wiki.
+Item map (top bar, or `#/map`), Acts 1 and 2: where to find the notable Act 1 gear and key pickups, on the game's minimap images with in-game coordinates, filters by rarity and a search. Item locations from bg3.wiki; map images © Larian Studios via bg3.wiki.
 
 ## Project Layout
 * `computations/`: the generic simulator

@@ -11,9 +11,13 @@ import { PageHeader, Section, Stat } from '../../components/Layout'
 import { chartLayout } from '../../format'
 import { Plot } from '../../components/Plot'
 import { ACTS, useParty } from '../../party'
+import { useUrlList, useUrlState } from '../../urlState'
 
 const SOURCE_COLORS: Record<string, string> = { 'Your party': '#FFD23F', Preset: '#636EFA', 'Build doc': '#00CC96', 'Reddit (approx.)': '#EF553B' }
 const VARIANT_SHORT: Record<string, string> = { planned: 'Planned', max_damage: 'Max damage', max_ac: 'Max AC', best_score: 'Best score' }
+
+const PLANNED = ['planned']
+const ALL_SOURCES = ['Your party', 'Preset', 'Build doc', 'Reddit (approx.)']
 
 type Row = LeaderboardEntry & { overall: number; d: Record<string, number | null>; rank: Record<string, number> }
 
@@ -21,12 +25,14 @@ const num = (v: number | null | undefined, digits = 1) => (v === null || v === u
 
 export function LeaderboardPage() {
   const party = useParty((s) => s.party)
-  const [scenario, setScenario] = useState('reliable')
-  const [enemies, setEnemies] = useState('1')
-  const [variants, setVariants] = useState<string[]>(['planned'])
-  const [sources, setSources] = useState<string[]>(['Your party', 'Preset', 'Build doc', 'Reddit (approx.)'])
-  const [chartAct, setChartAct] = useState('3')
-  const [compareId, setCompareId] = useState<string | null>(null)
+  const [scenario, setScenario] = useUrlState('scenario', 'reliable')
+  const [enemies, setEnemies] = useUrlState('enemies', '1')
+  const [variants, setVariants] = useUrlList('variants', PLANNED)
+  const [sources, setSources] = useUrlList('sources', ALL_SOURCES)
+  const [chartAct, setChartAct] = useUrlState('act', '3')
+  const [compare_, setCompare] = useUrlState('compare', '')
+  const compareId = compare_ || null
+  const setCompareId = (id: string | null) => setCompare(id ?? '')
   const [open, setOpen] = useState<Row | null>(null)
   const [label, setLabel] = useState('')
   const [withVariants, setWithVariants] = useState(false)
@@ -100,7 +106,7 @@ export function LeaderboardPage() {
         text: pts.map((r) => `${r.name}${r.variant !== 'planned' ? ` (${VARIANT_SHORT[r.variant]})` : ''}<br>AC ${r.ac[chartAct]}, score ${num(r.score[chartAct], 0)}`),
         hovertemplate: '%{text}<br>%{y:.1f} damage per round<extra></extra>',
         marker: { color: SOURCE_COLORS[source], size: pts.map((r) => 6 + (r.score[chartAct] ?? 0) / 6), opacity: 0.85,
-          line: { width: source === 'Your party' ? 2 : 0.5, color: source === 'Your party' ? '#fff' : 'rgba(0,0,0,0.4)' } },
+          line: { width: source === 'Your party' ? 2 : 0.5, color: source === 'Your party' ? '#888' : 'rgba(0,0,0,0.4)' } },
       }
     }),
     layout: chartLayout({ xaxis: { title: { text: 'Armour class' } }, yaxis: { title: { text: 'Damage per round' } }, margin: { l: 55, r: 10, t: 10, b: 40 } }),

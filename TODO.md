@@ -3,17 +3,15 @@
 Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user facing summary of each release.
 
 ## Active
-- [ ] New UI, last gap from the Dash app: the build doc import button (`python -m bg3.import_builds` still works)
-- [ ] New UI, next: compare more than four characters in the planner's charts, URL state for leaderboard filters, keyboard shortcuts,
-  a light theme, Playwright smoke tests in CI
+- [ ] New UI, next: URL state for the planner's tabs and the simulator's graph, more smoke test steps (editing gear, the character editor)
 - [ ] Before making the repository public: add local_data/ to .gitignore and `git rm --cached local_data/bg3.sqlite` (personal leaderboard runs and party builds)
 - [ ] Open a PR with the BG3 planner work once you have looked at it
 
 ## Priorities (most useful while playing first)
-1. [ ] Map missables, next steps (marking is done): Grove raid and other path locks (traders and items lost if the Grove falls, Nightsong outcome in Act 2), timed items (Waukeen's Rest fire), and a "missable" badge on planner gear cells
-2. [ ] Map: per member filter for the party gear layer, and where to get each Act 2/3 item once those maps exist
+1. [ ] Map missables, next steps (marking and the ⚠ on planner gear cells are done): Grove raid and other path locks (traders and items lost if the Grove falls), Act 2 path locks (Last Light Inn falling, Moonrise Towers turning hostile), timed items (Waukeen's Rest fire)
+2. [ ] Map: where to get each Act 3 item once that map exists; Act 2 key pickups (permanent buffs) in bg3/data/map_pickups.json
 3. [ ] Map: more key pickups (permanent buffs, tomes, crafting) in bg3/data/map_pickups.json, and from the build doc's Permanent buffs lines
-4. [ ] Map: Act 2 and 3 (Shadow-Cursed Lands and Lower City minimap images exist on bg3.wiki; calibrate them like Act 1), Grymforge and Rosymorn images if they turn up
+4. [ ] Map: Act 3 (the Lower City minimap image exists on bg3.wiki as Map_Lower_City_A_Terrain_Tex; calibrate it like Act 2, from a wiki map marker page or waypoints), Grymforge and Rosymorn images if they turn up
 5. [ ] Community builds (12 rough versions are in the leaderboard as "Reddit (approx.)", bg3/reddit_builds.py, guessed stats and feats): the 16 ★ Patch 8 builds in docs/reddit_build_index.md (Shadow Blade EK, Bhaalist Hexblade Battle Master, Booming Smite Assassin, Smite Swords Bard, Storm Bard, Filthy Harold Hunter, Bowsinger, Remus71's Drunken Master and Arcane Archer, Radiant Protector, Thief, Tempest Monk...) as planner examples: ask the build doc's AI to write them in docs/request_spec.md's format from their posts, then re-import
 5b. [ ] Doc builds: importer support for Respec (build 25), Party blocks, and Permanent buffs as ability score changes (Hag's Hair +1, Mirror of Loss +2); "Caitlin's Staff" (build 30) isn't a bg3.wiki item name
 6. [ ] AoE, next steps (the 1-4 enemies setting is done): the simulator and the party fight against groups (kills, Bloodlust), an enemy spacing setting, more areas (Call Lightning, Moonbeam, Hunger of Hadar, Slashing Flourish, Bladesong Climax, Cleave), Spirit Guardians' action cost in round 1, Wet synergy (Create Water: lightning/cold vulnerability) and Destructive Wrath maximising thunder/lightning
@@ -45,6 +43,8 @@ Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user faci
 - [ ] Smaller first load: the BG3 item lists (0.22MB) could load when the planner is first opened
 
 ## Done
+- 2026-11-07: Act 2 item map (Shadow-Cursed Lands calibrated to the wiki's map markers; Gauntlet of Shar, Shadowfell & Cloister and the Mind Flayer Colony on coordinate grids; 218 spots), an Act switch on the map page, a per member filter for the party gear layer, ⚠ on missable items in the planner's gear cells
+- 2026-11-07: New UI: build doc re-import (planner, "From an example build..."), example builds overlaid on the planner's damage chart, leaderboard and map settings in the URL, keyboard shortcuts (1-4, t, r, ?), a light theme, Playwright smoke test of every page in CI (`npm run smoke`)
 - 2026-11-04: Overall score (bg3/score.py, docs/scoring.md): 0-100 per character and act from single target damage, area damage, effective HP (BG3 hit points / chance to be hit), and points for control, support and utility tools, against fixed per act references and weighted 35/10/25/10/10/10. In the planner (hover for the parts) and the variants table; the High AC kit now ticks Mage Armour (kits can carry buffs)
 - 2026-11-04: Armour class: per character and act in a new Defence table (hover for the sources) and in the variants table. Armour type and base AC, shields and +AC items from bg3.wiki (bg3/data/armour.json, `python -m bg3.defence`); light/medium/heavy rules, Mage Armour, Draconic Resilience, Monk and Barbarian Unarmoured Defence, Defence style, Bracers of Defence, Bladesong (+2/+3/+4, a toggle), Shield of Faith, Haste and Warding Bond (new buffs). Chance to be hit for an enemy attack bonus (default +6, editable)
 - 2026-11-04: Map missables: red rings and a ⚠ line on items that can be missed: story choices (Nere's head, Florrick and Thrinn's rewards, and the Sussur Bark weapons as a new pick-one), and checklist notes about one-of rewards, time limits, checks, pickpocketing and disarming (Phalar Aluve, Svartlebee's Woundseeker, Silver Sword of the Astral Plane, The Jolty Vest, the Adamantine Forge's two items...). "Only missables" filter; the party gear checklist warns too

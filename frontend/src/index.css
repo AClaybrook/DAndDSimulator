@@ -63,3 +63,22 @@ body {
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
+
+/* Light theme: the same layout on a light neutral palette */
+[data-mantine-color-scheme='light'] body {
+  background: var(--mantine-color-gray-0);
+}
+
+[data-mantine-color-scheme='light'] .mantine-Paper-root[data-with-border] {
+  background: var(--mantine-color-white);
+  border-color: var(--mantine-color-gray-3);
+}
+
+[data-mantine-color-scheme='light'] .app-header {
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom-color: var(--mantine-color-gray-3);
+}
+
+[data-mantine-color-scheme='light'] .bar-track {
+  background: var(--mantine-color-gray-2);
+}

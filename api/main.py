@@ -204,6 +204,13 @@ def planner_example(name: str):
 def planner_party(request: PartyFightRequest):
     return planner.party(request.party, request.act, request.active, request.enemy, request.rounds_per_fight, request.hit_points)
 
+class ImportRequest(BaseModel):
+    source: str # A link to the build reference document
+
+@app.post("/api/planner/import-doc")
+def planner_import_doc(request: ImportRequest):
+    return planner.import_doc(request.source.strip())
+
 class SendRequest(PartyRequest):
     act: str | None = None # Every member at this act, or with selected: one member at every act
     selected: int | None = None

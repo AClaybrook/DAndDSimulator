@@ -1,8 +1,8 @@
-import { Badge, Checkbox, Group, NumberInput, Select, SimpleGrid, Stack, Table, Tabs, Text, Tooltip } from '@mantine/core'
+import { Badge, Checkbox, Group, MultiSelect, NumberInput, Select, SimpleGrid, Stack, Table, Tabs, Text, Tooltip } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { bg3, type Evaluation, type PlannerOptions } from '../../api'
+import { bg3, type Evaluation, type MemberResult, type PlannerOptions } from '../../api'
 import { Section, Stat } from '../../components/Layout'
 import { chartLayout } from '../../format'
 import { Plot } from '../../components/Plot'
@@ -12,16 +12,34 @@ import { useSharedEnemy } from './usePlanner'
 
 // Results: the party's damage across the acts first, then conflicts and how the party works together
 export function ResultsPanel({ options, evaluation }: { options: PlannerOptions; evaluation: Evaluation | undefined }) {
-  const { party, selected, enemies } = useParty()
+  const { party, selected, enemies, attackBonus } = useParty()
   const conflicts = evaluation?.conflicts ?? []
   const member = evaluation?.members[selected]
+  const { enemy, rounds } = useSharedEnemy()
+  // Example builds drawn next to the party (dashed), each evaluated on its own against the same enemy, so the chart isn't limited to four
+  const [compare, setCompare] = useState<string[]>([])
+  const compared = useQuery({
+    queryKey: ['compare', compare, enemy, rounds, attackBonus],
+    queryFn: async () => {
+      const builds = await Promise.all(compare.map((name) => bg3.example(name)))
+      return (await Promise.all(builds.map((b) => bg3.evaluate([b], enemy, rounds, attackBonus)))).map((e) => e.members[0])
+    },
+    enabled: compare.length > 0 && Boolean(enemy),
+    placeholderData: (previous) => previous,
+  })
+  const line = (m: MemberResult, color: string, width: number, dash?: string) => ({
+    type: 'scatter', mode: 'lines+markers', name: m.name, x: ACTS.map((a) => `Act ${a}`), y: ACTS.map((a) => m.acts[a].damage[enemies - 1]),
+    customdata: ACTS.map((a) => m.acts[a].level), line: { color, width, dash }, marker: { size: dash ? 6 : 9 },
+    hovertemplate: `${m.name}<br>%{x} (level %{customdata}): %{y:.1f} damage per round<extra></extra>`,
+  })
+  const others = compare.length ? (compared.data ?? []) : []
   const figure = {
-    data: (evaluation?.members ?? []).map((m, i) => ({
-      type: 'scatter', mode: 'lines+markers', name: m.name, x: ACTS.map((a) => `Act ${a}`), y: ACTS.map((a) => m.acts[a].damage[enemies - 1]),
-      customdata: ACTS.map((a) => m.acts[a].level), line: { color: COLORS[i % COLORS.length], width: i === selected ? 4 : 2 },
-      marker: { size: 9 }, hovertemplate: `${m.name}<br>%{x} (level %{customdata}): %{y:.1f} damage per round<extra></extra>`,
-    })),
-    layout: chartLayout({ margin: { l: 45, r: 10, t: 10, b: 30 }, yaxis: { rangemode: 'tozero', title: { text: 'Damage per round' } }, showlegend: false }),
+    data: [
+      ...(evaluation?.members ?? []).map((m, i) => line(m, COLORS[i % COLORS.length], i === selected ? 4 : 2)),
+      ...others.map((m, i) => line(m, COLORS[(party.length + i) % COLORS.length], 1.5, 'dash')),
+    ],
+    layout: chartLayout({ margin: { l: 45, r: 10, t: 10, b: 30 }, yaxis: { rangemode: 'tozero', title: { text: 'Damage per round' } }, showlegend: others.length > 0,
+      legend: { orientation: 'h', y: -0.2, font: { size: 10 } } }),
   }
 
   return (
@@ -33,7 +51,9 @@ export function ResultsPanel({ options, evaluation }: { options: PlannerOptions;
       </Tabs.List>
       <Tabs.Panel value="damage">
         <Stack gap="sm">
-          <Plot figure={figure} height={260} />
+          <Plot figure={figure} height={others.length ? 320 : 260} />
+          <MultiSelect size="xs" searchable clearable placeholder="Compare with example builds..." data={options.examples.map((e) => e.name)}
+            value={compare} onChange={setCompare} maxValues={8} rightSection={compared.isFetching ? <Text size="10px" c="dimmed">…</Text> : undefined} />
           {member && (
             <>
               <Text size="sm" fw={600}>{member.name}</Text>

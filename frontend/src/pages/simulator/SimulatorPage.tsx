@@ -1,5 +1,6 @@
 import { Button, Center, Grid, Loader, Menu, NumberInput, Popover, SegmentedControl, Select, Stack, Switch, Text } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
+import { useShortcuts } from '../../hotkeys'
 import { IconAdjustments, IconDice5, IconDownload } from '@tabler/icons-react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
@@ -49,6 +50,8 @@ export function SimulatorPage() {
     setExporting(true)
     try { download(fileName(kind), await api.exportCsv(characters, enemy, settings, kind)) } finally { setExporting(false) }
   }
+
+  useShortcuts([['r', () => { if (enemy && characters.length) run() }]])
 
   if (!options.data || !enemy) return <Center h={300}><Loader /></Center>
   const graph = options.data.graphs.find((g) => g.key === settings.graph)
