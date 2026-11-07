@@ -3,6 +3,14 @@
 Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user facing summary of each release.
 
 ## Active
+- [ ] UI rebuild (React + TypeScript over FastAPI, `frontend/` and `api/`), page by page. Done: API skeleton, Simulator page. Next:
+  leaderboard page (sortable table + damage vs AC scatter, row drawer with spec and "load into planner"), party planner (member strip,
+  Build/Gear/Buffs tabs with a paper doll gear grid per act, results tabs; more than 4 characters in its comparison charts), Act 1 map
+  (big region tabs, filters and the party checklist in a side panel), then session import/export and the remaining simulator extras
+  (copy variants menu, attack "Save"-free editing is done)
+- [ ] When the new UI matches the Dash app: remove `app.py`, `components/` (Dash only, keep anything the API imports by moving it into
+  `api/` or the engine packages first: plots, sweeps, help text, validation), `assets/app.css` and `assets/callbacks.js`, the Dash and
+  gunicorn dependencies, and point `Procfile` at `uvicorn api.main:app`; drop the old session formats in `components/session.py`
 - [ ] Before making the repository public: add local_data/ to .gitignore and `git rm --cached local_data/bg3.sqlite` (personal leaderboard runs and party builds)
 - [ ] Open a PR with the BG3 planner work once you have looked at it
 

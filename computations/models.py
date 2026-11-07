@@ -50,13 +50,9 @@ def multiple_die_and_mod_from_list(die_list):
         total_mod += m
     return num_die, die_sizes, total_mod
 
-# Old field name: new field name, so json files saved before a rename still load
-RENAMED_FIELDS = {"proficent": "proficient", "saving_throw_proficent": "saving_throw_proficient"}
-
 def from_dict(cls, data):
     """ Builds a dataclass from a dictionary, ignoring unknown keys so older/newer json files still load """
     names = {f.name for f in fields(cls) if f.init}
-    data = {RENAMED_FIELDS.get(k, k): v for k, v in data.items()}
     return cls(**{k: v for k, v in data.items() if k in names})
 
 def typed_damage_from_str(damage_str):

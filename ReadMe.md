@@ -3,8 +3,7 @@
 Live here: https://d-and-d-damage-simulator-745953dd5908.herokuapp.com/
 
 ##  For the D and D Theory Craftors of the World
-![Alt Text](assets/CharacterBuilder.PNG)
-![Alt Text](assets/Simulator.PNG)
+![The Simulator page: characters with their expected damage, the leading build, the damage distribution plot](docs/images/simulator.png)
 
 * Simulates many thousand turns of combat to find distributions of damage for a given character
 * Compare D&D characters at once for the theory crafters of the world, i.e.:
