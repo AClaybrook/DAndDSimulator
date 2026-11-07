@@ -1,10 +1,11 @@
-import { Button, Center, Grid, Loader, NumberInput, Popover, SegmentedControl, Select, Stack, Switch, Text } from '@mantine/core'
+import { Button, Center, Grid, Loader, Menu, NumberInput, Popover, SegmentedControl, Select, Stack, Switch, Text } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
-import { IconAdjustments, IconDice5 } from '@tabler/icons-react'
+import { IconAdjustments, IconDice5, IconDownload } from '@tabler/icons-react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../../api'
 import { PageHeader } from '../../components/Layout'
+import { download, fileName } from '../../format'
 import { useSimulator } from '../../store'
 import { CharacterEditor } from './CharacterEditor'
 import { EnemyPanel } from './EnemyPanel'
@@ -15,6 +16,7 @@ import { Results } from './Results'
 export function SimulatorPage() {
   const { characters, enemy, settings, setAll, updateSettings } = useSimulator()
   const [editing, setEditing] = useState<string | null>(null)
+  const [exporting, setExporting] = useState(false)
   const options = useQuery({ queryKey: ['options'], queryFn: api.options, staleTime: Infinity })
 
   // First visit: the example characters and enemy
@@ -42,6 +44,12 @@ export function SimulatorPage() {
     if (enemy && characters.length) run()
   }, [settledKey]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const exportRaw = async (kind: string) => {
+    if (!enemy) return
+    setExporting(true)
+    try { download(fileName(kind), await api.exportCsv(characters, enemy, settings, kind)) } finally { setExporting(false) }
+  }
+
   if (!options.data || !enemy) return <Center h={300}><Loader /></Center>
   const graph = options.data.graphs.find((g) => g.key === settings.graph)
   const editingIndex = characters.findIndex((c) => c.uid === editing)
@@ -67,6 +75,15 @@ export function SimulatorPage() {
               </Stack>
             </Popover.Dropdown>
           </Popover>
+          <Menu position="bottom-end">
+            <Menu.Target>
+              <Button size="xs" variant="default" leftSection={<IconDownload size={14} />} loading={exporting}>Raw data</Button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Label>Every simulated value as CSV</Menu.Label>
+              {options.data.exports.map((k) => <Menu.Item key={k} onClick={() => exportRaw(k)}>{k}</Menu.Item>)}
+            </Menu.Dropdown>
+          </Menu>
           <Button size="xs" leftSection={<IconDice5 size={14} />} loading={simulation.isPending} onClick={() => run()}>Simulate again</Button>
         </>} />
       <SegmentedControl fullWidth data={options.data.graphs.map((g) => g.key)} value={settings.graph} onChange={(g) => updateSettings({ graph: g })} />

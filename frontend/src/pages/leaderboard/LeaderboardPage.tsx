@@ -168,7 +168,7 @@ export function LeaderboardPage() {
         </Grid.Col>
         <Grid.Col span={{ base: 12, lg: 7 }}>
           <Section title="Rankings">
-            <SortTable data={rows} columns={columns} initialSorting={[{ id: 'Overall', desc: true }]} hidden={['Source', 'Fingerprint', 'Score 1', 'Score 2']}
+            <SortTable title="Leaderboard" data={rows} columns={columns} initialSorting={[{ id: 'Overall', desc: true }]} hidden={['Source', 'Fingerprint', 'Score 1', 'Score 2']}
               onRowClick={setOpen} maxHeight={480}
               rowStyle={(r) => (r.source === 'Your party' ? { background: 'rgba(255,210,63,0.08)' } : undefined)} />
           </Section>

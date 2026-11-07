@@ -15,7 +15,6 @@
 - `computations/` damage engine (analytic, exact distributions, simulation), `game_data/` D&D data, `bg3/` Baldur's Gate 3 builds, items, map,
   leaderboard and the local database (`local_data/bg3.sqlite`, personal data, gitignore it before making the repository public).
 - `api/` FastAPI backend over the engine, `frontend/` React + TypeScript + Vite app (Mantine, TanStack Table and Query, Plotly.js).
-- `app.py` + `components/` is the original Dash app, kept until the new front end matches it.
 
 ## Checks
 

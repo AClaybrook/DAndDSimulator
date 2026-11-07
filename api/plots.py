@@ -1,19 +1,13 @@
-""" Plotting and tables for the app """
-# Themes here: https://plotly.com/python/templates/
-
-import plotly.express as px
-import plotly.graph_objects as go
+""" Plotly figures for the simulator's results (the same figures the Dash app drew), from simulated data and the exact distributions """
 import numpy as np
 import pandas as pd
-from dash import html
-import dash_bootstrap_components as dbc
-from computations.analytic import attacks_per_round
+import plotly.express as px
+import plotly.graph_objects as go
+
 from computations.numerical_simulation import describe
 
-# Color Palette
 COLORS = px.colors.qualitative.Plotly
-
-# Histograms are binned here and only the bar heights and box statistics go to the browser, so every simulated round is plotted
+# Histograms send bar heights, not every simulated value; at most this many bars per character
 MAX_BINS = 200
 
 def calc_opacity(num_categories, o_init=0.75, o_slope=0.2, o_min=0.25, per_category=5):
@@ -130,35 +124,6 @@ def generate_histogram(groups, colors=None, histnorm='percent', opacity=0.75, x_
     fig.update_xaxes(title_text=x_title, row=2, col=1)
     return fig
 
-def generate_distplot(groups, labels, **kwargs):
-    """
-    Alternative to generate_histogram, but has some performance issues for many data points
-    Example Usage:
-        groups = [df_by_round["damage"] for df_by_round in df_by_rounds]
-        labels = [c.name for c in characters]
-        fig = generate_distplot(groups, labels)
-    """
-    import plotly.figure_factory as ff # pylint: disable=import-outside-toplevel
-    fig = ff.create_distplot(groups, labels, show_rug=True)
-    fig.update_layout(**kwargs)
-    return fig
-
-def generate_bar_plot(data, x="damage",**kwargs):
-    """ Basically a bar plot version of generate_distplot with out the side plots, but has some performance issues for many data points """
-    def add_damage_percent(data):
-        percent_dict = data.groupby("Type")[x].value_counts(normalize=True).to_dict()
-        data["Percent"] = data.apply(lambda i: percent_dict[(i["Type"], i[x])], axis=1)*100
-        return data
-    data1 = add_damage_percent(data.copy())
-    fig = px.bar(data1, x=x, y="Percent", color="Type", opacity=0.75,barmode='overlay',**kwargs)
-    return fig
-
-def generate_cdf_plot(data):
-    """ Generates a Cumulative Distribution Function plot with a histogram"""
-    return px.ecdf(data, x="damage", color="Type", marginal="histogram",orientation='h')
-
-
-
 def summary_stats(data: list, by_round=True):
     """ Extracts summary stats to be used for tables and exports"""
     df_summary = []
@@ -176,31 +141,6 @@ def summary_stats(data: list, by_round=True):
             datac.index.set_names([""], inplace=True)
             df_summary.append(datac.round(2))
     return df_summary
-
-
-
-def build_tables_row(characters, data_summary, by_round=True, width=12):
-    """ Builds the tables section from simulation data """
-    if by_round:
-        table_list = [dbc.Row(dbc.Col(html.H4("Per Round", className="mt-3")))]
-    else:
-        table_list = [dbc.Row(dbc.Col(html.H4("Per Attack", className="mt-3")))]
-    row = []
-    for ii, (c, df_table) in enumerate(zip(characters, data_summary)):
-        col = []
-        col.append(html.H5(c.name, style={'color': COLORS[ii]}))
-        col.append(dbc.Table.from_dataframe(df_table, striped=True, bordered=True, hover=True, responsive=True, index=True, size="sm"))
-        col.append(html.Br())
-        row.append(dbc.Col(col, xs=12, md=6, xl=width))
-
-    table_list.append(dbc.Row(row))
-    return table_list
-
-def add_tables(data, characters, by_round=True, width=12):
-    """ Processes the data and then builds the tables section from simulation data"""
-    data_summary = summary_stats(data, by_round=by_round)
-
-    return build_tables_row(characters, data_summary, width=width, by_round=by_round)
 
 def generate_line_plots(df_acs, groupby='Character', template='plotly_dark', order=None, x_col='Armor Class'):
     """ Generates a line plot of damage vs armor class (or another swept parameter), used by DPR/DPA vs Armor Class and Level"""
@@ -277,63 +217,6 @@ def generate_damage_per_attack_histogram(characters, dfs, template='plotly_dark'
             groups[name], colors[name] = values.to_numpy(), COLORS[ii % len(COLORS)]
     return generate_histogram(groups, colors=colors, opacity=calc_opacity(len(groups), o_slope=0.25), template=template, title=title, **kwargs)
 
-def color_header(name, ii):
-    return html.Span("\u25CF ", style={'color': COLORS[ii % len(COLORS)]}), name
-
-def build_leaderboard(characters, df_by_rounds, rounds_per_fight=None):
-    """ Ranks characters by mean damage per round """
-    rows = []
-    for ii, (c, df) in enumerate(zip(characters, df_by_rounds)):
-        num_attacks = max(attacks_per_round(c, rounds_per_fight), 1e-9)
-        rows.append({
-            "ii": ii,
-            "Character": c.name,
-            "Mean DPR": df["Damage"].mean(),
-            "Median": df["Damage"].median(),
-            "25%-75%": f"{df['Damage'].quantile(0.25):g} - {df['Damage'].quantile(0.75):g}",
-            "Attacks": f"{attacks_per_round(c, rounds_per_fight):.3g}",
-            "Hit %": 100 * df["Hit"].mean() / num_attacks,
-            "Crit %": 100 * df["Hit (Crit)"].mean() / num_attacks,
-        })
-    rows.sort(key=lambda r: r["Mean DPR"], reverse=True)
-    best = rows[0]["Mean DPR"] if rows else 0
-    header = html.Thead(html.Tr([html.Th(h) for h in ["#", "Character", "Mean DPR", "vs Best", "Median", "25%-75%", "Attacks/Round", "Hit %", "Crit %"]]))
-    body = html.Tbody([
-        html.Tr([
-            html.Td(rank),
-            html.Td(color_header(r["Character"], r["ii"])),
-            html.Td(html.B(f"{r['Mean DPR']:.2f}")),
-            html.Td(f"{100 * r['Mean DPR'] / best:.0f}%" if best else "-"),
-            html.Td(f"{r['Median']:g}"),
-            html.Td(r["25%-75%"]),
-            html.Td(r["Attacks"]),
-            html.Td(f"{r['Hit %']:.1f}"),
-            html.Td(f"{r['Crit %']:.1f}"),
-        ]) for rank, r in enumerate(rows, start=1)
-    ])
-    return [
-        dbc.Row(dbc.Col(html.H4("Leaderboard", className="mt-3"))),
-        dbc.Row(dbc.Col(dbc.Table([header, body], striped=True, bordered=True, hover=True, responsive=True, size="sm"))),
-    ]
-
-def build_breakdown_tables(characters, breakdowns, width=3):
-    """ Per attack hit chance and expected damage (exact, from computations.analytic) """
-    row = []
-    for ii, (c, df) in enumerate(zip(characters, breakdowns)):
-        total = df["Expected"].sum()
-        row.append(dbc.Col([
-            html.H5(c.name, style={'color': COLORS[ii]}),
-            dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, responsive=True, size="sm"),
-            html.P(f"Expected damage per round: {total:.2f}", className="small text-muted"),
-        ], xs=12, md=6, xl=width))
-    return [
-        dbc.Row(dbc.Col([
-            html.H4("Attack Breakdown", className="mt-3 mb-0"),
-            html.P("Exact hit chances and expected damage against the current enemy, useful to check the inputs are what you expect", className="small text-muted"),
-        ])),
-        dbc.Row(row),
-    ]
-
 def generate_rounds_to_kill_plot(df_rtk, max_rounds, hit_points, template='plotly_dark'):
     """ Probability the enemy is dead by each round, one line per character """
     fig = go.Figure()
@@ -359,60 +242,6 @@ def generate_rounds_to_kill_plot(df_rtk, max_rounds, hit_points, template='plotl
     fig.update_xaxes(range=[0.5, min(max_rounds, last_interesting + 1) + 0.5], dtick=1)
     return fig
 
-def rounds_to_kill_summary(df_rtk, max_rounds):
-    """ Summary table of the rounds to kill per character """
-    summary = pd.DataFrame({
-        "Mean Rounds": df_rtk.mean().round(2),
-        "Median": df_rtk.median(),
-        "25%": df_rtk.quantile(0.25),
-        "75%": df_rtk.quantile(0.75),
-        "Dead by Round 3 (%)": (100 * (df_rtk <= 3).mean()).round(1),
-        f"Alive After {max_rounds} (%)": (100 * (df_rtk > max_rounds).mean()).round(1),
-    })
-    summary.index.name = "Character"
-    return [
-        dbc.Row(dbc.Col(html.H4("Rounds to Kill", className="mt-3"))),
-        dbc.Row(dbc.Col(dbc.Table.from_dataframe(summary.reset_index(), striped=True, bordered=True, hover=True, responsive=True, size="sm"))),
-    ]
-
-def build_sweep_leaderboard(df_sweep, x_col, order):
-    """ Ranks characters by their average damage per round over the swept range """
-    rows = []
-    for ii, name in enumerate(order):
-        g = df_sweep.loc[df_sweep["Character"] == name]
-        if g.empty:
-            continue
-        rows.append({"ii": ii, "Character": name, "avg": g["mean"].astype(float).mean(),
-                     "low": g["mean"].astype(float).iloc[0], "high": g["mean"].astype(float).iloc[-1]})
-    rows.sort(key=lambda r: r["avg"], reverse=True)
-    first, last = df_sweep[x_col].iloc[0], df_sweep[x_col].iloc[-1]
-    header = html.Thead(html.Tr([html.Th(h) for h in ["#", "Character", f"Average DPR ({x_col} {first} to {last})", f"DPR at {first}", f"DPR at {last}"]]))
-    body = html.Tbody([
-        html.Tr([
-            html.Td(rank),
-            html.Td(color_header(r["Character"], r["ii"])),
-            html.Td(html.B(f"{r['avg']:.2f}")),
-            html.Td(f"{r['low']:.2f}"),
-            html.Td(f"{r['high']:.2f}"),
-        ]) for rank, r in enumerate(rows, start=1)
-    ])
-    return [
-        dbc.Row(dbc.Col(html.H4("Leaderboard", className="mt-3"))),
-        dbc.Row(dbc.Col(dbc.Table([header, body], striped=True, bordered=True, hover=True, responsive=True, size="sm"))),
-    ]
-
-def build_insights(insights):
-    """ Table of when to turn power attack feats (GWM, Sharpshooter) on or off """
-    if not insights:
-        return []
-    return [
-        dbc.Row(dbc.Col([
-            html.H4("Insights", className="mt-3 mb-0"),
-            html.P("Exact expected damage with each power attack feat on vs off against the current enemy's defenses at each armor class", className="small text-muted"),
-        ])),
-        dbc.Row(dbc.Col(dbc.Table.from_dataframe(pd.DataFrame(insights), striped=True, bordered=True, hover=True, responsive=True, size="sm"))),
-    ]
-
 def generate_fight_plot(fights, template='plotly_dark'):
     """ Average damage in each round of a fight, shows bursts from limited resources at the start of fights """
     fig = go.Figure()
@@ -435,8 +264,19 @@ def generate_fight_plot(fights, template='plotly_dark'):
     )
     return fig
 
+def fight_export(fights):
+    """ One row per character and fight, with the damage of each round """
+    frames = []
+    for name, damage in fights.items():
+        df = pd.DataFrame(damage.T, columns=[f"Round {r}" for r in range(1, damage.shape[0] + 1)])
+        df.insert(0, "Total", damage.sum(axis=0))
+        df.insert(0, "Fight", range(1, damage.shape[1] + 1))
+        df.insert(0, "Name", name)
+        frames.append(df)
+    return pd.concat(frames, ignore_index=True)
+
 def fight_summary(fights):
-    """ Table of total damage per fight and how it is spread over the rounds """
+    """ Total damage per fight and how it is spread over the rounds, one row per character, best first """
     rows = []
     for name, damage in fights.items():
         totals = damage.sum(axis=0)
@@ -452,38 +292,4 @@ def fight_summary(fights):
             "Last Round": round(float(by_round[-1]), 2),
         })
     rows.sort(key=lambda r: r["Mean Fight Damage"], reverse=True)
-    return [
-        dbc.Row(dbc.Col([
-            html.H4("Damage per Fight", className="mt-3 mb-0"),
-            html.P("Limited attacks are used in the first rounds of each fight and limited once per turn damage is used on the first hits until it runs out",
-                   className="small text-muted"),
-        ])),
-        dbc.Row(dbc.Col(dbc.Table.from_dataframe(pd.DataFrame(rows), striped=True, bordered=True, hover=True, responsive=True, size="sm"))),
-    ]
-
-def fight_export(fights):
-    """ One row per character and fight, with the damage of each round """
-    frames = []
-    for name, damage in fights.items():
-        df = pd.DataFrame(damage.T, columns=[f"Round {r}" for r in range(1, damage.shape[0] + 1)])
-        df.insert(0, "Total", damage.sum(axis=0))
-        df.insert(0, "Fight", range(1, damage.shape[1] + 1))
-        df.insert(0, "Name", name)
-        frames.append(df)
-    return pd.concat(frames, ignore_index=True)
-
-def results_summary(values, unit, higher_is_better=True, context=""):
-    """ One line summary of a simulation: who comes out on top and by how much """
-    if not values:
-        return None
-    ranked = sorted(values.items(), key=lambda kv: kv[1], reverse=higher_is_better)
-    best, best_value = ranked[0]
-    text = [html.B(best), f" leads with {best_value:.2f} {unit}"]
-    if len(ranked) > 1:
-        second, second_value = ranked[1]
-        if second_value:
-            difference = (best_value / second_value - 1) if higher_is_better else (1 - best_value / second_value)
-            text.append(f", {100 * difference:.0f}% {'ahead of' if higher_is_better else 'faster than'} {second} ({second_value:.2f})")
-    if context:
-        text.append(f" {context}")
-    return dbc.Alert([html.I(className="fa-solid fa-trophy me-2"), *text], color="info", class_name="py-2 mb-2")
+    return pd.DataFrame(rows)

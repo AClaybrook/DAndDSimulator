@@ -12,6 +12,8 @@ export interface Options {
   attackTemplates: { label: string; value: string }[]
   graphs: { key: string; description: string }[]
   sweepParameters: { key: string; description: string }[]
+  variants: { key: string; label: string }[]
+  exports: string[]
   attackDefaults: Attack
   characterDefaults: Record<string, Value>
   enemyDefaults: Enemy
@@ -52,15 +54,22 @@ export interface Settings {
   randomSeed: boolean
 }
 
-async function call<T>(path: string, body?: unknown): Promise<T> {
+async function request(path: string, body?: unknown): Promise<Response> {
   const response = await fetch(`/api${path}`, body === undefined ? undefined : {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
   if (!response.ok) throw new Error(`${path}: ${response.status} ${await response.text()}`)
-  return response.json() as Promise<T>
+  return response
 }
+
+const call = async <T,>(path: string, body?: unknown): Promise<T> => (await request(path, body)).json() as Promise<T>
+
+const simulation = (characters: Character[], enemy: Enemy, s: Settings) => ({
+  characters, enemy, graph: s.graph, num_rounds: s.numRounds, rounds_per_fight: s.roundsPerFight,
+  sweep_parameter: s.sweepParameter, ruleset: s.ruleset, seed: s.randomSeed ? null : 1,
+})
 
 // The backend ignores fields it doesn't know, so the client's uid can go along
 export const api = {
@@ -72,11 +81,12 @@ export const api = {
     call<Attack[]>('/simulator/template', { value, ability_stat, level, ruleset }),
   expected: (characters: Character[], enemy: Enemy, rounds_per_fight: number) =>
     call<Expected>('/simulator/expected', { characters, enemy, rounds_per_fight }),
-  simulate: (characters: Character[], enemy: Enemy, s: Settings) =>
-    call<SimulationResult>('/simulator/simulate', {
-      characters, enemy, graph: s.graph, num_rounds: s.numRounds, rounds_per_fight: s.roundsPerFight,
-      sweep_parameter: s.sweepParameter, ruleset: s.ruleset, seed: s.randomSeed ? null : 1,
-    }),
+  simulate: (characters: Character[], enemy: Enemy, s: Settings) => call<SimulationResult>('/simulator/simulate', simulation(characters, enemy, s)),
+  // A copy of a character with one change (level up, Bless...), or why it can't be made
+  variant: (character: Character, key: string) => call<{ character?: Character; problems?: string[] }>('/simulator/variant', { character, key }),
+  // Raw simulated data as CSV text
+  exportCsv: async (characters: Character[], enemy: Enemy, s: Settings, kind: string) =>
+    (await request('/simulator/export', { ...simulation(characters, enemy, s), kind })).text(),
 }
 
 // ---------- BG3: party planner, leaderboard, Act 1 map
@@ -223,6 +233,8 @@ export const bg3 = {
   run: (id: number) => call<LeaderboardEntry[]>(`/leaderboard/runs/${id}`),
   saveRun: (party: Build[], label: string, withVariants: boolean) =>
     call<{ id: number; rows: number }>('/leaderboard/save', { party: strip(party), label, with_variants: withVariants }),
+  toSimulator: (party: Build[], act: string | null, selected: number | null) =>
+    call<Character[]>('/planner/to-simulator', { party: strip(party), act, selected }),
   mapData: () => call<MapData>('/map/data'),
   partyGear: (party: Build[], act: string) => call<PartyGear[]>(`/map/party-gear?act=${act}`, { party: strip(party) }),
 }

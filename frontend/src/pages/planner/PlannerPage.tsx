@@ -1,10 +1,11 @@
-import { Center, Grid, Loader, NumberInput, Paper, SegmentedControl, Select, Tabs, Text } from '@mantine/core'
+import { Button, Center, Grid, Loader, Menu, NumberInput, Paper, SegmentedControl, Select, Tabs, Text } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
-import { useEffect } from 'react'
-import { api } from '../../api'
+import { IconSend } from '@tabler/icons-react'
+import { useEffect, useState } from 'react'
+import { api, bg3 } from '../../api'
 import { PageHeader } from '../../components/Layout'
 import { useParty } from '../../party'
-import { useSimulator } from '../../store'
+import { MAX_CHARACTERS, useSimulator } from '../../store'
 import { AdviceTab } from './AdviceTab'
 import { BuffsTab } from './BuffsTab'
 import { BuildTab } from './BuildTab'
@@ -17,7 +18,8 @@ import { VariantsTab } from './VariantsTab'
 export function PlannerPage() {
   const options = usePlannerOptions()
   const { party, selected, setParty, enemies, setEnemies, attackBonus, setAttackBonus } = useParty()
-  const { enemy, setEnemy } = useSimulator()
+  const { enemy, setEnemy, addCharacter } = useSimulator()
+  const [sending, setSending] = useState(false)
   const simOptions = useQuery({ queryKey: ['options'], queryFn: api.options, staleTime: Infinity })
   const evaluation = useEvaluation()
 
@@ -28,6 +30,15 @@ export function PlannerPage() {
       localStorage.setItem('bg3-party-started', '1')
     }
   }, [options.data, party.length, setParty])
+
+  // Compiled characters into the Simulator (as new characters, up to its limit), then open it
+  const send = async (act: string | null, member: number | null) => {
+    setSending(true)
+    try {
+      for (const c of await bg3.toSimulator(party, act, member)) addCharacter(c)
+      window.location.hash = '#/simulator'
+    } finally { setSending(false) }
+  }
 
   if (!options.data) return <Center h={300}><Loader /></Center>
   const o = options.data
@@ -44,6 +55,16 @@ export function PlannerPage() {
             data={[1, 2, 3, 4].map((n) => ({ value: String(n), label: n === 1 ? '1 enemy' : `${n} (AoE)` }))} />
           <NumberInput size="xs" w={150} placeholder="auto" value={attackBonus ?? ''} min={0} max={20} leftSection={<Text size="10px" c="dimmed">Enemy to hit +</Text>}
             leftSectionWidth={84} onChange={(v) => setAttackBonus(v === '' ? null : Number(v))} title="The enemy's attack bonus, for the chance to be hit (empty: from its challenge rating)" />
+          <Menu position="bottom-end">
+            <Menu.Target>
+              <Button size="xs" variant="default" leftSection={<IconSend size={14} />} loading={sending} disabled={!party.length}>To simulator</Button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Label>Add as Simulator characters (max {MAX_CHARACTERS})</Menu.Label>
+              {o.acts.map((a) => <Menu.Item key={a.key} onClick={() => send(a.key, null)}>Whole party at {a.label}</Menu.Item>)}
+              {party[selected] && <Menu.Item onClick={() => send(null, selected)}>{party[selected].name} at every act</Menu.Item>}
+            </Menu.Dropdown>
+          </Menu>
         </>} />
       <PartyStrip options={o} evaluation={evaluation.data} enemies={enemies} />
       {party.length > 0 && (

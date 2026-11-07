@@ -3,14 +3,9 @@
 Working notes for the Baldur's Gate 3 direction. The CHANGELOG has the user facing summary of each release.
 
 ## Active
-- [ ] New UI, last gaps before the Dash app can go: session export/import (characters, enemy, settings and the party in one file),
-  "Add to simulator" from the planner (party at an act as simulator characters), the simulator card copy menu (variants: +2 main stat,
-  one level higher, advantage, GWM/Sharpshooter, Bless), CSV export of simulation results, the build doc import button
+- [ ] New UI, last gap from the Dash app: the build doc import button (`python -m bg3.import_builds` still works)
 - [ ] New UI, next: compare more than four characters in the planner's charts, URL state for leaderboard filters, keyboard shortcuts,
   a light theme, Playwright smoke tests in CI
-- [ ] When the new UI matches the Dash app: remove `app.py`, `components/` (Dash only, keep anything the API imports by moving it into
-  `api/` or the engine packages first: plots, sweeps, help text, validation), `assets/app.css` and `assets/callbacks.js`, the Dash and
-  gunicorn dependencies, and point `Procfile` at `uvicorn api.main:app`; drop the old session formats in `components/session.py`
 - [ ] Before making the repository public: add local_data/ to .gitignore and `git rm --cached local_data/bg3.sqlite` (personal leaderboard runs and party builds)
 - [ ] Open a PR with the BG3 planner work once you have looked at it
 

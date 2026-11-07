@@ -83,3 +83,23 @@ def test_leaderboard_and_map_endpoints():
     assert client.get(data["maps"][0]["image"]).status_code == 200
     gear = client.post("/api/map/party-gear", params={"act": "1"}, json={"party": party}).json()
     assert any(g["name"] == "Caustic Band" and len(g["users"]) == 2 for g in gear)
+
+def test_variant_and_raw_exports():
+    defaults = client.get("/api/simulator/default").json()
+    options = client.get("/api/simulator/options").json()
+    assert "copy" not in {v["key"] for v in options["variants"]} # Exact copies are made in the browser
+    bless = client.post("/api/simulator/variant", json={"character": defaults["characters"][0], "key": "bless"}).json()
+    assert bless["character"]["name"].endswith("(Bless)")
+    asi = client.post("/api/simulator/variant", json={"character": defaults["characters"][0], "key": "ability"}).json()
+    assert asi["problems"] # Strength is already 20
+    for kind in options["exports"]:
+        response = client.post("/api/simulator/export", json={**defaults, "kind": kind, "num_rounds": 500})
+        assert response.status_code == 200 and response.headers["content-type"].startswith("text/csv"), kind
+        assert len(response.text.splitlines()) > 2, kind
+
+def test_party_to_simulator():
+    party = client.get("/api/planner/options").json()["defaultParty"]
+    at_act = client.post("/api/planner/to-simulator", json={"party": party, "act": "2"}).json()
+    assert len(at_act) == 4 and all(c["attacks"] for c in at_act)
+    every_act = client.post("/api/planner/to-simulator", json={"party": party, "selected": 0}).json()
+    assert len(every_act) == 3 and len({c["name"] for c in every_act}) == 3

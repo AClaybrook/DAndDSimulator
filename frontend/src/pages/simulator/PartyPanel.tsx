@@ -13,6 +13,7 @@ interface Props {
 // The characters at a glance: name, level and exact expected damage per round, details in the editor
 export function PartyPanel({ options, expected, onEdit }: Props) {
   const { characters, removeCharacter, copyCharacter, addCharacter, settings } = useSimulator()
+  const [problem, setProblem] = useState<string | null>(null)
   const [presetOpen, setPresetOpen] = useState(false)
   const [preset, setPreset] = useState<string | null>('fighter_gwm')
   const [level, setLevel] = useState<number>(5)
@@ -22,6 +23,14 @@ export function PartyPanel({ options, expected, onEdit }: Props) {
     if (!preset) return
     addCharacter(await api.preset(preset, level, settings.ruleset))
     setPresetOpen(false)
+  }
+
+  const addVariant = async (id: string, key: string) => {
+    const original = characters.find((c) => c.uid === id)
+    if (!original) return
+    const result = await api.variant(original, key)
+    setProblem(result.problems?.join('; ') ?? null)
+    if (result.character) addCharacter(result.character)
   }
 
   return (
@@ -55,7 +64,16 @@ export function PartyPanel({ options, expected, onEdit }: Props) {
                 </Tooltip>
                 <Group gap={0} wrap="nowrap" onClick={(e) => e.stopPropagation()}>
                   <ActionIcon variant="subtle" size="sm" onClick={() => onEdit(c.uid!)} aria-label="Edit"><IconPencil size={14} /></ActionIcon>
-                  <ActionIcon variant="subtle" size="sm" onClick={() => copyCharacter(c.uid!)} aria-label="Copy"><IconCopy size={14} /></ActionIcon>
+                  <Menu position="bottom-end" withinPortal>
+                    <Menu.Target>
+                      <ActionIcon variant="subtle" size="sm" aria-label="Copy" disabled={characters.length >= MAX_CHARACTERS}><IconCopy size={14} /></ActionIcon>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                      <Menu.Label>Add a copy</Menu.Label>
+                      <Menu.Item onClick={() => copyCharacter(c.uid!)}>Exact copy</Menu.Item>
+                      {options.variants.map((v) => <Menu.Item key={v.key} onClick={() => addVariant(c.uid!, v.key)}>{v.label}</Menu.Item>)}
+                    </Menu.Dropdown>
+                  </Menu>
                   <ActionIcon variant="subtle" size="sm" color="red" onClick={() => removeCharacter(c.uid!)} aria-label="Delete"><IconTrash size={14} /></ActionIcon>
                 </Group>
               </Group>
@@ -67,6 +85,7 @@ export function PartyPanel({ options, expected, onEdit }: Props) {
             </Paper>
           )
         })}
+        {problem && <Text size="xs" c="orange">{problem}</Text>}
         {expected?.problems?.map((p) => <Text key={p} size="xs" c="orange">{p}</Text>)}
       </Stack>
       <Modal opened={presetOpen} onClose={() => setPresetOpen(false)} title="Add a class preset" size="md">

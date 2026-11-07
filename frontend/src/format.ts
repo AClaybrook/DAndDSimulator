@@ -22,3 +22,20 @@ export function classLine(build: Build, options: PlannerOptions) {
   if (classes?.length) return classes.map(([c, sub, n]) => `${c[0].toUpperCase()}${c.slice(1)} ${n}${sub ? ` (${sub})` : ''}`).join(' / ')
   return options.presets.find((p) => p.key === build.preset)?.label ?? build.preset
 }
+
+// Saves text as a file in the browser's downloads
+export function download(filename: string, text: string, type = 'text/csv') {
+  const url = URL.createObjectURL(new Blob([text], { type }))
+  const link = Object.assign(document.createElement('a'), { href: url, download: filename })
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
+const csvCell = (v: unknown) => {
+  const text = Array.isArray(v) ? v.join('; ') : String(v ?? '')
+  return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text
+}
+
+export const toCsv = (columns: string[], rows: unknown[][]) => [columns, ...rows].map((r) => r.map(csvCell).join(',')).join('\n')
+
+export const fileName = (title: string) => `${title.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') || 'table'}.csv`

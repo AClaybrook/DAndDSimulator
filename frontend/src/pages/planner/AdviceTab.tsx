@@ -47,10 +47,10 @@ export function AdviceTab({ options }: { options: PlannerOptions }) {
       <SimpleGrid cols={{ base: 1, xl: 2 }}>
         <Section title="What each item adds" padding="sm">
           <Text size="xs" c="dimmed">Damage per round each worn item adds, compared to an empty slot.</Text>
-          <SortTable data={advice.data?.values ?? []} columns={valueColumns} initialSorting={[{ id: 'Adds', desc: true }]} filterable={false} />
+          <SortTable data={advice.data?.values ?? []} columns={valueColumns} initialSorting={[{ id: 'Adds', desc: true }]} filterable={false} title="Item values" />
         </Section>
         <Section title="Best items for the slot" padding="sm">
-          <SortTable data={advice.data?.suggestions ?? []} columns={suggestionColumns} initialSorting={[{ id: 'Adds', desc: true }]} filterable={false} />
+          <SortTable data={advice.data?.suggestions ?? []} columns={suggestionColumns} initialSorting={[{ id: 'Adds', desc: true }]} filterable={false} title="Item suggestions" />
         </Section>
       </SimpleGrid>
     </Stack>

@@ -1,16 +1,16 @@
 """ The simulator's computations as JSON: options, presets, expected damage, and simulations with their figure, headline numbers and tables.
-    Figures come from the same plotting functions as the Dash app (components.plots), so the plots look the same """
+    Figures come from api.plots """
 import json
 from dataclasses import asdict
 
 import numpy as np
 import pandas as pd
 
-from components.character_card import validation_errors
-from components.help import GRAPH_DESCRIPTIONS
-from components.plots import (generate_damage_per_attack_histogram, generate_fight_plot, generate_line_plots, generate_plot_data,
-                              generate_rounds_to_kill_plot)
-from components.sweeps import SWEEP_PARAMETERS, run_sweep
+from api.plots import (fight_export, fight_summary, generate_damage_per_attack_histogram, generate_fight_plot, generate_line_plots,
+                       generate_plot_data, generate_rounds_to_kill_plot)
+from api.sweeps import SWEEP_PARAMETERS, run_sweep
+from api.validation import validation_errors
+from api.variants import VARIANTS, make_variant
 from computations.analytic import attack_breakdown, attacks_per_round, expected_by_attack, power_attack_insights
 from computations.exact import damage_per_round
 from computations.models import Attack, Character, Enemy
@@ -18,6 +18,20 @@ from computations.numerical_simulation import set_seed, simulate_fights, simulat
 from game_data import RULESETS, attack_templates, attacks_from_template, enemy_from_monster, enemy_from_preset, enemy_presets
 from game_data.classes import BUILDS, build_character
 
+# What each graph type answers, shown under the graph picker
+GRAPH_DESCRIPTIONS = {
+    "DPR Distribution": "How much damage does each character deal per round against this enemy, and how swingy is it? The line over each "
+                        "histogram is the exact distribution the simulation samples from; hover it for the mean, spread, skew and the chance "
+                        "every attack misses.",
+    "DPA Distribution": "Which attacks do the damage? The same as DPR, split by attack.",
+    "DPR Sweep": "How does damage per round change with one parameter (pick it in Settings)? i.e. is GWM worth it at high armor class, how a "
+                 "build scales with level.",
+    "DPA Sweep": "The same as DPR Sweep, split by attack.",
+    "Rounds to Kill": "How many rounds does each character need to kill this enemy on their own? Uses the enemy's hit points.",
+    "Damage per Fight": "How is damage spread over a fight? Shows bursts from limited resources (Action Surge, smites, first round effects) "
+                        "using Rounds per fight.",
+}
+EXPORTS = ["Damage per round", "Damage per attack", "Sweep", "Rounds to kill", "Damage per fight"]
 TEMPLATE = "plotly_dark"
 MAX_ROUNDS_TO_KILL = 20
 ARMOR_CLASSES = range(10, 26)
@@ -32,6 +46,8 @@ def options():
         "attackTemplates": [{"label": label, "value": value} for label, value in attack_templates()],
         "graphs": [{"key": k, "description": v} for k, v in GRAPH_DESCRIPTIONS.items()],
         "sweepParameters": [{"key": k, "description": v[2]} for k, v in SWEEP_PARAMETERS.items()],
+        "variants": [{"key": k, "label": label} for k, (label, change) in VARIANTS.items() if change],
+        "exports": EXPORTS,
         "attackDefaults": Attack().to_dict(),
         "characterDefaults": {k: v for k, v in Character().to_dict().items() if k != "attacks"},
         "enemyDefaults": Enemy().to_dict(),
@@ -161,13 +177,44 @@ def simulate(characters, enemy_dict, graph="DPR Distribution", num_rounds=10000,
         fights = simulate_fights(parsed, foe, num_fights=max(num_rounds // rounds_per_fight, 1), rounds_per_fight=rounds_per_fight, rng=rng)
         fig = generate_fight_plot(fights, template=TEMPLATE)
         headline = _headline({n: d.sum(axis=0).mean() for n, d in fights.items()}, f"damage per {rounds_per_fight} round fight", context=f"against {foe.name}")
-        rows = {n: {f"Round {r + 1}": round(float(d[r].mean()), 2) for r in range(d.shape[0])} | {"Fight total": round(float(d.sum(axis=0).mean()), 2)}
-                for n, d in fights.items()}
-        tables.append(_table("Mean damage by round of the fight", pd.DataFrame(rows).T.rename_axis("Character")))
+        tables.append(_table("Damage per fight", fight_summary(fights), "Limited attacks are used in the first rounds of each fight, limited once "
+                             "per turn damage on the first hits until it runs out"))
     else:
         return {"problems": [f"Unknown graph type {graph}"]}
     tables.append(_breakdown(parsed, foe, rounds_per_fight))
     return {"figure": _figure(fig), "headline": headline, "tables": tables}
+
+def variant(character, key):
+    """ A copy of the character with one change (copy menu), or {problems} when the change isn't possible """
+    parsed, _, problems = parse([character], Enemy().to_dict())
+    if problems:
+        return {"problems": problems}
+    try:
+        return {"character": make_variant(parsed[0], key).to_dict()}
+    except ValueError as e:
+        return {"problems": [str(e)]}
+
+def export(characters, enemy_dict, kind, num_rounds=10000, rounds_per_fight=3, sweep_parameter="Armor Class", ruleset="bg3", seed=1):
+    """ Raw simulated data as CSV text: every round, every attack, a sweep, rounds to kill or every fight """
+    parsed, foe, problems = parse(characters, enemy_dict)
+    if problems:
+        return None, problems
+    rng = set_seed(seed)
+    rounds_per_fight = max(int(rounds_per_fight or 3), 1)
+    if kind in ("Damage per round", "Damage per attack"):
+        dfs, df_by_rounds, _ = simulate_rounds_from_characters(parsed, foe, num_rounds=int(num_rounds), rng=rng, rounds_per_fight=rounds_per_fight)
+        frames = df_by_rounds if kind == "Damage per round" else [d.sort_values(by=["Round"]) for d in dfs]
+        df = pd.concat([f.assign(Name=c.name) for c, f in zip(parsed, frames)], ignore_index=True)
+        df = df[["Name", *[col for col in df.columns if col != "Name"]]]
+    elif kind == "Sweep":
+        df = run_sweep(parsed, foe, sweep_parameter, by_round=True, ruleset=ruleset, num_rounds=int(num_rounds), rng=rng, rounds_per_fight=rounds_per_fight)
+    elif kind == "Rounds to kill":
+        df = simulate_rounds_to_kill(parsed, foe, num_rounds=int(num_rounds), max_rounds=MAX_ROUNDS_TO_KILL, rng=rng).rename_axis("Fight").reset_index()
+    elif kind == "Damage per fight":
+        df = fight_export(simulate_fights(parsed, foe, num_fights=max(int(num_rounds) // rounds_per_fight, 1), rounds_per_fight=rounds_per_fight, rng=rng))
+    else:
+        return None, [f"Unknown export {kind}"]
+    return df.to_csv(index=False), []
 
 def distribution(character, enemy_dict, rounds_per_fight=None):
     """ The exact damage per round distribution of one character, {damage: probability} """
@@ -177,4 +224,4 @@ def distribution(character, enemy_dict, rounds_per_fight=None):
     probs = damage_per_round(parsed[0], foe, rounds_per_fight)
     return {"probabilities": [float(p) for p in probs]}
 
-__all__ = ["options", "default_session", "preset_character", "enemy", "template_attacks", "expected", "simulate", "distribution", "asdict"]
+__all__ = ["options", "default_session", "preset_character", "enemy", "template_attacks", "expected", "simulate", "variant", "export", "distribution", "asdict"]

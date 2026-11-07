@@ -6,7 +6,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -71,6 +71,26 @@ def simulator_expected(inputs: Inputs):
 @app.post("/api/simulator/simulate")
 def simulator_simulate(sim: Simulation):
     return simulator.simulate(sim.characters, sim.enemy, sim.graph, sim.num_rounds, sim.rounds_per_fight, sim.sweep_parameter, sim.ruleset, sim.seed)
+
+class VariantRequest(BaseModel):
+    character: dict
+    key: str
+
+class ExportRequest(Simulation):
+    kind: str = "Damage per round"
+
+@app.post("/api/simulator/variant")
+def simulator_variant(request: VariantRequest):
+    return simulator.variant(request.character, request.key)
+
+@app.post("/api/simulator/export")
+def simulator_export(request: ExportRequest):
+    csv, problems = simulator.export(request.characters, request.enemy, request.kind, request.num_rounds, request.rounds_per_fight,
+                                     request.sweep_parameter, request.ruleset, request.seed)
+    if problems:
+        raise HTTPException(422, "; ".join(problems))
+    name = request.kind.lower().replace(" ", "_")
+    return PlainTextResponse(csv, media_type="text/csv", headers={"Content-Disposition": f'attachment; filename="{name}.csv"'})
 
 # ---------- Leaderboard
 
@@ -183,6 +203,14 @@ def planner_example(name: str):
 @app.post("/api/planner/party")
 def planner_party(request: PartyFightRequest):
     return planner.party(request.party, request.act, request.active, request.enemy, request.rounds_per_fight, request.hit_points)
+
+class SendRequest(PartyRequest):
+    act: str | None = None # Every member at this act, or with selected: one member at every act
+    selected: int | None = None
+
+@app.post("/api/planner/to-simulator")
+def planner_to_simulator(request: SendRequest):
+    return planner.to_simulator(request.party, request.act, request.selected)
 
 @app.post("/api/planner/advice")
 def planner_advice(request: AdviceRequest):

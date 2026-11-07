@@ -1,7 +1,23 @@
 """ The Act 1 map's data for the browser, which filters and draws it (so every filter change is instant), and the party's gear on it """
+import json
+from pathlib import Path
+
 from bg3.build import Bg3Build, equipment_at
 from bg3.items import SLOT_LABELS, catalog
-from components.bg3_map import COLORS, DATA, DEFAULT_RARITIES, MAPS, MISSABLE_COLOR, PARTY_COLOR, POINTS, RARITIES
+
+DATA = json.loads((Path(__file__).parent.parent / "bg3" / "data" / "map_act1.json").read_text(encoding="utf-8"))
+MAPS = DATA["maps"]
+POINTS = DATA["points"]
+RARITIES = ["Key", "Legendary", "Story", "Very Rare", "Rare", "Uncommon", "Common"]
+DEFAULT_RARITIES = ["Key", "Legendary", "Story", "Very Rare", "Rare"]
+# The game's rarity colours, so markers read like the inventory. Key pickups (buffs, crafting) aren't items, white stars
+COLORS = {"Common": "#9a9a9a", "Uncommon": "#3fbf5a", "Rare": "#3d8ff5", "Very Rare": "#b35cf2", "Legendary": "#e8b13a", "Story": "#f07a35",
+          "Key": "#ffffff"}
+WEAPON_SLOTS = {"weapon"}
+LABELLED = {"Key", "Legendary", "Very Rare", "Story"}
+PARTY_COLOR = "#ffd23f"
+MISSABLE_COLOR = "#ff5a5f"
+
 
 def data():
     return {

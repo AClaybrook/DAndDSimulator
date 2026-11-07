@@ -8,18 +8,88 @@ from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_S
                            class_levels, class_order, compile_character, feat_opportunities, relevant_toggles)
 from bg3.checkpoints import ACTS, act_level
 from bg3.defence import armour_class, attack_bonus_for, hit_chance
-from bg3.items import SLOT_LABELS, SLOTS, catalog
+from bg3.items import SLOT_LABELS, SLOTS, catalog, condition_id
 from bg3.kits import QUICK_VARIANTS, apply_kit, kits, taken_by_others, variant_build, variant_damage
 from bg3.party import MAX_PARTY_SIZE, party_conflicts
 from bg3.presets import DEFAULT_PARTY, PRESETS, examples
 from bg3.roles import CORE_ROLES, ROLE_LABELS, party_roles
 from bg3.score import WEIGHTS, score
-from components.bg3_planner import conditional_options, grouped_item_options, item_summary, option_group
 from computations.analytic import expected_damage_vs_enemies
 from computations.models import STATS, Enemy
 from game_data.classes import BUILDS
 
 ENEMY_COUNTS = [1, 2, 3, 4]
+
+# ---------- Item lists and labels
+
+def effect_text(effect):
+    target = "" if effect.applies_to in ("all", "self") else f" ({effect.applies_to.replace('_', ' ')})"
+    what = {"ability_min": f"{effect.stat.title()} {effect.value}", "ability_bonus": f"{effect.stat.title()} +{effect.value}",
+            "attack_bonus": f"+{effect.value} to hit", "attack_dice": f"+{effect.value} to hit", "damage_bonus": f"+{effect.value} damage",
+            "damage_bonus_ability": f"+{effect.stat.title()} modifier to damage", "extra_damage": f"+{effect.value} damage",
+            "crit_damage": f"+{effect.value} on a crit", "crit_range": f"crit range +{effect.value}", "advantage": "advantage",
+            "spell_dc": f"+{effect.value} spell DC", "damage_reroll": f"reroll damage dice of {effect.value} or less",
+            "miss_damage_ability": f"{effect.stat.title()} modifier damage on a miss", "once_per_turn_bonus": f"+{effect.value} Sneak Attack damage", "extra_attack": "extra attack", "flag": str(effect.value),
+            "lightning_charges": f"{effect.value} Lightning Charges on a hit: +1 to hit and 1 lightning damage on every attack"}.get(effect.kind, effect.kind)
+    return what + target + (f" [toggle: {effect.condition}]" if effect.condition else "")
+
+def item_summary(item):
+    """ Hover text: modelled effects, other effects, where it's found """
+    parts = []
+    if item.weapon:
+        w = item.weapon
+        parts.append(f"{w['damage']} {w['damage_type']}" + (f" +{w['enhancement']}" if w.get("enhancement") else "") +
+                     (f", {', '.join(w['properties'])}" if w.get("properties") else ""))
+    parts += [effect_text(e) for e in item.effects]
+    if item.notes:
+        parts.append(f"Not modelled: {item.notes}")
+    if item.location:
+        parts.append(f"Found: {item.location}")
+    return "\n".join(parts)
+
+def item_label(item):
+    if not item.unique:
+        return f"{item.name} (common)"
+    details = " · ".join(x for x in [item.rarity, f"Act {item.act}" if item.act else "Act ?"] if x)
+    # Marks items whose effects change damage in the simulator
+    marker = " ✦" if item.effects or (item.weapon and item.weapon.get("enhancement")) else ""
+    return f"{item.name}{marker} · {details}"
+
+def item_options(slot, act, include_unknown=True):
+    """ Items that fit a slot and are found by an act, named items first """
+    items = [i for i in catalog().values() if i.fits(slot) and ((i.act is None and include_unknown) or (i.act or 9) <= int(act))]
+    items.sort(key=lambda i: (not i.unique, i.act or 9, i.name))
+    return [{"label": item_label(i), "value": i.key, "title": item_summary(i)} for i in items]
+
+# Slots that share an item list, the browser fills each dropdown from its group, filtered by act
+# The off hand takes melee weapons and shields, so its list is both groups
+OPTION_GROUPS = {"melee_main": "melee", "melee_off": "melee+shield", "ranged_main": "ranged", "ranged_off": "ranged", "ring_1": "ring", "ring_2": "ring"}
+
+def option_group(slot):
+    return OPTION_GROUPS.get(slot, slot)
+
+def grouped_item_options():
+    """ {group: options} with every item's act, sent to the browser once instead of in every dropdown """
+    groups = {}
+    for slot, _, _ in SLOTS:
+        group = option_group(slot)
+        if "+" not in group and group not in groups:
+            groups[group] = [{**o, "act": catalog()[o["value"]].act} for o in item_options(slot, 3, include_unknown=True)]
+    groups["shield"] = [{**o, "act": catalog()[o["value"]].act} for o in item_options("melee_off", 3) if catalog()[o["value"]].slot == "shield"]
+    return groups
+
+def conditional_options(build):
+    """ Toggles for the conditional effects of everything the build equips in any act """
+    items, options, seen = catalog(), [], set()
+    for act in ACT_KEYS:
+        for key in equipment_at(build, act).values():
+            item = items.get(key)
+            if item is None or key in seen:
+                continue
+            seen.add(key)
+            options += [{"label": f"{item.name}: {e.condition}", "value": condition_id(key, ii)} for ii, e in enumerate(item.effects) if e.condition]
+    return options
+
 PART_LABELS = {"damage": "Damage", "aoe": "AoE", "defence": "Defence", "control": "Control", "support": "Support", "utility": "Utility"}
 
 def options():
@@ -162,3 +232,12 @@ def advice(build_dict, party_dicts, act="1", slot="melee_main", enemy_dict=None,
         "suggestions": [{"key": i.key, "item": i.name, "summary": item_summary(i), "gain": round(g, 2), "act": i.act, "users": users}
                         for i, g, users in slot_suggestions(build, act, slot, enemy, rounds, party=builds)],
     }
+
+def to_simulator(party_dicts, act=None, selected=None):
+    """ Simulator characters from the party: every member at an act, or one member at every act """
+    builds = [Bg3Build.from_dict(b) for b in party_dicts]
+    if selected is not None:
+        characters = [compile_build(builds[selected], a) for a in ACT_KEYS]
+    else:
+        characters = [compile_build(b, act or "1") for b in builds]
+    return [c.to_dict() for c in characters]

@@ -2,6 +2,7 @@ import { AppShell, Burger, Container, Drawer, Group, NavLink, Stack, Tabs, Text 
 import { useDisclosure } from '@mantine/hooks'
 import { IconChartHistogram, IconMap, IconSwords, IconTrophy } from '@tabler/icons-react'
 import { useEffect, useState } from 'react'
+import { SessionMenu } from './components/SessionMenu'
 import { LeaderboardPage } from './pages/leaderboard/LeaderboardPage'
 import { MapPage } from './pages/map/MapPage'
 import { PlannerPage } from './pages/planner/PlannerPage'
@@ -43,6 +44,8 @@ export default function App() {
               {PAGES.map((p) => <Tabs.Tab key={p.key} value={p.key} leftSection={<p.icon size={16} />}>{p.label}</Tabs.Tab>)}
             </Tabs.List>
           </Tabs>
+          <div style={{ flex: 1 }} />
+          <SessionMenu />
         </Group>
       </AppShell.Header>
       <Drawer opened={menu} onClose={close} size={260} title="Damage Lab">

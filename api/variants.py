@@ -1,7 +1,7 @@
 """ Character variants: copies with one change, for quick what-if comparisons (i.e. is +2 strength better than a feat) """
 from dataclasses import replace
 
-from components.sweeps import primary_stat
+from api.sweeps import primary_stat
 from game_data.classes import character_at_level
 
 MAX_LEVEL = 20

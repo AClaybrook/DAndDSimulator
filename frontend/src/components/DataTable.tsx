@@ -1,12 +1,12 @@
 import { ActionIcon, Checkbox, Group, Menu, Table, Text, TextInput } from '@mantine/core'
-import { IconArrowDown, IconArrowUp, IconColumns, IconSearch } from '@tabler/icons-react'
+import { IconArrowDown, IconArrowUp, IconColumns, IconDownload, IconSearch } from '@tabler/icons-react'
 import {
   flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, useReactTable,
   type ColumnDef, type SortingState, type VisibilityState,
 } from '@tanstack/react-table'
 import { useMemo, useState, type CSSProperties, type ReactNode } from 'react'
 import type { Table as TableData, Value } from '../api'
-import { formatValue } from '../format'
+import { download, fileName, formatValue, toCsv } from '../format'
 
 interface SortTableProps<T> {
   data: T[]
@@ -19,10 +19,11 @@ interface SortTableProps<T> {
   rowStyle?: (row: T) => CSSProperties | undefined
   maxHeight?: number | string
   filterable?: boolean
+  title?: string // Names the CSV download
 }
 
 // A sortable, filterable table with a column picker. Click a header to sort, type to filter every column
-export function SortTable<T>({ data, columns, initialSorting = [], hidden = [], toolbar, description, onRowClick, rowStyle, maxHeight, filterable = true }: SortTableProps<T>) {
+export function SortTable<T>({ data, columns, initialSorting = [], hidden = [], toolbar, description, onRowClick, rowStyle, maxHeight, filterable = true, title = 'table' }: SortTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>(initialSorting)
   const [filter, setFilter] = useState('')
   const [visibility, setVisibility] = useState<VisibilityState>(Object.fromEntries(hidden.map((h) => [h, false])))
@@ -32,6 +33,13 @@ export function SortTable<T>({ data, columns, initialSorting = [], hidden = [], 
     onSortingChange: setSorting, onGlobalFilterChange: setFilter, onColumnVisibilityChange: setVisibility,
     getCoreRowModel: getCoreRowModel(), getSortedRowModel: getSortedRowModel(), getFilteredRowModel: getFilteredRowModel(),
   })
+
+  // The rows as shown (filtered, sorted, visible columns), raw values rather than formatted ones
+  const saveCsv = () => {
+    const columns = model.getVisibleLeafColumns().filter((c) => c.accessorFn)
+    const rows = model.getRowModel().rows.map((row) => columns.map((c) => row.getValue(c.id)))
+    download(fileName(title), toCsv(columns.map((c) => String(c.columnDef.header ?? c.id)), rows))
+  }
 
   return (
     <div>
@@ -43,6 +51,7 @@ export function SortTable<T>({ data, columns, initialSorting = [], hidden = [], 
             {filterable && (
               <TextInput size="xs" placeholder="Filter rows" leftSection={<IconSearch size={14} />} value={filter} onChange={(e) => setFilter(e.currentTarget.value)} w={170} />
             )}
+            <ActionIcon variant="default" aria-label="Download CSV" title="Download these rows as CSV" size="md" onClick={saveCsv}><IconDownload size={16} /></ActionIcon>
             <Menu closeOnItemClick={false} position="bottom-end">
               <Menu.Target>
                 <ActionIcon variant="default" aria-label="Columns" size="md"><IconColumns size={16} /></ActionIcon>
@@ -100,5 +109,5 @@ export function DataTable({ table, maxHeight }: { table: TableData; maxHeight?: 
     () => table.columns.map((c) => ({ id: c, accessorFn: (row: Row) => row[c], header: c, cell: (info) => formatValue(info.getValue() as Value), sortUndefined: 'last' })),
     [table],
   )
-  return <SortTable data={data} columns={columns} description={table.description} maxHeight={maxHeight} />
+  return <SortTable data={data} columns={columns} description={table.description} maxHeight={maxHeight} title={table.title} />
 }

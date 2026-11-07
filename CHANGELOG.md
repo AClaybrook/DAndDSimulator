@@ -15,6 +15,9 @@
 - **Redesign:** navigation moved to the top bar, a refined dark theme, every page built from the same parts (a header with its controls,
   headline numbers, titled cards). Less to open by hand: results are tabs instead of folded sections, editors show every field group,
   attacks are a list with the selected one's fields beside it, and the enemy is a summary with a side panel editor.
+- **The Dash app is gone:** its last features moved over (session export/import with the BG3 party in one file, "To simulator" from the
+  planner, the copy-with-a-change menu on simulator characters, CSV downloads of every table and of the raw simulated data), then
+  `app.py`, `components/` and the Dash and gunicorn dependencies were removed. `Procfile` serves `uvicorn api.main:app`.
 
 ## 2.7.0 (in progress)
 
