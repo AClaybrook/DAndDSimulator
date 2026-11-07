@@ -120,7 +120,7 @@ app = Dash(__name__, external_stylesheets=[style_sheet, dbc.icons.FONT_AWESOME],
 server = app.server
 
 # Plot data
-fig = generate_plot_data(characters, df_by_rounds, template=template, title="Damage Per Round Distribution")
+fig = generate_plot_data(characters, df_by_rounds, template=template, title="Damage Per Round Distribution", enemy=enemy)
 
 
 main_page = html.Div(dbc.Container([

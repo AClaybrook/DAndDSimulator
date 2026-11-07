@@ -664,7 +664,8 @@ def register_callbacks(app, sidebar=True, template='plotly_dark'): # pylint: dis
             leaderboard = build_leaderboard(characters, df_by_rounds, rounds_per_fight)
             summary = results_summary({c.name: df["Damage"].mean() for c, df in zip(characters, df_by_rounds)}, "damage per round", context=f"against {enemy.name}.")
             if simulate_type == "DPR Distribution":
-                fig = generate_plot_data(characters, df_by_rounds, template=template, title="Damage Per Round Distribution")
+                fig = generate_plot_data(characters, df_by_rounds, template=template, title="Damage Per Round Distribution", enemy=enemy,
+                                         rounds_per_fight=rounds_per_fight)
                 tables = leaderboard + add_tables(df_by_rounds, characters, by_round=True, width=3) + breakdown
             elif simulate_type == "DPA Distribution":
                 fig = generate_damage_per_attack_histogram(characters, dfs, template=template, title="Damage Per Attack Distribution")

@@ -22,10 +22,18 @@ def calc_opacity(num_categories, o_init=0.75, o_slope=0.2, o_min=0.25, per_categ
     opacity = max([o_init - reduction, o_min])
     return opacity
 
-def generate_plot_data(characters, df_by_rounds, template='plotly_dark', title=None, **kwargs):
-    """ Generates the plot data for the DPR Distribution Histogram"""
+def generate_plot_data(characters, df_by_rounds, template='plotly_dark', title=None, enemy=None, rounds_per_fight=None, **kwargs):
+    """ Generates the plot data for the DPR Distribution Histogram. With the enemy, each histogram gets its exact distribution as a line """
     groups = {c.name: df["Damage"].to_numpy() for c, df in zip(characters, df_by_rounds)}
-    return generate_histogram(groups, opacity=calc_opacity(len(characters)), template=template, title=title, **kwargs)
+    exact = {}
+    if enemy is not None:
+        from computations.exact import damage_per_round # pylint: disable=import-outside-toplevel
+        for c in characters:
+            try:
+                exact[c.name] = damage_per_round(c, enemy, rounds_per_fight)
+            except Exception: # pylint: disable=broad-exception-caught
+                pass # The smooth fit stands in
+    return generate_histogram(groups, opacity=calc_opacity(len(characters)), template=template, title=title, exact=exact, **kwargs)
 
 def box_stats(values):
     """ Tukey box plot statistics: quartiles, whiskers at the furthest values within 1.5 IQR, and the mean """
@@ -35,16 +43,34 @@ def box_stats(values):
     return {"q1": [q1], "median": [median], "q3": [q3], "lowerfence": [inside.min()], "upperfence": [inside.max()], "mean": [values.mean()]}
 
 def smooth_curve(counts, width, values):
-    """ A smooth fit of a binned distribution: a Gaussian kernel density estimate of the counts, in the same units as the bars. Half
-        Silverman's bandwidth: damage distributions have a hump per number of hits, and the full rule smooths the peaks away.
-        Returns (bin centre offsets, heights as a share of the values per bin) """
+    """ A smooth fit of a binned distribution when the exact one isn't known: a Gaussian kernel density estimate of the counts, in the same
+        units as the bars. The bandwidth is chosen by leave-one-out cross-validation (the width whose curve, built without each value, gives
+        the values the highest likelihood), so a hump per number of hits keeps its peak. Rounds where everything missed (exactly 0) are a
+        spike no smooth curve can follow, they are left to their bar. Returns (bin offsets, heights as a share of all values per bin) """
     n = len(values)
-    spread = min(np.std(values), (np.percentile(values, 75) - np.percentile(values, 25)) / 1.34 or np.std(values))
-    bandwidth = max(0.5 * 1.06 * spread * n ** -0.2, width) / width # In bins, at least one bin
-    reach = int(np.ceil(4 * bandwidth))
-    kernel = np.exp(-0.5 * (np.arange(-reach, reach + 1) / bandwidth) ** 2)
-    smoothed = np.convolve(counts, kernel / kernel.sum(), mode="full")[reach:reach + len(counts)]
-    return np.arange(len(counts)), smoothed / n
+    counts = counts.astype(float).copy()
+    zeros = int((values == 0).sum())
+    if values.min() == 0:
+        counts[0] -= zeros
+    m = counts.sum()
+    rest = values[values != 0] if zeros else values
+    if m < 2 or rest.std() == 0:
+        return np.arange(len(counts)), counts / n
+    spread = min(rest.std(), (np.percentile(rest, 75) - np.percentile(rest, 25)) / 1.34 or rest.std())
+    silverman = 1.06 * spread * m ** -0.2 / width # In bins
+    best = None
+    for factor in (0.1, 0.15, 0.2, 0.3, 0.4, 0.5): # Wider never helped: it flattens the hit-count peaks
+        bandwidth = max(factor * silverman, 0.6)
+        reach = int(np.ceil(4 * bandwidth))
+        kernel = np.exp(-0.5 * (np.arange(-reach, reach + 1) / bandwidth) ** 2)
+        kernel /= kernel.sum()
+        smoothed = np.convolve(counts, kernel, mode="full")[reach:reach + len(counts)]
+        leave_out = (smoothed - kernel[reach] * counts) / (m - 1)
+        seen = counts > 0
+        likelihood = float(np.sum(counts[seen] * np.log(np.maximum(leave_out[seen], 1e-12))))
+        if best is None or likelihood > best[0]:
+            best = (likelihood, smoothed)
+    return np.arange(len(counts)), best[1] / n
 
 def distribution_summary(values):
     """ Mean, standard deviation and skew of a distribution, the shape of a fit in three numbers """
@@ -52,10 +78,12 @@ def distribution_summary(values):
     skew = float(np.mean(((values - mean) / sd) ** 3)) if sd else 0.0
     return mean, sd, skew
 
-def generate_histogram(groups, colors=None, histnorm='percent', opacity=0.75, x_title="Damage", template='plotly_dark', title=None, fit=True, **kwargs):
+def generate_histogram(groups, colors=None, histnorm='percent', opacity=0.75, x_title="Damage", template='plotly_dark', title=None, fit=True, exact=None,
+                       **kwargs):
     """ Overlaid histograms of integer values with a box plot of each group above, from {name: values}.
-        Bins are one damage wide, or wider so there are at most MAX_BINS. fit adds a smooth curve (kernel density) over each histogram,
-        hover it for the mean, standard deviation and skew """
+        Bins are one damage wide, or wider so there are at most MAX_BINS. fit adds a curve over each histogram: the exact distribution
+        when exact has one for the group ({name: probabilities indexed by damage}, computations.exact), else a smooth kernel density fit.
+        Hover it for the mean, standard deviation and skew """
     from plotly.subplots import make_subplots # pylint: disable=import-outside-toplevel
     groups = {name: np.asarray(v) for name, v in groups.items() if len(v)}
     colors = colors or {name: COLORS[ii % len(COLORS)] for ii, name in enumerate(groups)}
@@ -74,10 +102,24 @@ def generate_histogram(groups, colors=None, histnorm='percent', opacity=0.75, x_
                                  marker={"color": colors[name], "line": {"width": 0}}, customdata=np.stack([starts[keep], starts[keep] + width - 1], axis=1),
                                  hovertemplate=f"{name}<br>{x_title} {label}: %{{y:.2f}}{'%' if histnorm == 'percent' else ''}<extra></extra>"),
                           row=2, col=1)
-            if fit and len(values) > 30 and values.std() > 0:
+            scale = 100 if histnorm == "percent" else 1
+            if fit and (exact or {}).get(name) is not None:
+                from computations.exact import binned # pylint: disable=import-outside-toplevel
+                probs = np.asarray(exact[name])
+                curve = binned(probs, low, width, len(counts))
+                damage = np.arange(len(probs))
+                mean = float(damage @ probs)
+                sd = float(np.sqrt(((damage - mean) ** 2) @ probs))
+                skew = float((((damage - mean) / sd) ** 3) @ probs) if sd else 0.0
+                fig.add_trace(go.Scatter(x=starts + (width - 1) / 2, y=curve * scale, mode="lines", name=f"{name} (exact)", legendgroup=name,
+                                         showlegend=False, line={"color": colors[name], "width": 2},
+                                         hovertemplate=f"{name} exact: %{{y:.2f}}{'%' if histnorm == 'percent' else ''}<br>mean {mean:.1f}, "
+                                                       f"sd {sd:.1f}, skew {skew:+.2f}, all miss {probs[0]:.1%}<extra></extra>"), row=2, col=1)
+            elif fit and len(values) > 30 and values.std() > 0:
                 offsets, curve = smooth_curve(counts, width, values)
                 mean, sd, skew = distribution_summary(values)
-                fig.add_trace(go.Scatter(x=low + width * offsets + (width - 1) / 2, y=curve * (100 if histnorm == "percent" else 1), mode="lines",
+                keep_curve = (low + width * offsets) > 0 if (values == 0).any() else np.ones(len(offsets), dtype=bool)
+                fig.add_trace(go.Scatter(x=(low + width * offsets + (width - 1) / 2)[keep_curve], y=(curve * scale)[keep_curve], mode="lines",
                                          name=f"{name} (fit)", legendgroup=name, showlegend=False, line={"color": colors[name], "width": 2},
                                          hovertemplate=f"{name} fit<br>mean {mean:.1f}, sd {sd:.1f}, skew {skew:+.2f}<extra></extra>"), row=2, col=1)
             fig.add_trace(go.Box(y=[name], orientation="h", name=name, legendgroup=name, showlegend=False, marker={"color": colors[name]},

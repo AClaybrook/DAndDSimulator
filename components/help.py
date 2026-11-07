@@ -4,7 +4,7 @@ from dash import html
 
 # What each graph type answers, shown under the graph type selector
 GRAPH_DESCRIPTIONS = {
-    "DPR Distribution": "How much damage does each character deal per round against this enemy, and how swingy is it? The line over each histogram is a smooth fit (kernel density); hover it for the mean, spread and skew.",
+    "DPR Distribution": "How much damage does each character deal per round against this enemy, and how swingy is it? The line over each histogram is the exact distribution the simulation samples from; hover it for the mean, spread, skew and the chance every attack misses.",
     "DPA Distribution": "Which attacks do the damage? The same as DPR, split by attack.",
     "DPR Sweep": "How does damage per round change with one parameter (pick it below)? i.e. is GWM worth it at high armor class, how does a build scale with level",
     "DPA Sweep": "The same as DPR Sweep, split by attack.",
