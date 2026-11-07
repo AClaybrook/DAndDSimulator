@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.0 (in progress)
+
+- **New front end, page by page:** a React + TypeScript app (`frontend/`) over a FastAPI backend (`api/`), replacing the Dash app as pages
+  are rebuilt. The Simulator is first: characters with their live expected damage on the left, the answer up front (who leads and by how
+  much), the same plots as before, and sortable, filterable tables folded underneath. Characters open in a side panel with Stats, Attacks
+  and Bonuses tabs, rarely used fields folded away. Results update shortly after each edit. Everything is kept in the browser.
+  `uv run python -m api` serves it on http://localhost:8000. The Dash app (`app.py`) stays for the planner, leaderboard and map until
+  they're rebuilt.
+
 ## 2.7.0 (in progress)
 
 Baldur's Gate 3 first. The original simulator and analytics are unchanged, BG3 builds compile to the same Characters.

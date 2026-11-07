@@ -1,0 +1,26 @@
+body {
+  margin: 0;
+}
+
+.numeric {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Horizontal bars in the headline, one per character */
+.bar-track {
+  background: var(--mantine-color-dark-5);
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  border-radius: 4px;
+  height: 100%;
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
