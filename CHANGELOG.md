@@ -26,6 +26,9 @@
 - **Reaction attacks:** Polearm Master (an enemy entering your reach, about once a fight) and Sentinel (an enemy next to you attacking an
   ally, about every other round) as expected reaction attacks, with advantage from the Halberd of Vigilance; a "reactions" toggle.
   Finesse weapons from gear hit with the higher of Strength and Dexterity.
+- **Smites average the day's slots:** sustained damage counts each smite at the average size of the day's slots (pact slots back on
+  short rests, Flexible Casting's extra slot, less the slot Shadow Blade used) instead of the best slot's size, which overstated every
+  Paladin, the Sorcadin most.
 - **Padlock vs Sorcadin vs polearm builds:** eight new example builds and docs/padlock_vs_sorcadin.md, sustained and burst damage by act.
 - **Smaller additions:** re-import the build doc from the planner; overlay example builds on the planner's damage chart; leaderboard and
   map settings kept in the URL; keyboard shortcuts (1-4 pages, t theme, r simulate again, ? list); a light theme; a browser smoke test

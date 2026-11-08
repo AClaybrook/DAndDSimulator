@@ -9,7 +9,7 @@ from math import ceil
 from bg3.abilities import apply_improvement, starting_scores
 from computations.models import STATS, Attack, Character
 from game_data import spell_attacks, spells, weapon_attack, weapons
-from game_data.classes import action_surge, per_fight, spell_slots
+from game_data.classes import FIGHTS_PER_LONG_REST, SHORT_RESTS_PER_LONG_REST, action_surge, per_fight, spell_slots
 
 MAX_LEVEL = 12
 CLASSES = ("barbarian", "bard", "cleric", "druid", "fighter", "monk", "paladin", "ranger", "rogue", "sorcerer", "warlock", "wizard")
@@ -399,6 +399,26 @@ def _attacks(character, c, levels, subs, feats, notes, main_finesse=None):
         attacks.append(replace(main, name=f"{main.name} (Dread Ambusher)", uses_per_fight=1, bonus_damage_die_mod_list=["1d8"]))
     return attacks
 
+# Flexible Casting (Sorcerer 2): sorcery points into a spell slot, the cost by slot level (5e and BG3)
+SLOT_COST = {1: 2, 2: 3, 3: 5, 4: 6, 5: 7}
+
+def smite_slots(character, levels, subs):
+    """ Slot levels a day for smites: long rest slots, pact slots (back on each short rest), slots made from sorcery points, less the
+        slot Shadow Blade is cast with once a day (it lasts until a long rest; with a pact slot it comes back on the next short rest) """
+    slots = [level for level, count in enumerate(spell_slots(caster_level(levels, subs)), start=1) for _ in range(count)]
+    pact, pact_level = warlock_pact_slots(levels.get("warlock", 0))
+    day = slots + [pact_level] * pact * (SHORT_RESTS_PER_LONG_REST + 1)
+    points = levels.get("sorcerer", 0) if levels.get("sorcerer", 0) >= 2 else 0
+    while points >= 2 and day:
+        level = max(lv for lv, cost in SLOT_COST.items() if cost <= points and lv <= max(day))
+        day.append(level)
+        points -= SLOT_COST[level]
+    if character.routine in ("shadow_blade", "shadow_blade_shield") and shadow_blade_dice(levels, subs):
+        cast = max(slots, default=0)
+        if cast >= pact_level and cast in day: # Cast with a long rest slot (a pact slot comes back after a short rest)
+            day.remove(cast)
+    return sorted(day, reverse=True)
+
 def knows_shadow_blade(levels, subs):
     """ Shadow Blade is on the Sorcerer, Warlock and Wizard lists (and the Eldritch Knight's and Arcane Trickster's, which use the Wizard's) """
     return any(levels.get(cls) for cls in ("sorcerer", "warlock", "wizard")) or \
@@ -520,11 +540,14 @@ def _class_features(character, c, levels, subs, notes, main_finesse=None):
     c.brutal_critical = barbarian >= 9
     # Paladin
     if paladin >= 2 and character.toggle("smite") and weapon:
-        slots = spell_slots(caster_level(levels, subs))
-        pact, pact_level = warlock_pact_slots(warlock)
-        highest = max(len(slots), pact_level)
-        if highest:
-            _once_per_turn(c, f"{min(1 + highest, 5)}d8", per_fight(per_long_rest=sum(slots), per_short_rest=pact))
+        day = smite_slots(character, levels, subs)
+        if day:
+            # Each smite is the day's average: 2d8 from a level 1 slot, +1d8 a level, at most 5d8. Fractions of a die as a flat bonus
+            mean = sum(min(1 + level, 5) for level in day) / len(day)
+            dice, rest = int(mean), round((mean - int(mean)) * 4.5)
+            _once_per_turn(c, f"{dice}d8", round(len(day) / FIGHTS_PER_LONG_REST, 2))
+            if rest:
+                c.once_per_turn_die_mod_list = [*c.once_per_turn_die_mod_list, str(rest)]
     c.improved_divine_smite = paladin >= 11 and weapon
     if paladin >= 3 and character.toggle("vow"):
         oath = subs.get("paladin")

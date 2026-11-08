@@ -31,7 +31,8 @@ def test_multiclass_levels_feats_and_spell_slots():
     ek = {"fighter": "Eldritch Knight"}
     assert [caster_level({"fighter": n}, ek) for n in (2, 3, 6, 7, 12, 13)] == [0, 1, 2, 3, 4, 5]
     character, _ = compile_character(sorcadin, 12)
-    assert character.once_per_turn_die_mod_list == ["5d8"] and character.advantage # Smite with 5th level slots, Vow of Enmity
+    # Smites average the day's slots (4/3/3/3/1 plus a level 4 slot from 6 sorcery points: 3.6d8 = 3d8 + 3), Vow of Enmity
+    assert character.once_per_turn_die_mod_list == ["3d8", "3"] and character.once_per_turn_uses_per_fight == 3.75 and character.advantage
 
 def test_class_features():
     rogue = Bg3Character(scores={**STR, "dexterity": 15, "strength": 8}, classes=[["rogue", "Thief", 12]], routine="dual_wield")
