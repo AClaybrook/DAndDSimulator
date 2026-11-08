@@ -72,9 +72,27 @@ the engine (bg3/character.py, computations/analytic.py).
   With advantage (Trip Attack's prone, Faerie Fire) the Battle Master reaches 96, level with the Halberd Padlock.
 - **On a Padlock** the Halberd is the strongest polearm: a bound pact weapon with 3 attacks and the butt end, smites on every hit in
   burst (169). **On a Sorcadin** it gives a big burst (133) but only 63 sustained: 2 attacks, and no Hexblade's Curse.
-- **Dexterity glaive:** only works from Act 3 (The Dancing Breeze is the one finesse polearm), and the Swashbuckler's Sneak Attack and
-  Flick o' the Wrist come back with it. Before Act 3 a Dexterity build would use another weapon.
+- **Dexterity glaive:** only works from Act 3 (The Dancing Breeze is the one finesse polearm), see below.
 - Reaction attacks are an estimate (the `reactions` toggle on every build); real fights give more when enemies run past you.
+
+## The Dancing Breeze and Hex
+
+| Act 3, sustained / burst | |
+|---|---|
+| Padlock, Halberd of Vigilance (Polearm Master) + Hex | 112 / 188 |
+| Padlock, Shadow Blade + shield + Hex | 98 / 131 |
+| Pure Hexblade 12, Shadow Blade + dagger, darkness advantage + Hex | 93 / 93 |
+| Fighter 6 / Swashbuckler 6, The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | 59 / 76 (74 with advantage) |
+| Fighter 8 / Swashbuckler 4, The Dancing Breeze (Dexterity, Polearm Master, GWM) | 52 / 64 (77 with advantage) |
+
+- **The Dancing Breeze** is a +2 finesse glaive with Whirlwind Attack (hits every enemy around you). Its point is a Dexterity Rogue with
+  reach: Sneak Attack is once per *turn*, so with Polearm Master and Sentinel each reaction attack on an enemy's turn adds another Sneak
+  Attack (about 15 a round here), and Whirlwind is area damage this single target number doesn't show. As a single target damage
+  dealer it is a mid build; it makes sense as the end of a Dexterity Rogue or Fighter you have played all game, not as a target to
+  rebuild for in Act 3.
+- **Hex** (+1d6 necrotic per hit, concentration, Warlock spell) stacks with Hexblade's Curse, smites and Shadow Blade, which needs no
+  concentration in BG3. It adds about 10 to 16 a round to the Padlocks (more hits, more Hex dice) and puts the pure Hexblade with
+  darkness advantage at 93, level with the Halberd Padlock without Hex. Builds with no Warlock level don't get it.
 
 ## Lockadin, Sorcadin and pure Hexblade variants
 

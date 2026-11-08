@@ -151,6 +151,11 @@ PRESETS = {b.name: b for b in [
     Bg3Build("Sorcadin: Halberd of Vigilance (GWF, Polearm Master)", "paladin_smite", equipment=HALBERD, **custom(
         "Sorcadin (Halberd of Vigilance)", PALADIN, {"strength": 2, "charisma": 1}, [["paladin", "Oath of Vengeance", 6], ["sorcerer", "Draconic Bloodline", 6]],
         ["strength+2", "Polearm Master"], "polearm", ["Great Weapon Fighting"], toggles=NO_BOOMING)),
+    Bg3Build("Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel)", "fighter_gwm",
+             equipment={"3": {"melee_main": "bg3:the_dancing_breeze"}},
+             **custom("Dancing Breeze Sentinel", DEXTERITY, {"dexterity": 2, "constitution": 1}, [["fighter", "Battle Master", 6], ["rogue", "Swashbuckler", 6]],
+                      ["dexterity+2", "Polearm Master", "Sentinel"], "polearm", ["Great Weapon Fighting"],
+                      level_order=["fighter"] * 5 + ["rogue"] * 6 + ["fighter"])),
     # Dexterity glaive: The Dancing Breeze (Act 3) is the only finesse polearm, so Rakish Sneak Attack and Flick o' the Wrist come online there
     Bg3Build("Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master)", "fighter_gwm", equipment={"3": {"melee_main": "bg3:the_dancing_breeze"}},
              **custom("Dancing Breeze Swashbuckler", DEXTERITY, {"dexterity": 2, "constitution": 1}, [["fighter", "Battle Master", 8], ["rogue", "Swashbuckler", 4]],

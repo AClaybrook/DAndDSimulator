@@ -575,6 +575,10 @@ def _class_features(character, c, levels, subs, notes, main_finesse=None):
         for a in c.attacks:
             if a.offhand:
                 a.once_per_turn_eligible = False
+            if "reaction)" in a.name:
+                # Sneak Attack is once per turn, and a reaction attack is on an enemy's turn: it gets its own
+                a.once_per_turn_eligible = False
+                a.extra_damage_list = [*a.extra_damage_list, f"{ceil(rogue / 2)}d6 {a.damage_type}"]
     if rogue >= 3 and subs.get("rogue") == "Assassin" and character.toggle("surprise"):
         c.first_round_advantage = c.first_round_auto_crit = True
     # Monk

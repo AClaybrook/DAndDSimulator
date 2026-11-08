@@ -256,3 +256,12 @@ def test_reaction_attacks_and_the_halberd_of_vigilance():
     assert [a.advantage for a in plain.attacks if "reaction)" in a.name] == [True, False] # Sentinel: advantage on opportunity attacks only
     off = Bg3Character.from_dict({**PRESETS["Battle Master: Glaive (Polearm Master, GWM, Sentinel)"].character, "toggles": {"reactions": False}})
     assert not any("reaction)" in a.name for a in compile_character(off, 12)[0].attacks)
+
+def test_reaction_attacks_get_their_own_sneak_attack():
+    """ Sneak Attack is once per turn: a reaction attack on an enemy's turn adds its own, with a finesse weapon """
+    from bg3.build import compile_build
+    from bg3.presets import PRESETS
+    c = compile_build(PRESETS["Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel)"], "3")
+    reactions = [a for a in c.attacks if "reaction)" in a.name]
+    assert len(reactions) == 2 and all("3d6 slashing" in a.extra_damage_list and not a.once_per_turn_eligible for a in reactions)
+    assert c.once_per_turn_die_mod_list == ["3d6"]
