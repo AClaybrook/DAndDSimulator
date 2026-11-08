@@ -26,6 +26,9 @@
 - **Reaction attacks:** Polearm Master (an enemy entering your reach, about once a fight) and Sentinel (an enemy next to you attacking an
   ally, about every other round) as expected reaction attacks, with advantage from the Halberd of Vigilance; a "reactions" toggle.
   Finesse weapons from gear hit with the higher of Strength and Dexterity.
+- **Elixirs:** Bloodlust gives an extra Attack action on a kill (estimated every other turn against a group), every elixir replaces the one
+  before (Heroism included), Viciousness and Battlemage's Power come from Act 2 trader stock, and each elixir says where to get it.
+  docs/padlock_vs_sorcadin.md compares them per build and act (docs/elixirs.png).
 - **Sneak Attack on reactions:** a reaction attack on an enemy's turn gets its own Sneak Attack (once per turn, not per round), with a
   finesse weapon. New example build: Fighter 6 / Swashbuckler 6 with The Dancing Breeze, Polearm Master and Sentinel.
 - **Smites average the day's slots:** sustained damage counts each smite at the average size of the day's slots (pact slots back on

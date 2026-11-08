@@ -94,6 +94,44 @@ the engine (bg3/character.py, computations/analytic.py).
   concentration in BG3. It adds about 10 to 16 a round to the Padlocks (more hits, more Hex dice) and puts the pure Hexblade with
   darkness advantage at 93, level with the Halberd Padlock without Hex. Builds with no Warlock level don't get it.
 
+## Elixirs
+
+![Damage each elixir adds in Act 3, and each build with no elixir, its best elixir and Bloodlust](elixirs.png)
+
+Sustained damage with no elixir → with the best elixir you can have by then (one at a time: every elixir replaces the one before):
+
+| Build | Act 1 | Act 2 | Act 3 | Act 3 with Bloodlust (groups) |
+|---|---|---|---|---|
+| Padlock, Shadow Blade + shield | 31 → 36 (Heroism) | 57 → 62 (Colossus) | 87 → 95 (Colossus) | 122 |
+| Padlock, Halberd of Vigilance (PAM) | 19 → 23 (Colossus) | 52 → 58 (Colossus) | 95 → 109 (Colossus) | 123 |
+| Sorcadin, Shadow Blade + shield | 26 → 31 (Colossus) | 44 → 57 (Cloud Giant Strength) | 62 → 73 (Cloud Giant Strength) | 85 |
+| Sorcadin, Halberd of Vigilance (PAM) | 27 → 33 (Colossus) | 41 → 51 (Cloud Giant Strength) | 63 → 81 (Cloud Giant Strength) | 77 |
+| Battle Master, Halberd, PAM + GWM + Sentinel, with advantage | 36 → 47 (Colossus) | 71 → 102 (Cloud Giant Strength) | 96 → 143 (Cloud Giant Strength) | 112 |
+| Battle Master, Halberd, PAM + GWM + Sentinel | 26 → 35 (Hill Giant Strength) | 48 → 77 (Cloud Giant Strength) | 64 → 107 (Cloud Giant Strength) | 75 |
+| Battle Master, Halberd, GWM + Savage (no reaction feats) | 22 → 30 (Hill Giant Strength) | 34 → 55 (Cloud Giant Strength) | 53 → 75 (Cloud Giant Strength) | 65 |
+| Fighter 6 / Swashbuckler 6, Dancing Breeze (DEX, Sentinel) | – | – | 58 → 68 (Colossus) | 63 |
+| Pure Hexblade, Shadow Blade + dagger, darkness | 48 → 56 (Colossus) | 48 → 56 (Colossus) | 82 → 92 (Colossus) | 118 |
+
+| Elixir | Effect | When you can have it |
+|---|---|---|
+| Hill Giant Strength | Strength 21 | Act 1: Auntie Ethel sells 3 a long rest (Grove, then the Riverside Teahouse), Derryth (Myconid Colony); craftable |
+| Heroism | +1d4 to attacks and saves (stacks with Bless), 10 temp HP | Act 1: Mol (Tiefling Hideout), Talli; craftable |
+| Colossus | +1d4 weapon damage | Act 1, craftable only from Chasm Creepers along the Underdark paths, so a handful |
+| Bloodlust | An extra action, once a turn, when you kill | Act 1: Cyrel, Derryth, Kith; craftable from Worg Fangs |
+| Viciousness | Crit range +1 | Trader stock from level 6 (Act 2); craftable |
+| Battlemage's Power | +3 spell attacks and save DC (3 Arcane Acuity) | Trader stock from level 6 (Act 2); craftable |
+| Cloud Giant Strength | Strength 27 | Trader stock from level 9 (Act 3); craftable from Cloud Giant Fingers sold in the Myconid Colony from level 6, so a few in Act 2 |
+
+- **Strength builds: Cloud Giant Strength is the biggest single upgrade in the game** (+43 to +47 on the Halberd Battle Master in Act 3,
+  Strength 19 → 27). Before you can make it, Hill Giant (+10) or Heroism (+18) are the picks; Heroism is best when GWM's -5 is hurting.
+- **Charisma builds (Padlock, pure Hexblade) gain nothing from the Strength elixirs.** Their best single target elixir is Colossus
+  (+8 to +14, more attacks, more 1d4s) or Heroism; Viciousness adds about 5.
+- **Bloodlust** is the biggest gain for builds with many attacks per action (+27 to +36 for the Padlocks and pure Hexblade) but only
+  against groups: the extra Attack action needs a kill on your turn (estimated every other turn here), so against a single boss it adds
+  nothing. In Honour Mode the extra action doesn't get Extra Attack.
+- **Battlemage's Power** does nothing for weapon attacks (Shadow Blade and smites aren't spell attacks); it only adds a little to the
+  Sorcadin's Quickened Fireball (+3 DC).
+
 ## Lockadin, Sorcadin and pure Hexblade variants
 
 | Build (Shadow Blade + shield unless noted) | Act 1 | Act 2 | Act 3 | Act 3 without advantage |

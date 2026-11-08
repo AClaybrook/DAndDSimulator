@@ -136,6 +136,18 @@ def _attacks_for(character, effect, own_attacks):
         attacks += [a for a in character.attacks if "Booming Blade" in a.name and a not in attacks]
     return attacks
 
+# Elixir of Bloodlust: once per turn, a kill gives an extra action. Against a group that is about every other turn of a 3 round fight
+# (an estimate; against one enemy the kill ends the fight, so it adds nothing)
+BLOODLUST_KILLS_PER_FIGHT = 1.5
+
+def _action_attacks(character):
+    """ The attacks of one Attack action (or cantrip cast): not bonus action, reaction, off hand or limited use attacks """
+    def plain(a):
+        bonus = any(word in a.name for word in ("Butt End", "Frenzy", "Flick", "War Priest", "Martial Arts", "Flurry", "reaction)", "Bloodlust"))
+        return not (a.offhand or a.uses_per_fight or a.fallback_for or bonus or a.min_enemies > 1)
+    weapons = [a for a in character.attacks if (a.is_weapon or a.type == "unarmed") and plain(a)]
+    return weapons or [a for a in character.attacks if a.type == "spell" and plain(a)]
+
 def apply_effect(character, effect, own_attacks=()):
     """ Applies one effect to a character (in place). own_attacks are the attacks made with the item's weapon """
     kind, value = effect.kind, effect.value
@@ -148,6 +160,9 @@ def apply_effect(character, effect, own_attacks=()):
         character.additional_spell_dc += int(value)
     elif kind == "flag":
         setattr(character, str(value), True)
+    elif kind == "extra_action_on_kill":
+        # Another Attack action (Extra Attack included outside Honour Mode) whenever a kill happens on your turn
+        character.attacks += [replace(a, name=f"{a.name.split(' (')[0]} (Bloodlust)", uses_per_fight=float(value)) for a in _action_attacks(character)]
     elif kind == "once_per_turn_bonus":
         # Only adds to once per turn damage the character already has, i.e. Sneak Attack
         if character.once_per_turn_die_mod_list:

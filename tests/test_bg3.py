@@ -190,12 +190,22 @@ def test_gear_advice():
 def test_elixirs():
     from bg3.buffs import BUFFS
     giant, vicious = BUFFS["elixir:elixir_of_hill_giant_strength"], BUFFS["elixir:elixir_of_viciousness"]
-    assert giant.exclusive and vicious.exclusive and not BUFFS["elixir:elixir_of_heroism"].exclusive
+    # Every elixir replaces the one before (Heroism's attack bonus too, bg3.wiki); Viciousness is in trader stock from level 6 (Act 2)
+    assert giant.exclusive and vicious.exclusive and BUFFS["elixir:elixir_of_heroism"].exclusive
+    assert (giant.act, vicious.act, BUFFS["elixir:elixir_of_cloud_giant_strength"].act) == (1, 2, 2)
     character = compile_build(fighter(buffs={"1": [giant.key]}), 1, ITEMS)
     assert character.strength == 21
     assert all(a.crit_on == 18 for a in compile_build(fighter(buffs={"1": [vicious.key]}), 1, ITEMS).attacks) # Champion 19, then one lower
     both = fighter(buffs={"1": [giant.key, vicious.key]})
     assert [c.kind for c in build_conflicts(both, 1, ITEMS)] == ["elixirs"]
+
+def test_bloodlust_adds_an_attack_action_on_kills():
+    """ Elixir of Bloodlust: an extra Attack action (Extra Attack included) on about half the turns against a group """
+    from bg3.items import BLOODLUST_KILLS_PER_FIGHT
+    character = compile_build(fighter(buffs={"1": ["elixir:elixir_of_bloodlust"]}), 1, ITEMS)
+    extra = [a for a in character.attacks if "(Bloodlust)" in a.name]
+    plain = [a for a in character.attacks if not a.uses_per_fight and not a.fallback_for and not a.offhand]
+    assert extra and len(extra) <= len(plain) and all(a.uses_per_fight == BLOODLUST_KILLS_PER_FIGHT for a in extra)
 
 def test_concentration():
     from bg3.party import concentration_conflicts
