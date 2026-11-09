@@ -106,12 +106,6 @@ def test_from_dict_ignores_unknown_keys():
     assert c.strength == 18
     assert c.attacks[0].heavy # Older files without 'heavy' fall back to two_handed
 
-def test_renamed_fields_still_load():
-    """ Json files saved before 'proficent' was renamed to 'proficient' """
-    character = Character.from_dict({"name": "Old", "attacks": [{"name": "Old", "proficent": False}]})
-    enemy = Enemy.from_dict({"saving_throw_proficent": True})
-    assert not character.attacks[0].proficient and enemy.saving_throw_proficient
-
 def test_typed_damage_from_str():
     from computations.models import typed_damage_from_str
     assert typed_damage_from_str("1d4 fire") == ([1], [4], 0, "fire")

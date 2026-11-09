@@ -1,5 +1,5 @@
 {
- "_note": "Key pickups that aren't gear, shown on the Act 1 map. x/y are in-game minimap coordinates; region is wilderness, underdark, creche, grymforge or mountain",
+ "_note": "Key pickups that aren't gear, shown on the item maps. x/y are in-game minimap coordinates; region is a map key in bg3/build_map.py (wilderness, underdark, creche, grymforge, mountain, shadowcursed, gauntlet, shadowfell, colony)",
  "pickups": [
   {
    "name": "Auntie Ethel's Hair",

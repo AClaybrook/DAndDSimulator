@@ -30,8 +30,3 @@ def test_spirit_guardians_aura_and_horde_breaker():
     h, _ = compile_character(hunter, 5)
     assert any(a.min_enemies == 2 for a in h.attacks)
     assert expected_damage_vs_enemies(h, ENEMY, 3, 2) > expected_damage_vs_enemies(h, ENEMY, 3, 1)
-
-def test_planner_layout_builds():
-    from components.bg3_planner import planner
-    layout = str(planner())
-    assert "bg3-enemies" in layout and "bg3-kit" in layout and "bg3-variants" in layout

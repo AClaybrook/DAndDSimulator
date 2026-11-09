@@ -3,8 +3,7 @@
 Live here: https://d-and-d-damage-simulator-745953dd5908.herokuapp.com/
 
 ##  For the D and D Theory Craftors of the World
-![Alt Text](assets/CharacterBuilder.PNG)
-![Alt Text](assets/Simulator.PNG)
+![The Simulator page: characters with their expected damage, the leading build, the damage distribution plot](docs/images/simulator.png)
 
 * Simulates many thousand turns of combat to find distributions of damage for a given character
 * Compare D&D characters at once for the theory crafters of the world, i.e.:
@@ -23,37 +22,39 @@ Live here: https://d-and-d-damage-simulator-745953dd5908.herokuapp.com/
 * Download or git clone the repo from: https://github.com/AClaybrook/DAndDSimulator
 * Install [uv](https://docs.astral.sh/uv/getting-started/installation/) (it installs the right Python version for you)
 * `uv sync` to create the virtual environment and install the dependencies
-* Launch the App on localhost 8050:
-    * `uv run python app.py`
-    * Or select the `.venv` interpreter and run app.py from VsCode
+* The app (React front end over a FastAPI backend: Party planner, Leaderboard, Item map (Acts 1 and 2) and Simulator):
+    * Once: `cd frontend && npm install && npm run build` (needs Node 22)
+    * `uv run python -m api`, then open http://localhost:8000
+    * For front end work: `uv run python -m api` and, in `frontend/`, `npm run dev` (http://localhost:5173, reloads as you edit)
 * Development:
     * `uv run pytest` to run the tests (the simulation is validated against exact analytic results)
     * `uv run ruff check .` to lint
     * `uv run python -m benchmarks.benchmark` to time the simulation, run it before and after changing `computations/`
+    * `cd frontend && npm run lint && npm run build` to check the front end, and `npm run smoke` (with the app running) to click through every page in a browser
 
 See [CHANGELOG.md](CHANGELOG.md) for what changed in 2.0.
 
-## Using the Dashboard
-0. **BG3 Party Planner** (top of the page): up to four characters, each a class preset or a custom character (race, point buy, classes in order, subclasses, feats, fighting styles), with gear and buffs for each act checkpoint (End of Act 1 at level 5, Act 2 at 8, Act 3 at 12, editable per character). An empty gear cell keeps the item from the act before. The planner shows the exact expected damage per round of every character at every act, lists equipment conflicts (a unique item wanted by more than one character in the same act, a unique item in two slots, a two-handed weapon with an off hand, items found in a later act) and highlights the conflicting cells. "Add to simulator" adds the party at an act, or one character at every act, as cards for the full simulation.
-1. **Characters**: add presets (Preset, Level, +), which level up like the real class, or blank characters, then tweak them. Each card shows its exact expected damage per round against the current enemy, updated as you edit. Card sections expand when the character uses them, attacks are edited by clicking one, changing it and pressing Save.
-2. **Enemy**: load a monster or a CR baseline, or type in armor class, hit points, saves and resistances.
-3. **Simulate**: pick what you want to know (each graph type says what it answers) and press Simulate, the floating button works from anywhere. Results start with a one line summary.
+## Using the App
+0. **Party planner**: up to four characters, each a class preset or a custom character (race, point buy, classes in order, subclasses, feats, fighting styles), with gear and buffs for each act checkpoint (End of Act 1 at level 5, Act 2 at 8, Act 3 at 12, editable per character). An empty gear cell keeps the item from the act before. The planner shows the exact expected damage per round of every character at every act, lists equipment conflicts (a unique item wanted by more than one character in the same act, a unique item in two slots, a two-handed weapon with an off hand, items found in a later act) and highlights the conflicting cells. "To simulator" adds the party at an act, or one character at every act, as Simulator characters.
+1. **Simulator characters**: add class presets, which level up like the real class, or blank characters, then click one to edit it. Each shows its exact expected damage per round against the current enemy, updated as you edit.
+2. **Enemy**: load a monster or a CR baseline, or edit armor class, hit points, saves and resistances.
+3. **Results**: pick what you want to know (each graph type says what it answers); results follow every edit, and "Simulate again" reruns. Every table downloads as CSV, and "Raw data" downloads every simulated value.
 
 Common questions:
 * **Which build does the most damage?** Add a few presets, Simulate with DPR Distribution and read the Leaderboard.
 * **Is Great Weapon Master or Sharpshooter worth it?** DPR Sweep over Armor Class, the Insights table shows the armor class to turn it off.
-* **Which feat or ASI should I take?** Use the copy menu on a card to make a copy with one change (+2 main ability score, a level up, advantage, GWM/Sharpshooter, Bless), or copy it exactly and change something yourself. The expected damage under each name compares them right away, Simulate for the full picture.
+* **Which feat or ASI should I take?** Use the copy menu on a character to make a copy with one change (+2 main ability score, a level up, advantage, GWM/Sharpshooter, Bless), or copy it exactly and change something yourself. The expected damage under each name compares them right away, Simulate for the full picture.
 * **How does my build scale?** DPR Sweep over Level, presets level up and keep your edits.
 * **How fast can we kill this boss?** Load the monster and run Rounds to Kill.
 * **Nova or sustained damage?** Set Rounds per Fight and run Damage per Fight.
 
-Sessions: every simulation saves the session in your browser, after a reload you are offered to restore it. Export saves the characters, enemy and settings to a json file that Import loads back (older character only files are still added to the current characters).
+Sessions: everything is kept in your browser. The save icon at the top right exports the simulator's characters, enemy and settings and the BG3 party to one json file, and imports it back (older exports and character only files load too).
 
 # Technical Notes/Features:
 
 Kits and variants: in the planner, "Quick gear" fills a curated item kit's slots (docs/act1_item_kits.md) and "Variants" compares the selected character with a kit, buffs or advantage, without changing its own gear.
 
-Act 1 Map (sidebar, or `/map`): where to find the notable Act 1 gear and key pickups, on the game's minimap images with in-game coordinates, filters by rarity and a search. Item locations from bg3.wiki; map images © Larian Studios via bg3.wiki.
+Item map (top bar, or `#/map`), Acts 1 and 2: where to find the notable Act 1 gear and key pickups, on the game's minimap images with in-game coordinates, filters by rarity and a search. Item locations from bg3.wiki; map images © Larian Studios via bg3.wiki.
 
 ## Project Layout
 * `computations/`: the generic simulator
@@ -72,7 +73,8 @@ Act 1 Map (sidebar, or `/map`): where to find the notable Act 1 gear and key pic
     * `scrape_wiki.py`, `scrape_sheet.py`, `build_items.py`: export the Patch 8 item pages from bg3.wiki and the community checklist sheet, and build `data/items.json` (hand checked fixes in `data/effect_overrides.json`)
     * `presets.py`: example builds with gear per act
     * `character.py`, `abilities.py`: the character builder (race, point buy, classes, subclasses, feats) compiled to a Character from the Patch 8 rules in `data/rules.json`
-* `components/`: Dash layout and callbacks
+* `api/`: FastAPI backend over the engine (plots, sweeps, variants and validation for the simulator; planner, leaderboard and map endpoints)
+* `frontend/`: React + TypeScript + Vite app (Mantine, TanStack Table and Query, Plotly.js)
 * `tests/`, `benchmarks/`
 
 ## Completed Features:

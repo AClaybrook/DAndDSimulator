@@ -9,7 +9,7 @@ from math import ceil
 from bg3.abilities import apply_improvement, starting_scores
 from computations.models import STATS, Attack, Character
 from game_data import spell_attacks, spells, weapon_attack, weapons
-from game_data.classes import action_surge, per_fight, spell_slots
+from game_data.classes import FIGHTS_PER_LONG_REST, SHORT_RESTS_PER_LONG_REST, action_surge, per_fight, spell_slots
 
 MAX_LEVEL = 12
 CLASSES = ("barbarian", "bard", "cleric", "druid", "fighter", "monk", "paladin", "ranger", "rogue", "sorcerer", "warlock", "wizard")
@@ -89,10 +89,11 @@ def is_proficient(base, profs):
 ROUTINES = {
     "two_handed": "Two-handed weapon", "one_handed": "One-handed weapon (Duelling)", "dual_wield": "Two weapons", "ranged": "Ranged weapon",
     "unarmed": "Unarmed strikes", "thrown": "Thrown weapon", "cantrip": "Attack cantrip", "shadow_blade": "Shadow Blade (and an off-hand weapon)",
+    "shadow_blade_shield": "Shadow Blade and a shield (Duelling applies)", "polearm": "Polearm (Glaive: reach, Polearm Master)",
     "dual_hand_crossbows": "Two hand crossbows",
 }
 SHADOW_BLADE = "Shadow Blade"
-DEFAULT_WEAPONS = {"two_handed": "Greatsword", "one_handed": "Longsword", "dual_wield": "Shortsword", "ranged": "Longbow", "thrown": "Handaxe",
+DEFAULT_WEAPONS = {"two_handed": "Greatsword", "polearm": "Glaive", "one_handed": "Longsword", "dual_wield": "Shortsword", "ranged": "Longbow", "thrown": "Handaxe",
                    "dual_hand_crossbows": "Hand Crossbow"}
 RANGED_ROUTINES = ("ranged", "dual_hand_crossbows")
 # Damage spells cast with spell slots before falling back to the attack cantrip
@@ -110,17 +111,20 @@ TOGGLES = {
     "booming_blade": "Booming Blade on the first melee attack each turn",
     "bladesong": "Bladesong in fights (+2/+3/+4 AC without medium or heavy armour or a shield)",
     "horde_breaker": "Horde Breaker instead of Colossus Slayer (an extra attack on a second enemy, needs 2+ enemies)",
+    "reactions": "Reaction attacks: Polearm Master when an enemy enters your reach (about once a fight), Sentinel when an enemy next to you "
+    "attacks an ally (about every other round)",
+    "honour_mode": "Honour Mode rules: Pact of the Blade's Extra Attack doesn't stack with another class's (it does in other modes)",
     "advantage": "Attack with advantage (Shadow Blade in darkness or dim light, hiding, Dirty Tricks, Faerie Fire, Darkness with Devil's Sight)",
 }
 # Toggles that are off unless ticked: advantage depends on the fight, so it isn't assumed
-TOGGLE_DEFAULTS = {"advantage": False, "horde_breaker": False}
+TOGGLE_DEFAULTS = {"advantage": False, "horde_breaker": False, "honour_mode": False}
 # The class (and subclass) each toggle is for, so the builder only offers the ones that matter
 TOGGLE_FOR = {"rage": ("barbarian", ""), "reckless": ("barbarian", ""), "smite": ("paladin", ""), "vow": ("paladin", ""),
               "curse": ("warlock", "The Hexblade"), "surprise": ("rogue", "Assassin"), "manifestation": ("monk", "Way of the Open Hand"),
               "damaged_target": ("ranger", "Hunter"), "starry_form": ("druid", "Circle of Stars"), "symbiotic": ("druid", "Circle of Spores"),
               "storm_close": ("sorcerer", "Storm Sorcery"),
               "booming_blade": [("wizard", ""), ("sorcerer", ""), ("warlock", ""), ("fighter", "Eldritch Knight"), ("rogue", "Arcane Trickster")],
-              "horde_breaker": ("ranger", "Hunter"), "bladesong": ("wizard", "Bladesinging"), "advantage": [(cls, "") for cls in CLASSES]}
+              "horde_breaker": ("ranger", "Hunter"), "honour_mode": ("warlock", ""), "reactions": [(cls, "") for cls in CLASSES], "bladesong": ("wizard", "Bladesinging"), "advantage": [(cls, "") for cls in CLASSES]}
 
 def relevant_toggles(classes):
     """ Toggles for a [class, subclass, levels] list """
@@ -203,8 +207,9 @@ def warlock_pact_slots(warlock_level):
     slots = 1 if warlock_level == 1 else 2 if warlock_level < 11 else 3
     return slots, min(5, (warlock_level + 1) // 2)
 
-def compile_character(character, level=MAX_LEVEL):
-    """ The Character at a level, and notes on what is and isn't modelled """
+def compile_character(character, level=MAX_LEVEL, main_finesse=None):
+    """ The Character at a level, and notes on what is and isn't modelled. main_finesse: whether the main hand weapon from gear is finesse
+        or ranged (Sneak Attack, Flick o' the Wrist), None to go by the routine's default weapon """
     level = max(1, min(int(level), MAX_LEVEL, len(class_order(character))))
     levels = class_levels(character, level)
     subs = {cls: subclass_of(character, cls, n) for cls, n in levels.items()}
@@ -225,7 +230,7 @@ def compile_character(character, level=MAX_LEVEL):
     for feat in feats:
         if feat in FEAT_FLAGS:
             setattr(c, FEAT_FLAGS[feat], True)
-        elif feat not in ("Dual Wielder", "Polearm Master", "Athlete"):
+        elif feat not in ("Dual Wielder", "Polearm Master", "Athlete", "Sentinel"):
             notes.append(f"{feat}: not modelled")
     c.savage_attacker_per_die = c.savage_attacker # BG3 Savage Attacker keeps the higher of each die
     styles = [s for s in character.fighting_styles if FIGHTING_STYLES.get(s)]
@@ -240,7 +245,7 @@ def compile_character(character, level=MAX_LEVEL):
     if character.race.endswith("Halfling"):
         c.attack_reroll_on = 1 # Halfling Luck
 
-    attacks = _attacks(character, c, levels, subs, feats, notes)
+    attacks = _attacks(character, c, levels, subs, feats, notes, main_finesse)
     profs = weapon_proficiencies(character, level)
     if "Weapon Master" in feats:
         profs |= {weapon_base(a.name) for a in attacks} # Four weapons of your choice, assumed to be the ones used
@@ -251,7 +256,7 @@ def compile_character(character, level=MAX_LEVEL):
     c.attacks = attacks + _spirit_guardians(character, c, levels, subs, notes)
     if character.toggle("booming_blade") and "booming_blade" in relevant_toggles(character.classes):
         _booming_blade(c, character)
-    _class_features(character, c, levels, subs, notes)
+    _class_features(character, c, levels, subs, notes, main_finesse)
     split = " / ".join(f"{cls.title()} {n}" + (f" ({subs[cls]})" if subs.get(cls) else "") for cls, n in levels.items())
     c.description = f"{character.race}, {split}. Feats: {', '.join(feats) or 'none'}"
     return c, notes
@@ -261,7 +266,19 @@ def weapon_base(attack_name):
     return attack_name.split(" (")[0]
 
 def _extra_attacks(levels, subs, character):
-    """ Attacks with the Attack action """
+    """ Attacks with the Attack action. Pact of the Blade's Extra Attack (Warlock 5) stacks with another class's outside Honour Mode
+        (bg3.wiki, Deepened Pact), with the pact weapon: a melee weapon or Shadow Blade bound with Bind Pact (or Hexed) Weapon """
+    attacks = _class_extra_attacks(levels, subs, character)
+    pact_weapon = character.routine in ("two_handed", "polearm", "one_handed", "shadow_blade", "shadow_blade_shield")
+    if attacks >= 2 and levels.get("warlock", 0) >= 5 and pact_weapon and not character.toggle("honour_mode") and not _only_warlock(levels, subs):
+        attacks += 1
+    return attacks
+
+def _only_warlock(levels, subs):
+    """ Whether the Warlock's Deepened Pact is the build's only Extra Attack """
+    return _class_extra_attacks({k: v for k, v in levels.items() if k != "warlock"}, subs, None) < 2
+
+def _class_extra_attacks(levels, subs, character):
     attacks = 1
     if levels.get("fighter", 0) >= 11:
         attacks = 3
@@ -271,7 +288,7 @@ def _extra_attacks(levels, subs, character):
         attacks = 2
     elif levels.get("wizard", 0) >= 6 and subs.get("wizard") == "Bladesinging":
         attacks = 2
-    elif levels.get("warlock", 0) >= 5 and character.routine != "cantrip": # Pact of the Blade, Deepened Pact
+    elif levels.get("warlock", 0) >= 5 and character is not None and character.routine != "cantrip": # Pact of the Blade, Deepened Pact
         attacks = 2
     return attacks
 
@@ -290,7 +307,7 @@ def _spirit_guardians(character, c, levels, subs, notes):
     # Lasts 10 turns, so one cast covers a fight; uses per fight is the rounds it's up
     return [replace(aura, name="Spirit Guardians (aura)", damage_type="radiant", uses_per_fight=10 * min(casts, 1.0), once_per_turn_eligible=False)]
 
-def _attacks(character, c, levels, subs, feats, notes):
+def _attacks(character, c, levels, subs, feats, notes, main_finesse=None):
     routine = character.routine
     if routine == "cantrip":
         stat = max((SPELL_ABILITY[cls] for cls in levels if cls in SPELL_ABILITY), key=lambda s: getattr(c, s), default="charisma")
@@ -340,8 +357,9 @@ def _attacks(character, c, levels, subs, feats, notes):
             attacks.append(replace(strike, name="Flurry of Blows", uses_per_fight=per_fight(per_short_rest=ki)))
         return attacks
 
-    if routine == "shadow_blade":
-        return _shadow_blade_attacks(c, levels, subs, count, stat_for, notes)
+    if routine in ("shadow_blade", "shadow_blade_shield"):
+        blades = _shadow_blade_attacks(c, levels, subs, count, stat_for, notes, shield=routine == "shadow_blade_shield")
+        return blades + _reaction_attacks(character, blades[0], weapon_base(blades[0].name), feats, routine)
     name = DEFAULT_WEAPONS[routine]
     weapon_stat = "dexterity" if routine in ("ranged", "dual_wield", "dual_hand_crossbows") else "strength"
     if routine == "one_handed" and c.dexterity > c.strength:
@@ -363,41 +381,96 @@ def _attacks(character, c, levels, subs, feats, notes):
         attacks.append(replace(main, name=f"{weapon_base(main.name)} ({'Enraged Throw' if routine == 'thrown' else 'Frenzy'})"))
         bonus_actions -= 1
     if bonus_actions and "Polearm Master" in feats and name in POLEARMS:
-        attacks.append(Attack(name="Polearm Butt End", ability_stat=stat_for("strength"), damage="1d4", damage_type="bludgeoning"))
+        # The other end of the same weapon: Great Weapon Fighting and Great Weapon Master apply to it as to the blade
+        attacks.append(replace(main, name="Polearm Butt End", damage="1d4", damage_type="bludgeoning"))
         bonus_actions -= 1
-    if bonus_actions and levels.get("rogue", 0) >= 4 and subs.get("rogue") == "Swashbuckler" and routine not in RANGED_ROUTINES:
+    finesse = _finesse_or_ranged(main) if main_finesse is None else main_finesse
+    if bonus_actions and levels.get("rogue", 0) >= 4 and subs.get("rogue") == "Swashbuckler" and routine not in RANGED_ROUTINES and finesse:
+        # Dirty Trick: Flick o' the Wrist needs a finesse weapon in the main hand (bg3.wiki)
         attacks.append(replace(main, name=f"{main.name} (Flick o' the Wrist)"))
         bonus_actions -= 1
     if bonus_actions and levels.get("cleric") and subs.get("cleric") == "War Domain":
         charges = 3 + (levels["cleric"] >= 5) + (levels["cleric"] >= 8) + (levels["cleric"] >= 11)
         attacks.append(replace(main, name=f"{main.name} (War Priest)", uses_per_fight=per_fight(per_long_rest=charges)))
+    attacks += _reaction_attacks(character, main, name, feats, routine)
     if levels.get("fighter", 0) >= 2:
         attacks += action_surge(levels["fighter"], "bg3", replace(main))
     if levels.get("ranger", 0) >= 3 and subs.get("ranger") == "Gloom Stalker":
         attacks.append(replace(main, name=f"{main.name} (Dread Ambusher)", uses_per_fight=1, bonus_damage_die_mod_list=["1d8"]))
     return attacks
 
+# Flexible Casting (Sorcerer 2): sorcery points into a spell slot, the cost by slot level (5e and BG3)
+SLOT_COST = {1: 2, 2: 3, 3: 5, 4: 6, 5: 7}
+
+def smite_slots(character, levels, subs):
+    """ Slot levels a day for smites: long rest slots, pact slots (back on each short rest), slots made from sorcery points, less the
+        slot Shadow Blade is cast with once a day (it lasts until a long rest; with a pact slot it comes back on the next short rest) """
+    slots = [level for level, count in enumerate(spell_slots(caster_level(levels, subs)), start=1) for _ in range(count)]
+    pact, pact_level = warlock_pact_slots(levels.get("warlock", 0))
+    day = slots + [pact_level] * pact * (SHORT_RESTS_PER_LONG_REST + 1)
+    points = levels.get("sorcerer", 0) if levels.get("sorcerer", 0) >= 2 else 0
+    while points >= 2 and day:
+        level = max(lv for lv, cost in SLOT_COST.items() if cost <= points and lv <= max(day))
+        day.append(level)
+        points -= SLOT_COST[level]
+    if character.routine in ("shadow_blade", "shadow_blade_shield") and shadow_blade_dice(levels, subs):
+        cast = max(slots, default=0)
+        if cast >= pact_level and cast in day: # Cast with a long rest slot (a pact slot comes back after a short rest)
+            day.remove(cast)
+    return sorted(day, reverse=True)
+
+def knows_shadow_blade(levels, subs):
+    """ Shadow Blade is on the Sorcerer, Warlock and Wizard lists (and the Eldritch Knight's and Arcane Trickster's, which use the Wizard's) """
+    return any(levels.get(cls) for cls in ("sorcerer", "warlock", "wizard")) or \
+        subs.get("fighter") == "Eldritch Knight" or subs.get("rogue") == "Arcane Trickster"
+
+# Reaction attacks per fight (an estimate): Polearm Master's attack when an enemy enters your reach, about once a fight as enemies close in;
+# Sentinel's when an enemy next to you attacks an ally, about every other round of a 3 round fight
+POLEARM_REACTIONS, SENTINEL_REACTIONS = 1.0, 1.5
+
+def _reaction_attacks(character, main, name, feats, routine):
+    """ Reaction attacks the build's feats make likely, with the main weapon (GWM and GWF apply). Polearm Master's is an opportunity
+        attack, so Sentinel gives it advantage. Items like the Halberd of Vigilance give every reaction attack advantage (bg3.build) """
+    if not character.toggle("reactions") or routine in (*RANGED_ROUTINES, "cantrip", "thrown"):
+        return []
+    out = []
+    if "Polearm Master" in feats and name in POLEARMS:
+        out.append(replace(main, name=f"{weapon_base(main.name)} (Polearm Master reaction)", uses_per_fight=POLEARM_REACTIONS,
+                           advantage=main.advantage or "Sentinel" in feats))
+    if "Sentinel" in feats:
+        out.append(replace(main, name=f"{weapon_base(main.name)} (Sentinel reaction)", uses_per_fight=SENTINEL_REACTIONS))
+    return out
+
 def shadow_blade_dice(levels, subs):
-    """ Shadow Blade's dice from the highest spell slot: 2d8, 3d8 from a level 3 slot, 4d8 from a level 5 slot (even levels add nothing). 0 without a level 2 slot """
+    """ Shadow Blade's dice from the highest spell slot: 2d8, 3d8 from a level 3 slot, 4d8 from a level 5 slot (even levels add nothing).
+        0 without a level 2 slot or a class that learns it """
+    if not knows_shadow_blade(levels, subs):
+        return 0
     slots = spell_slots(caster_level(levels, subs))
     highest = max(len(slots), warlock_pact_slots(levels.get("warlock", 0))[1])
     return 0 if highest < 2 else 4 if highest >= 5 else 3 if highest >= 3 else 2
 
-def _shadow_blade_attacks(c, levels, subs, count, stat_for, notes):
-    """ Shadow Blade in the main hand (cast before the fight with a bonus action; in BG3 it lasts until a long rest, no concentration), a dagger in the off hand with the bonus action """
+def _shadow_blade_attacks(c, levels, subs, count, stat_for, notes, shield=False):
+    """ Shadow Blade in the main hand (cast before the fight with a bonus action; in BG3 it lasts until a long rest, no concentration), and a
+        dagger in the off hand with the bonus action, or a shield (no off-hand attack; Duelling's +2 applies) """
     dice = shadow_blade_dice(levels, subs)
     stat = stat_for("dexterity" if c.dexterity >= c.strength else "strength") # Finesse
     if not dice:
-        notes.append("Shadow Blade needs a level 2 spell slot, using a Rapier until then")
-        main = weapon_attack("Rapier", ability_stat=stat)
+        # Until then a Rapier (or with a shield and more Strength, a Longsword)
+        fallback = "Longsword" if shield and c.strength > c.dexterity else "Rapier"
+        why = "a level 2 spell slot" if knows_shadow_blade(levels, subs) else "a Sorcerer, Warlock or Wizard level"
+        notes.append(f"Shadow Blade needs {why}, using a {fallback} until then")
+        main = weapon_attack(fallback, ability_stat=stat_for("strength" if fallback == "Longsword" else stat))
     else:
         main = Attack(name=SHADOW_BLADE, type="weapon (melee)", ability_stat=stat, damage=f"{dice}d8", damage_type="psychic", weapon_enhancement=0)
+    if shield:
+        return [replace(main) for _ in range(count)]
     offhand = weapon_attack("Dagger", ability_stat=stat, offhand=True)
     return [replace(main) for _ in range(count)] + [offhand]
 
 def _booming_blade(c, character):
     """ Booming Blade replaces the first melee weapon attack each turn: +1d8 thunder on a hit from level 5, 2d8 from level 11 (moving damage isn't modelled) """
-    if c.level < 5 or character.routine not in ("two_handed", "one_handed", "dual_wield", "shadow_blade"):
+    if c.level < 5 or character.routine not in ("two_handed", "polearm", "one_handed", "dual_wield", "shadow_blade", "shadow_blade_shield"):
         return
     first = next((a for a in c.attacks if a.type == "weapon (melee)" and not a.offhand and not a.uses_per_fight and not a.fallback_for), None)
     if first is not None:
@@ -417,6 +490,15 @@ def _limited_rider(c, label, uses, bonus=None, extra=None):
     main.fallback_for = name
     c.attacks.insert(c.attacks.index(main), rider)
 
+def _finesse_or_ranged(attack):
+    """ Shadow Blade is finesse; other weapons by their base weapon's properties """
+    from game_data import weapons # pylint: disable=import-outside-toplevel
+    base = weapon_base(attack.name)
+    if base == SHADOW_BLADE or attack.type in ("weapon (ranged)",):
+        return True
+    data = weapons().get(base)
+    return bool(data) and (data["kind"] == "ranged" or "finesse" in data.get("properties", []))
+
 def _once_per_turn(c, dice, uses=0, crit_only=False):
     """ Adds once per turn damage. The engine has one pool, so a second source adds its dice to the first """
     c.once_per_turn_die_mod_list = [*c.once_per_turn_die_mod_list, dice]
@@ -424,7 +506,7 @@ def _once_per_turn(c, dice, uses=0, crit_only=False):
         c.once_per_turn_uses_per_fight = uses
     c.once_per_turn_crit_only = c.once_per_turn_crit_only or crit_only
 
-def _class_features(character, c, levels, subs, notes):
+def _class_features(character, c, levels, subs, notes, main_finesse=None):
     weapon = character.routine not in ("cantrip",)
     fighter, barbarian, paladin, ranger, rogue = (levels.get(k, 0) for k in ("fighter", "barbarian", "paladin", "ranger", "rogue"))
     monk, warlock, sorcerer, wizard, cleric, bard = (levels.get(k, 0) for k in ("monk", "warlock", "sorcerer", "wizard", "cleric", "bard"))
@@ -458,12 +540,20 @@ def _class_features(character, c, levels, subs, notes):
     c.brutal_critical = barbarian >= 9
     # Paladin
     if paladin >= 2 and character.toggle("smite") and weapon:
-        slots = spell_slots(caster_level(levels, subs))
-        pact, pact_level = warlock_pact_slots(warlock)
-        highest = max(len(slots), pact_level)
-        if highest:
-            _once_per_turn(c, f"{min(1 + highest, 5)}d8", per_fight(per_long_rest=sum(slots), per_short_rest=pact))
-    c.improved_divine_smite = paladin >= 11 and weapon
+        day = smite_slots(character, levels, subs)
+        if day:
+            # Each smite is the day's average: 2d8 from a level 1 slot, +1d8 a level, at most 5d8. Fractions of a die as a flat bonus
+            mean = sum(min(1 + level, 5) for level in day) / len(day)
+            dice, rest = int(mean), round((mean - int(mean)) * 4.5)
+            _once_per_turn(c, f"{dice}d8", round(len(day) / FIGHTS_PER_LONG_REST, 2))
+            c.once_per_turn_damage_type = "radiant"
+            if rest:
+                c.once_per_turn_die_mod_list = [*c.once_per_turn_die_mod_list, str(rest)]
+    if paladin >= 11 and weapon:
+        # Improved Divine Smite: 1d8 radiant on every melee weapon hit, typed so it takes radiant resistance or vulnerability
+        for a in c.attacks:
+            if a.type == "weapon (melee)":
+                a.extra_damage_list = [*a.extra_damage_list, "1d8 radiant"]
     if paladin >= 3 and character.toggle("vow"):
         oath = subs.get("paladin")
         if oath == "Oath of Vengeance":
@@ -481,12 +571,19 @@ def _class_features(character, c, levels, subs, notes):
         _once_per_turn(c, "1d8")
     if ranger >= 3 and subs.get("ranger") == "Swarmkeeper":
         _once_per_turn(c, "1d8" if ranger >= 11 else "1d6")
-    # Rogue: Sneak Attack, never on off-hand attacks
-    if rogue and character.routine != "unarmed":
+    # Rogue: Sneak Attack, never on off-hand attacks, and only with a finesse or ranged weapon (not a greatsword or a glaive)
+    finesse = any(a.is_weapon and not a.offhand and _finesse_or_ranged(a) for a in c.attacks) if main_finesse is None else main_finesse
+    if rogue and character.routine != "unarmed" and not finesse:
+        notes.append("Sneak Attack needs a finesse or ranged weapon, so this weapon gets none")
+    if rogue and character.routine != "unarmed" and finesse:
         _once_per_turn(c, f"{ceil(rogue / 2)}d6")
         for a in c.attacks:
             if a.offhand:
                 a.once_per_turn_eligible = False
+            if "reaction)" in a.name:
+                # Sneak Attack is once per turn, and a reaction attack is on an enemy's turn: it gets its own
+                a.once_per_turn_eligible = False
+                a.extra_damage_list = [*a.extra_damage_list, f"{ceil(rogue / 2)}d6 {a.damage_type}"]
     if rogue >= 3 and subs.get("rogue") == "Assassin" and character.toggle("surprise"):
         c.first_round_advantage = c.first_round_auto_crit = True
     # Monk

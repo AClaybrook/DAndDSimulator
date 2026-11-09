@@ -89,7 +89,7 @@ def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multi
                 advantage=False, disadvantage=False, reroll_on=0,
                 miss_num_die=None, miss_damage_die=None, miss_damage_modifier=0, save_success_multiplier=0,
                 crit_num_die=None, crit_damage_die=None, crit_damage_modifier=0,
-                once_num_die=None, once_die_size=None, once_modifier=0, once_mask=None,
+                once_num_die=None, once_die_size=None, once_modifier=0, once_mask=None, once_damage_multiplier=None,
                 rider_num_die=None, rider_die_size=None, rider_modifier=None, rider_multiplier=None, per_die_advantage=False, rng=RNG, **_):
     """ Roll damage for each hit, crit and miss.
         Resistances/vulnerabilities and damage reduction are applied to the total damage of the attack (rounded down)"""
@@ -115,11 +115,18 @@ def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multi
                          + crit_damage_modifier)
 
     # Once per turn damage on the first hit of the round, i.e. sneak attack, dice are doubled on a crit
+    # With its own damage type (a radiant smite on a psychic Shadow Blade) it's added after, with its own multiplier
+    once_hit = once_crit = None
     if once_mask is not None and once_mask.any() and (once_num_die or once_modifier):
         once_hits = once_mask & hit
         once_crits = once_mask & crit
-        hit_damage[once_hits] += roll_dice(int(once_hits.sum()), once_num_die or [], once_die_size or [], reroll_on=reroll_on, rng=rng) + once_modifier
-        crit_damage[once_crits] += roll_dice(int(once_crits.sum()), once_num_die or [], once_die_size or [], reroll_on=reroll_on, rng=rng)
+        separate = once_damage_multiplier is not None
+        once_hit = np.zeros(num_rolls, dtype='int32') if separate else hit_damage
+        once_crit = np.zeros(num_rolls, dtype='int32') if separate else crit_damage
+        once_hit[once_hits] += roll_dice(int(once_hits.sum()), once_num_die or [], once_die_size or [], reroll_on=reroll_on, rng=rng) + once_modifier
+        once_crit[once_crits] += roll_dice(int(once_crits.sum()), once_num_die or [], once_die_size or [], reroll_on=reroll_on, rng=rng)
+        if not separate:
+            once_hit = once_crit = None
 
     # Roll damage for misses/successful saving throws
     miss_damage = np.zeros(num_rolls, dtype='int32')
@@ -140,6 +147,13 @@ def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multi
         hit_damage = np.floor(hit_damage * damage_multiplier).astype('int32')
         crit_damage = np.floor(crit_damage * damage_multiplier).astype('int32')
         miss_damage = np.floor(miss_damage * damage_multiplier).astype('int32')
+
+    if once_hit is not None:
+        once_total = np.floor(np.maximum(once_hit + once_crit, 0) * once_damage_multiplier).astype('int32')
+        once_hit_part = np.floor(np.maximum(once_hit, 0) * once_damage_multiplier).astype('int32')
+        total_damage = total_damage + once_total
+        hit_damage = hit_damage + once_hit_part
+        crit_damage = crit_damage + (once_total - once_hit_part)
 
     # Extra damage of other types on a hit, each rounded down with its own resistance multiplier
     for r_num_die, r_die_size, r_modifier, r_multiplier in zip(rider_num_die or [], rider_die_size or [], rider_modifier or [], rider_multiplier or []):

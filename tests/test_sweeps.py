@@ -1,7 +1,7 @@
 """ Tests for the parameter sweeps """
 import pytest
 
-from components.sweeps import SWEEP_PARAMETERS, primary_stat, run_sweep
+from api.sweeps import SWEEP_PARAMETERS, primary_stat, run_sweep
 from computations.models import Attack, Character, Enemy
 from game_data import RULESETS
 from game_data.classes import build_character

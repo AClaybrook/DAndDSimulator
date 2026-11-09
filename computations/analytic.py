@@ -140,7 +140,8 @@ def expected_by_attack(character, enemy, rounds_per_fight=None):
         p = (p_crit if d.once_crit_only else p_hit) if d.once_per_turn_eligible and (d.once_num_die or d.once_modifier) else 0.0
         once = expected_dice(d.once_num_die, d.once_die_size, d.reroll_on)
         # Given that this attack used the once per turn damage, the chance it was a crit is p_crit/p
-        once_value = (once + d.once_modifier + p_crit / p * once) * d.damage_multiplier if p > 0 else 0.0
+        once_multiplier = d.damage_multiplier if d.once_damage_multiplier is None else d.once_damage_multiplier
+        once_value = (once + d.once_modifier + p_crit / p * once) * once_multiplier if p > 0 else 0.0
         return expected_attack_damage(a, d, auto_crit=auto_crit), p, once_value
 
     later_rounds = [profile(a, d, False) for a, d in zip(attack_contexts, damage_contexts)]

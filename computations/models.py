@@ -50,13 +50,9 @@ def multiple_die_and_mod_from_list(die_list):
         total_mod += m
     return num_die, die_sizes, total_mod
 
-# Old field name: new field name, so json files saved before a rename still load
-RENAMED_FIELDS = {"proficent": "proficient", "saving_throw_proficent": "saving_throw_proficient"}
-
 def from_dict(cls, data):
     """ Builds a dataclass from a dictionary, ignoring unknown keys so older/newer json files still load """
     names = {f.name for f in fields(cls) if f.init}
-    data = {RENAMED_FIELDS.get(k, k): v for k, v in data.items()}
     return cls(**{k: v for k, v in data.items() if k in names})
 
 def typed_damage_from_str(damage_str):
@@ -166,6 +162,7 @@ class Creature:
     once_per_turn_die_mod_list: list[str | int] = field(default_factory=list)
     once_per_turn_crit_only: bool = False # Only use it on a crit, i.e. crit fishing with divine smite
     once_per_turn_uses_per_fight: float = 0 # Average uses per fight (i.e. spell slots for smites), 0 means unlimited
+    once_per_turn_damage_type: str = "" # Its own damage type for resistances and vulnerabilities (radiant for smites), "" = the attack's
     # First round of a fight, i.e. Assassinate: advantage against enemies that haven't acted, hits are crits against surprised enemies
     first_round_advantage: bool = False
     first_round_auto_crit: bool = False
@@ -395,6 +392,7 @@ class DamageContext:
     once_per_turn_eligible: bool = False
     once_crit_only: bool = False
     once_uses_per_fight: float = 0
+    once_damage_multiplier: float | None = None # Resistance or vulnerability of the once per turn damage's own type, None = the attack's
     # Average uses per fight of a limited attack, 0 means every round
     uses_per_fight: float = 0
     # Index of the limited attack this attack replaces once it is used up, -1 for none
@@ -534,6 +532,8 @@ def calculate_attack_and_damage_context(character, enemy):
         damage_multiplier = enemy.damage_multiplier(attack) if isinstance(enemy, Enemy) else 1
         riders = [typed_damage_from_str(r) for r in attack.extra_damage_list or []]
         riders = [(n, d, m, enemy.damage_multiplier(attack, t) if isinstance(enemy, Enemy) else 1) for n, d, m, t in riders if n or m]
+        once_type = character.once_per_turn_damage_type
+        once_multiplier = enemy.damage_multiplier(attack, once_type) if once_type and isinstance(enemy, Enemy) else None
 
         # Difficulty Class
         difficulty_class = enemy.armor_class
@@ -589,6 +589,7 @@ def calculate_attack_and_damage_context(character, enemy):
             once_per_turn_eligible=attack.once_per_turn_eligible and not saving_throw,
             once_crit_only=character.once_per_turn_crit_only,
             once_uses_per_fight=character.once_per_turn_uses_per_fight or 0,
+            once_damage_multiplier=once_multiplier if once_multiplier != damage_multiplier else None,
             uses_per_fight=attack.uses_per_fight or 0,
             fallback_index=attack_names.index(attack.fallback_for) if attack.fallback_for in attack_names and attack.fallback_for != attack.name else -1,
             first_round_advantage=character.first_round_advantage and not saving_throw,

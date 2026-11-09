@@ -1,5 +1,50 @@
 # Changelog
 
+## 3.0.0 (in progress)
+
+- **New front end, page by page:** a React + TypeScript app (`frontend/`) over a FastAPI backend (`api/`), replacing the Dash app as pages
+  are rebuilt. The Simulator is first: characters with their live expected damage on the left, the answer up front (who leads and by how
+  much), the same plots as before, and sortable, filterable tables folded underneath. Characters open in a side panel with Stats, Attacks
+  and Bonuses tabs, rarely used fields folded away. Results update shortly after each edit. Everything is kept in the browser.
+  `uv run python -m api` serves it on http://localhost:8000.
+- **Every page in the new app:** the Party planner (a strip of the party with damage per act; Gear, Build, Buffs, Variants and Gear advice
+  tabs; results tabs for the damage chart and score, conflicts, and the party fight, synergies and roles), the Leaderboard (best builds up
+  front, a damage vs armour class scatter, sortable rankings with a detail panel per build, saved runs to compare), and the Act 1 map
+  (region switcher, markers drawn in the browser so every filter is instant, the party's gear as a checklist). One enemy is shared by the
+  planner and the simulator.
+- **Redesign:** navigation moved to the top bar, a refined dark theme, every page built from the same parts (a header with its controls,
+  headline numbers, titled cards). Less to open by hand: results are tabs instead of folded sections, editors show every field group,
+  attacks are a list with the selected one's fields beside it, and the enemy is a summary with a side panel editor.
+- **Act 2 item map:** the Shadow-Cursed Lands minimap (Last Light Inn, Reithwin, Moonrise Towers, the Ruined Battlefield) with every Act 2
+  item spot from bg3.wiki, plus the Gauntlet of Shar, the Shadowfell and the Mind Flayer Colony on coordinate grids. An Act switch on the
+  map page picks the regions, the party gear checklist (now filterable by member) and the items with no spot. Missable items carry a ⚠ in
+  the planner's gear lists.
+- **Rules fixes (Tactician):** Pact of the Blade's Extra Attack now stacks with another class's outside Honour Mode (a Paladin 5 /
+  Warlock 5 attacks 3 times with the pact weapon; an "Honour Mode rules" toggle turns it off). Sneak Attack only with finesse or ranged
+  weapons. Shadow Blade needs a Sorcerer, Warlock or Wizard level. New attack routines: Polearm (Glaive; Polearm Master's butt end gets
+  GWF and GWM) and Shadow Blade with a shield (Duelling, +2 AC).
+- **Reaction attacks:** Polearm Master (an enemy entering your reach, about once a fight) and Sentinel (an enemy next to you attacking an
+  ally, about every other round) as expected reaction attacks, with advantage from the Halberd of Vigilance; a "reactions" toggle.
+  Finesse weapons from gear hit with the higher of Strength and Dexterity.
+- **Smites keep their own damage type:** once per turn damage can have its own type (radiant for smites) with its own resistance or
+  vulnerability, in the analytic, exact and simulated engines; Improved Divine Smite is a radiant rider. Before, a smite on a Shadow
+  Blade hit took the blade's psychic vulnerability from the Resonance Stone. docs/padlock_vs_sorcadin.md has a Resonance Stone section.
+- **Elixirs:** Bloodlust gives an extra Attack action on a kill (estimated every other turn against a group), every elixir replaces the one
+  before (Heroism included), Viciousness and Battlemage's Power come from Act 2 trader stock, and each elixir says where to get it.
+  docs/padlock_vs_sorcadin.md compares them per build and act (docs/elixirs.png).
+- **Sneak Attack on reactions:** a reaction attack on an enemy's turn gets its own Sneak Attack (once per turn, not per round), with a
+  finesse weapon. New example build: Fighter 6 / Swashbuckler 6 with The Dancing Breeze, Polearm Master and Sentinel.
+- **Smites average the day's slots:** sustained damage counts each smite at the average size of the day's slots (pact slots back on
+  short rests, Flexible Casting's extra slot, less the slot Shadow Blade used) instead of the best slot's size, which overstated every
+  Paladin, the Sorcadin most.
+- **Padlock vs Sorcadin vs polearm builds:** eight new example builds and docs/padlock_vs_sorcadin.md, sustained and burst damage by act.
+- **Smaller additions:** re-import the build doc from the planner; overlay example builds on the planner's damage chart; leaderboard and
+  map settings kept in the URL; keyboard shortcuts (1-4 pages, t theme, r simulate again, ? list); a light theme; a browser smoke test
+  of every page in CI.
+- **The Dash app is gone:** its last features moved over (session export/import with the BG3 party in one file, "To simulator" from the
+  planner, the copy-with-a-change menu on simulator characters, CSV downloads of every table and of the raw simulated data), then
+  `app.py`, `components/` and the Dash and gunicorn dependencies were removed. `Procfile` serves `uvicorn api.main:app`.
+
 ## 2.7.0 (in progress)
 
 Baldur's Gate 3 first. The original simulator and analytics are unchanged, BG3 builds compile to the same Characters.

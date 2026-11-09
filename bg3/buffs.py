@@ -17,14 +17,35 @@ class Buff:
     exclusive: bool = False # Elixirs that end the effect of the elixir drunk before, only one can be active
     source: str = ""
 
+# When each elixir can first be had (bg3.wiki "where to find"), by the act checkpoints (End of Act 1 is level 5, Act 2 level 8, Act 3 level 12)
+ELIXIR_ACT = {"elixir:elixir_of_viciousness": 2, "elixir:elixir_of_battlemage_s_power": 2}
+OBTAIN = {
+    "elixir:elixir_of_hill_giant_strength": "Act 1: Auntie Ethel sells 3 a long rest (Grove, then the Riverside Teahouse), Derryth in the Myconid Colony; craftable",
+    "elixir:elixir_of_bloodlust": "Act 1: Cyrel (Risen Road), Derryth (Myconid Colony), Kith (Grymforge); craftable from Worg Fangs",
+    "elixir:elixir_of_heroism": "Act 1: Mol (Tiefling Hideout), Talli; craftable from Pegasus Feathers",
+    "elixir:elixir_of_the_colossus": "Act 1: craftable only, from Chasm Creepers (glowing purple plants along the Underdark paths), so a handful",
+    "elixir:elixir_of_viciousness": "Trader stock from level 6 (Act 2), craftable from Shadowroot Sacs",
+    "elixir:elixir_of_battlemage_s_power": "Trader stock from level 6 (Act 2), craftable from Gauth Eyestalks",
+    "elixir:elixir_of_cloud_giant_strength": "Trader stock from level 9 (Act 3). Craftable earlier from Cloud Giant Fingers, which Blurg and Derryth "
+                                             "(Myconid Colony) stock from level 6, so a few in Act 2",
+}
+
 def elixirs():
-    """ Elixirs from data/buffs.json (built by build_items.py from bg3.wiki) """
+    """ Elixirs from data/buffs.json (built by build_items.py from bg3.wiki). Every elixir replaces the one drunk before (bg3.wiki),
+        so they are all exclusive. Bloodlust's extra action on a kill is an estimate (bg3.items.BLOODLUST_KILLS_PER_FIGHT) """
     path = DATA / "buffs.json"
     if not path.exists():
         return []
+    from bg3.items import BLOODLUST_KILLS_PER_FIGHT # pylint: disable=import-outside-toplevel
+    out = []
     with open(path, encoding="utf-8") as f:
-        return [Buff(b["key"], b["name"], b["act"], [Effect(**e) for e in b["effects"]], b.get("notes", ""),
-                     exclusive=b.get("exclusive", False), source=b.get("source", "")) for b in json.load(f)["buffs"]]
+        for b in json.load(f)["buffs"]:
+            effects = [Effect(**e) for e in b["effects"]]
+            if b["key"] == "elixir:elixir_of_bloodlust":
+                effects = [Effect("extra_action_on_kill", BLOODLUST_KILLS_PER_FIGHT)]
+            notes = " ".join(x for x in (b.get("notes", ""), OBTAIN.get(b["key"], "")) if x)
+            out.append(Buff(b["key"], b["name"], ELIXIR_ACT.get(b["key"], b["act"]), effects, notes, exclusive=True, source=b.get("source", "")))
+    return out
 
 # Standard spell effects (the same in BG3 as in 5e), then elixirs from the item data
 BUFFS = {b.key: b for b in [

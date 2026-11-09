@@ -18,3 +18,55 @@ jobs:
         run: uv run pytest
       - name: Benchmark
         run: uv run python -m benchmarks.benchmark
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Type check and build
+        run: npm run build
+
+  smoke:
+    # Pinned: Playwright 1.56 has no browser build for ubuntu-latest (26.04) yet
+    runs-on: ubuntu-24.04
+    needs: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: |
+          uv sync --locked
+          cd frontend && npm ci && npx playwright install --with-deps chromium
+      - name: Build the front end
+        run: cd frontend && npm run build
+      - name: Start the app
+        run: |
+          # The venv's Python, not `uv run`: a running uv process holds the cache lock and the post-job cache prune times out
+          .venv/bin/python -m api 8000 > api.log 2>&1 &
+          echo $! > api.pid
+          for i in $(seq 1 60); do curl -sf http://localhost:8000/api/simulator/options > /dev/null && break; sleep 1; done
+      - name: Smoke test every page in a browser
+        run: cd frontend && npm run smoke
+      - name: Server log
+        if: failure()
+        run: cat api.log
+      - name: Stop the app
+        if: always()
+        run: kill "$(cat api.pid)" || true

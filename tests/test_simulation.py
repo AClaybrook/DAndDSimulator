@@ -167,12 +167,12 @@ def test_rounds_to_kill_uses_fights_for_limited_resources():
 
 def test_damage_per_fight_outputs():
     from computations.numerical_simulation import simulate_fights
-    from components.plots import fight_export, fight_summary, generate_fight_plot
+    from api.plots import fight_export, fight_summary, generate_fight_plot
     characters = [FIGHT_CASES["action_surge"][1], CASES["basic"]]
     characters[0] = Character(**{**characters[0].__dict__, "name": "Surge"})
     fights = simulate_fights(characters, Enemy(), num_fights=500, rounds_per_fight=4)
     assert {name: damage.shape for name, damage in fights.items()} == {"Surge": (4, 500), "Character": (4, 500)}
-    assert len(generate_fight_plot(fights).data) == 2 and fight_summary(fights)
+    assert len(generate_fight_plot(fights).data) == 2 and not fight_summary(fights).empty
     export = fight_export(fights)
     assert len(export) == 1000 and list(export.columns[:3]) == ["Name", "Fight", "Total"]
     assert (export["Total"] == export[[f"Round {r}" for r in range(1, 5)]].sum(axis=1)).all()
@@ -248,3 +248,26 @@ def test_hits_crit_matches_analytic():
     assert df_by_rounds[0]["Damage"].mean() == pytest.approx(expected, rel=0.02)
     plain = Character(level=5, strength=18, attacks=[Attack(damage="2d6", advantage=True)] * 2)
     assert expected > expected_damage_per_round(plain, enemy) * 1.4
+
+
+def test_smites_keep_their_own_damage_type():
+    """ A radiant smite on a psychic Shadow Blade: psychic vulnerability (Resonance Stone) doubles the blade, not the smite.
+        The analytic, exact and simulated numbers agree """
+    from computations.exact import damage_per_round
+    from computations.models import Attack, Character, Enemy
+    from computations.numerical_simulation import simulate_rounds_from_characters
+    blade = Attack(name="Shadow Blade", ability_stat="dexterity", damage="3d8", damage_type="psychic")
+    character = Character(name="Smiter", level=8, dexterity=18, attacks=[blade, blade], once_per_turn_die_mod_list=["4d8"],
+                          once_per_turn_damage_type="radiant")
+    plain, stone = Enemy(armor_class=16), Enemy(armor_class=16, vulnerabilities=["psychic"])
+    radiant_too = Enemy(armor_class=16, vulnerabilities=["psychic", "radiant"])
+    base, doubled, both = (expected_damage_per_round(character, e) for e in (plain, stone, radiant_too))
+    no_smite = Character(**{**character.__dict__, "once_per_turn_die_mod_list": []})
+    blade_only = expected_damage_per_round(no_smite, stone) - expected_damage_per_round(no_smite, plain)
+    assert doubled - base == pytest.approx(blade_only, rel=0.02) # Only the blade's share doubles
+    assert both - doubled == pytest.approx(base - expected_damage_per_round(no_smite, plain), rel=0.05) # A radiant vulnerability doubles the smite
+    exact = damage_per_round(character, stone) # Probabilities indexed by damage
+    assert float(np.dot(np.arange(len(exact)), exact)) == pytest.approx(doubled, rel=0.01)
+    _, dfs, _ = simulate_rounds_from_characters([character], stone, num_rounds=200_000, rng=np.random.default_rng(3))
+    simulated = dfs[0]["Damage"].mean()
+    assert simulated == pytest.approx(doubled, rel=0.02)

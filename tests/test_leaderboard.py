@@ -100,14 +100,10 @@ def test_doc_builds_are_repaired():
     godblade = builds["1. The Godblade"]
     assert not any(n.startswith(("Ability scores guessed", "Feats guessed")) for n in godblade["notes"]) # Complete builds are left alone
 
-def test_planner_table():
-    from bg3.build import Bg3Build
-    from components.bg3_planner import DEFAULT_PARTY, leaderboard_entries, leaderboard_table
-    from components.static_html import to_html
-    party = [Bg3Build.from_dict(b) for b in DEFAULT_PARTY]
-    entries = leaderboard_entries(party, run_entries=[entry(b.name, b, "Preset") for b in party[:2]])
-    html_ = to_html(leaderboard_table(entries, "reliable", 3, "overall", ["Your party", "Preset"], ["planned"]))
-    assert "Lae&#x27;zel" in html_ and "Your party" in html_
-    # Party members identical to an example replace its row
-    assert not any(e["source"] == "Preset" for e in entries) and sum(bool(e.get("same_as")) for e in entries) == 2
-    assert to_html(leaderboard_table(entries, "nova", 1, "score", ["Your party"], ["planned"], "karlach")).count("<tr") == 2 # Header + Karlach
+def test_party_rows_replace_identical_examples():
+    from api.leaderboard import entries
+    from bg3.presets import DEFAULT_PARTY, PRESETS
+    rows = entries([PRESETS[name].to_dict() for name in DEFAULT_PARTY])
+    mine = [r for r in rows if r["source"] == "Your party"]
+    assert len(mine) == 4 and all(r["same_as"].endswith("(Preset)") for r in mine)
+    assert not any(r["source"] == "Preset" and r["fingerprint"] in {m["fingerprint"] for m in mine} for r in rows)

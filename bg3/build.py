@@ -6,7 +6,7 @@ from dataclasses import asdict, dataclass, field, fields, replace
 from bg3.buffs import BUFFS
 from bg3.character import Bg3Character, compile_character, is_proficient, weapon_proficiencies
 from bg3.checkpoints import ACTS, act_level
-from bg3.items import SLOT_LABELS, SLOTS, active_effects, apply_effect, apply_lightning_charges, apply_reverberation, catalog, equip_weapon
+from bg3.items import SLOT_LABELS, SLOTS, active_effects, apply_effect, apply_lightning_charges, apply_reverberation, catalog, equip_weapon, REACTION_ADVANTAGE
 from game_data.classes import BUILDS, build_character
 
 ACT_KEYS = [str(a) for a in ACTS]
@@ -62,11 +62,16 @@ def compile_build(build, act, items=None):
     """ The build's Character at an act checkpoint, with gear, buffs and toggled conditions applied """
     items = items or catalog()
     level = act_level(act, build.levels)
+    gear = {slot: items[key] for slot, key in equipment_at(build, act).items() if key in items and items[key].fits(slot)}
     if build.character:
-        character, _ = compile_character(Bg3Character.from_dict(build.character), level)
+        # A finesse or ranged weapon from gear decides Sneak Attack and Flick o' the Wrist (i.e. The Dancing Breeze, a finesse glaive)
+        bg3_character = Bg3Character.from_dict(build.character)
+        weapon = (gear.get("ranged_main") if bg3_character.routine in ("ranged", "dual_hand_crossbows") else gear.get("melee_main"))
+        weapon = weapon.weapon if weapon is not None and weapon.weapon else None
+        finesse = None if weapon is None else weapon.get("kind") == "ranged" or "finesse" in (weapon.get("properties") or [])
+        character, _ = compile_character(bg3_character, level, finesse)
     else:
         character = build_character(build.preset, level, "bg3")
-    gear = {slot: items[key] for slot, key in equipment_at(build, act).items() if key in items and items[key].fits(slot)}
 
     # Weapons replace the preset's weapon for the attacks made with them. Custom characters lose the proficiency bonus with weapons they
     # aren't proficient with (presets are assumed proficient)
@@ -81,12 +86,19 @@ def compile_build(build, act, items=None):
             renamed = equip_weapon(attack, item)
             names[attack.name] = renamed.name
             attack = renamed
+            # A finesse weapon from gear hits with the higher of Strength and Dexterity (unless the build hits with Charisma, i.e. a pact weapon)
+            if "finesse" in (item.weapon.get("properties") or []) and attack.ability_stat in ("strength", "dexterity"):
+                attack.ability_stat = "dexterity" if character.dexterity > character.strength else "strength"
             if profs is not None:
                 attack.proficient = is_proficient(item.weapon.get("base"), profs)
             own_attacks[slot].append(attack)
         else:
             attack = deepcopy(attack)
         attacks.append(attack)
+    if any(item.key in REACTION_ADVANTAGE for item in gear.values()):
+        for attack in attacks:
+            if "reaction)" in attack.name:
+                attack.advantage = True
     for attack in attacks:
         if attack.fallback_for in names:
             attack.fallback_for = names[attack.fallback_for]

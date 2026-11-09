@@ -1,7 +1,7 @@
 """ Copy with a change: each variant changes one thing """
 import pytest
 
-from components.variants import VARIANTS, make_variant
+from api.variants import VARIANTS, make_variant
 from computations.analytic import expected_damage_per_round
 from computations.models import Character
 from game_data import enemy_from_monster

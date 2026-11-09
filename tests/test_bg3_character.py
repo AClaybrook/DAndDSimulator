@@ -31,7 +31,8 @@ def test_multiclass_levels_feats_and_spell_slots():
     ek = {"fighter": "Eldritch Knight"}
     assert [caster_level({"fighter": n}, ek) for n in (2, 3, 6, 7, 12, 13)] == [0, 1, 2, 3, 4, 5]
     character, _ = compile_character(sorcadin, 12)
-    assert character.once_per_turn_die_mod_list == ["5d8"] and character.advantage # Smite with 5th level slots, Vow of Enmity
+    # Smites average the day's slots (4/3/3/3/1 plus a level 4 slot from 6 sorcery points: 3.6d8 = 3d8 + 3), Vow of Enmity
+    assert character.once_per_turn_die_mod_list == ["3d8", "3"] and character.once_per_turn_uses_per_fight == 3.75 and character.advantage
 
 def test_class_features():
     rogue = Bg3Character(scores={**STR, "dexterity": 15, "strength": 8}, classes=[["rogue", "Thief", 12]], routine="dual_wield")
@@ -157,9 +158,9 @@ def replace_toggle(character, key):
     return compile_character(off, 6)[0]
 
 def test_builder_only_offers_toggles_for_its_classes():
-    assert relevant_toggles([["fighter", "Champion", 12]]) == ["advantage"]
-    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse", "booming_blade", "advantage"]
-    assert relevant_toggles([["warlock", "The Fiend", 12]]) == ["booming_blade", "advantage"]
+    assert relevant_toggles([["fighter", "Champion", 12]]) == ["reactions", "advantage"]
+    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse", "booming_blade", "honour_mode", "reactions", "advantage"]
+    assert relevant_toggles([["warlock", "The Fiend", 12]]) == ["booming_blade", "honour_mode", "reactions", "advantage"]
 
 
 def test_shadow_blade_and_booming_blade():
@@ -193,3 +194,74 @@ def test_dual_hand_crossbows():
     names = [a.name for a in c.attacks]
     assert names.count("Hand Crossbow") == 2 and "Hand Crossbow (Offhand)" in names
     assert all(a.type == "weapon (ranged)" for a in c.attacks)
+
+
+def _attack_names(character, level):
+    c, notes = compile_character(character, level)
+    return [a.name for a in c.attacks], c, notes
+
+def test_pact_of_the_blade_extra_attack_stacks_outside_honour_mode():
+    """ bg3.wiki, Deepened Pact: Pact of the Blade's Extra Attack stacks with a Paladin's (3 attacks), but not in Honour Mode """
+    padlock = Bg3Character("Padlock", classes=[["paladin", "Oath of Vengeance", 5], ["warlock", "The Hexblade", 5]], routine="two_handed",
+                           toggles={"booming_blade": False})
+    names, _, _ = _attack_names(padlock, 10)
+    assert names.count("Greatsword") == 3
+    honour = Bg3Character.from_dict({**padlock.to_dict(), "toggles": {"booming_blade": False, "honour_mode": True}})
+    assert _attack_names(honour, 10)[0].count("Greatsword") == 2
+    assert _attack_names(padlock, 9)[0].count("Greatsword") == 2 # Warlock 4: no Deepened Pact yet
+    pure = Bg3Character("Blade", classes=[["warlock", "The Hexblade", 12]], routine="two_handed", toggles={"booming_blade": False})
+    assert _attack_names(pure, 12)[0].count("Greatsword") == 2 # Deepened Pact alone is just Extra Attack
+    ranged = Bg3Character.from_dict({**padlock.to_dict(), "routine": "ranged"})
+    assert _attack_names(ranged, 10)[0].count("Longbow") == 2 # Not with a bow: the pact weapon is a melee weapon
+
+def test_polearm_and_shadow_blade_with_a_shield():
+    glaive = Bg3Character("Glaive", classes=[["fighter", "Battle Master", 12]], feats=["Polearm Master", "Great Weapon Master"],
+                          fighting_styles=["Great Weapon Fighting"], routine="polearm")
+    names, c, _ = _attack_names(glaive, 8)
+    butt = next(a for a in c.attacks if a.name == "Polearm Butt End")
+    assert "Glaive" in names and butt.damage == "1d4" and butt.two_handed and butt.heavy # GWF and GWM apply to the other end too
+    shield = Bg3Character("Sword and board", classes=[["paladin", "Oath of Vengeance", 6], ["sorcerer", "Draconic Bloodline", 6]],
+                          fighting_styles=["Duelling"], routine="shadow_blade_shield", toggles={"booming_blade": False})
+    names, c, _ = _attack_names(shield, 12)
+    assert names == ["Shadow Blade", "Shadow Blade"] and c.dueling and not any(a.offhand for a in c.attacks)
+    # Paladin levels alone don't learn Shadow Blade: a Longsword (Strength, a shield) until a Sorcerer level
+    names, _, notes = _attack_names(shield, 5)
+    assert names == ["Longsword", "Longsword"] and any("Sorcerer, Warlock or Wizard" in n for n in notes)
+
+def test_sneak_attack_needs_a_finesse_or_ranged_weapon():
+    rapier = Bg3Character("Rapier", scores={"strength": 8, "dexterity": 15, "constitution": 15, "intelligence": 8, "wisdom": 14, "charisma": 10},
+                          bonus={"dexterity": 2, "constitution": 1}, classes=[["rogue", "Thief", 5]], routine="one_handed")
+    assert compile_character(rapier, 5)[0].once_per_turn_die_mod_list == ["3d6"]
+    glaive = Bg3Character("Glaive rogue", classes=[["rogue", "Swashbuckler", 5]], routine="polearm")
+    c, notes = compile_character(glaive, 5)
+    assert not c.once_per_turn_die_mod_list and any("finesse" in n for n in notes)
+
+def test_flick_and_sneak_attack_follow_a_finesse_weapon_from_gear():
+    """ Flick o' the Wrist and Rakish Sneak Attack need a finesse weapon: none with a plain glaive, both with The Dancing Breeze (a finesse glaive) """
+    from bg3.build import Bg3Build, compile_build
+    swash = Bg3Character("Swash", classes=[["rogue", "Swashbuckler", 12]], routine="polearm")
+    plain = compile_build(Bg3Build("Swash", "fighter_gwm", character=swash.to_dict()), "3")
+    assert not plain.once_per_turn_die_mod_list and not any("Flick" in a.name for a in plain.attacks)
+    breeze = compile_build(Bg3Build("Swash", "fighter_gwm", character=swash.to_dict(), equipment={"3": {"melee_main": "bg3:the_dancing_breeze"}}), "3")
+    assert breeze.once_per_turn_die_mod_list == ["6d6"] and any("Flick" in a.name for a in breeze.attacks)
+
+def test_reaction_attacks_and_the_halberd_of_vigilance():
+    """ Polearm Master and Sentinel add expected reaction attacks; the Halberd of Vigilance gives them advantage """
+    from bg3.build import compile_build
+    from bg3.presets import PRESETS
+    c = compile_build(PRESETS["Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel)"], "3")
+    reactions = [a for a in c.attacks if "reaction)" in a.name]
+    assert [a.uses_per_fight for a in reactions] == [1.0, 1.5] and all(a.advantage for a in reactions)
+    plain = compile_build(PRESETS["Battle Master: Glaive (Polearm Master, GWM, Sentinel)"], "3")
+    assert [a.advantage for a in plain.attacks if "reaction)" in a.name] == [True, False] # Sentinel: advantage on opportunity attacks only
+    off = Bg3Character.from_dict({**PRESETS["Battle Master: Glaive (Polearm Master, GWM, Sentinel)"].character, "toggles": {"reactions": False}})
+    assert not any("reaction)" in a.name for a in compile_character(off, 12)[0].attacks)
+
+def test_reaction_attacks_get_their_own_sneak_attack():
+    """ Sneak Attack is once per turn: a reaction attack on an enemy's turn adds its own, with a finesse weapon """
+    from bg3.build import compile_build
+    from bg3.presets import PRESETS
+    c = compile_build(PRESETS["Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel)"], "3")
+    reactions = [a for a in c.attacks if "reaction)" in a.name]
+    assert len(reactions) == 2 and all("3d6 slashing" in a.extra_damage_list and not a.once_per_turn_eligible for a in reactions)
+    assert c.once_per_turn_die_mod_list == ["3d6"]
