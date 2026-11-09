@@ -40,8 +40,8 @@ No outside help. Self cast Hex and Divine Favour stay, Reckless Attack still giv
 | 28 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 21.8 (#42) | 35.2 (#29) | 55.8 (#26) | 50 |
 | 29 | Sorcadin: Greatsword (GWF, GWM) | Preset | 30.9 (#15) | 34.4 (#31) | 40.9 (#43) | 49 |
 | 30 | Gloom Stalker (Archer) | Preset | 28.6 (#21) | 36.8 (#27) | 38.2 (#47) | 48 |
-| 31 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 31.4 (#13) | 29.8 (#40) | 43.8 (#39) | 48 |
-| 32 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 22.4 (#39) | 33.9 (#33) | 51.7 (#29) | 48 |
+| 31 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 22.4 (#39) | 33.9 (#33) | 51.7 (#29) | 48 |
+| 32 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 31.4 (#13) | 29.8 (#40) | 42.9 (#39) | 48 |
 | 33 | Sorcadin: Glaive (GWF, Polearm Master) | Preset | 26.8 (#25) | 30.6 (#38) | 47.0 (#36) | 47 |
 | 34 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 21.5 (#45) | 33.2 (#34) | 50.9 (#32) | 47 |
 | 35 | 8. Shadow Sorcadin | Build doc | 27.0 (#23) | 30.2 (#39) | 46.1 (#37) | 47 |
@@ -136,7 +136,7 @@ Bless, the build's own planned buffs, and advantage only with a dependable sourc
 | 41 | Sorcadin: Greatsword (GWF, GWM) | Preset | 32.2 (#31) | 36.5 (#42) | 50.1 (#48) | 42 |
 | 42 | Thief Monoclass (Thief 12) | Reddit (approx.) | 33.2 (#28) | 36.3 (#43) | 47.8 (#55) | 42 |
 | 43 | 28. Darkness Dirty Trickster | Build doc | 32.3 (#30) | 26.4 (#56) | 63.3 (#31) | 41 |
-| 44 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 32.7 (#29) | 32.8 (#47) | 51.8 (#47) | 41 |
+| 44 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 32.7 (#29) | 32.8 (#47) | 50.7 (#47) | 41 |
 | 45 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 23.4 (#50) | 39.4 (#37) | 61.7 (#33) | 41 |
 | 46 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 24.2 (#48) | 39.4 (#36) | 59.8 (#34) | 41 |
 | 47 | 18. The 11/1 Fire Sorlock | Build doc | 20.4 (#56) | 45.0 (#26) | 57.1 (#39) | 40 |
@@ -188,7 +188,7 @@ Round 1, everything: Bless, Haste, Phalar Aluve's Sing, advantage, the target he
 | 10 | Karlach (Berserker) | Preset | 112.1 (#8) | 137.4 (#9) | 168.1 (#19) | 69 |
 | 11 | 5. Arcane Deadeye | Build doc | 114.5 (#6) | 123.1 (#13) | 180.7 (#14) | 69 |
 | 12 | Padlock: Shadow Blade + shield | Preset | 101.1 (#13) | 133.9 (#11) | 175.6 (#15) | 67 |
-| 13 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Reddit (approx.) | 115.0 (#4) | 112.7 (#16) | 145.0 (#28) | 63 |
+| 13 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Reddit (approx.) | 115.0 (#4) | 112.7 (#16) | 145.0 (#27) | 63 |
 | 14 | Path of Giants Barbarian (Patch 8) | Preset | 96.2 (#14) | 126.8 (#12) | 150.0 (#25) | 61 |
 | 15 | 3. Hexwing Phantom | Build doc | 88.7 (#19) | 87.8 (#34) | 194.5 (#11) | 59 |
 | 16 | Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Preset | 103.6 (#12) | 100.4 (#23) | 139.9 (#32) | 58 |
@@ -200,11 +200,11 @@ Round 1, everything: Bless, Haste, Phalar Aluve's Sing, advantage, the target he
 | 22 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 77.8 (#26) | 99.6 (#25) | 152.6 (#23) | 53 |
 | 23 | The Waterdeep Brat (EK 11 / Hexblade 1) | Reddit (approx.) | 57.5 (#48) | 114.6 (#15) | 170.2 (#18) | 53 |
 | 24 | Sorcadin: Shadow Blade + shield | Preset | 64.6 (#38) | 116.1 (#14) | 154.3 (#22) | 53 |
-| 25 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 87.8 (#20) | 87.8 (#32) | 145.7 (#27) | 53 |
-| 26 | Gloom Stalker (Archer) | Preset | 93.4 (#16) | 104.7 (#21) | 108.5 (#40) | 52 |
+| 25 | Gloom Stalker (Archer) | Preset | 93.4 (#16) | 104.7 (#21) | 108.5 (#40) | 52 |
+| 26 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 87.8 (#20) | 87.8 (#32) | 141.4 (#31) | 52 |
 | 27 | 9. Hexblade Sorlock | Build doc | 65.9 (#36) | 79.6 (#42) | 193.2 (#12) | 52 |
-| 28 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Preset | 72.4 (#33) | 94.2 (#27) | 144.1 (#30) | 50 |
-| 29 | Padlock: Greatsword (GWF, GWM) | Preset | 62.5 (#40) | 102.5 (#22) | 142.2 (#31) | 49 |
+| 28 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Preset | 72.4 (#33) | 94.2 (#27) | 144.1 (#29) | 50 |
+| 29 | Padlock: Greatsword (GWF, GWM) | Preset | 62.5 (#40) | 102.5 (#22) | 142.2 (#30) | 49 |
 | 30 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Reddit (approx.) | 45.6 (#55) | 105.4 (#20) | 162.4 (#21) | 48 |
 | 31 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 76.5 (#28) | 89.3 (#31) | 124.5 (#36) | 48 |
 | 32 | 16. Karlach, God of Thunder | Build doc | 73.4 (#31) | 82.7 (#39) | 136.4 (#34) | 47 |
@@ -214,7 +214,7 @@ Round 1, everything: Bless, Haste, Phalar Aluve's Sing, advantage, the target he
 | 36 | Swashbuckler Rogue (Patch 8) | Preset | 67.9 (#35) | 99.7 (#24) | 119.2 (#38) | 47 |
 | 37 | 7. Patch 8 Hexadin / Lockadin | Build doc | 69.5 (#34) | 83.1 (#38) | 138.1 (#33) | 47 |
 | 38 | Sorcadin: Greatsword (GWF, GWM) | Preset | 84.5 (#21) | 84.2 (#36) | 107.0 (#42) | 46 |
-| 39 | Padlock: Glaive (GWF, Polearm Master) | Preset | 53.5 (#53) | 90.6 (#30) | 144.1 (#29) | 45 |
+| 39 | Padlock: Glaive (GWF, Polearm Master) | Preset | 53.5 (#53) | 90.6 (#30) | 144.1 (#28) | 45 |
 | 40 | Throwing Berserker GWM (Berserker 12) | Reddit (approx.) | 78.9 (#24) | 86.9 (#35) | 98.9 (#46) | 45 |
 | 41 | 13. Jedi Consular | Build doc | 78.2 (#25) | 82.1 (#40) | 98.5 (#47) | 44 |
 | 42 | Throwzerker (Giant, Tavern Brawler) | Preset | 73.4 (#30) | 90.9 (#29) | 94.6 (#50) | 44 |
@@ -312,7 +312,7 @@ Bless, the build's own planned buffs, and advantage only with a dependable sourc
 | 51 | Thief Monoclass (Thief 12) | Reddit (approx.) | 33.2 (#36) | 36.3 (#52) | 47.8 (#64) | 42 |
 | 52 | Evocation Wizard (Fireball, then Fire Bolt) | Preset | 22.0 (#64) | 35.4 (#56) | 73.9 (#32) | 42 |
 | 53 | 28. Darkness Dirty Trickster | Build doc | 32.3 (#39) | 26.4 (#68) | 63.3 (#39) | 41 |
-| 54 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 32.7 (#38) | 32.8 (#58) | 51.8 (#56) | 41 |
+| 54 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 32.7 (#38) | 32.8 (#58) | 50.7 (#56) | 41 |
 | 55 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 23.4 (#59) | 39.4 (#44) | 61.7 (#42) | 41 |
 | 56 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 24.2 (#57) | 39.4 (#43) | 59.8 (#44) | 41 |
 | 57 | Gale (Evoker) | Preset | 20.0 (#67) | 35.4 (#55) | 73.9 (#31) | 41 |
@@ -582,10 +582,10 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 | Path of Giants Barbarian (Patch 8) | Max damage gear | 44.5 / 56.8 / 69.4 | 17 / 14 / 14 | 41 / 32 / 27 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Caustic Band, The Mighty Cloth; Act 3: Legacy of the Masters, Caustic Band, The Mighty Cloth, Sarevok's Horned Helmet |
 | Path of Giants Barbarian (Patch 8) | Max AC gear | 44.5 / 50.6 / 59.6 | 19 / 22 / 22 | 47 / 42 / 38 | Act 1: Adamantine Scale Mail, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Dark Justiciar Half-Plate (Very Rare), Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Dark Justiciar Half-Plate (Very Rare), Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
 | Path of Giants Barbarian (Patch 8) | Best overall score gear | 44.5 / 50.6 / 56.2 | 19 / 21 / 22 | 47 / 42 / 38 | Act 1: Adamantine Scale Mail, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Dark Justiciar Half-Plate (Very Rare), Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection; Act 3: Dark Justiciar Half-Plate (Very Rare), Gloves of Dexterity, Ring of Protection, The Whispering Promise, Cloak of Protection, Mask of Soul Perception, Evasive Shoes |
-| Radiant Protector (Crown Paladin 12) | Planned gear | 32.7 / 32.8 / 51.8 | 9 / 9 / 9 | 30 / 28 / 27 | - |
-| Radiant Protector (Crown Paladin 12) | Max damage gear | 36.5 / 47.5 / 85.0 | 9 / 9 / 9 | 32 / 34 / 36 | Act 1: Caustic Band; Act 2: Caustic Band, The Mighty Cloth, Dark Justiciar Gauntlets (Rare), Risky Ring; Act 3: Caustic Band, The Mighty Cloth, Helldusk Gloves, Risky Ring, Sarevok's Horned Helmet |
-| Radiant Protector (Crown Paladin 12) | Max AC gear | 36.5 / 36.4 / 69.7 | 20 / 23 / 25 | 47 / 47 / 51 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Dwarven Splintmail, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Helldusk Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
-| Radiant Protector (Crown Paladin 12) | Best overall score gear | 36.5 / 35.9 / 69.7 | 20 / 22 / 23 | 47 / 48 / 52 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Dwarven Splintmail, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection; Act 3: Helldusk Armour, Wondrous Gloves, The Whispering Promise, Risky Ring, Cloak of Protection, Mask of Soul Perception |
+| Radiant Protector (Crown Paladin 12) | Planned gear | 32.7 / 32.8 / 50.7 | 9 / 9 / 9 | 30 / 28 / 27 | - |
+| Radiant Protector (Crown Paladin 12) | Max damage gear | 36.5 / 47.5 / 83.3 | 9 / 9 / 9 | 32 / 34 / 36 | Act 1: Caustic Band; Act 2: Caustic Band, The Mighty Cloth, Dark Justiciar Gauntlets (Rare), Risky Ring; Act 3: Caustic Band, The Mighty Cloth, Helldusk Gloves, Risky Ring, Sarevok's Horned Helmet |
+| Radiant Protector (Crown Paladin 12) | Max AC gear | 36.5 / 36.4 / 68.1 | 20 / 23 / 25 | 47 / 47 / 51 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Dwarven Splintmail, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Helldusk Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Radiant Protector (Crown Paladin 12) | Best overall score gear | 36.5 / 35.9 / 68.1 | 20 / 22 / 23 | 47 / 48 / 52 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Dwarven Splintmail, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection; Act 3: Helldusk Armour, Wondrous Gloves, The Whispering Promise, Risky Ring, Cloak of Protection, Mask of Soul Perception |
 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Planned gear | 43.9 / 42.0 / 58.5 | 14 / 14 / 14 | 35 / 28 / 29 | - |
 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Max damage gear | 52.9 / 58.5 / 84.2 | 15 / 15 / 15 | 42 / 34 / 34 | Act 1: The Graceful Cloth, Gloves of Dexterity, Caustic Band; Act 2: The Graceful Cloth, Dark Justiciar Gauntlets (Rare), Caustic Band; Act 3: The Graceful Cloth, Helldusk Gloves, Caustic Band, Sarevok's Horned Helmet |
 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Max AC gear | 49.7 / 50.6 / 67.7 | 19 / 23 / 27 | 45 / 48 / 48 | Act 1: Padded Armour +2, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Studded Leather Armour +2, Wondrous Gloves, Ring of Protection, Caustic Band, Helmet of Arcane Acuity, Cloak of Protection, Evasive Shoes; Act 3: Studded Leather Armour +2, Wondrous Gloves, Ring of Protection, Caustic Band, Helmet of Arcane Acuity, Cloak of Protection, Evasive Shoes, Shield (Hope) |

@@ -546,9 +546,14 @@ def _class_features(character, c, levels, subs, notes, main_finesse=None):
             mean = sum(min(1 + level, 5) for level in day) / len(day)
             dice, rest = int(mean), round((mean - int(mean)) * 4.5)
             _once_per_turn(c, f"{dice}d8", round(len(day) / FIGHTS_PER_LONG_REST, 2))
+            c.once_per_turn_damage_type = "radiant"
             if rest:
                 c.once_per_turn_die_mod_list = [*c.once_per_turn_die_mod_list, str(rest)]
-    c.improved_divine_smite = paladin >= 11 and weapon
+    if paladin >= 11 and weapon:
+        # Improved Divine Smite: 1d8 radiant on every melee weapon hit, typed so it takes radiant resistance or vulnerability
+        for a in c.attacks:
+            if a.type == "weapon (melee)":
+                a.extra_damage_list = [*a.extra_damage_list, "1d8 radiant"]
     if paladin >= 3 and character.toggle("vow"):
         oath = subs.get("paladin")
         if oath == "Oath of Vengeance":

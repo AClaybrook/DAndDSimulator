@@ -26,6 +26,9 @@
 - **Reaction attacks:** Polearm Master (an enemy entering your reach, about once a fight) and Sentinel (an enemy next to you attacking an
   ally, about every other round) as expected reaction attacks, with advantage from the Halberd of Vigilance; a "reactions" toggle.
   Finesse weapons from gear hit with the higher of Strength and Dexterity.
+- **Smites keep their own damage type:** once per turn damage can have its own type (radiant for smites) with its own resistance or
+  vulnerability, in the analytic, exact and simulated engines; Improved Divine Smite is a radiant rider. Before, a smite on a Shadow
+  Blade hit took the blade's psychic vulnerability from the Resonance Stone. docs/padlock_vs_sorcadin.md has a Resonance Stone section.
 - **Elixirs:** Bloodlust gives an extra Attack action on a kill (estimated every other turn against a group), every elixir replaces the one
   before (Heroism included), Viciousness and Battlemage's Power come from Act 2 trader stock, and each elixir says where to get it.
   docs/padlock_vs_sorcadin.md compares them per build and act (docs/elixirs.png).

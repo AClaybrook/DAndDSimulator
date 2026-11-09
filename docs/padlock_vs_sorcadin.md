@@ -36,7 +36,7 @@ the engine (bg3/character.py, computations/analytic.py).
 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | 22 / 30 | 34 / 46 | 53 / 72 | 13 |
 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | 19 / 19 | 52 / 75 | 95 / 169 | 18 |
 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | 27 / 47 | 41 / 65 | 63 / 133 | 14 |
-| Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | 9 / 12 | 8 / 10 | 50 / 60 | 11 |
+| Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | 9 / 12 | 8 / 10 | 52 / 72 | 11 |
 | Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | 26 / 36 | 22 / 31 | 25 / 36 | 6 |
 | Padlock: Shadow Blade + shield (Honour Mode) | 31 / 31 | 57 / 80 | 63 / 83 | 23 |
 
@@ -82,8 +82,8 @@ the engine (bg3/character.py, computations/analytic.py).
 | Padlock, Halberd of Vigilance (Polearm Master) + Hex | 112 / 188 |
 | Padlock, Shadow Blade + shield + Hex | 98 / 131 |
 | Pure Hexblade 12, Shadow Blade + dagger, darkness advantage + Hex | 93 / 93 |
-| Fighter 6 / Swashbuckler 6, The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | 59 / 76 (74 with advantage) |
-| Fighter 8 / Swashbuckler 4, The Dancing Breeze (Dexterity, Polearm Master, GWM) | 52 / 64 (77 with advantage) |
+| Fighter 6 / Swashbuckler 6, The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | 59 / 89 (74 with advantage) |
+| Fighter 8 / Swashbuckler 4, The Dancing Breeze (Dexterity, Polearm Master, GWM) | 52 / 73 (77 with advantage) |
 
 - **The Dancing Breeze** is a +2 finesse glaive with Whirlwind Attack (hits every enemy around you). Its point is a Dexterity Rogue with
   reach: Sneak Attack is once per *turn*, so with Polearm Master and Sentinel each reaction attack on an enemy's turn adds another Sneak
@@ -155,6 +155,36 @@ Sustained damage with no elixir → with the best elixir you can have by then (o
   a third attack (no Paladin, Fighter or Ranger 5). Its weapon is bound with Bind Hexed Weapon, so it attacks with **Charisma** (bg3.wiki:
   even if Strength or Dexterity is higher). In Act 3 The Dancing Breeze (finesse) turns Sneak Attack back on, and with its gear and
   Swarmkeeper's die it reaches 93.
+
+## The Resonance Stone
+
+![Act 3 damage without and with psychic vulnerability](resonance_stone.png)
+
+The Resonance Stone (Mind Flayer Colony, end of Act 2; bg3.wiki) gives everyone within 9 m **Steeped in Bliss**: vulnerable to psychic
+damage and disadvantage on Intelligence, Wisdom and Charisma saves (undead and constructs are immune). It is carried, not worn.
+
+| Act 2 / Act 3, sustained / burst | Without the stone | With the Resonance Stone |
+|---|---|---|
+| Padlock, Shadow Blade + shield | 57 / 80 · 87 / 120 | 100 / 123 · 156 / 190 |
+| Pure Hexblade, Shadow Blade + dagger, darkness | 48 · 82 | 91 · 154 |
+| Nuclear Pure Hexblade (own gear) | 47 · 78 | 82 · 130 |
+| Sorcadin, Shadow Blade + shield | 44 / 65 · 62 / 114 | 80 / 100 · 108 / 159 |
+| Battle Master, Halberd, with advantage | 71 / 101 · 96 / 140 | 71 / 101 · 96 / 140 |
+| Padlock, Halberd of Vigilance | 52 / 75 · 95 / 169 | 52 / 75 · 95 / 169 |
+| Hexwing Phantom (own gear) | 39 · 93 | 39 · 93 |
+| The Godblade (own gear) | 42 · 57 / 82 | 71 · 89 / 114 |
+| Arcane Deadeye (own gear) | 41 / 56 · 75 / 110 | 46 / 60 · 80 / 115 |
+| Sorcadin, Halberd of Vigilance | 41 / 65 · 63 / 133 | 41 / 65 · 63 / 133 |
+| Arcane Archer Fighter 12 (own gear) | 42 / 57 · 56 / 76 | 47 / 62 · 60 / 81 |
+| Fighter 6 / Swash 6, Dancing Breeze | 8 / 10 · 58 / 89 | 8 / 10 · 58 / 89 |
+
+- **Shadow Blade builds double**: the whole Shadow Blade hit is psychic (dice, ability modifier, Duelling, Hexblade's Curse, Lifedrinker
+  is necrotic and stays), so the Padlock goes from 87 to 156 and the pure Hexblade from 82 to 154 in Act 3. Smites stay radiant, so the
+  Sorcadin gains less (62 to 108) and the Halberd, glaive and greatsword builds gain nothing.
+- With the stone, Shadow Blade + shield is clearly the best weapon for every Paladin and Warlock build; without it the Halberd of Vigilance
+  is level or ahead. Arcane Archers gain about 5 from Beguiling Arrow's psychic 2d6.
+- **The catch:** it also affects your party within 9 m, so enemy psychic damage (mind flayers, intellect devourers, psionic attacks) hits
+  you double, and your allies get disadvantage on mental saves too. The wiki also notes it sometimes stops working after leaving Act 2.
 
 ## Lockadin, Sorcadin and pure Hexblade variants
 

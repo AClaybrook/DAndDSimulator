@@ -86,16 +86,22 @@ def outcome_damage(d, outcome, once=False):
             main = main + base.mapped(_floor_times(d["save_success_multiplier"]))
     else:
         main = base
-        if once:
+        separate = once and d.get("once_damage_multiplier") is not None # Its own damage type: added after the attack's multiplier
+        if once and not separate:
             main = main + dice(d["once_num_die"], d["once_die_size"], d["reroll_on"]) + d["once_modifier"]
         if outcome == "crit":
             main = main + damage_dice(d) + dice(d["crit_num_die"], d["crit_damage_die"], d["reroll_on"]) + d["crit_damage_modifier"]
-            if once:
+            if once and not separate:
                 main = main + dice(d["once_num_die"], d["once_die_size"], d["reroll_on"])
     if d["modifier"] < 0 or d["miss_damage_modifier"] < 0 or d["crit_damage_modifier"] < 0 or d["once_modifier"] < 0:
         main = main.mapped(lambda v: max(v, 0))
     if d["damage_multiplier"] != 1:
         main = main.mapped(_floor_times(d["damage_multiplier"]))
+    if outcome != "miss" and once and d.get("once_damage_multiplier") is not None:
+        extra = dice(d["once_num_die"], d["once_die_size"], d["reroll_on"]) + d["once_modifier"]
+        if outcome == "crit":
+            extra = extra + dice(d["once_num_die"], d["once_die_size"], d["reroll_on"])
+        main = main + extra.mapped(lambda v, mult=d["once_damage_multiplier"]: int(np.floor(max(v, 0) * mult)))
     if outcome != "miss":
         for n, s, m, mult in zip(d.get("rider_num_die") or [], d.get("rider_die_size") or [], d.get("rider_modifier") or [],
                                  d.get("rider_multiplier") or []):
