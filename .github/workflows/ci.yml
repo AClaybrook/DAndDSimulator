@@ -39,7 +39,8 @@ jobs:
         run: npm run build
 
   smoke:
-    runs-on: ubuntu-latest
+    # Pinned: Playwright 1.56 has no browser build for ubuntu-latest (26.04) yet
+    runs-on: ubuntu-24.04
     needs: frontend
     steps:
       - uses: actions/checkout@v4
