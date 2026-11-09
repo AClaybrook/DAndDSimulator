@@ -132,6 +132,30 @@ Sustained damage with no elixir → with the best elixir you can have by then (o
 - **Battlemage's Power** does nothing for weapon attacks (Shadow Blade and smites aren't spell attacks); it only adds a little to the
   Sorcadin's Quickened Fireball (+3 DC).
 
+## Arcane Archers and the Hexwing
+
+| Act 3, single target, sustained | No gear | Its own gear | + Humanoid Slaying arrow a round | + Smokepowder arrow a round |
+|---|---|---|---|---|
+| Arcane Archer Fighter 12 (Sharpshooter, Archery) | 37 | 56 | 64 | 74 |
+| 5. Arcane Deadeye (Arcane Archer 11 / War Cleric 1; Gontr Mael in Act 3) | 34 | 75 | 85 | 96 |
+| 3. Hexwing Phantom (Swashbuckler 4 / Hexblade 5 / Swarmkeeper 3; The Dancing Breeze in Act 3) | | 93 | | |
+| For scale: Padlock, Shadow Blade + shield (no gear) | 87 | | | |
+
+- **Arcane Shots** are counted: 4 / 7 / 10 Arcane Arrows a short rest at Fighter 3 / 7 / 10 (bg3.wiki), one per round on the first
+  attack (Beguiling Arrow, +2d6 psychic) until they run out, which they rarely do in a 3 round fight.
+- **Special arrows** (consumables, one a round on the first attack): elemental arrows (Fire, Ice, Lightning, Acid, from Act 1) add 2d4
+  that a Dexterity save negates, about +1 to +2 a round. Slaying arrows (trader level 6) double the weapon's base damage against one
+  creature type, Sharpshooter's +10 included: Humanoid Slaying adds about +7 to +10 a round against humanoids. Smokepowder Arrows (trader
+  level 9) add 4d6 fire + 4d6 force, about +15 to +20 a round. They cost gold and run out; elemental arrows are plentiful.
+- **Where archers stand:** without gear a Fighter archer is level with the no gear Battle Master (no smites, no advantage, Sharpshooter's
+  -5 against AC 18). With their gear and a slaying or Smokepowder arrow every round they reach the Padlock's range (75 to 96). Not
+  counted here: safety at range, high ground (+2 to hit), and the control and area Arcane Shots (Bursting, Banishing, Piercing).
+- **Hexwing at level 8:** with the doc's order (Swashbuckler 4 first) it is Rogue 4 / Hexblade 4: one attack, plus Flick o' the Wrist as the
+  bonus action. Taking Hexblade 5 first gives two attacks (Deepened Pact) but no Flick yet: about the same damage at level 8. It never gets
+  a third attack (no Paladin, Fighter or Ranger 5). Its weapon is bound with Bind Hexed Weapon, so it attacks with **Charisma** (bg3.wiki:
+  even if Strength or Dexterity is higher). In Act 3 The Dancing Breeze (finesse) turns Sneak Attack back on, and with its gear and
+  Swarmkeeper's die it reaches 93.
+
 ## Lockadin, Sorcadin and pure Hexblade variants
 
 | Build (Shadow Blade + shield unless noted) | Act 1 | Act 2 | Act 3 | Act 3 without advantage |
