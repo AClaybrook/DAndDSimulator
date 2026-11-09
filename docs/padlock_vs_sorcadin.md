@@ -183,6 +183,20 @@ damage and disadvantage on Intelligence, Wisdom and Charisma saves (undead and c
   Sorcadin gains less (62 to 108) and the Halberd, glaive and greatsword builds gain nothing.
 - With the stone, Shadow Blade + shield is clearly the best weapon for every Paladin and Warlock build; without it the Halberd of Vigilance
   is level or ahead. Arcane Archers gain about 5 from Beguiling Arrow's psychic 2d6.
+- **It's a party choice.** Anyone's psychic damage against an enemy near the stone doubles, so the question is whether your party has
+  psychic damage to spend it on. Example Act 3 party (Padlock, Halberd Battle Master with advantage, Arcane Deadeye, Sorcadin):
+
+  | Party, Act 3 sustained | Without the stone | With the stone |
+  |---|---|---|
+  | Halberd variants (Padlock and Sorcadin with the Halberd of Vigilance) | 329 | 334 |
+  | Shadow Blade variants (Padlock and Sorcadin with Shadow Blade + shield) | 319 | 440 |
+
+  Without the stone the Halberd party is slightly ahead; with it the Shadow Blade party is a third stronger. Small psychic riders count
+  too: the Strange Conduit Ring (Act 1, +1d4 psychic on weapon hits while you concentrate, i.e. on Hex) takes a Halberd Padlock with Hex
+  from 123 to 135 with the stone, and a Shadow Blade Padlock with Hex from 106 to 183.
+- **When it applies:** an enemy within 9 m of whoever carries the stone (it works from the inventory, nothing to equip), that isn't
+  undead or a construct. Give it to the front liner who stands next to your targets; ranged allies benefit when their target is in that
+  radius. In the planner: Party tab, Synergies, tick Resonance Stone (offered from Act 2).
 - **The catch:** it also affects your party within 9 m, so enemy psychic damage (mind flayers, intellect devourers, psionic attacks) hits
   you double, and your allies get disadvantage on mental saves too. The wiki also notes it sometimes stops working after leaving Act 2.
 
