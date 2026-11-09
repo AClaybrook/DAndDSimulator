@@ -58,10 +58,15 @@ jobs:
         run: cd frontend && npm run build
       - name: Start the app
         run: |
-          uv run python -m api 8000 > api.log 2>&1 &
+          # The venv's Python, not `uv run`: a running uv process holds the cache lock and the post-job cache prune times out
+          .venv/bin/python -m api 8000 > api.log 2>&1 &
+          echo $! > api.pid
           for i in $(seq 1 60); do curl -sf http://localhost:8000/api/simulator/options > /dev/null && break; sleep 1; done
       - name: Smoke test every page in a browser
         run: cd frontend && npm run smoke
       - name: Server log
         if: failure()
         run: cat api.log
+      - name: Stop the app
+        if: always()
+        run: kill "$(cat api.pid)" || true
