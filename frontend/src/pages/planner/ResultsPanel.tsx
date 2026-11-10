@@ -32,7 +32,8 @@ export function ResultsPanel({ options, evaluation }: { options: PlannerOptions;
     enabled: compare.length > 0 && Boolean(enemy),
     placeholderData: (previous) => previous,
   })
-  const short = (name: string) => name.split(' (')[0]
+  // A name short enough to sit beside the line: 'Light Cleric: Spirit Guardians + ...' -> 'Light Cleric'
+  const short = (name: string) => { const s = name.split(' (')[0].split(':')[0]; return s.length > 20 ? `${s.slice(0, 19)}…` : s }
   const line = (m: MemberResult, color: string, width: number, dash?: string) => ({
     type: 'scatter', mode: 'lines+markers', name: m.name, x: ACTS.map((a) => `Act ${a}`), y: ACTS.map((a) => m.acts[a].damage[enemies - 1]),
     customdata: ACTS.map((a) => m.acts[a].level), line: { color, width, dash }, marker: { size: dash ? 6 : 8, color },
