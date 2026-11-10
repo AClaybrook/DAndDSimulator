@@ -6,7 +6,7 @@ from computations.models import STATS
 from computations.numerical_simulation import simulate_sweep
 from game_data import RULESETS
 from game_data.classes import character_at_level
-from utilities.helper_functions import timeit
+from computations.timing import timeit
 
 def primary_stat(character):
     """ The ability score most of the character's attacks use """

@@ -262,10 +262,12 @@ def import_doc(source):
     """ Re-imports the example builds from a build reference document link (bg3.doc_import), replacing bg3/data/doc_builds.json.
         Returns {builds: [{name, notes}]} or {problems} """
     import json
+    import re
     import urllib.error
     from bg3.doc_import import OUT, fetch_text, import_text
-    if not source.startswith(("https://", "http://")):
-        return {"problems": ["Paste a link to the document (https://...)"]}
+    # Only Google Docs links: the server fetches the link itself, so it mustn't be pointed at anything else
+    if not re.match(r"https://docs\.google\.com/document/d/[\w-]+", source):
+        return {"problems": ["Paste a link to a Google Doc (https://docs.google.com/document/d/...)"]}
     try:
         builds = import_text(fetch_text(source))
     except (urllib.error.URLError, TimeoutError, ValueError) as e:

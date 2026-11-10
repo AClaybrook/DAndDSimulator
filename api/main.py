@@ -2,6 +2,7 @@
 
     uv run uvicorn api.main:app --port 8000     (or: uv run python -m api)
     During front end development, `npm run dev` in frontend/ proxies /api here """
+import os
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -13,6 +14,13 @@ from pydantic import BaseModel, Field
 from api import leaderboard, map as act_map, planner, simulator
 
 app = FastAPI(title="D&D Damage Simulator")
+# A hosted copy is shared by its visitors, so nothing they send may change what the others see: set DAMAGE_LAB_READ_ONLY=1 there
+READ_ONLY = os.environ.get("DAMAGE_LAB_READ_ONLY", "").lower() in ("1", "true", "yes")
+
+def writable(what):
+    if READ_ONLY:
+        raise HTTPException(403, f"{what} is switched off on this shared copy. Run the app on your own machine to use it")
+
 app.add_middleware(GZipMiddleware, minimum_size=2000)
 ROOT = Path(__file__).parent.parent
 DIST = ROOT / "frontend" / "dist"
@@ -119,6 +127,7 @@ def leaderboard_run(run_id: int):
 
 @app.post("/api/leaderboard/save")
 def leaderboard_save(request: SaveRequest):
+    writable("Saving leaderboard runs")
     return leaderboard.save(request.party, request.label, request.with_variants)
 
 @app.get("/api/leaderboard/build/{fingerprint}")
@@ -175,7 +184,7 @@ class AdviceRequest(PlannerRequest):
 
 @app.get("/api/planner/options")
 def planner_options():
-    return planner.options()
+    return {**planner.options(), "readOnly": READ_ONLY}
 
 @app.post("/api/planner/evaluate")
 def planner_evaluate(request: PlannerRequest):
@@ -209,6 +218,7 @@ class ImportRequest(BaseModel):
 
 @app.post("/api/planner/import-doc")
 def planner_import_doc(request: ImportRequest):
+    writable("Importing a build document")
     return planner.import_doc(request.source.strip())
 
 class SendRequest(PartyRequest):

@@ -31,7 +31,7 @@ pythonpath = ["."]
 [tool.ruff]
 line-length = 160
 target-version = "py311"
-extend-exclude = ["random"]
+extend-exclude = []
 
 [tool.ruff.format]
 quote-style = "preserve"

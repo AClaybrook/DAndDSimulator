@@ -113,4 +113,16 @@ def test_build_doc_import(monkeypatch, tmp_path):
     result = client.post("/api/planner/import-doc", json={"source": "https://docs.google.com/document/d/x/edit"}).json()
     assert [b["name"] for b in result["builds"]] == ["1. Test Champion"] and (tmp_path / "doc_builds.json").exists()
     monkeypatch.setattr(doc_import, "fetch_text", lambda source: "nothing here")
-    assert client.post("/api/planner/import-doc", json={"source": "https://example.com"}).json()["problems"]
+    assert client.post("/api/planner/import-doc", json={"source": "https://docs.google.com/document/d/y/edit"}).json()["problems"]
+    # The server fetches the link itself, so only Google Docs links are followed
+    for link in ["https://example.com", "http://169.254.169.254/latest/meta-data", "https://docs.google.com.evil.example/document/d/x"]:
+        assert "Google Doc" in client.post("/api/planner/import-doc", json={"source": link}).json()["problems"][0]
+
+def test_a_shared_copy_is_read_only(monkeypatch):
+    """ With DAMAGE_LAB_READ_ONLY set (a hosted copy), visitors can't replace the example builds or write leaderboard runs """
+    import api.main as main
+    monkeypatch.setattr(main, "READ_ONLY", True)
+    assert client.post("/api/planner/import-doc", json={"source": "https://docs.google.com/document/d/x/edit"}).status_code == 403
+    assert client.post("/api/leaderboard/save", json={"party": [], "label": "x"}).status_code == 403
+    assert client.get("/api/planner/options").json()["readOnly"] is True
+    assert client.post("/api/planner/evaluate", json={"party": []}).status_code == 200 # Everything that only computes still works

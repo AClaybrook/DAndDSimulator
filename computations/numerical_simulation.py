@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from computations.models import calculate_attack_and_damage_context
-from utilities.helper_functions import timeit
+from computations.timing import timeit
 
 # Set random seed for reproducibility
 SEED = 1

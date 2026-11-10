@@ -8,7 +8,7 @@ from computations.models import Attack, Character, Enemy
 from game_data import enemy_from_monster
 from game_data.classes import BUILDS, build_character
 
-TEST_FILES = Path(__file__).parent.parent / "test_files"
+TEST_FILES = Path(__file__).parent / "fixtures"
 
 def round_trip(character):
     return Character.from_dict(json.loads(json.dumps(character.to_dict())))
