@@ -45,7 +45,7 @@ APPLIES_TO = {
 class Effect:
     """ One modelled effect of an item or buff.
         kind: ability_min (stat becomes at least value), ability_bonus (+value, up to max_value), attack_bonus, attack_dice,
-              damage_bonus (same type as the attack), damage_bonus_ability (the stat's modifier, or the attack's own stat for 'spellcasting'),
+              damage_bonus (same type as the attack), damage_bonus_ability (the stat's modifier, the attack's own stat for 'spellcasting', the items' casting ability for 'casting'),
               extra_damage (typed, i.e. '1d4 fire'), crit_damage (extra damage on a crit), crit_range (crit on value lower),
               advantage, damage_reroll (reroll damage dice at or below value), miss_damage_ability (the stat's modifier on a miss, Tenacity),
               once_per_turn_bonus (more Sneak Attack damage), spell_dc, extra_action (Haste), lightning_charges (gained on hits of applies_to),
@@ -203,8 +203,13 @@ def apply_effect(character, effect, own_attacks=(), honour_mode=False):
             elif kind == "damage_bonus":
                 a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(value)]
             elif kind == "damage_bonus_ability":
-                stat = a.ability_stat if effect.stat in ("", "spellcasting") else effect.stat
-                a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(character.ability_modifier(stat))]
+                if effect.stat == "casting":
+                    # Arcane Synergy: the modifier of the ability the character's items cast with, on top of the weapon's own
+                    stat = getattr(character, "casting_stat", "") or max(("intelligence", "wisdom", "charisma"), key=character.ability_modifier)
+                    amount = max(character.ability_modifier(stat), 0)
+                else:
+                    amount = character.ability_modifier(a.ability_stat if effect.stat in ("", "spellcasting") else effect.stat)
+                a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(amount)]
             elif kind == "crit_damage":
                 a.bonus_crit_die_mod_list = [*a.bonus_crit_die_mod_list, str(value)]
             elif kind == "extra_damage":
@@ -239,14 +244,17 @@ def equip_weapon(attack, item):
     props = w.get("properties", [])
     two_handed = "two-handed" in props or (attack.two_handed and "versatile" in props and not attack.offhand)
     damage = w.get("versatile_damage") if two_handed and "versatile" in props and w.get("versatile_damage") else w["damage"]
+    # BG3's Great Weapon Master counts any melee weapon held in both hands, a versatile one included (bg3.wiki, All In): the engine's
+    # test for it is the heavy flag
+    heavy = "heavy" in props or (two_handed and w.get("kind") == "melee")
     suffix = f" ({attack.label})" if attack.label else ""
     if "butt_end" in attack.tags: # The other end of the new polearm: its enhancement and properties, still 1d4 bludgeoning
-        return replace(attack, base=w.get("base") or attack.base, weapon_enhancement=int(w.get("enhancement", 0)), two_handed=two_handed, heavy="heavy" in props,
+        return replace(attack, base=w.get("base") or attack.base, weapon_enhancement=int(w.get("enhancement", 0)), two_handed=two_handed, heavy=heavy,
                        bonus_attack_die_mod_list=list(attack.bonus_attack_die_mod_list), bonus_damage_die_mod_list=list(attack.bonus_damage_die_mod_list),
                        extra_damage_list=list(attack.extra_damage_list))
     return replace(attack, name=item.name + suffix, base=w.get("base") or attack.base, damage=damage, damage_type=w["damage_type"],
                    weapon_enhancement=int(w.get("enhancement", 0)),
-                   two_handed=two_handed, heavy="heavy" in props,
+                   two_handed=two_handed, heavy=heavy,
                    bonus_attack_die_mod_list=list(attack.bonus_attack_die_mod_list), bonus_damage_die_mod_list=list(attack.bonus_damage_die_mod_list),
                    extra_damage_list=list(attack.extra_damage_list))
 

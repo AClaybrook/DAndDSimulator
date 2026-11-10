@@ -293,3 +293,22 @@ def test_necromancy_staff_and_amulet_of_the_devout():
         return by_name["Inflict Wounds (Touch of Death)"], by_name["Inflict Wounds"]
     assert casts({}) == (1.5, 2.5) and casts({"amulet": amulet}) == (1.75, 2.25)
     assert casts({"melee_main": staff}) == (1.5, 2.5) and casts({"melee_main": staff}, [condition_id(staff, 2)]) == (1.5, 3.5)
+
+def test_arcane_synergy_gwm_in_two_hands_and_saving_throw_bonuses():
+    """ bg3.wiki: Arcane Synergy adds the spellcasting ability modifier to weapon attacks; Great Weapon Master: All In works with a
+        versatile weapon held in both hands; the Helmet of Arcane Acuity gives +1 to Dexterity saving throws, not Dexterity """
+    from bg3.character import Bg3Character
+    scores = {"strength": 8, "dexterity": 15, "constitution": 14, "intelligence": 8, "wisdom": 12, "charisma": 15}
+    hexblade = Bg3Character(scores=scores, bonus={"charisma": 2, "dexterity": 1}, classes=[["warlock", "The Hexblade", 12]], routine="two_handed",
+                            feats=["Great Weapon Master"], toggles={"curse": False, "booming_blade": False})
+    ring, phalar = "bg3:ring_of_arcane_synergy", "bg3:phalar_aluve"
+    def main_attack(gear, conditions=()):
+        build = Bg3Build(name="Hexblade", preset="", character=hexblade.to_dict(), equipment={"3": gear}, conditions=list(conditions))
+        return compile_build(build, "3").attacks[0]
+    bare = main_attack({"melee_main": phalar})
+    assert bare.heavy and bare.damage == "1d10" # A longsword in two hands: All In's -5/+10 applies
+    off, on = main_attack({"melee_main": phalar, "ring_1": ring}), main_attack({"melee_main": phalar, "ring_1": ring}, [condition_id(ring, 0)])
+    assert off.bonus_damage_die_mod_list == bare.bonus_damage_die_mod_list and on.bonus_damage_die_mod_list == [*bare.bonus_damage_die_mod_list, "3"] # CHA 17
+    helmet = catalog()["bg3:helmet_of_arcane_acuity"]
+    assert helmet.effects == [] and helmet.notes.startswith("Dexterity saving throws +1")
+    assert catalog()["bg3:khalid_s_gift"].effects[0].kind == "ability_bonus" # 'Wisdom +1 (up to 21)' is still an ability bonus

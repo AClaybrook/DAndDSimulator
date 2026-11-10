@@ -2068,10 +2068,18 @@
    "rarity": "Rare",
    "unique": true,
    "weapon": null,
-   "effects": [],
-   "notes": "When you inflict a condition, gain Arcane Synergy for 2 turns",
+   "effects": [
+    {
+     "kind": "damage_bonus_ability",
+     "stat": "casting",
+     "applies_to": "weapon",
+     "condition": "Arcane Synergy: after inflicting a condition (Booming Blade's counts), for 2 turns"
+    }
+   ],
+   "notes": "",
    "location": "Crèche Y'llek",
-   "source": "https://bg3.wiki/wiki/Diadem_of_Arcane_Synergy"
+   "source": "https://bg3.wiki/wiki/Diadem_of_Arcane_Synergy",
+   "reviewed": true
   },
   {
    "key": "bg3:frayed_drow_hood",
@@ -2458,10 +2466,18 @@
    "rarity": "Rare",
    "unique": true,
    "weapon": null,
-   "effects": [],
-   "notes": "When you deal damage with a Cantrip, you gain Arcane Synergy for 2 turns",
+   "effects": [
+    {
+     "kind": "damage_bonus_ability",
+     "stat": "casting",
+     "applies_to": "weapon",
+     "condition": "Arcane Synergy: after dealing damage with a cantrip (Booming Blade counts), for 2 turns"
+    }
+   ],
+   "notes": "",
    "location": "Crèche Y'llek",
-   "source": "https://bg3.wiki/wiki/Ring_of_Arcane_Synergy"
+   "source": "https://bg3.wiki/wiki/Ring_of_Arcane_Synergy",
+   "reviewed": true
   },
   {
    "key": "bg3:ring_of_being_really_invisible",
@@ -7519,14 +7535,8 @@
    "rarity": "Rare",
    "unique": true,
    "weapon": null,
-   "effects": [
-    {
-     "kind": "ability_bonus",
-     "stat": "strength",
-     "value": 1
-    }
-   ],
-   "notes": "Circuitry Interface",
+   "effects": [],
+   "notes": "Strength saving throws +1; Circuitry Interface",
    "location": "Last Light Inn",
    "source": "https://bg3.wiki/wiki/Gloves_of_the_Automaton"
   },
@@ -7905,14 +7915,8 @@
    "rarity": "Uncommon",
    "unique": true,
    "weapon": null,
-   "effects": [
-    {
-     "kind": "ability_bonus",
-     "stat": "dexterity",
-     "value": 1
-    }
-   ],
-   "notes": "Whenever you deal damage with a weapon attack, you gain Arcane Acuity for 2 turns",
+   "effects": [],
+   "notes": "Dexterity saving throws +1; Whenever you deal damage with a weapon attack, you gain Arcane Acuity for 2 turns",
    "location": "Mason's Guild",
    "source": "https://bg3.wiki/wiki/Helmet_of_Arcane_Acuity"
   },
@@ -13593,10 +13597,17 @@
      "two-handed"
     ]
    },
-   "effects": [],
-   "notes": "Celestial Haste recharge=Long Rest; This object shines with a glowing light in a radius of ft=20 m=6; Toggle this to douse and rekindle the light; On a hit, possibly inflict Guiding Bolt upon the target",
+   "effects": [
+    {
+     "kind": "advantage",
+     "applies_to": "self",
+     "condition": "Promised Victory: a hit marks the target with Guiding Bolt until the end of the turn, so the next shot has Advantage (counted on every shot, the first of a turn included)"
+    }
+   ],
+   "notes": "Celestial Haste once a long rest",
    "location": "Steel Watch Foundry",
-   "source": "https://bg3.wiki/wiki/Gontr_Mael"
+   "source": "https://bg3.wiki/wiki/Gontr_Mael",
+   "reviewed": true
   },
   {
    "key": "bg3:greataxe_2",

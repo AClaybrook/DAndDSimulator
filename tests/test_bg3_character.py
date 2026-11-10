@@ -158,9 +158,9 @@ def replace_toggle(character, key):
     return compile_character(off, 6)[0]
 
 def test_builder_only_offers_toggles_for_its_classes():
-    assert relevant_toggles([["fighter", "Champion", 12]]) == ["reactions", "honour_mode", "advantage"]
-    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse", "booming_blade", "offhand_crossbow", "reactions", "honour_mode", "advantage"]
-    assert relevant_toggles([["warlock", "The Fiend", 12]]) == ["booming_blade", "offhand_crossbow", "reactions", "honour_mode", "advantage"]
+    assert relevant_toggles([["fighter", "Champion", 12]]) == ["reactions", "honour_mode", "illithid", "advantage"]
+    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse", "booming_blade", "offhand_crossbow", "reactions", "honour_mode", "illithid", "advantage"]
+    assert relevant_toggles([["warlock", "The Fiend", 12]]) == ["booming_blade", "offhand_crossbow", "reactions", "honour_mode", "illithid", "advantage"]
 
 
 def test_shadow_blade_and_booming_blade():
@@ -404,3 +404,43 @@ def test_divine_strike_is_typed_and_weapon_only():
     caster, _ = compile_character(reaper(toggles={"offhand_crossbow": True}), 12)
     assert once_per_turn_pools(caster) and all(not a.once_per_turn_eligible for a in caster.attacks if a.type == "spell")
     assert not once_per_turn_pools(compile_character(reaper(), 12)[0])
+
+def test_illithid_powers():
+    """ bg3.wiki: Psionic Overload +1d4 psychic on each attack; Favourable Beginnings the proficiency bonus on the first attack roll
+        against a target; Luck of the Far Realms turns a hit into a critical hit once a long rest """
+    plain, _ = compile_character(champion(), 12)
+    powered, _ = compile_character(Bg3Character.from_dict({**champion().to_dict(), "toggles": {"illithid": True}}), 12)
+    assert "illithid" in relevant_toggles(champion().classes) and all("1d4 psychic" not in a.extra_damage_list for a in plain.attacks)
+    assert all(a.extra_damage_list[-1] == "1d4 psychic" for a in powered.attacks)
+    lucky, first, main = powered.attacks[:3]
+    assert lucky.name == "Greatsword (Luck of the Far Realms)" and lucky.hits_crit and lucky.uses_per_fight == 0.25
+    assert first.name == "Greatsword (Favourable Beginnings)" and first.uses_per_fight == 1 and first.fallback_for == lucky.name
+    assert first.bonus_attack_die_mod_list[-1] == "4" and main.fallback_for == first.name and not main.uses_per_fight
+    assert len(powered.attacks) == len(plain.attacks) + 2 # The same attacks a round, two of them special once
+    gain = expected_damage_per_round(powered, ENEMY, 3) - expected_damage_per_round(plain, ENEMY, 3)
+    assert 5 < gain < 12 # 1d4 on about three hits a round, and the two once a fight extras
+    # A caster's saving throws aren't attacks: nothing on Toll the Dead or the aura, the crossbow shot gets the 1d4
+    caster, _ = compile_character(reaper(spell="Spirit Guardians", toggles={"illithid": True, "offhand_crossbow": True}), 12)
+    by_name = {a.name: a for a in caster.attacks}
+    assert by_name["Toll the Dead"].extra_damage_list == [] and "1d4 psychic" in by_name["Hand Crossbow (Offhand)"].extra_damage_list
+    assert not any("Luck of the Far Realms" in name for name in by_name)
+
+def test_illithid_powers_agree_across_the_engines():
+    from tests.test_exact import check
+    powered, _ = compile_character(Bg3Character.from_dict({**champion().to_dict(), "toggles": {"illithid": True}}), 12)
+    check(powered, ENEMY, 3)
+
+def test_permanent_boons_and_the_item_casting_ability():
+    from bg3.character import item_casting_stat
+    haired = Bg3Character(scores={**STR, "dexterity": 13}, bonus={"strength": 2, "constitution": 1}, classes=[["fighter", "Champion", 12]], boons={"strength": 1})
+    assert compile_character(haired, 1)[0].strength == 18 # 15 + 2, and Auntie Ethel's Hair
+    assert compile_character(Bg3Character.from_dict({**haired.to_dict(), "feats": ["strength+2", "strength+2"]}), 12)[0].strength == 20 # Stops at 20
+    # Items cast with the ability of the spellcasting class whose first level came last; a Swashbuckler or Champion has none
+    hexwing = Bg3Character(classes=[["rogue", "Swashbuckler", 4], ["warlock", "The Hexblade", 5], ["ranger", "Swarmkeeper", 3]])
+    assert item_casting_stat(hexwing) == "wisdom" and item_casting_stat(hexwing, 9) == "charisma" and item_casting_stat(champion()) == ""
+    hexwing.toggles["item_casting"] = "charisma" # A respec that takes the Warlock levels last
+    assert item_casting_stat(hexwing) == "charisma"
+    # Gathered Swarm is psychic (the Resonance Stone doubles it), in its own pool next to Sneak Attack
+    from computations.models import once_per_turn_pools
+    swarm = compile_character(Bg3Character(classes=[["ranger", "Swarmkeeper", 12]], routine="ranged"), 12)[0]
+    assert [(p["damage_type"]) for p in once_per_turn_pools(swarm)] == ["psychic"]

@@ -32,7 +32,10 @@
     }
    },
    "buffs": {},
-   "conditions": [],
+   "conditions": [
+    "bg3:diadem_of_arcane_synergy#0",
+    "bg3:strange_conduit_ring#0"
+   ],
    "levels": {},
    "character": {
     "name": "The Godblade",
@@ -69,8 +72,13 @@
     "routine": "shadow_blade",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {},
-    "level_order": []
+    "toggles": {
+     "item_casting": "intelligence"
+    },
+    "level_order": [],
+    "boons": {
+     "dexterity": 1
+    }
    },
    "carried": [
     "Resonance Stone"
@@ -127,7 +135,10 @@
     }
    },
    "buffs": {},
-   "conditions": [],
+   "conditions": [
+    "bg3:strange_conduit_ring#0",
+    "bg3:ring_of_arcane_synergy#0"
+   ],
    "levels": {},
    "character": {
     "name": "Nuclear Pure Hexblade Warlock",
@@ -161,7 +172,10 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {},
-    "level_order": []
+    "level_order": [],
+    "boons": {
+     "charisma": 1
+    }
    },
    "carried": [
     "Resonance Stone"
@@ -211,7 +225,9 @@
     }
    },
    "buffs": {},
-   "conditions": [],
+   "conditions": [
+    "bg3:ring_of_arcane_synergy#0"
+   ],
    "levels": {},
    "character": {
     "name": "Hexwing Phantom",
@@ -256,7 +272,8 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {},
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [],
@@ -368,7 +385,8 @@
      "booming_blade": false,
      "offhand_crossbow": true
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [],
@@ -506,7 +524,10 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {
+     "dexterity": 1
+    }
    },
    "carried": [],
    "roles": [],
@@ -516,7 +537,9 @@
   "carried": [],
   "roles": [],
   "unmatched": [],
-  "notes": [],
+  "notes": [
+   "Auntie Ethel's Hair assumed: +1 Dexterity, to reach the score the write-up gives"
+  ],
   "companion": "Astarion or Lae'zel.",
   "themes": [],
   "provides": [],
@@ -551,7 +574,9 @@
     }
    },
    "buffs": {},
-   "conditions": [],
+   "conditions": [
+    "bg3:ring_of_arcane_synergy#0"
+   ],
    "levels": {},
    "character": {
     "name": "Tempest Bladesinger",
@@ -589,7 +614,8 @@
     "cantrip": "Eldritch Blast",
     "spell": "Spirit Guardians",
     "toggles": {},
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [],
@@ -677,7 +703,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [],
@@ -767,7 +794,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [],
@@ -855,7 +883,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [],
@@ -930,7 +959,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [],
@@ -979,7 +1009,9 @@
     }
    },
    "buffs": {},
-   "conditions": [],
+   "conditions": [
+    "bg3:ring_of_arcane_synergy#0"
+   ],
    "levels": {},
    "character": {
     "name": "Ultimate Dark Knight",
@@ -1022,7 +1054,10 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {},
-    "level_order": []
+    "level_order": [],
+    "boons": {
+     "charisma": 1
+    }
    },
    "carried": [],
    "roles": [
@@ -1118,7 +1153,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [],
@@ -1162,7 +1198,10 @@
     }
    },
    "buffs": {},
-   "conditions": [],
+   "conditions": [
+    "bg3:diadem_of_arcane_synergy#0",
+    "bg3:ring_of_arcane_synergy#0"
+   ],
    "levels": {},
    "character": {
     "name": "Jedi Consular",
@@ -1201,7 +1240,8 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {},
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [],
@@ -1292,7 +1332,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [
@@ -1403,7 +1444,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [
@@ -1502,7 +1544,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [
@@ -1597,7 +1640,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [
@@ -1694,7 +1738,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [
@@ -1790,7 +1835,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [
@@ -1841,7 +1887,10 @@
     }
    },
    "buffs": {},
-   "conditions": [],
+   "conditions": [
+    "bg3:strange_conduit_ring#0",
+    "bg3:ring_of_arcane_synergy#0"
+   ],
    "levels": {},
    "character": {
     "name": "Shadow Blade Eldritch Knight",
@@ -1880,7 +1929,8 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {},
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [
     "Resonance Stone"
@@ -1962,7 +2012,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [],
@@ -2037,7 +2088,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [],
@@ -2118,7 +2170,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [],
@@ -2191,7 +2244,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [],
@@ -2307,7 +2361,8 @@
      "fighter",
      "wizard",
      "wizard"
-    ]
+    ],
+    "boons": {}
    },
    "carried": [],
    "roles": [
@@ -2394,7 +2449,8 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {},
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [
     "Drakethroat Glaive"
@@ -2504,7 +2560,8 @@
      "paladin",
      "paladin",
      "paladin"
-    ]
+    ],
+    "boons": {}
    },
    "carried": [],
    "roles": [
@@ -2603,7 +2660,8 @@
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {},
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [
@@ -2714,7 +2772,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [
@@ -2798,7 +2857,8 @@
     "toggles": {
      "booming_blade": false
     },
-    "level_order": []
+    "level_order": [],
+    "boons": {}
    },
    "carried": [],
    "roles": [
@@ -2924,7 +2984,8 @@
      "sorcerer",
      "sorcerer",
      "sorcerer"
-    ]
+    ],
+    "boons": {}
    },
    "carried": [],
    "roles": [

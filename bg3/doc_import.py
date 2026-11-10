@@ -16,7 +16,7 @@ from bg3.abilities import point_buy_problems
 from bg3.buffs import BUFFS
 from bg3.build import Bg3Build
 from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_SPELLS, RACES, ROUTINES, SHADOW_BLADE, SUBCLASSES, Bg3Character,
-                           feat_opportunities)
+                           compile_character, feat_opportunities)
 from bg3.items import catalog, condition_id
 from computations.models import STATS
 from game_data import spells
@@ -207,6 +207,18 @@ def play_modes(character, body, gear):
                       **({"conditions": conditions} if conditions else {})})
     return modes
 
+def met_conditions(character, equipment, items):
+    """ Conditional item effects the build meets whenever it fights: concentrating while its weapon is Shadow Blade (Strange Conduit
+        Ring), Arcane Synergy while it opens every turn with Booming Blade (a cantrip that also inflicts a condition) """
+    booming = any("booming_blade" in a.tags for a in compile_character(character, 12)[0].attacks)
+    on = []
+    for key in dict.fromkeys(k for gear in equipment.values() for k in gear.values() if k in items):
+        for ii, effect in enumerate(items[key].effects):
+            condition = effect.condition or ""
+            if (condition.startswith("When Concentrating") and character.routine == "shadow_blade") or (condition.startswith("Arcane Synergy") and booming):
+                on.append(condition_id(key, ii))
+    return on
+
 def guess_routine(text, equipment, items, classes=()):
     """ The attack routine from what the build fights with """
     lowered = text.lower()
@@ -395,11 +407,26 @@ def parse_build(number, title, body, index, items):
     # A caster with hand crossbows shoots the off-hand one with the bonus action
     if character.routine == "cantrip" and any(items.get(k) and items[k].weapon and items[k].weapon.get("base") == "Hand Crossbow" for k in flat.values()):
         character.toggles = {**character.toggles, "offhand_crossbow": True}
+    # Auntie Ethel's Hair: named beside a score ('DEX 17 (+1 Hag's Hair to 18)'), or the score the write-up says it reaches is one more
+    # than the feats give ('reaches 20 DEX')
+    hair = re.search(r"\b(STR|DEX|CON|INT|WIS|CHA)\s+\d+\s*\(\+1 (?:Hag|Auntie Ethel)", ability_line)
+    if hair:
+        character.boons = {STAT_NAMES[hair.group(1)]: 1}
+    elif reached := re.findall(r"(\d+) (STR|DEX|CON|INT|WIS|CHA)\b", " ".join(re.findall(r"\(reaches ([^)]*)\)", ability_line))):
+        built = compile_character(character, 12)[0]
+        short = [STAT_NAMES[s] for n, s in reached if getattr(built, STAT_NAMES[s]) == int(n) - 1]
+        if short:
+            character.boons = {short[0]: 1}
+            notes.append(f"Auntie Ethel's Hair assumed: +1 {short[0].title()}, to reach the score the write-up gives")
+    # A respec that takes the casting class last, so items and Arcane Synergy use its ability
+    if m := re.search(r"items? scale with (INT|WIS|CHA)\b", body):
+        character.toggles = {**character.toggles, "item_casting": STAT_NAMES[m.group(1)]}
     modes = play_modes(character, body, flat)
     roles = [r for r in ROLES if re.search(rf"\b{r}", field(body, "Roles", "Assigned Companion / Role", "Role").lower())]
     buffs = {act: parse_buffs(line) for act, line in re.findall(r"^Act ([123]) Buffs:\s*(.+)$", body, re.M)}
     build = Bg3Build(name=f"{number}. {character.name}", preset="fighter_gwm", equipment=trimmed, character=character.to_dict(),
-                     buffs={a: b for a, b in buffs.items() if b}, carried=sorted(carried), roles=roles, variants=modes)
+                     buffs={a: b for a, b in buffs.items() if b}, carried=sorted(carried), roles=roles, variants=modes,
+                     conditions=met_conditions(character, trimmed, items))
     return {"number": number, "title": title, "source": field(body, "Source", "Source / Creator"), "build": build.to_dict(),
             "carried": sorted(carried), "roles": roles, "unmatched": unmatched, "notes": notes,
             "companion": field(body, "Recommended Character/Race", "Assigned Companion / Role", "Companion"),

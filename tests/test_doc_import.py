@@ -112,3 +112,17 @@ def test_a_caster_with_a_staff_casts_and_gets_play_modes():
     circle = {a.name: a for a in compile_build(variant_build(build, modes["Circle of Death"]), "3").attacks}
     assert circle["Circle of Death"].uses_per_fight == 1.25 and "Spirit Guardians (aura)" in circle # Its slot, and Life Essence's free cast
     assert "Thorn Whip (Touch of Death)" in {a.name for a in compile_build(variant_build(build, modes["Thorn Whip"]), "3").attacks}
+
+def test_hags_hair_respec_note_and_conditions_always_met():
+    text = FREE_TEXT.replace("Level 3 (Wizard 3)", "Level 12: Respec at 12 to take Paladin at Level 1 so scrolls/items scale with INT.\nLevel 1: Booming Blade.\nLevel 3 (Wizard 3)") \
+        .replace("Caustic Band, Crusher's Ring", "Diadem of Arcane Synergy, Strange Conduit Ring")
+    godblade, deadeye = import_text(text + "Starting Ability Scores: STR 8, DEX 17, CON 14, INT 16, WIS 10, CHA 8 (reaches 20 DEX / 16 INT).\n"
+                                    "Feats: Sharpshooter, ASI (+2 DEX to 20), Alert.\n")
+    character = godblade["build"]["character"]
+    assert character["boons"] == {"dexterity": 1} and character["toggles"]["item_casting"] == "intelligence"
+    # Shadow Blade is concentration and Booming Blade a cantrip with a condition: the ring's and the diadem's effects are on
+    assert set(godblade["build"]["conditions"]) == {"bg3:diadem_of_arcane_synergy#0", "bg3:strange_conduit_ring#0"}
+    blade = compile_build(Bg3Build.from_dict(godblade["build"]), "1").attacks[0]
+    assert "1d4 psychic" in blade.extra_damage_list and blade.bonus_damage_die_mod_list[-1] == "3" # INT 16
+    # 17 + 2 from the feat is 19: the write-up reaches 20, so the hair is assumed and noted
+    assert deadeye["build"]["character"]["boons"] == {"dexterity": 1} and any("Auntie Ethel's Hair assumed" in n for n in deadeye["notes"])

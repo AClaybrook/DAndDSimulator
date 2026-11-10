@@ -1,4 +1,4 @@
-import { ActionIcon, Badge, Checkbox, Group, NumberInput, SegmentedControl, Select, SimpleGrid, Stack, Text, TextInput } from '@mantine/core'
+import { ActionIcon, Badge, Checkbox, Group, NumberInput, SegmentedControl, Select, SimpleGrid, Stack, Text, TextInput, Tooltip } from '@mantine/core'
 import { IconPlus, IconX } from '@tabler/icons-react'
 import type { Build, BuilderCharacter as Character, MemberResult, PlannerOptions } from '../../api'
 import { Section } from '../../components/Layout'
@@ -57,6 +57,10 @@ export function BuildTab({ options, result }: { options: PlannerOptions; result:
                 onChange={(v) => v && setChar({ bonus: { ...Object.fromEntries(Object.entries(character.bonus).filter(([k, n]) => n !== 2 && k !== v)), [v]: 2 } })} />
               <Select size="xs" label="+1" data={STATS.map((s) => ({ value: s, label: statLabel(s) }))} value={Object.keys(character.bonus).find((k) => character.bonus[k] === 1) ?? null}
                 onChange={(v) => v && setChar({ bonus: { ...Object.fromEntries(Object.entries(character.bonus).filter(([k, n]) => n !== 1 && k !== v)), [v]: 1 } })} />
+              <Tooltip label="Auntie Ethel's Hair (Act 1): a permanent +1 to one ability, up to 20">
+                <Select size="xs" label="Hag's Hair +1" placeholder="None" clearable data={STATS.map((s) => ({ value: s, label: statLabel(s) }))}
+                  value={Object.keys(character.boons ?? {})[0] ?? null} onChange={(v) => setChar({ boons: v ? { [v]: 1 } : {} })} />
+              </Tooltip>
             </Group>
             <SimpleGrid cols={6} spacing={6}>
               {STATS.map((s) => (

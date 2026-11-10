@@ -119,17 +119,19 @@ TOGGLES = {
     "attacks an ally (about every other round)",
     "honour_mode": "Honour Mode rules: Haste's and Bloodlust's extra action is one attack (not a full Attack action), and Pact of the Blade's "
     "Extra Attack doesn't stack with another class's",
+    "illithid": "Illithid powers: Psionic Overload (+1d4 psychic on every attack roll), Favourable Beginnings (+proficiency to hit on the "
+    "first attack of a fight), Luck of the Far Realms (one hit a day becomes a critical hit)",
     "advantage": "Attack with advantage (Shadow Blade in darkness or dim light, hiding, Dirty Tricks, Faerie Fire, Darkness with Devil's Sight)",
 }
 # Toggles that are off unless ticked: advantage depends on the fight, so it isn't assumed
-TOGGLE_DEFAULTS = {"advantage": False, "horde_breaker": False, "honour_mode": False, "spiritual_weapon": False, "offhand_crossbow": False, "spirit_guardians": False}
+TOGGLE_DEFAULTS = {"advantage": False, "horde_breaker": False, "honour_mode": False, "spiritual_weapon": False, "offhand_crossbow": False, "spirit_guardians": False, "illithid": False}
 # The class (and subclass) each toggle is for, so the builder only offers the ones that matter
 TOGGLE_FOR = {"rage": ("barbarian", ""), "reckless": ("barbarian", ""), "smite": ("paladin", ""), "vow": ("paladin", ""),
               "curse": ("warlock", "The Hexblade"), "surprise": ("rogue", "Assassin"), "manifestation": ("monk", "Way of the Open Hand"),
               "damaged_target": ("ranger", "Hunter"), "starry_form": ("druid", "Circle of Stars"), "symbiotic": ("druid", "Circle of Spores"),
               "storm_close": ("sorcerer", "Storm Sorcery"),
               "booming_blade": [("wizard", ""), ("sorcerer", ""), ("warlock", ""), ("fighter", "Eldritch Knight"), ("rogue", "Arcane Trickster")],
-              "horde_breaker": ("ranger", "Hunter"), "spirit_guardians": ("cleric", ""), "spiritual_weapon": ("cleric", ""), "offhand_crossbow": [(cls, "") for cls in ("bard", "cleric", "druid", "sorcerer", "warlock", "wizard")], "reactions": [(cls, "") for cls in CLASSES], "honour_mode": [(cls, "") for cls in CLASSES], "bladesong": ("wizard", "Bladesinging"), "advantage": [(cls, "") for cls in CLASSES]}
+              "horde_breaker": ("ranger", "Hunter"), "spirit_guardians": ("cleric", ""), "spiritual_weapon": ("cleric", ""), "offhand_crossbow": [(cls, "") for cls in ("bard", "cleric", "druid", "sorcerer", "warlock", "wizard")], "reactions": [(cls, "") for cls in CLASSES], "honour_mode": [(cls, "") for cls in CLASSES], "illithid": [(cls, "") for cls in CLASSES], "bladesong": ("wizard", "Bladesinging"), "advantage": [(cls, "") for cls in CLASSES]}
 
 def relevant_toggles(classes):
     """ Toggles for a [class, subclass, levels] list """
@@ -152,6 +154,7 @@ class Bg3Character:
     spell: str = "" # A levelled damage spell cast with every slot high enough, before the cantrip (cantrip routine)
     toggles: dict = field(default_factory=dict) # TOGGLES (all on by default), and "ancestry" for Draconic Bloodline (default fire)
     level_order: list[str] = field(default_factory=list) # The class taken at each level when it isn't "first class first", i.e. a 1 level dip first
+    boons: dict[str, int] = field(default_factory=dict) # Permanent ability bonuses from the story: Auntie Ethel's Hair (+1), Mirror of Loss (+2)
 
     def to_dict(self):
         return asdict(self)
@@ -232,6 +235,9 @@ def compile_character(character, level=MAX_LEVEL, main_finesse=None):
             if choice in FEAT_ABILITY:
                 stat = max(FEAT_ABILITY[choice], key=lambda s: scores[s])
                 scores = apply_improvement(scores, f"{stat}+1")
+    for stat, amount in (character.boons or {}).items():
+        if stat in STATS: # The hair stops at 20 like an improvement, the Mirror of Loss at 24
+            scores[stat] = max(scores[stat], min(scores[stat] + int(amount), 24 if int(amount) >= 2 else 20))
     c = Character(name=character.name, level=level, **scores)
     for feat in feats:
         if feat in FEAT_FLAGS:
@@ -267,6 +273,9 @@ def compile_character(character, level=MAX_LEVEL, main_finesse=None):
         _booming_blade(c, character)
     _class_features(character, c, levels, subs, notes, main_finesse)
     _cleric_spells(character, c, levels, subs, notes)
+    c.casting_stat = item_casting_stat(character, level)
+    if character.toggle("illithid"):
+        _illithid_powers(c)
     split = " / ".join(f"{cls.title()} {n}" + (f" ({subs[cls]})" if subs.get(cls) else "") for cls, n in levels.items())
     c.description = f"{character.race}, {split}. Feats: {', '.join(feats) or 'none'}"
     return c, notes
@@ -579,6 +588,36 @@ def _limited_rider(c, label, uses, bonus=None, extra=None, main=None, tags=()):
     main.fallback_for = rider.name
     c.attacks.insert(index, rider)
 
+def item_casting_stat(character, level=MAX_LEVEL):
+    """ The ability items and scrolls cast with (Arcane Synergy's damage): that of the spellcasting class whose first level was taken
+        last (bg3.wiki, Spells: multiclassing). toggles['item_casting'] names it when a respec changes the order, '' without a caster """
+    if character.toggles.get("item_casting") in STATS:
+        return character.toggles["item_casting"]
+    subs = {cls: sub for cls, sub, _ in character.classes}
+    def casts(cls):
+        return cls not in ("fighter", "rogue") or subs.get(cls) in ("Eldritch Knight", "Arcane Trickster")
+    first_levels = list(dict.fromkeys(class_order(character, level)))
+    return next((SPELL_ABILITY[cls] for cls in reversed(first_levels) if cls in SPELL_ABILITY and casts(cls)), "")
+
+def _illithid_powers(c):
+    """ Illithid powers that change damage (bg3.wiki). Psionic Overload: +1d4 psychic on each of the caster's attacks for 10 turns, an
+        action once a short rest (a bonus action when Awakened), taken as already up like a buff. Favourable Beginnings: the proficiency
+        bonus on the first attack roll against a target, here the first attack of the fight. Luck of the Far Realms: once a long rest a
+        hit becomes a critical hit, on the same kind of attack """
+    for a in c.attacks:
+        if not a.saving_throw and not a.always_hit and "summon" not in a.tags:
+            a.extra_damage_list = [*a.extra_damage_list, "1d4 psychic"]
+    main = next((a for a in c.attacks if a.action == "action" and not a.saving_throw and not a.always_hit and not a.uses_per_fight
+                 and not a.fallback_for and "setup" not in a.tags), None)
+    if main is None:
+        return
+    index = c.attacks.index(main)
+    lucky = main.variant("Luck of the Far Realms", uses_per_fight=round(1 / FIGHTS_PER_LONG_REST, 2), hits_crit=True)
+    first = main.variant("Favourable Beginnings", uses_per_fight=1, fallback_for=lucky.name,
+                         bonus_attack_die_mod_list=[*main.bonus_attack_die_mod_list, str(c.proficiency_bonus)])
+    main.fallback_for = first.name
+    c.attacks[index:index] = [lucky, first]
+
 def _quickened(c, quickens):
     """ Quickened Spell: a second cast with the bonus action for 3 sorcery points (sorcery points = sorcerer level per long rest).
         A quickened levelled spell spends one of the same spell slots, so the slots are shared between the two casts; quickens left
@@ -693,7 +732,7 @@ def _class_features(character, c, levels, subs, notes, main_finesse=None):
     elif ranger >= 3 and subs.get("ranger") == "Hunter" and character.toggle("damaged_target") and weapon:
         _once_per_turn(c, "Colossus Slayer", "1d8")
     if ranger >= 3 and subs.get("ranger") == "Swarmkeeper":
-        _once_per_turn(c, "Gathered Swarm", "1d8" if ranger >= 11 else "1d6")
+        _once_per_turn(c, "Gathered Swarm", "1d8" if ranger >= 11 else "1d6", damage_type="psychic") # Flurry of Moths
     # Rogue: Sneak Attack, never on off-hand attacks, and only with a finesse or ranged weapon (not a greatsword or a glaive)
     finesse = any(a.is_weapon and not a.offhand and _finesse_or_ranged(a) for a in c.attacks) if main_finesse is None else main_finesse
     if rogue and character.routine != "unarmed" and not finesse:

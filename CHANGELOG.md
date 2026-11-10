@@ -32,6 +32,16 @@
   B while its uses last, then C), in the analytic, exact and simulated engines.
 - **Build doc import:** a full caster holding a staff casts its cantrip instead of swinging the staff, Toll the Dead is recognised, a
   second hand crossbow goes in the off hand, and Booming Blade is only assumed when the write-up names it.
+- **Illithid powers:** a checkbox for every custom character (off by default). Psionic Overload adds 1d4 psychic to every attack
+  roll, Favourable Beginnings the proficiency bonus to the first attack of a fight, and Luck of the Far Realms makes one hit a day a
+  critical hit. Psionic Overload is taken as already up, like a buff. Mind Blast, Concentrated Blast, Cull the Weak and Black Hole
+  aren't counted.
+- **Build audit (Godblade, Hexwing Phantom, Deathreaper, Arcane Deadeye):** Auntie Ethel's Hair as a permanent +1 (a select next to
+  the +2/+1, read from the build doc); Arcane Synergy on the ring and the diadem (the spellcasting ability modifier on weapon attacks,
+  with the ability of the casting class taken last); Great Weapon Master with a versatile weapon held in both hands (Phalar Aluve);
+  Gontr Mael's Guiding Bolt as a toggle; Gathered Swarm's damage is psychic. The Helmet of Arcane Acuity and Gloves of the Automaton
+  gave +1 to an ability score where the game gives +1 to its saving throws. Imported builds switch on item conditions they always
+  meet (Strange Conduit Ring while Shadow Blade is up, Arcane Synergy with Booming Blade).
 - **Balduran's Giantslayer** doubles the Strength modifier's damage (and has advantage against Large creatures as a toggle).
 - **Review fixes, rules:** Haste and Bloodlust give a whole Attack action outside Honour Mode (Extra Attack included) and one attack in
   it; the Honour Mode toggle is now offered to every class. BG3 Savage Attacker and Great Weapon Fighting reach rider and once per turn

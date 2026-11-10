@@ -118,6 +118,7 @@ export interface BuilderCharacter {
   spell: string
   toggles: Record<string, boolean | string>
   level_order: string[]
+  boons: Record<string, number>
 }
 
 export interface BuilderOptions {

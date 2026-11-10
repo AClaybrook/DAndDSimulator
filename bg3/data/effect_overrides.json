@@ -172,6 +172,38 @@
                 }
             ],
             "notes": ""
+        },
+        "Ring of Arcane Synergy": {
+            "effects": [
+                {
+                    "kind": "damage_bonus_ability",
+                    "stat": "casting",
+                    "applies_to": "weapon",
+                    "condition": "Arcane Synergy: after dealing damage with a cantrip (Booming Blade counts), for 2 turns"
+                }
+            ],
+            "notes": ""
+        },
+        "Diadem of Arcane Synergy": {
+            "effects": [
+                {
+                    "kind": "damage_bonus_ability",
+                    "stat": "casting",
+                    "applies_to": "weapon",
+                    "condition": "Arcane Synergy: after inflicting a condition (Booming Blade's counts), for 2 turns"
+                }
+            ],
+            "notes": ""
+        },
+        "Gontr Mael": {
+            "effects": [
+                {
+                    "kind": "advantage",
+                    "applies_to": "self",
+                    "condition": "Promised Victory: a hit marks the target with Guiding Bolt until the end of the turn, so the next shot has Advantage (counted on every shot, the first of a turn included)"
+                }
+            ],
+            "notes": "Celestial Haste once a long rest"
         }
     }
 }

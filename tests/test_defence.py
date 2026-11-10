@@ -12,12 +12,12 @@ def test_armour_data_from_the_wiki():
     assert data["bg3:wondrous_gloves"]["bonus"] == 1
 
 def test_godblade_high_ac_stack():
-    godblade = examples()["1. The Godblade"] # DEX 19, Bracers of Defence, Bladesinger 5 in Act 1
-    assert armour_class(godblade, "1")[0] == 10 + 4 + 2 + 3
+    godblade = examples()["1. The Godblade"] # DEX 20 (17, Auntie Ethel's Hair, +2 at level 4), Bracers of Defence, Bladesinger 5 in Act 1
+    assert armour_class(godblade, "1")[0] == 10 + 5 + 2 + 3
     buffed = variant_build(godblade, {"kit": "tank_unarmoured", "buffs": ["mage_armour", "shield_of_faith", "haste"]})
-    assert armour_class(buffed, "1")[0] == 13 + 4 + 2 + 3 + 1 + 2 + 2
+    assert armour_class(buffed, "1")[0] == 13 + 5 + 2 + 3 + 1 + 2 + 2
     off = variant_build(godblade, {"toggles": {"bladesong": False}})
-    assert armour_class(off, "1")[0] == 16
+    assert armour_class(off, "1")[0] == 17
 
 def test_armour_rules():
     heavy = Bg3Build("Tank", "fighter_gwm", character=Bg3Character(classes=[["fighter", "Champion", 5]], fighting_styles=["Defence"]).to_dict(),
