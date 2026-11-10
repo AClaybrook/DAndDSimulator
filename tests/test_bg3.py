@@ -65,8 +65,16 @@ def test_crit_range_stacks_with_champion():
 def test_buffs():
     plain = compile_build(fighter(), 1, ITEMS)
     hasted = compile_build(fighter(buffs={"1": ["haste", "bless"]}), 1, ITEMS)
-    assert len(hasted.attacks) == len(plain.attacks) + 1 and hasted.attacks[-1].name.endswith("(Haste)")
+    # Haste is another action: a whole Attack action outside Honour Mode (2 attacks at level 5), one attack in it
+    extra = [a for a in hasted.attacks if a.label == "Haste"]
+    assert len(hasted.attacks) == len(plain.attacks) + 2 and len(extra) == 2 and all(a.action == "extra" and not a.uses_per_fight for a in extra)
     assert all("1d4" in a.bonus_attack_die_mod_list for a in hasted.attacks)
+    from bg3.character import Bg3Character
+    custom = Bg3Character(classes=[["fighter", "Champion", 12]]).to_dict()
+    def hastes(toggles):
+        build = Bg3Build(name="Tav", preset="", character={**custom, "toggles": toggles}, buffs={"3": ["haste"]})
+        return sum(a.label == "Haste" for a in compile_build(build, 3, ITEMS).attacks)
+    assert hastes({}) == 3 and hastes({"honour_mode": True}) == 1 # Fighter 12: three attacks an action
 
 def test_party_conflicts():
     a = fighter(equipment={"1": {"melee_main": "test:flame_sword", "ring_1": "test:acid_ring", "ring_2": "test:acid_ring"}})

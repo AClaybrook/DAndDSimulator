@@ -1,5 +1,5 @@
 """ Dataclasses and associated helper functions for containing character and enemy data """
-from dataclasses import dataclass, field, asdict, fields
+from dataclasses import dataclass, field, asdict, fields, replace
 from typing import Literal
 
 Stat = Literal["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"]
@@ -111,6 +111,13 @@ class Attack:
     # only counts with at least min_enemies. The simulator and single target numbers use one enemy
     targets: int = 1
     min_enemies: int = 1
+    # What the attack costs and where it comes from, so code doesn't have to read the name: "action" (the Attack action or a spell),
+    # "bonus" (bonus action), "reaction", "extra" (another action: Action Surge, Haste, Bloodlust)
+    action: Literal["action", "bonus", "reaction", "extra"] = "action"
+    # Free form markers set by the builders, i.e. "booming_blade", "conjured" (Shadow Blade: no gear slot), "butt_end"
+    tags: list[str] = field(default_factory=list)
+    base: str = '' # The weapon or spell in the rules ('Greatsword', 'Fire Bolt'), whatever the attack is called
+    label: str = '' # The variant shown in brackets after the name, i.e. 'Action Surge' in 'Greatsword (Action Surge)'
 
     def __post_init__(self):
         if self.heavy is None:
@@ -118,6 +125,18 @@ class Attack:
 
     def to_dict(self):
         return asdict(self)
+
+    @property
+    def stem(self):
+        """ The name without its variant label: 'Greatsword (Action Surge)' -> 'Greatsword' """
+        suffix = f" ({self.label})"
+        return self.name[:-len(suffix)] if self.label and self.name.endswith(suffix) else self.name
+
+    def variant(self, label, **changes):
+        """ A copy named '<stem> (<label>)', with any other changes, and its own lists """
+        copied = {f: list(getattr(self, f)) for f in ("bonus_attack_die_mod_list", "bonus_damage_die_mod_list", "bonus_crit_die_mod_list",
+                                                      "bonus_miss_die_mod_list", "extra_damage_list", "tags")}
+        return replace(self, **{"name": f"{self.stem} ({label})", "label": label, **copied, **changes})
 
     @property
     def is_weapon(self):
@@ -163,6 +182,9 @@ class Creature:
     once_per_turn_crit_only: bool = False # Only use it on a crit, i.e. crit fishing with divine smite
     once_per_turn_uses_per_fight: float = 0 # Average uses per fight (i.e. spell slots for smites), 0 means unlimited
     once_per_turn_damage_type: str = "" # Its own damage type for resistances and vulnerabilities (radiant for smites), "" = the attack's
+    # More once per turn damage with its own limits, i.e. Sneak Attack next to limited radiant smites. Each is a dict:
+    # {"name", "dice": ['3d6'], "uses_per_fight": 0, "damage_type": "", "crit_only": False}. Every pool goes on the first hit that can take it
+    once_per_turn_extra: list[dict] = field(default_factory=list)
     # First round of a fight, i.e. Assassinate: advantage against enemies that haven't acted, hits are crits against surprised enemies
     first_round_advantage: bool = False
     first_round_auto_crit: bool = False
@@ -385,14 +407,12 @@ class DamageContext:
     miss_damage_modifier: int = 0
     # Fraction of the hit damage dealt on a successful saving throw (i.e. 0.5 for fireball)
     save_success_multiplier: float = 0
-    # Once per turn damage on the first hit (doubled dice on a crit)
-    once_num_die: list[int] = field(default_factory=list)
-    once_die_size: list[int] = field(default_factory=list)
-    once_modifier: int = 0
-    once_per_turn_eligible: bool = False
-    once_crit_only: bool = False
-    once_uses_per_fight: float = 0
-    once_damage_multiplier: float | None = None # Resistance or vulnerability of the once per turn damage's own type, None = the attack's
+    # Once per turn damage this attack can carry, on the first hit of the round (doubled dice on a crit). One dict per pool:
+    # {"id" (the same pool on every attack), "num_die", "die_size", "modifier", "crit_only", "uses" (average per fight, 0 = unlimited),
+    #  "multiplier" (resistance or vulnerability of the pool's own damage type, None = the attack's)}
+    once_pools: list[dict] = field(default_factory=list)
+    # Extra dice (riders, once per turn damage) keep the higher of two rolls per die: BG3 Savage Attacker on melee weapon attacks
+    rider_advantage: bool = False
     # Average uses per fight of a limited attack, 0 means every round
     uses_per_fight: float = 0
     # Index of the limited attack this attack replaces once it is used up, -1 for none
@@ -406,6 +426,20 @@ class DamageContext:
     rider_modifier: list[int] = field(default_factory=list)
     rider_multiplier: list[float] = field(default_factory=list)
 
+def once_per_turn_pools(character):
+    """ The character's once per turn damage as a list of pools: the main one (once_per_turn_die_mod_list and its options), then
+        once_per_turn_extra. Pools without damage are left out """
+    sources = [{"dice": character.once_per_turn_die_mod_list, "uses_per_fight": character.once_per_turn_uses_per_fight,
+                "damage_type": character.once_per_turn_damage_type, "crit_only": character.once_per_turn_crit_only}]
+    sources += list(getattr(character, "once_per_turn_extra", None) or [])
+    pools = []
+    for index, source in enumerate(sources):
+        num_die, die_size, modifier = multiple_die_and_mod_from_list(source.get("dice") or [])
+        if num_die or modifier:
+            pools.append({"id": index, "num_die": num_die, "die_size": die_size, "modifier": modifier, "crit_only": bool(source.get("crit_only")),
+                          "uses": float(source.get("uses_per_fight") or 0), "damage_type": str(source.get("damage_type") or "").lower()})
+    return pools
+
 def calculate_attack_and_damage_context(character, enemy):
     """ Extracts the attack and damage contexts for a given character and enemy """
     attack_contexts = []
@@ -416,7 +450,7 @@ def calculate_attack_and_damage_context(character, enemy):
     c_damage_num_die, c_damage_die_sizes, c_bonus_damage_mod = multiple_die_and_mod_from_list(character.bonus_damage_die_mod_list)
     c_miss_num_die, c_miss_damage_die, c_miss_damage_modifier = multiple_die_and_mod_from_list(character.bonus_miss_die_mod_list)
     c_crit_num_die, c_crit_damage_die, c_crit_damage_modifier = multiple_die_and_mod_from_list(character.bonus_crit_die_mod_list)
-    once_num_die, once_die_size, once_modifier = multiple_die_and_mod_from_list(character.once_per_turn_die_mod_list)
+    pools = once_per_turn_pools(character)
     attack_names = [a.name for a in character.attacks]
 
     for attack in character.attacks:
@@ -429,6 +463,7 @@ def calculate_attack_and_damage_context(character, enemy):
             attack_modifier += character.proficiency_bonus
         # Damage
         damage_modifier = 0
+        lifedrinker = False
         damage_adv = False
         per_die_advantage = False
         damage_dis = False
@@ -495,8 +530,7 @@ def calculate_attack_and_damage_context(character, enemy):
                 damage_num_die.append(1)
                 damage_die_sizes.append(8)
             # Warlock
-            if character.lifedrinker:
-                damage_modifier += max(character.charisma_ability_modifier, 1)
+            lifedrinker = character.lifedrinker
             # Half-Orc
             if character.savage_attacks_half_orc and weapon_die:
                 crit_num_die.append(1)
@@ -515,6 +549,8 @@ def calculate_attack_and_damage_context(character, enemy):
             if character.raging:
                 damage_modifier += character.rage_damage
         elif attack.type == 'thrown': # TODO: Implement improvised thrown weapons
+            if character.savage_attacker and character.savage_attacker_per_die:
+                damage_adv = per_die_advantage = True # BG3: the thrown weapon's own dice, not the riders
             if character.tavern_brawler:
                 attack_modifier += character.strength_ability_modifier
                 damage_modifier += character.strength_ability_modifier
@@ -531,9 +567,16 @@ def calculate_attack_and_damage_context(character, enemy):
         # Enemy Specific
         damage_multiplier = enemy.damage_multiplier(attack) if isinstance(enemy, Enemy) else 1
         riders = [typed_damage_from_str(r) for r in attack.extra_damage_list or []]
+        if lifedrinker:
+            # Lifedrinker: the Charisma modifier as necrotic damage, so it takes its own resistance or vulnerability
+            riders.append(([], [], max(character.charisma_ability_modifier, 1), "necrotic"))
         riders = [(n, d, m, enemy.damage_multiplier(attack, t) if isinstance(enemy, Enemy) else 1) for n, d, m, t in riders if n or m]
-        once_type = character.once_per_turn_damage_type
-        once_multiplier = enemy.damage_multiplier(attack, once_type) if once_type and isinstance(enemy, Enemy) else None
+        once_pools = []
+        if attack.once_per_turn_eligible and not attack.saving_throw:
+            for pool in pools:
+                own = enemy.damage_multiplier(attack, pool["damage_type"]) if pool["damage_type"] and isinstance(enemy, Enemy) else None
+                once_pools.append({"id": pool["id"], "num_die": list(pool["num_die"]), "die_size": list(pool["die_size"]), "modifier": pool["modifier"],
+                                   "crit_only": pool["crit_only"], "uses": pool["uses"], "multiplier": own if own != damage_multiplier else None})
 
         # Difficulty Class
         difficulty_class = enemy.armor_class
@@ -583,13 +626,8 @@ def calculate_attack_and_damage_context(character, enemy):
             miss_num_die=miss_num_die,
             miss_damage_die=miss_damage_die,
             miss_damage_modifier=miss_damage_modifier,
-            once_num_die=list(once_num_die),
-            once_die_size=list(once_die_size),
-            once_modifier=once_modifier,
-            once_per_turn_eligible=attack.once_per_turn_eligible and not saving_throw,
-            once_crit_only=character.once_per_turn_crit_only,
-            once_uses_per_fight=character.once_per_turn_uses_per_fight or 0,
-            once_damage_multiplier=once_multiplier if once_multiplier != damage_multiplier else None,
+            once_pools=once_pools,
+            rider_advantage=attack.type == 'weapon (melee)' and character.savage_attacker and character.savage_attacker_per_die,
             uses_per_fight=attack.uses_per_fight or 0,
             fallback_index=attack_names.index(attack.fallback_for) if attack.fallback_for in attack_names and attack.fallback_for != attack.name else -1,
             first_round_advantage=character.first_round_advantage and not saving_throw,

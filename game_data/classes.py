@@ -58,7 +58,7 @@ def action_surge(level, ruleset, attack):
         return []
     surges = 2 if level >= 17 and ruleset == "5e" else 1
     uses = per_fight(per_short_rest=surges)
-    return [replace(attack, name=f"{attack.name} (Action Surge)", uses_per_fight=uses) for _ in range(extra_attacks(level, "fighter", ruleset))]
+    return [attack.variant("Action Surge", uses_per_fight=uses, action="extra") for _ in range(extra_attacks(level, "fighter", ruleset))]
 
 def half_caster_slot(level):
     """ Highest spell slot for paladins and rangers """
@@ -143,6 +143,8 @@ def barbarian_berserker(level, ruleset):
     c.brutal_critical = level >= 9
     num_attacks = extra_attacks(level, "barbarian", ruleset) + (level >= 3) # Frenzy bonus action attack
     c.attacks = [weapon_attack("Greataxe") for _ in range(num_attacks)]
+    if level >= 3:
+        c.attacks[-1].action = "bonus" # Frenzied Strike
     return _named(c, "Berserker Barbarian (Reckless)", level, taken)
 
 def paladin_smite(level, ruleset):
@@ -204,8 +206,9 @@ def monk_open_hand(level, ruleset):
     strike = Attack(name="Unarmed Strike", type="unarmed", ability_stat="dexterity", damage=f"1d{martial_arts}", damage_type="bludgeoning")
     # Attack action plus the Martial Arts bonus action strike, Flurry of Blows adds a strike for 1 ki per short rest (from level 1 in BG3, 2 in 5e)
     c.attacks = [replace(strike) for _ in range(extra_attacks(level, "monk", ruleset) + 1)]
+    c.attacks[-1].action = "bonus" # Martial Arts
     if level >= (1 if ruleset == "bg3" else 2):
-        c.attacks.append(replace(strike, name="Flurry of Blows", uses_per_fight=per_fight(per_short_rest=ki)))
+        c.attacks.append(replace(strike, name="Flurry of Blows", uses_per_fight=per_fight(per_short_rest=ki), action="bonus"))
     return _named(c, "Open Hand Monk (Flurry)", level, taken)
 
 def warlock_eldritch_blast(level, ruleset):
@@ -238,7 +241,7 @@ def sorlock(level, ruleset):
     metamagic_level, quicken_cost = (3, 3) if ruleset == "bg3" else (3, 2)
     if sorcerer_level >= metamagic_level:
         uses = per_fight(per_long_rest=sorcerer_level // quicken_cost)
-        c.attacks += [replace(a, name=f"Quickened Eldritch Blast Beam {ii + 1}", uses_per_fight=uses) for ii, a in enumerate(blasts)]
+        c.attacks += [replace(a, name=f"Quickened Eldritch Blast Beam {ii + 1}", uses_per_fight=uses, action="bonus") for ii, a in enumerate(blasts)]
     c = _named(c, "Sorlock (Warlock 2 / Sorcerer)", level, taken)
     c.description += f". Warlock {warlock_level} / Sorcerer {sorcerer_level}"
     return c

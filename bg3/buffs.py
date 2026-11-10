@@ -50,8 +50,8 @@ def elixirs():
 # Standard spell effects (the same in BG3 as in 5e), then elixirs from the item data
 BUFFS = {b.key: b for b in [
     Buff("bless", "Bless", 1, [Effect("attack_dice", "1d4")], "Also +1d4 to saving throws, up to 3 targets", concentration=True, targets=3),
-    Buff("haste", "Haste", 1, [Effect("extra_attack", 1, applies_to="weapon")],
-         "One extra weapon attack per turn and +2 AC. Needs a level 5 caster in Act 1, or a Potion of Speed", concentration=True),
+    Buff("haste", "Haste", 1, [Effect("extra_action", 1)],
+         "One more action per turn (a whole Attack action outside Honour Mode, one attack in it) and +2 AC. Needs a level 5 caster in Act 1, or a Potion of Speed", concentration=True),
     Buff("hex", "Hex", 1, [Effect("extra_damage", "1d6 necrotic")], "Cast by the character, bonus action", concentration=True, self_cast=True),
     Buff("divine_favour", "Divine Favour", 1, [Effect("extra_damage", "1d4 radiant", applies_to="weapon")], "Paladin, bonus action",
          concentration=True, self_cast=True),

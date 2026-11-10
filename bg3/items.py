@@ -46,7 +46,7 @@ class Effect:
               damage_bonus (same type as the attack), damage_bonus_ability (the stat's modifier, or the attack's own stat for 'spellcasting'),
               extra_damage (typed, i.e. '1d4 fire'), crit_damage (extra damage on a crit), crit_range (crit on value lower),
               advantage, damage_reroll (reroll damage dice at or below value), miss_damage_ability (the stat's modifier on a miss, Tenacity),
-              once_per_turn_bonus (more Sneak Attack damage), spell_dc, extra_attack (Haste), lightning_charges (gained on hits of applies_to),
+              once_per_turn_bonus (more Sneak Attack damage), spell_dc, extra_action (Haste), lightning_charges (gained on hits of applies_to),
               flag (turns on a Character option, i.e. savage_attacker)
         applies_to: a key of APPLIES_TO, or 'self' for the attacks made with the item's own weapon
         condition: when set, the effect only counts while the condition is toggled on, i.e. 'while raging' """
@@ -128,12 +128,12 @@ def _attacks_for(character, effect, own_attacks):
     if (effect.condition or "").startswith("First weapon hit after"):
         # Ring of Elemental Infusion: one weapon attack a turn, the first after the elemental cantrip (Booming Blade) or spell
         weapons = [a for a in attacks if a.is_weapon and not a.uses_per_fight]
-        after = next((ii for ii, a in enumerate(weapons) if "Booming Blade" in a.name), None)
+        after = next((ii for ii, a in enumerate(weapons) if "booming_blade" in a.tags), None)
         pick = weapons[after + 1:after + 2] if after is not None else weapons[:1]
         return pick
     if "cantrip" in (effect.condition or "").lower() and "thunder" in (effect.condition or "").lower():
         # Elemental cantrip effects (Necklace of Elemental Augmentation) also count Booming Blade, a cantrip on a weapon attack
-        attacks += [a for a in character.attacks if "Booming Blade" in a.name and a not in attacks]
+        attacks += [a for a in character.attacks if "booming_blade" in a.tags and a not in attacks]
     return attacks
 
 # Elixir of Bloodlust: once per turn, a kill gives an extra action. Against a group that is about every other turn of a 3 round fight
@@ -143,12 +143,19 @@ BLOODLUST_KILLS_PER_FIGHT = 1.5
 def _action_attacks(character):
     """ The attacks of one Attack action (or cantrip cast): not bonus action, reaction, off hand or limited use attacks """
     def plain(a):
-        bonus = any(word in a.name for word in ("Butt End", "Frenzy", "Flick", "War Priest", "Martial Arts", "Flurry", "reaction)", "Bloodlust"))
-        return not (a.offhand or a.uses_per_fight or a.fallback_for or bonus or a.min_enemies > 1)
+        return a.action == "action" and not (a.offhand or a.uses_per_fight or a.fallback_for or a.min_enemies > 1)
     weapons = [a for a in character.attacks if (a.is_weapon or a.type == "unarmed") and plain(a)]
     return weapons or [a for a in character.attacks if a.type == "spell" and plain(a)]
 
-def apply_effect(character, effect, own_attacks=()):
+def extra_action(character, label, honour_mode=False, uses=0):
+    """ Another action each turn (Haste) or after a kill (Bloodlust): outside Honour Mode a whole Attack action, Extra Attack included;
+        in Honour Mode one attack (bg3.wiki, Hastened: 'can not use Extra Attack with its additional action'). Casters get another cantrip """
+    attacks = _action_attacks(character)
+    if honour_mode and attacks and attacks[0].type != "spell":
+        attacks = attacks[:1]
+    character.attacks += [a.variant(label, action="extra", uses_per_fight=uses) for a in attacks]
+
+def apply_effect(character, effect, own_attacks=(), honour_mode=False):
     """ Applies one effect to a character (in place). own_attacks are the attacks made with the item's weapon """
     kind, value = effect.kind, effect.value
     if kind == "ability_min" and effect.stat in STATS:
@@ -161,11 +168,11 @@ def apply_effect(character, effect, own_attacks=()):
     elif kind == "flag":
         setattr(character, str(value), True)
     elif kind == "extra_action_on_kill":
-        # Another Attack action (Extra Attack included outside Honour Mode) whenever a kill happens on your turn
-        character.attacks += [replace(a, name=f"{a.name.split(' (')[0]} (Bloodlust)", uses_per_fight=float(value)) for a in _action_attacks(character)]
+        # Another Attack action whenever a kill happens on your turn
+        extra_action(character, "Bloodlust", honour_mode, uses=float(value))
     elif kind == "once_per_turn_bonus":
-        # Only adds to once per turn damage the character already has, i.e. Sneak Attack
-        if character.once_per_turn_die_mod_list:
+        # Only adds to once per turn damage the character already has every round, i.e. Sneak Attack (not to limited smites)
+        if character.once_per_turn_die_mod_list and not character.once_per_turn_uses_per_fight:
             character.once_per_turn_die_mod_list = [*character.once_per_turn_die_mod_list, str(value)]
     else:
         for a in _attacks_for(character, effect, own_attacks):
@@ -208,12 +215,13 @@ def equip_weapon(attack, item):
     props = w.get("properties", [])
     two_handed = "two-handed" in props or (attack.two_handed and "versatile" in props and not attack.offhand)
     damage = w.get("versatile_damage") if two_handed and "versatile" in props and w.get("versatile_damage") else w["damage"]
-    suffix = attack.name[attack.name.index(" ("):] if " (" in attack.name else ""
-    if attack.name == "Polearm Butt End": # The other end of the new polearm: its enhancement and properties, still 1d4 bludgeoning
-        return replace(attack, weapon_enhancement=int(w.get("enhancement", 0)), two_handed=two_handed, heavy="heavy" in props,
+    suffix = f" ({attack.label})" if attack.label else ""
+    if "butt_end" in attack.tags: # The other end of the new polearm: its enhancement and properties, still 1d4 bludgeoning
+        return replace(attack, base=w.get("base") or attack.base, weapon_enhancement=int(w.get("enhancement", 0)), two_handed=two_handed, heavy="heavy" in props,
                        bonus_attack_die_mod_list=list(attack.bonus_attack_die_mod_list), bonus_damage_die_mod_list=list(attack.bonus_damage_die_mod_list),
                        extra_damage_list=list(attack.extra_damage_list))
-    return replace(attack, name=item.name + suffix, damage=damage, damage_type=w["damage_type"], weapon_enhancement=int(w.get("enhancement", 0)),
+    return replace(attack, name=item.name + suffix, base=w.get("base") or attack.base, damage=damage, damage_type=w["damage_type"],
+                   weapon_enhancement=int(w.get("enhancement", 0)),
                    two_handed=two_handed, heavy="heavy" in props,
                    bonus_attack_die_mod_list=list(attack.bonus_attack_die_mod_list), bonus_damage_die_mod_list=list(attack.bonus_damage_die_mod_list),
                    extra_damage_list=list(attack.extra_damage_list))

@@ -80,9 +80,13 @@ def hit_and_crit_chance(num_die=(), die_size=(), modifier=0, difficulty_class=15
         p_hit += p_face * bonus[max(needed, 0):].sum()
     return float(p_hit), float(p_hit if hits_crit else p_crit)
 
-def expected_attack_damage(attack_context, damage_context, p_first_hit=None, auto_crit=False):
-    """ Expected damage of a single attack (before damage reduction, resistances are applied linearly)
-        p_first_hit is the probability that this attack is the first to hit this round, used for once per turn damage.
+def extra_dice(d, num_die, die_size):
+    """ Expected total of rider or once per turn dice: rerolled like the weapon's dice, and with BG3 Savage Attacker the higher of two
+        rolls per die """
+    return expected_dice(num_die, die_size, d["reroll_on"], advantage=bool(d.get("rider_advantage")), per_die=True)
+
+def expected_attack_damage(attack_context, damage_context, auto_crit=False):
+    """ Expected damage of a single attack without once per turn damage (before damage reduction, resistances are applied linearly).
         With auto_crit every hit is a crit (i.e. Assassinate against a surprised enemy) """
     a = attack_context if isinstance(attack_context, dict) else asdict(attack_context)
     d = damage_context if isinstance(damage_context, dict) else asdict(damage_context)
@@ -97,16 +101,10 @@ def expected_attack_damage(attack_context, damage_context, p_first_hit=None, aut
         + expected_dice(d["crit_num_die"], d["crit_damage_die"], d["reroll_on"]) + d["crit_damage_modifier"]
     miss = expected_dice(d["miss_num_die"], d["miss_damage_die"]) + d["miss_damage_modifier"] + d["save_success_multiplier"] * base
 
-    expected = p_hit * base + p_crit * crit_extra + p_miss * miss
-    p_trigger = p_crit if d.get("once_crit_only") else p_hit
-    if p_first_hit is not None and d.get("once_per_turn_eligible") and p_trigger > 0:
-        once = expected_dice(d["once_num_die"], d["once_die_size"], d["reroll_on"])
-        # Given that this is the first trigger, the chance it was a crit is p_crit/p_trigger
-        expected += p_first_hit * (once + d["once_modifier"] + p_crit / p_trigger * once)
-    expected *= d["damage_multiplier"]
+    expected = (p_hit * base + p_crit * crit_extra + p_miss * miss) * d["damage_multiplier"]
     # Extra damage of other types on a hit, dice doubled on a crit
     for n, s, m, mult in zip(d.get("rider_num_die") or [], d.get("rider_die_size") or [], d.get("rider_modifier") or [], d.get("rider_multiplier") or []):
-        dice = expected_dice(n, s)
+        dice = extra_dice(d, n, s)
         expected += (p_hit * (dice + m) + p_crit * dice) * mult
     return expected
 
@@ -130,50 +128,63 @@ def expected_by_attack(character, enemy, rounds_per_fight=None):
     attack_contexts, damage_contexts = calculate_attack_and_damage_context(character, enemy)
 
     def profile(a, d, first_round):
-        """ Expected damage without once per turn damage, chance to trigger it and its expected value when it does """
+        """ Expected damage without once per turn damage, and for each once per turn pool the attack can carry:
+            {pool id: (chance to trigger it, its expected damage when it does)} """
         a = asdict(a)
         if first_round and d.first_round_advantage:
             a["advantage"] = True
         auto_crit = first_round and d.first_round_auto_crit
         p_hit, p_crit = hit_and_crit_chance(**a)
         p_crit = p_hit if auto_crit else p_crit
-        p = (p_crit if d.once_crit_only else p_hit) if d.once_per_turn_eligible and (d.once_num_die or d.once_modifier) else 0.0
-        once = expected_dice(d.once_num_die, d.once_die_size, d.reroll_on)
-        # Given that this attack used the once per turn damage, the chance it was a crit is p_crit/p
-        once_multiplier = d.damage_multiplier if d.once_damage_multiplier is None else d.once_damage_multiplier
-        once_value = (once + d.once_modifier + p_crit / p * once) * once_multiplier if p > 0 else 0.0
-        return expected_attack_damage(a, d, auto_crit=auto_crit), p, once_value
+        context = asdict(d)
+        once = {}
+        for pool in d.once_pools:
+            p = p_crit if pool["crit_only"] else p_hit
+            if p <= 0:
+                continue
+            dice = extra_dice(context, pool["num_die"], pool["die_size"])
+            multiplier = d.damage_multiplier if pool["multiplier"] is None else pool["multiplier"]
+            # Given that this attack used the once per turn damage, the chance it was a crit is p_crit/p
+            once[pool["id"]] = (p, (dice + pool["modifier"] + p_crit / p * dice) * multiplier)
+        return expected_attack_damage(a, context, auto_crit=auto_crit), once
 
     later_rounds = [profile(a, d, False) for a, d in zip(attack_contexts, damage_contexts)]
-    has_once = any(p for _, p, _ in later_rounds)
+    pool_uses = {pool["id"]: pool["uses"] for d in damage_contexts for pool in d.once_pools}
     limited = bool(rounds_per_fight) and has_fight_limits([asdict(d) for d in damage_contexts])
     first_round = [profile(a, d, True) for a, d in zip(attack_contexts, damage_contexts)] if limited else later_rounds
     num_rounds = rounds_per_fight if limited else 1
-    averages = [d.uses_per_fight if limited else 0 for d in damage_contexts] + [damage_contexts[0].once_uses_per_fight if limited and has_once else 0]
+    pool_ids = sorted(pool_uses)
+    averages = [d.uses_per_fight if limited else 0 for d in damage_contexts] + [pool_uses[p] if limited else 0 for p in pool_ids]
 
     totals = np.zeros(len(attack_contexts))
     for probability, uses in _uses_realizations(averages):
-        attack_uses, once_uses = uses[:-1], uses[-1]
-        triggered_rounds = np.array([1.0]) # Distribution of the number of rounds once per turn damage was used so far
+        attack_uses = uses[:len(damage_contexts)]
+        once_uses = dict(zip(pool_ids, uses[len(damage_contexts):]))
+        # Per pool: the distribution of the number of rounds it was used so far (pools are independent in expectation)
+        triggered_rounds = {p: np.array([1.0]) for p in pool_ids}
         for r in range(num_rounds):
-            p_available = 1.0 if once_uses is None else triggered_rounds[:once_uses].sum()
-            p_none_yet = 1.0
+            p_none_yet = {p: 1.0 for p in pool_ids}
             for k, (u, d) in enumerate(zip(attack_uses, damage_contexts)):
                 if d.fallback_index >= 0:
-                    # Made once the limited attack it replaces is used up, never if that attack isn't limited
+                    # Made once the limited attack it replaces is used up (for its own uses, if limited), never if that attack isn't limited
                     replaced_uses = attack_uses[d.fallback_index]
-                    if replaced_uses is None or r < replaced_uses:
+                    if replaced_uses is None or r < replaced_uses or (u is not None and r >= replaced_uses + u):
                         continue
                 elif u is not None and r >= u:
                     continue # Used up
-                base, p_trigger, once_value = (first_round if r == 0 else later_rounds)[k]
+                base, once = (first_round if r == 0 else later_rounds)[k]
                 totals[k] += probability * base
-                if p_trigger:
-                    totals[k] += probability * p_available * p_none_yet * p_trigger * once_value
-                    p_none_yet *= 1 - p_trigger
-            if once_uses is not None:
-                q = 1 - p_none_yet
-                triggered_rounds = np.concatenate([triggered_rounds * (1 - q), [0]]) + np.concatenate([[0], triggered_rounds * q])
+                for p, (p_trigger, once_value) in once.items():
+                    p_available = 1.0 if once_uses[p] is None else triggered_rounds[p][:once_uses[p]].sum()
+                    totals[k] += probability * p_available * p_none_yet[p] * p_trigger * once_value
+                    p_none_yet[p] *= 1 - p_trigger
+            for p in pool_ids:
+                if once_uses[p] is not None:
+                    # Only rounds where it was still available can spend a use
+                    dist = triggered_rounds[p]
+                    can = np.arange(len(dist)) < once_uses[p]
+                    step = np.where(can, dist * (1 - p_none_yet[p]), 0)
+                    triggered_rounds[p] = np.concatenate([dist - step, [0]]) + np.concatenate([[0], step])
     return totals / num_rounds
 
 def attack_breakdown(character, enemy, rounds_per_fight=None):
