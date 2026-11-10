@@ -2,6 +2,30 @@
 
 ## 3.0.0 (in progress)
 
+- **Review fixes, rules:** Haste and Bloodlust give a whole Attack action outside Honour Mode (Extra Attack included) and one attack in
+  it; the Honour Mode toggle is now offered to every class. BG3 Savage Attacker and Great Weapon Fighting reach rider and once per turn
+  dice (smites, Sneak Attack, item damage), and Savage Attacker a thrown weapon's own dice. Lifedrinker is necrotic, so the Resonance
+  Stone no longer doubles it. Quickened Spell shares the spell slots and the sorcery points (a Fireball sorcerer was overstated). The pact
+  weapon's Charisma only applies to the main hand melee weapon. Multiclass caster levels sum their fractions before rounding down.
+  Smites only on melee weapon hits. All checked against bg3.wiki.
+- **Several once per turn pools:** a character can have Sneak Attack every round next to limited radiant smites, each with its own uses
+  and damage type, in the analytic, exact and simulated engines (`once_per_turn_extra`). A fallback attack can have its own uses.
+- **Charts drawn in the browser:** the simulator's backend sends chart data and the front end draws it, in one palette for both themes
+  (checked for colour vision deficiencies and contrast). Damage distributions are one row per character on a shared axis instead of
+  overlapping histograms. The headline is the exact number on the cards; the simulated mean is in the table. The Python plotly
+  dependency is gone.
+- **Layout:** the simulator's editor sits beside the results instead of over them. The planner leads with its chart, shows only the gear
+  slots in use (one act at a time on a phone), has one buff by act grid and the overall score as a stacked bar per act. The leaderboard has
+  denser rows, one armour class column for the chart's act, and its chart and table are linked. The map's key sits outside the plot and
+  names avoid each other. Every page was checked at phone width.
+- **Typed API:** `api/schemas.py` describes every request and response, responses are checked against it, and the front end's types are
+  generated from it (`uv run python -m api.openapi`; a test fails when they are out of date). vitest unit tests for the front end's logic.
+- **Attack roles as fields:** attacks carry `action` (action, bonus, reaction, extra), `tags`, `base` and `label`, replacing checks on
+  their names.
+- **For a hosted copy:** `DAMAGE_LAB_READ_ONLY=1` turns off the doc import and leaderboard saves; the doc import only follows Google Docs
+  links; `python -m api` listens on this machine only unless `HOST` is set.
+- **Cleanup:** `random/` and `utilities/` removed, test fixtures under `tests/fixtures/`, simulation timings in the log instead of printed.
+  The example party wears armour.
 - **New front end, page by page:** a React + TypeScript app (`frontend/`) over a FastAPI backend (`api/`), replacing the Dash app as pages
   are rebuilt. The Simulator is first: characters with their live expected damage on the left, the answer up front (who leads and by how
   much), the same plots as before, and sortable, filterable tables folded underneath. Characters open in a side panel with Stats, Attacks

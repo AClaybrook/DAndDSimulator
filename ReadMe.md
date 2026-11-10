@@ -30,7 +30,7 @@ Live here: https://d-and-d-damage-simulator-745953dd5908.herokuapp.com/
     * `uv run pytest` to run the tests (the simulation is validated against exact analytic results)
     * `uv run ruff check .` to lint
     * `uv run python -m benchmarks.benchmark` to time the simulation, run it before and after changing `computations/`
-    * `cd frontend && npm run lint && npm run build` to check the front end, and `npm run smoke` (with the app running) to click through every page in a browser
+    * `cd frontend && npm run lint && npm test && npm run build` to check the front end, and `npm run smoke` (with the app running) to click through every page in a browser
 
 See [CHANGELOG.md](CHANGELOG.md) for what changed in 2.0.
 

@@ -6,6 +6,12 @@ the engine (bg3/character.py, computations/analytic.py).
 
 ![Sustained damage by act, and Act 3 sustained vs burst with reaction attacks](build_comparison.png)
 
+> **After the rules fixes of 2026-11-10** (Savage Attacker and Great Weapon Fighting on rider dice, Lifedrinker as necrotic damage, the
+> pact weapon's Charisma only in the main hand) the sustained numbers below move by 3 at most: the Halberd of Vigilance builds gain 1 to 3
+> in Acts 2 and 3 (Padlock 95 to 98, Sorcadin 63 to 65, Battle Master 64 to 66 and 53 to 56), the others are unchanged. With the
+> Resonance Stone the pure Hexblade is 144, not 154. The tables and charts keep the earlier figures except where noted. Haste is now
+> a whole extra Attack action outside Honour Mode, which none of these tables use.
+
 ## How the numbers are counted
 
 - **Sustained:** the average round of a 3 round fight with the day's resources spread over 4 fights (2 short rests). A smite is used at
@@ -166,7 +172,7 @@ damage and disadvantage on Intelligence, Wisdom and Charisma saves (undead and c
 | Act 2 / Act 3, sustained / burst | Without the stone | With the Resonance Stone |
 |---|---|---|
 | Padlock, Shadow Blade + shield | 57 / 80 · 87 / 120 | 100 / 123 · 156 / 190 |
-| Pure Hexblade, Shadow Blade + dagger, darkness | 48 · 82 | 91 · 154 |
+| Pure Hexblade, Shadow Blade + dagger, darkness | 48 · 81 | 91 · 144 |
 | Nuclear Pure Hexblade (own gear) | 47 · 78 | 82 · 130 |
 | Sorcadin, Shadow Blade + shield | 44 / 65 · 62 / 114 | 80 / 100 · 108 / 159 |
 | Battle Master, Halberd, with advantage | 71 / 101 · 96 / 140 | 71 / 101 · 96 / 140 |
@@ -179,7 +185,7 @@ damage and disadvantage on Intelligence, Wisdom and Charisma saves (undead and c
 | Fighter 6 / Swash 6, Dancing Breeze | 8 / 10 · 58 / 89 | 8 / 10 · 58 / 89 |
 
 - **Shadow Blade builds double**: the whole Shadow Blade hit is psychic (dice, ability modifier, Duelling, Hexblade's Curse, Lifedrinker
-  is necrotic and stays), so the Padlock goes from 87 to 156 and the pure Hexblade from 82 to 154 in Act 3. Smites stay radiant, so the
+  is necrotic and stays), so the Padlock goes from 87 to 156 and the pure Hexblade from 81 to 144 in Act 3. Smites stay radiant, so the
   Sorcadin gains less (62 to 108) and the Halberd, glaive and greatsword builds gain nothing.
 - With the stone, Shadow Blade + shield is clearly the best weapon for every Paladin and Warlock build; without it the Halberd of Vigilance
   is level or ahead. Arcane Archers gain about 5 from Beguiling Arrow's psychic 2d6.
