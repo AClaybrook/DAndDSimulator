@@ -58,7 +58,7 @@ def roll_damage_dice(num_rolls, num_die, die_size, advantage=False, disadvantage
     return total
 
 def attack_roll(num_rolls, num_die=None, die_size=None, modifier=0, difficulty_class=15, crit_on=20, always_hit=False, always_crit=False, hits_crit=False,
-                saving_throw=False, advantage=False, disadvantage=False, reroll_on=0, rng=RNG):
+                saving_throw=False, advantage=False, disadvantage=False, advantage_chance=0.0, reroll_on=0, rng=RNG):
     """ Roll an attack roll with num_rolls dice, adding attack_modifier to each roll, tracking hits and crits"""
     # Special cases
     ## Some attacks always hit, i.e. magic missile
@@ -70,6 +70,10 @@ def attack_roll(num_rolls, num_die=None, die_size=None, modifier=0, difficulty_c
 
     # Normal case
     rolls = roll_adv_dis(num_rolls, advantage=advantage, disadvantage=disadvantage, reroll_on=reroll_on, rng=rng)
+    if advantage_chance and not advantage:
+        # Advantage on a share of the rolls (it cancels disadvantage on those)
+        with_advantage = roll_adv_dis(num_rolls, advantage=True, disadvantage=disadvantage, reroll_on=reroll_on, rng=rng)
+        rolls = np.where(rng.random(num_rolls) < advantage_chance, with_advantage, rolls)
     # Add modifiers, bonus dice such as bless are rolled normally
     attack_rolls = rolls + modifier + roll_dice(num_rolls, num_die or [], die_size or [], rng=rng)
     # Saving throw, a hit is if the roll is lower than the difficulty class, crits are ignored

@@ -27,9 +27,11 @@ ENEMY_COUNTS = [1, 2, 3, 4]
 def effect_text(effect):
     target = "" if effect.applies_to in ("all", "self") else f" ({effect.applies_to.replace('_', ' ')})"
     what = {"ability_min": f"{effect.stat.title()} {effect.value}", "ability_bonus": f"{effect.stat.title()} +{effect.value}",
-            "attack_bonus": f"+{effect.value} to hit", "attack_dice": f"+{effect.value} to hit", "damage_bonus": f"+{effect.value} damage",
+            "attack_bonus": "proficiency bonus added twice to hit" if effect.value == "proficiency" else f"+{effect.value} to hit", "attack_dice": f"+{effect.value} to hit", "damage_bonus": f"+{effect.value} damage",
             "damage_bonus_ability": f"+{effect.stat.title()} modifier to damage", "extra_damage": f"+{effect.value} damage",
             "crit_damage": f"+{effect.value} on a crit", "crit_range": f"crit range +{effect.value}", "advantage": "advantage",
+            "advantage_chance": f"advantage on about {round(float(effect.value or 0) * 100)}% of attacks" if effect.kind == "advantage_chance" else "",
+            "limited_haste": f"its own Haste: {effect.value} more actions a fight",
             "spell_dc": f"+{effect.value} spell DC", "damage_reroll": f"reroll damage dice of {effect.value} or less",
             "miss_damage_ability": f"{effect.stat.title()} modifier damage on a miss", "once_per_turn_bonus": f"+{effect.value} Sneak Attack damage", "extra_action": "another action each turn", "save_disadvantage": "enemies have disadvantage on the save",
             "free_cast": f"{effect.value} more cast a fight", "channel_divinity": f"+{effect.value} Channel Divinity charge", "extra_action_on_kill": "another action after a kill", "flag": str(effect.value),

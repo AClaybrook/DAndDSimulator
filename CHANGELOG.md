@@ -32,6 +32,12 @@
   B while its uses last, then C), in the analytic, exact and simulated engines.
 - **Build doc import:** a full caster holding a staff casts its cantrip instead of swinging the staff, Toll the Dead is recognised, a
   second hand crossbow goes in the off hand, and Booming Blade is only assumed when the write-up names it.
+- **Act 3 bows:** The Dead Shot adds the proficiency bonus twice to its own attack rolls (Keen Attack, which was only a note, so the
+  bow was undersold). Gontr Mael's Promised Victory is advantage on about a quarter of its shots (a hit marks the target with Guiding
+  Bolt for the next attack roll that turn, after a DC 15 Dexterity save) instead of a toggle that gave every shot advantage; Bolt of
+  Celestial Light's radiant rider and Celestial Haste (half an action a fight, nothing when Haste is already on) are counted. The
+  engine has advantage on a share of an attack's rolls (`advantage_chance`), the same in the analytic, exact and simulated numbers.
+- **Auntie Ethel's Hair** on more than one party member shows in the Conflicts tab (it is given once a playthrough).
 - **Illithid powers:** a checkbox for every custom character (off by default). Psionic Overload adds 1d4 psychic to every attack
   roll, Favourable Beginnings the proficiency bonus to the first attack of a fight, and Luck of the Far Realms makes one hit a day a
   critical hit. Psionic Overload is taken as already up, like a buff. Mind Blast, Concentrated Blast, Cull the Weak and Black Hole

@@ -54,13 +54,16 @@ def expected_dice(num_die, die_size, reroll_on=0, advantage=False, disadvantage=
     return float(np.dot(np.arange(len(pmf)), pmf))
 
 def hit_and_crit_chance(num_die=(), die_size=(), modifier=0, difficulty_class=15, crit_on=20, advantage=False, disadvantage=False,
-                        reroll_on=0, saving_throw=False, always_hit=False, always_crit=False, hits_crit=False, **_):
+                        advantage_chance=0.0, reroll_on=0, saving_throw=False, always_hit=False, always_crit=False, hits_crit=False, **_):
     """ Exact probability to hit (including crits) and to crit for an attack roll or a saving throw (hit = failed save) """
     if always_crit:
         return 1.0, 1.0
     if always_hit:
         return 1.0, 0.0
     d20 = adv_dis_pmf(die_pmf(20, reroll_on), advantage, disadvantage)
+    if advantage_chance and not advantage:
+        # Advantage on a share of the rolls (it cancels disadvantage on those)
+        d20 = (1 - advantage_chance) * d20 + advantage_chance * adv_dis_pmf(die_pmf(20, reroll_on), True, disadvantage)
     bonus = dice_sum_pmf(num_die, die_size)
     p_hit = 0.0
     p_crit = 0.0

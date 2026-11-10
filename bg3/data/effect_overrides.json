@@ -198,12 +198,36 @@
         "Gontr Mael": {
             "effects": [
                 {
-                    "kind": "advantage",
-                    "applies_to": "self",
-                    "condition": "Promised Victory: a hit marks the target with Guiding Bolt until the end of the turn, so the next shot has Advantage (counted on every shot, the first of a turn included)"
+                    "kind": "advantage_chance",
+                    "value": 0.25,
+                    "applies_to": "self"
+                },
+                {
+                    "kind": "extra_damage",
+                    "value": "2 radiant",
+                    "applies_to": "self"
+                },
+                {
+                    "kind": "limited_haste",
+                    "value": 0.5
                 }
             ],
-            "notes": "Celestial Haste once a long rest"
+            "notes": "Promised Victory: a hit marks the target with Guiding Bolt (DEX save DC 15) for the next attack roll that turn, so about a quarter of shots have Advantage; Bolt of Celestial Light: +1d4 radiant on every shot for 10 turns after it, once a short rest (counted as 2 radiant a shot); Celestial Haste: an action, 5 turns of Haste once a long rest (about half an action a fight, nothing when Haste is already on)"
+        },
+        "The Dead Shot": {
+            "effects": [
+                {
+                    "kind": "crit_range",
+                    "value": 1,
+                    "applies_to": "all"
+                },
+                {
+                    "kind": "attack_bonus",
+                    "value": "proficiency",
+                    "applies_to": "self"
+                }
+            ],
+            "notes": "Keen Attack: the proficiency bonus is added twice to ranged attack rolls with this bow (not with Disadvantage)"
         }
     }
 }

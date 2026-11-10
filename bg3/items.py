@@ -51,7 +51,9 @@ class Effect:
               once_per_turn_bonus (more Sneak Attack damage), spell_dc, extra_action (Haste), lightning_charges (gained on hits of applies_to),
               flag (turns on a Character option, i.e. savage_attacker), save_disadvantage (enemies roll saves against these attacks twice
               and keep the lower), free_cast (value more casts a fight of the limited spell it applies to), channel_divinity (value more
-              Channel Divinity charges per long rest)
+              Channel Divinity charges per long rest), advantage_chance (advantage on that share of the attack rolls), limited_haste
+              (value more actions a fight from a Haste the item casts, unless Haste is already on). An attack_bonus of 'proficiency'
+              adds the proficiency bonus again (The Dead Shot)
         applies_to: a key of APPLIES_TO, or 'self' for the attacks made with the item's own weapon
         condition: when set, the effect only counts while the condition is toggled on, i.e. 'while raging' """
     kind: str
@@ -199,7 +201,8 @@ def apply_effect(character, effect, own_attacks=(), honour_mode=False):
     else:
         for a in _attacks_for(character, effect, own_attacks):
             if kind in ("attack_bonus", "attack_dice"):
-                a.bonus_attack_die_mod_list = [*a.bonus_attack_die_mod_list, str(value)]
+                bonus = character.proficiency_bonus if value == "proficiency" else value
+                a.bonus_attack_die_mod_list = [*a.bonus_attack_die_mod_list, str(bonus)]
             elif kind == "damage_bonus":
                 a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(value)]
             elif kind == "damage_bonus_ability":
@@ -218,6 +221,8 @@ def apply_effect(character, effect, own_attacks=(), honour_mode=False):
                 a.crit_on = max(2, min(a.crit_on, character.crit_on) - int(value))
             elif kind == "advantage":
                 a.advantage = True
+            elif kind == "advantage_chance":
+                a.advantage_chance = max(a.advantage_chance, float(value))
             elif kind == "save_disadvantage":
                 a.save_disadvantage = True
             elif kind == "miss_damage_ability":

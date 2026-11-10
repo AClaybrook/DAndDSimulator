@@ -312,3 +312,37 @@ def test_arcane_synergy_gwm_in_two_hands_and_saving_throw_bonuses():
     helmet = catalog()["bg3:helmet_of_arcane_acuity"]
     assert helmet.effects == [] and helmet.notes.startswith("Dexterity saving throws +1")
     assert catalog()["bg3:khalid_s_gift"].effects[0].kind == "ability_bonus" # 'Wisdom +1 (up to 21)' is still an ability bonus
+
+def test_dead_shot_gontr_mael_and_one_hags_hair():
+    """ The Dead Shot adds the proficiency bonus twice to its own attack rolls; Gontr Mael's Guiding Bolt is advantage on a share of its
+        shots (the same in every engine), with its radiant rider and a part-time Haste; Auntie Ethel's Hair on two members is a conflict """
+    from bg3 import doc_import
+    from bg3.party import party_conflicts
+    doc = {e["build"]["name"]: e["build"] for e in doc_import.load()}
+    deadeye = Bg3Build.from_dict(doc["5. Arcane Deadeye"])
+    gontr = compile_build(deadeye, "3")
+    shot = next(a for a in gontr.attacks if a.name == "Gontr Mael")
+    assert shot.advantage_chance == 0.25 and not shot.advantage and "2 radiant" in shot.extra_damage_list
+    assert any("Celestial Haste" in a.name and a.uses_per_fight == 0.5 for a in gontr.attacks)
+    hasted = compile_build(replace(deadeye, buffs={"3": ["haste"]}), "3")
+    assert not any("Celestial Haste" in a.name for a in hasted.attacks) and any("(Haste)" in a.name for a in hasted.attacks)
+
+    dead_shot = compile_build(replace(deadeye, equipment={"3": {"ranged_main": "bg3:the_dead_shot"}}), "3")
+    shot = next(a for a in dead_shot.attacks if a.name == "The Dead Shot")
+    assert str(dead_shot.proficiency_bonus) in shot.bonus_attack_die_mod_list and shot.crit_on == 19
+
+    # Advantage on a share of the rolls sits between none and always, and the engines agree on it
+    from computations.models import Attack, Character
+    from tests.test_exact import check
+    enemy = Enemy(armor_class=18)
+    plain, some, always = (Character(name="a", level=5, dexterity=18, attacks=[Attack(name="Bow", type="weapon (ranged)", ability_stat="dexterity",
+                                                                                      damage="1d8", advantage_chance=q, advantage=q == 1)])
+                           for q in (0, 0.25, 1))
+    low, mid, high = (expected_damage_per_round(c, enemy) for c in (plain, some, always))
+    assert low < mid < high and mid == pytest.approx(0.75 * low + 0.25 * high)
+    check(some, enemy, 3)
+    check(gontr, enemy, 3)
+
+    party = (Bg3Build.from_dict(doc["1. The Godblade"]), deadeye)
+    assert any("Auntie Ethel's Hair" in c.message for c in party_conflicts(party, acts=("3",)))
+    assert not any("Auntie Ethel's Hair" in c.message for c in party_conflicts(party[:1], acts=("3",)))

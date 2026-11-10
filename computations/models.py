@@ -84,6 +84,7 @@ class Attack:
     always_hit: bool = False
     always_crit: bool = False
     hits_crit: bool = False # Every hit is a crit, i.e. melee attacks against paralysed targets
+    advantage_chance: float = 0.0 # Share of these rolls made with advantage, i.e. when an earlier hit may have set it up (Guiding Bolt)
     crit_on: int = 20
     # Weapon Specific
     weapon_enhancement: int = 0
@@ -376,6 +377,7 @@ class AttackContext:
     modifier: int = 0
     advantage: bool = False
     disadvantage: bool = False
+    advantage_chance: float = 0.0 # Share of rolls with advantage when it isn't certain
     crit_on: int = 20
     reroll_on: int = 0
     difficulty_class: int = 15
@@ -604,6 +606,7 @@ def calculate_attack_and_damage_context(character, enemy):
             modifier=attack_modifier,
             advantage=advantage,
             disadvantage=disadvantage,
+            advantage_chance=0.0 if saving_throw else attack.advantage_chance,
             crit_on=crit_on,
             reroll_on=attack_reroll_on,
             difficulty_class=difficulty_class,
