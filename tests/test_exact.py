@@ -108,3 +108,38 @@ def test_a_fallback_can_have_its_own_uses():
     # 4 rounds: Fireball, then Fire Bolt three times, quickened once
     assert expected_damage_per_round(character, Enemy(), 4) == pytest.approx((28 + 3 * 11 + 11) / 4)
     check(character, Enemy(), 4)
+
+def test_fallbacks_chain():
+    """ A limited spell, then a second limited spell, then the cantrip: each starts when the one before has run out """
+    def spell(name, damage, **kwargs):
+        return Attack(name=name, type="spell", ability_stat="charisma", damage=damage, always_hit=True, **kwargs)
+    first = spell("Inflict Wounds (Touch of Death)", "10d1", uses_per_fight=1)
+    second = spell("Inflict Wounds", "5d1", uses_per_fight=2, fallback_for=first.name)
+    cantrip = spell("Shocking Grasp", "1d1", fallback_for=second.name)
+    character = Character(level=5, charisma=10, attacks=[first, second, cantrip])
+    # 5 rounds: 10, then 5 and 5, then 1 and 1
+    assert expected_damage_per_round(character, Enemy(), 5) == pytest.approx((10 + 5 + 5 + 1 + 1) / 5)
+    check(character, Enemy(), 5)
+    # Half a use on average: the later attacks shift by a round in half the fights
+    half = Character(level=5, charisma=10, attacks=[spell(first.name, "10d1", uses_per_fight=0.5), second, cantrip])
+    assert expected_damage_per_round(half, Enemy(), 3) == pytest.approx(((5 + 5 + 1) + (10 + 5 + 5)) / 2 / 3)
+    check(half, Enemy(), 3)
+    # A fallback of something that never runs out is never made
+    never = Character(level=5, charisma=10, attacks=[spell("Fire Bolt", "2d1"), spell("Backup", "9d1", fallback_for="Fire Bolt")])
+    assert expected_damage_per_round(never, Enemy(), 3) == pytest.approx(2)
+
+def test_save_disadvantage_and_fixed_dc():
+    """ The enemy keeps the lower of two save rolls (Staff of Cherished Necromancy); a spell can have its own DC (Dethrone's 18) """
+    toll = Attack(name="Toll the Dead", type="spell", ability_stat="wisdom", damage="3d12", saving_throw=True, saving_throw_stat="wisdom",
+                  saving_throw_success_multiplier=0)
+    cleric = Character(level=12, wisdom=20, attacks=[toll]) # DC 8 + 4 + 5 = 17
+    enemy = Enemy(wisdom_save=6) # Fails on a roll of 10 or lower: 50%
+    plain = expected_damage_per_round(cleric, enemy)
+    assert plain == pytest.approx(0.5 * 19.5)
+    from dataclasses import replace
+    cursed = replace(cleric, attacks=[replace(toll, save_disadvantage=True)])
+    assert expected_damage_per_round(cursed, enemy) == pytest.approx(0.75 * 19.5) # 1 - 0.5 * 0.5
+    check(cursed, enemy)
+    fixed = replace(cleric, attacks=[replace(toll, save_dc=18)])
+    assert expected_damage_per_round(fixed, enemy) == pytest.approx(0.55 * 19.5) # Fails on 11 or lower
+    check(fixed, enemy)

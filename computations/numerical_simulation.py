@@ -265,6 +265,23 @@ def once_masks_for(d, hit, crit, hit_already, once_left=None):
 def is_fallback(d):
     return d.get("fallback_index", -1) >= 0
 
+NEVER = 10 ** 9 # A round no fight reaches
+
+def attack_windows(uses, fallback_index):
+    """ [(first round, round after the last)] each attack is made in during a fight, rounds counted from 0.
+        uses: per attack None (every round) or its uses this fight (a number, or an array with one entry per simulated fight).
+        fallback_index: per attack the attack it follows, -1 for none. A fallback starts when the attack it replaces has run out, and
+        runs for its own uses if it has any, so fallbacks can chain (a limited spell, then another, then the cantrip). A fallback of
+        an attack that never runs out is never made """
+    windows = {}
+    def window(k, seen=()):
+        if k not in windows:
+            replaced = fallback_index[k]
+            start = 0 if replaced < 0 or replaced == k or replaced in seen else window(replaced, (*seen, k))[1]
+            windows[k] = (start, NEVER if uses[k] is None else start + uses[k])
+        return windows[k]
+    return [window(k) for k in range(len(uses))]
+
 def inactive_results(num_rounds, damage_only):
     """ Results of an attack that is never made """
     if damage_only:
@@ -323,6 +340,7 @@ def simulate_fight_attacks(attack_contexts, damage_contexts, num_rounds, rounds_
     limited_pools = {pool["id"]: pool["uses"] for d in damage_contexts for pool in d.get("once_pools") or () if pool["uses"]}
 
     once_left = {pool_id: uses_per_fight(average, num_fights, rng) for pool_id, average in limited_pools.items()}
+    windows = attack_windows(attack_uses, [d.get("fallback_index", -1) for d in damage_contexts])
 
     per_attack = [[] for _ in damage_contexts]
     rounds = np.arange(1, num_fights + 1, dtype='int32')
@@ -333,15 +351,10 @@ def simulate_fight_attacks(attack_contexts, damage_contexts, num_rounds, rounds_
         for k, ((attack_rolls, rolls, hit, crit), d) in enumerate(zip(rolled, damage_contexts)):
             if r == 0 and d.get("first_round_auto_crit"):
                 crit = hit.copy()
-            if is_fallback(d):
-                # Made once the limited attack it replaces is used up, never if that attack isn't limited
-                # (and with uses of its own, only for that many rounds after)
-                limited_uses = attack_uses[d["fallback_index"]]
-                active = limited_uses <= r if limited_uses is not None else np.zeros(num_fights, dtype=bool)
-                if attack_uses[k] is not None:
-                    active = active & (limited_uses + attack_uses[k] > r)
-            else:
-                active = attack_uses[k] > r if attack_uses[k] is not None else None
+            # Limited attacks in the first rounds, fallbacks once the attack they replace has run out (never if it doesn't)
+            start, end = windows[k]
+            always = isinstance(start, int) and start == 0 and isinstance(end, int)
+            active = None if always else np.broadcast_to((start <= r) & (r < end), (num_fights,))
             if active is not None:
                 hit, crit = hit & active, crit & active
             columns = damage_roll(hit, crit, **d, once_masks=once_masks_for(d, hit, crit, hit_already, once_left), rng=rng)

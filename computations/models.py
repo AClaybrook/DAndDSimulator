@@ -94,6 +94,8 @@ class Attack:
     saving_throw: bool = False
     saving_throw_stat: Stat = 'dexterity'
     saving_throw_success_multiplier: float = 0.5
+    save_disadvantage: bool = False # The enemy rolls the save twice and keeps the lower (i.e. Staff of Cherished Necromancy)
+    save_dc: int = 0 # A fixed save DC instead of the caster's (i.e. Dethrone's 18), 0 for the caster's
     # Whether the character's once per turn damage (sneak attack, smite) can be added to this attack
     once_per_turn_eligible: bool = True
     # Limited attacks (i.e. Action Surge, quickened spells): average uses per fight, used in the first rounds. 0 means every round
@@ -588,10 +590,11 @@ def calculate_attack_and_damage_context(character, enemy):
         crit_on = min(character.crit_on, attack.crit_on)
         if saving_throw:
             # The enemy rolls a saving throw against the character's spell save DC, so character attack roll bonuses don't apply
-            difficulty_class = character.spell_difficulty_class(attack.ability_stat)
+            difficulty_class = attack.save_dc or character.spell_difficulty_class(attack.ability_stat)
             attack_modifier = enemy.saving_throw_modifier(attack.saving_throw_stat) if isinstance(enemy, Enemy) else enemy.ability_modifier(attack.saving_throw_stat)
             attack_num_die, attack_die_sizes = [], []
-            advantage = disadvantage = False
+            # The roll is the enemy's, so only its own disadvantage counts
+            advantage, disadvantage = False, bool(attack.save_disadvantage)
             attack_reroll_on = 0
             save_success_multiplier = attack.saving_throw_success_multiplier
 

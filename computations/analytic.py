@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 from computations.models import calculate_attack_and_damage_context
-from computations.numerical_simulation import has_fight_limits
+from computations.numerical_simulation import attack_windows, has_fight_limits
 
 # Analytic Values
 def expected_value(die_size):
@@ -162,16 +162,13 @@ def expected_by_attack(character, enemy, rounds_per_fight=None):
         once_uses = dict(zip(pool_ids, uses[len(damage_contexts):]))
         # Per pool: the distribution of the number of rounds it was used so far (pools are independent in expectation)
         triggered_rounds = {p: np.array([1.0]) for p in pool_ids}
+        windows = attack_windows(attack_uses, [d.fallback_index for d in damage_contexts])
         for r in range(num_rounds):
             p_none_yet = {p: 1.0 for p in pool_ids}
-            for k, (u, d) in enumerate(zip(attack_uses, damage_contexts)):
-                if d.fallback_index >= 0:
-                    # Made once the limited attack it replaces is used up (for its own uses, if limited), never if that attack isn't limited
-                    replaced_uses = attack_uses[d.fallback_index]
-                    if replaced_uses is None or r < replaced_uses or (u is not None and r >= replaced_uses + u):
-                        continue
-                elif u is not None and r >= u:
-                    continue # Used up
+            for k in range(len(damage_contexts)):
+                # Limited attacks in the first rounds, fallbacks once the attack they replace has run out
+                if not windows[k][0] <= r < windows[k][1]:
+                    continue
                 base, once = (first_round if r == 0 else later_rounds)[k]
                 totals[k] += probability * base
                 for p, (p_trigger, once_value) in once.items():
