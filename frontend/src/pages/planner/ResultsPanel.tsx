@@ -1,22 +1,27 @@
-import { Badge, Checkbox, Group, MultiSelect, NumberInput, Select, SimpleGrid, Stack, Table, Tabs, Text, Tooltip } from '@mantine/core'
-import { useDebouncedValue } from '@mantine/hooks'
+import { Badge, Checkbox, Collapse, Group, MultiSelect, NumberInput, Select, Stack, Table, Tabs, Text, Tooltip, UnstyledButton } from '@mantine/core'
+import { useDebouncedValue, useMediaQuery } from '@mantine/hooks'
+import { IconChevronDown, IconChevronRight } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { bg3, type Evaluation, type MemberResult, type PlannerOptions } from '../../api'
-import { Section, Stat } from '../../components/Layout'
-import { chartLayout } from '../../format'
+import { Section } from '../../components/Layout'
+import { chartLayout, spread } from '../../format'
 import { Plot } from '../../components/Plot'
 import { ACTS, useParty } from '../../party'
-import { COLORS } from '../../store'
+import { colorAt, useColors } from '../../theme'
 import { useSharedEnemy } from './usePlanner'
 
-// Results: the party's damage across the acts first, then conflicts and how the party works together
+const MAX_LINES = 8 // One colour slot per line, so the party and the compared builds share eight
+
+// Results: the party's damage across the acts first, then conflicts and how the party works together.
+// The damage numbers themselves live on the party cards above; this panel is the picture and the detail behind them
 export function ResultsPanel({ options, evaluation }: { options: PlannerOptions; evaluation: Evaluation | undefined }) {
   const { party, selected, enemies, attackBonus } = useParty()
+  const colors = useColors()
   const conflicts = evaluation?.conflicts ?? []
   const member = evaluation?.members[selected]
   const { enemy, rounds } = useSharedEnemy()
-  // Example builds drawn next to the party (dashed), each evaluated on its own against the same enemy, so the chart isn't limited to four
+  // Example builds drawn next to the party (dashed), each evaluated on its own against the same enemy
   const [compare, setCompare] = useState<string[]>([])
   const compared = useQuery({
     queryKey: ['compare', compare, enemy, rounds, attackBonus],
@@ -27,19 +32,31 @@ export function ResultsPanel({ options, evaluation }: { options: PlannerOptions;
     enabled: compare.length > 0 && Boolean(enemy),
     placeholderData: (previous) => previous,
   })
+  const short = (name: string) => name.split(' (')[0]
   const line = (m: MemberResult, color: string, width: number, dash?: string) => ({
     type: 'scatter', mode: 'lines+markers', name: m.name, x: ACTS.map((a) => `Act ${a}`), y: ACTS.map((a) => m.acts[a].damage[enemies - 1]),
-    customdata: ACTS.map((a) => m.acts[a].level), line: { color, width, dash }, marker: { size: dash ? 6 : 9 },
-    hovertemplate: `${m.name}<br>%{x} (level %{customdata}): %{y:.1f} damage per round<extra></extra>`,
+    customdata: ACTS.map((a) => m.acts[a].level), line: { color, width, dash }, marker: { size: dash ? 6 : 8, color },
+    hovertemplate: `${m.name} (level %{customdata}): %{y:.1f}<extra></extra>`,
   })
+  const members = evaluation?.members ?? []
   const others = compare.length ? (compared.data ?? []) : []
+  const lines = [...members.map((m, i) => ({ m, i })), ...others.map((m, i) => ({ m, i: party.length + i }))]
+  // A name at the end of each line while there are few enough to read; with more, the legend names them
+  const last = ACTS[ACTS.length - 1]
+  const ends = lines.map(({ m }) => m.acts[last].damage[enemies - 1])
+  const top = Math.max(1, ...lines.flatMap(({ m }) => ACTS.map((a) => m.acts[a].damage[enemies - 1])))
+  const narrow = useMediaQuery('(max-width: 48em)')
+  const labels = lines.length <= 4 && !narrow ? spread(ends, top * 0.075).map((y, k) => ({
+    x: `Act ${last}`, y, xanchor: 'left', xshift: 8, showarrow: false, text: short(lines[k].m.name), font: { size: 11, color: colorAt(colors, lines[k].i) },
+  })) : []
   const figure = {
     data: [
-      ...(evaluation?.members ?? []).map((m, i) => line(m, COLORS[i % COLORS.length], i === selected ? 4 : 2)),
-      ...others.map((m, i) => line(m, COLORS[(party.length + i) % COLORS.length], 1.5, 'dash')),
+      ...members.map((m, i) => line(m, colorAt(colors, i), i === selected ? 3.5 : 2)),
+      ...others.map((m, i) => line(m, colorAt(colors, party.length + i), 2, 'dash')),
     ],
-    layout: chartLayout({ margin: { l: 45, r: 10, t: 10, b: 30 }, yaxis: { rangemode: 'tozero', title: { text: 'Damage per round' } }, showlegend: others.length > 0,
-      legend: { orientation: 'h', y: -0.2, font: { size: 10 } } }),
+    layout: chartLayout({ margin: { l: 46, r: labels.length ? 110 : 12, t: 8, b: 30 }, hovermode: 'x unified', annotations: labels,
+      yaxis: { rangemode: 'tozero', title: { text: `Damage per round${enemies > 1 ? `, ${enemies} enemies` : ''}` } },
+      showlegend: labels.length === 0 && lines.length > 1, legend: { orientation: 'h', y: -0.16, font: { size: 11 } } }),
   }
 
   return (
@@ -51,37 +68,10 @@ export function ResultsPanel({ options, evaluation }: { options: PlannerOptions;
       </Tabs.List>
       <Tabs.Panel value="damage">
         <Stack gap="sm">
-          <Plot figure={figure} height={others.length ? 320 : 260} />
+          <Plot figure={figure} height={lines.length > 4 ? 360 : 300} />
           <MultiSelect size="xs" searchable clearable placeholder="Compare with example builds..." data={options.examples.map((e) => e.name)}
-            value={compare} onChange={setCompare} maxValues={8} rightSection={compared.isFetching ? <Text size="10px" c="dimmed">…</Text> : undefined} />
-          {member && (
-            <>
-              <Text size="sm" fw={600}>{member.name}</Text>
-              <SimpleGrid cols={3} spacing="xs">
-                {ACTS.map((a) => {
-                  const r = member.acts[a]
-                  return (
-                    <Stat key={a} label={`Act ${a} · level ${r.level}`} value={r.damage[enemies - 1].toFixed(1)}
-                      detail={<Tooltip multiline w={300} label={r.acParts.map((p) => `${p.source} ${p.value}`).join(' + ')}><span>AC {r.ac} · hit {Math.round(100 * r.hitChance)}%</span></Tooltip>} />
-                  )
-                })}
-              </SimpleGrid>
-              <Section title="Overall score" padding="sm">
-                <Table fz="xs" className="numeric">
-                  <Table.Thead><Table.Tr><Table.Th />{ACTS.map((a) => <Table.Th key={a}>Act {a}</Table.Th>)}</Table.Tr></Table.Thead>
-                  <Table.Tbody>
-                    <Table.Tr><Table.Td fw={700}>Total</Table.Td>{ACTS.map((a) => <Table.Td key={a} fw={700}>{member.acts[a].score.toFixed(0)}</Table.Td>)}</Table.Tr>
-                    {Object.keys(options.partLabels).map((part) => (
-                      <Table.Tr key={part}>
-                        <Table.Td c="dimmed">{options.partLabels[part]} <Text span size="10px">×{options.scoreWeights[part]}</Text></Table.Td>
-                        {ACTS.map((a) => <Table.Td key={a}><Tooltip label={member.acts[a].scoreNotes[part]} multiline w={260}><span>{member.acts[a].scoreParts[part]}</span></Tooltip></Table.Td>)}
-                      </Table.Tr>
-                    ))}
-                  </Table.Tbody>
-                </Table>
-              </Section>
-            </>
-          )}
+            value={compare} onChange={setCompare} maxValues={Math.max(MAX_LINES - party.length, 0)} rightSection={compared.isFetching ? <Text size="10px" c="dimmed">…</Text> : undefined} />
+          {member && <ScoreView member={member} options={options} />}
         </Stack>
       </Tabs.Panel>
       <Tabs.Panel value="conflicts">
@@ -105,9 +95,63 @@ export function ResultsPanel({ options, evaluation }: { options: PlannerOptions;
   )
 }
 
+// The selected character's all round score: one stacked bar per act (each part's share of the 0-100 total), the numbers on demand
+function ScoreView({ member, options }: { member: MemberResult; options: PlannerOptions }) {
+  const colors = useColors()
+  const [open, setOpen] = useState(false)
+  const parts = Object.keys(options.partLabels)
+  const weightSum = parts.reduce((n, p) => n + options.scoreWeights[p], 0)
+  const acts = [...ACTS].reverse() // Plotly draws the first category at the bottom
+  const figure = {
+    data: parts.map((part, i) => ({
+      type: 'bar', orientation: 'h', name: options.partLabels[part], y: acts.map((a) => `Act ${a}`),
+      x: acts.map((a) => (member.acts[a].scoreParts[part] * options.scoreWeights[part]) / weightSum),
+      marker: { color: colorAt(colors, i), line: { color: 'rgba(0,0,0,0)', width: 0 } },
+      customdata: acts.map((a) => [member.acts[a].scoreParts[part], options.scoreWeights[part], member.acts[a].scoreNotes[part]]),
+      hovertemplate: `${options.partLabels[part]}: %{customdata[0]} of 100, weight %{customdata[1]}<br>%{customdata[2]}<extra></extra>`,
+    })),
+    layout: chartLayout({ barmode: 'stack', bargap: 0.35, margin: { l: 44, r: 40, t: 4, b: 28 }, xaxis: { range: [0, 100], dtick: 25 },
+      legend: { orientation: 'h', y: -0.28, font: { size: 11 }, traceorder: 'normal' },
+      annotations: acts.map((a) => ({ x: member.acts[a].score, y: `Act ${a}`, text: `<b>${member.acts[a].score.toFixed(0)}</b>`, showarrow: false, xanchor: 'left', xshift: 6 })) }),
+  }
+  return (
+    <Section padding="sm" title={<Text fw={600}>Overall score <Text span size="xs" c="dimmed" fw={400}>· {member.name.split(' (')[0]}, 0 to 100</Text></Text>}>
+      <Plot figure={figure} height={170} />
+      <UnstyledButton onClick={() => setOpen((o) => !o)}>
+        <Group gap={4}>{open ? <IconChevronDown size={14} /> : <IconChevronRight size={14} />}<Text size="xs" c="dimmed">The numbers, armour class and how each part is scored</Text></Group>
+      </UnstyledButton>
+      <Collapse expanded={open}>
+        <Table fz="xs" className="numeric">
+          <Table.Thead><Table.Tr><Table.Th />{ACTS.map((a) => <Table.Th key={a}>Act {a} · level {member.acts[a].level}</Table.Th>)}</Table.Tr></Table.Thead>
+          <Table.Tbody>
+            <Table.Tr><Table.Td fw={700}>Total</Table.Td>{ACTS.map((a) => <Table.Td key={a} fw={700}>{member.acts[a].score.toFixed(0)}</Table.Td>)}</Table.Tr>
+            {parts.map((part) => (
+              <Table.Tr key={part}>
+                <Table.Td c="dimmed">{options.partLabels[part]} <Text span size="10px">×{options.scoreWeights[part]}</Text></Table.Td>
+                {ACTS.map((a) => <Table.Td key={a}><Tooltip label={member.acts[a].scoreNotes[part]} multiline w={260}><span>{member.acts[a].scoreParts[part]}</span></Tooltip></Table.Td>)}
+              </Table.Tr>
+            ))}
+            <Table.Tr>
+              <Table.Td c="dimmed">Armour class</Table.Td>
+              {ACTS.map((a) => (
+                <Table.Td key={a}>
+                  <Tooltip multiline w={300} label={member.acts[a].acParts.map((p) => `${p.source} ${p.value}`).join(' + ')}>
+                    <span>{member.acts[a].ac} · hit {Math.round(100 * member.acts[a].hitChance)}%</span>
+                  </Tooltip>
+                </Table.Td>
+              ))}
+            </Table.Tr>
+          </Table.Tbody>
+        </Table>
+      </Collapse>
+    </Section>
+  )
+}
+
 function PartyAnalysisView({ options, count }: { options: PlannerOptions; count: number }) {
   const party = useParty((s) => s.party)
   const { enemy, rounds } = useSharedEnemy()
+  const colors = useColors()
   const [act, setAct] = useState('2')
   const [hp, setHp] = useState<number>(300)
   const [active, setActive] = useState<string[] | null>(null)
@@ -119,7 +163,7 @@ function PartyAnalysisView({ options, count }: { options: PlannerOptions; count:
   if (!a) return null
   const roles = Object.keys(options.roleLabels).filter((r) => options.coreRoles.includes(r) || a.roles.some((m) => r in m.roles))
   const fight = {
-    data: [{ type: 'bar', x: a.fight.down_by_round.map((_, i) => i + 1), y: a.fight.down_by_round.map((p) => 100 * p), marker: { color: '#00CC96' },
+    data: [{ type: 'bar', x: a.fight.down_by_round.map((_, i) => i + 1), y: a.fight.down_by_round.map((p) => 100 * p), marker: { color: colorAt(colors, 2) },
       hovertemplate: 'Down by round %{x}: %{y:.0f}%<extra></extra>' }],
     layout: chartLayout({ margin: { l: 40, r: 10, t: 10, b: 35 }, yaxis: { range: [0, 100], title: { text: '% of fights' } }, xaxis: { title: { text: 'Enemy down by round' }, dtick: 1 } }),
   }
@@ -144,7 +188,7 @@ function PartyAnalysisView({ options, count }: { options: PlannerOptions; count:
         </Table>
       </Section>
       <Section title="Roles" padding="sm">
-        <Table fz="xs">
+        <Table.ScrollContainer minWidth={360}><Table fz="xs">
           <Table.Thead><Table.Tr><Table.Th>Role</Table.Th>{a.roles.map((m) => <Table.Th key={m.name}>{m.name.split(' (')[0]}</Table.Th>)}</Table.Tr></Table.Thead>
           <Table.Tbody>
             {roles.map((r) => (
@@ -154,7 +198,7 @@ function PartyAnalysisView({ options, count }: { options: PlannerOptions; count:
               </Table.Tr>
             ))}
           </Table.Tbody>
-        </Table>
+        </Table></Table.ScrollContainer>
         {a.missing.length > 0 && <Text size="xs" c="orange">Nobody covers: {a.missing.map((r) => options.roleLabels[r]).join(', ')}</Text>}
         {a.overlaps.map((o) => <Text key={o} size="xs" c="dimmed">{o}</Text>)}
       </Section>

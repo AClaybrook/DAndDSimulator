@@ -1,10 +1,12 @@
-import { Alert, Button, Checkbox, Group, Select, Stack, Table, Text, Tooltip } from '@mantine/core'
+import { Alert, Button, Checkbox, Group, SegmentedControl, Select, Stack, Switch, Table, Text, Tooltip } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import { IconWand } from '@tabler/icons-react'
 import { useMemo, useState } from 'react'
 import { bg3, type ItemOption, type MemberResult, type PlannerOptions } from '../../api'
 import { ACTS, useParty } from '../../party'
 
-// Slots down, acts across. An empty cell keeps the item from the act before (shown as its placeholder)
+// Slots down, acts across. An empty cell keeps the item from the act before (shown as its placeholder).
+// Only the slots with an item show until more are asked for; on a narrow screen one act at a time
 export function GearTab({ options, result }: { options: PlannerOptions; result: MemberResult | undefined }) {
   const { party, selected, update, replace } = useParty()
   const build = party[selected]
@@ -13,6 +15,10 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
   const [skipTaken, setSkipTaken] = useState(true)
   const [onlyEmpty, setOnlyEmpty] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
+  const [added, setAdded] = useState<string[]>([]) // Empty slots the user opened
+  const [all, setAll] = useState(false)
+  const [phoneAct, setPhoneAct] = useState('1')
+  const narrow = useMediaQuery('(max-width: 48em)')
 
   const itemsFor = useMemo(() => {
     const cache: Record<string, ItemOption[]> = {}
@@ -37,6 +43,15 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
     setMessage(`Placed ${result.placed.join(', ') || 'nothing (every kit slot already had an item)'}` + (result.blocked.length ? `. Taken by another character: ${result.blocked.join(', ')}` : ''))
   }
   const chosenKit = options.kits.find((k) => k.key === kit)
+  const used = (slot: string) => ACTS.some((a) => build.equipment[a]?.[slot] || result?.acts[a]?.inherited[slot])
+  const rows = options.slots.filter((s) => all || used(s.key) || added.includes(s.key))
+  const hidden = options.slots.filter((s) => !rows.includes(s))
+  const acts = narrow ? [phoneAct] : ACTS
+  // The two ring slots share a label, so the picker numbers them
+  const slotName = (s: (typeof options.slots)[number]) => {
+    const twins = options.slots.filter((x) => x.label === s.label)
+    return twins.length > 1 ? `${s.label} ${twins.indexOf(s) + 1}` : s.label
+  }
 
   return (
     <Stack gap="sm">
@@ -50,19 +65,21 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
       </Group>
       {chosenKit && <Text size="xs" c="dimmed">{chosenKit.trigger}. {chosenKit.fits ? `Fits ${chosenKit.fits}.` : ''}</Text>}
       {message && <Alert py={6} color="blue" withCloseButton onClose={() => setMessage(null)}>{message}</Alert>}
-      <Table.ScrollContainer minWidth={640}>
+      {narrow && <SegmentedControl size="xs" fullWidth value={phoneAct} onChange={setPhoneAct} data={ACTS.map((a) => ({ value: a, label: `Act ${a}` }))} />}
+      <Table.ScrollContainer minWidth={narrow ? 280 : 620}>
         <Table verticalSpacing={4} horizontalSpacing={6}>
           <Table.Thead>
             <Table.Tr>
-              <Table.Th w={120}>Slot</Table.Th>
-              {ACTS.map((a) => <Table.Th key={a}>{options.acts.find((x) => x.key === a)?.label}</Table.Th>)}
+              <Table.Th w={narrow ? 92 : 120}>Slot</Table.Th>
+              {acts.map((a) => <Table.Th key={a}>{options.acts.find((x) => x.key === a)?.label}</Table.Th>)}
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
-            {options.slots.map((slot) => (
+            {rows.length === 0 && <Table.Tr><Table.Td colSpan={acts.length + 1}><Text size="sm" c="dimmed">No gear yet. Add a slot below, or fill from a kit.</Text></Table.Td></Table.Tr>}
+            {rows.map((slot) => (
               <Table.Tr key={slot.key}>
                 <Table.Td><Text size="xs" fw={500}>{slot.label}</Text></Table.Td>
-                {ACTS.map((a) => {
+                {acts.map((a) => {
                   const value = build.equipment[a]?.[slot.key] ?? null
                   const flagged = result?.acts[a]?.flagged.includes(slot.key)
                   const inherited = result?.acts[a]?.inherited[slot.key]
@@ -81,6 +98,13 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
           </Table.Tbody>
         </Table>
       </Table.ScrollContainer>
+      <Group gap="sm" wrap="wrap">
+        {hidden.length > 0 && (
+          <Select size="xs" w={190} placeholder={`Add a slot (${hidden.length} empty)...`} value={null} data={hidden.map((s) => ({ value: s.key, label: slotName(s) }))}
+            onChange={(v) => v && setAdded((list) => [...list, v])} aria-label="Add a slot" />
+        )}
+        <Switch size="xs" label="Every slot" checked={all} onChange={(e) => setAll(e.currentTarget.checked)} />
+      </Group>
       <Text size="xs" c="dimmed">Empty cells keep the item from the act before (↳). Red cells are in a conflict, see Conflicts. ✦ items have modelled effects, ⚠ items can be missed (hover for why).</Text>
     </Stack>
   )

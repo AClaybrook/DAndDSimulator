@@ -8,11 +8,10 @@ import { PageHeader, Section } from '../../components/Layout'
 import { Plot, type PlotClick } from '../../components/Plot'
 import { useParty } from '../../party'
 import { useUrlState } from '../../urlState'
+import { placeLabels } from './labels'
 
 const RANK = (data: MapData, rarity: string) => (data.rarities.includes(rarity) ? data.rarities.indexOf(rarity) : data.rarities.length)
-const LABELLED = new Set(['Key', 'Legendary', 'Very Rare', 'Story'])
 const MAP_CONFIG = { scrollZoom: true }
-
 interface Filters { rarities: string[]; missables: boolean; onlyMissables: boolean; names: boolean; partyOnly: boolean; builds: boolean; noTraders: boolean; noInside: boolean }
 
 function visible(p: MapPoint, f: Filters, search: string[], party: Set<string>) {
@@ -73,6 +72,7 @@ export function MapPage() {
   const chosen = spots.find((s) => s.id === selected)
   const names = [...new Set(d.points.map((p) => p.name))].sort()
   const actMaps = d.maps.filter((m) => String(m.act) === act)
+  const shape = (() => { const m = d.maps.find((x) => x.key === mapKey); return m?.image && m.width && m.height ? { width: m.width, height: m.height } : null })()
   const mapName = (key: string) => { const m = d.maps.find((x) => x.key === key)!; return `${m.label} (Act ${m.act})` }
   const found = search.map((name) => ({ name, maps: [...new Set(d.points.filter((p) => p.name === name).map((p) => mapName(p.map)))] }))
   const onClick = (point: PlotClick) => {
@@ -95,7 +95,14 @@ export function MapPage() {
               </Chip.Group>
               <MultiSelect size="xs" placeholder="Find items on any map..." data={names} value={search} onChange={setSearch} searchable clearable style={{ flex: 1, minWidth: 220 }} />
             </Group>
-            <Plot figure={figure} height="72vh" onClick={onClick} config={MAP_CONFIG} keepColors />
+            <Group gap="md" px={4} wrap="wrap">
+              <Key mark="★" label="Key pickup" /><Key mark="◆" label="Weapon" /><Key mark="●" label="Other item, coloured by rarity" />
+              <Key mark="◯" color={d.partyColor} label="Your party's gear" /><Key mark="◯" color={d.missableColor} label="Can be missed" />
+            </Group>
+            {/* As tall as the map image at this width, so there are no empty bands beside or above it */}
+            <div style={{ width: '100%', aspectRatio: shape ? `${shape.width} / ${shape.height}` : '4 / 3', maxHeight: '74vh', minHeight: 280 }}>
+              <Plot figure={figure} height="100%" onClick={onClick} config={MAP_CONFIG} keepColors />
+            </div>
             <Group gap="md" px={4} pb={4}>
               <Switch size="xs" label="Mark missables" checked={filters.missables} onChange={(e) => set({ missables: e.currentTarget.checked })} />
               <Switch size="xs" label="Only missables" checked={filters.onlyMissables} onChange={(e) => set({ onlyMissables: e.currentTarget.checked })} />
@@ -152,6 +159,11 @@ export function MapPage() {
       <Text size="xs" c="dimmed" mt="sm">Item locations: <Anchor href="https://bg3.wiki" target="_blank" size="xs">bg3.wiki</Anchor> (CC BY-NC-SA 4.0). Map images: Baldur's Gate 3 minimap textures © Larian Studios, via bg3.wiki. Unofficial fan tool.</Text>
     </>
   )
+}
+
+// One entry of the map's key: the mark and what it stands for
+function Key({ mark, label, color }: { mark: string; label: string; color?: string }) {
+  return <Text size="xs" c="dimmed"><Text span c={color} fw={700} mr={4}>{mark}</Text>{label}</Text>
 }
 
 function ItemLine({ data, p }: { data: MapData; p: MapPoint }) {
@@ -225,21 +237,28 @@ function mapFigure(data: MapData, mapKey: string, spots: { id: string; points: M
   const m = data.maps.find((x) => x.key === mapKey)!
   const xy = (s: { points: MapPoint[] }) => (m.image ? [s.points[0].px!, s.points[0].py!] : [s.points[0].x, s.points[0].y])
   const traces: object[] = []
+  const found = (s: { points: MapPoint[] }) => s.points.some((p) => search.includes(p.name))
+  const size = (s: { points: MapPoint[] }) => Math.min(10 + 2 * (s.points.length - 1), 20) + (found(s) ? 8 : 0)
+  // Names: the party's gear and searched items always; other markers only when "Item names" is on (hover shows them anyway)
+  const label = (s: { points: MapPoint[] }) => {
+    const mine = s.points.find((p) => wanted.has(p.key))
+    if (mine) return mine.name
+    return f.names || found(s) ? s.points[0].name + (s.points.length > 1 ? ` +${s.points.length - 1}` : '') : ''
+  }
+  const extent = m.image ? m.width! : Math.max(1, ...spots.map((s) => xy(s)[0])) - Math.min(0, ...spots.map((s) => xy(s)[0]))
+  const places = placeLabels(spots.map((s) => ({ x: xy(s)[0], y: xy(s)[1], text: label(s), size: size(s) })), extent / 880, m.image ? 1 : -1)
+  const placeOf = new Map(spots.map((s, i) => [s.id, places[i]]))
   for (const rarity of data.rarities) {
     const chosen = spots.filter((s) => s.points[0].rarity === rarity)
     if (!chosen.length) continue
-    const hit = chosen.map((s) => s.points.some((p) => search.includes(p.name)))
+    const hit = chosen.map(found)
     traces.push({
       type: 'scatter', mode: 'markers+text', name: rarity === 'Key' ? 'Key pickup' : rarity,
       x: chosen.map((s) => xy(s)[0]), y: chosen.map((s) => xy(s)[1]),
-      text: chosen.map((s, i) => {
-        const mine = s.points.find((p) => wanted.has(p.key))
-        if (mine) return mine.name
-        return f.names || hit[i] || LABELLED.has(s.points[0].rarity) ? s.points[0].name + (s.points.length > 1 ? ` +${s.points.length - 1}` : '') : ''
-      }),
-      textposition: 'top center', textfont: { size: 11, color: '#f2f2f2' },
+      text: chosen.map(label),
+      textposition: chosen.map((s) => placeOf.get(s.id)), textfont: { size: 11, color: '#f2f2f2' },
       hovertext: chosen.map((s) => hover(data, s.points, users)), hoverinfo: 'text', customdata: chosen.map((s) => [s.id]),
-      marker: { color: data.colors[rarity], size: chosen.map((s, i) => Math.min(10 + 2 * (s.points.length - 1), 20) + (hit[i] ? 8 : 0)),
+      marker: { color: data.colors[rarity], size: chosen.map(size),
         symbol: chosen.map((s) => (rarity === 'Key' ? 'star' : s.points[0].slot === 'weapon' ? 'diamond' : 'circle')),
         line: { color: hit.map((h) => (h ? '#ff3355' : '#111')), width: hit.map((h) => (h ? 3 : 1.5)) }, opacity: 0.95 },
     })
@@ -251,14 +270,13 @@ function mapFigure(data: MapData, mapKey: string, spots: { id: string; points: M
   ring(spots.filter((s) => s.points.some((p) => wanted.has(p.key))), 'Party gear', data.partyColor, 28)
   if (f.missables || f.onlyMissables) ring(spots.filter((s) => s.points.some((p) => p.missable)), 'Missable', data.missableColor, 22)
   const layout: Record<string, unknown> = {
-    margin: { l: 0, r: 0, t: 0, b: 0 }, dragmode: 'pan', uirevision: mapKey, font: { color: '#ddd' },
+    margin: { l: 0, r: 0, t: 0, b: 0 }, dragmode: 'pan', uirevision: mapKey, font: { color: '#ddd' }, showlegend: false,
     hoverlabel: { align: 'left', bgcolor: 'rgba(20,20,24,0.95)', bordercolor: '#555', font: { color: '#eee', size: 12 } },
-    legend: { orientation: 'h', y: 1, x: 0.01, bgcolor: 'rgba(0,0,0,0.55)' },
   }
   if (m.image) {
     Object.assign(layout, {
       images: [{ source: m.image, xref: 'x', yref: 'y', x: 0, y: 0, sizex: m.width, sizey: m.height, xanchor: 'left', yanchor: 'top', sizing: 'stretch', layer: 'below' }],
-      xaxis: { range: [0, m.width], visible: false, constrain: 'domain' }, yaxis: { range: [m.height, 0], visible: false, scaleanchor: 'x' }, plot_bgcolor: '#000',
+      xaxis: { range: [0, m.width], visible: false, constrain: 'domain' }, yaxis: { range: [m.height, 0], visible: false, scaleanchor: 'x' }, plot_bgcolor: 'rgba(0,0,0,0)',
     })
   } else {
     Object.assign(layout, { plot_bgcolor: '#14151c', xaxis: { title: { text: 'Minimap X' }, gridcolor: '#333' }, yaxis: { title: { text: 'Minimap Y' }, scaleanchor: 'x', gridcolor: '#333' } })

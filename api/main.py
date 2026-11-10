@@ -111,7 +111,7 @@ class SaveRequest(PartyRequest):
 
 @app.get("/api/leaderboard/options")
 def leaderboard_options():
-    return leaderboard.options()
+    return {**leaderboard.options(), "readOnly": READ_ONLY}
 
 @app.post("/api/leaderboard/entries")
 def leaderboard_entries(request: PartyRequest):

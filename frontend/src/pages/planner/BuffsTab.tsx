@@ -1,4 +1,5 @@
-import { Checkbox, Chip, Group, Stack, Text, Tooltip } from '@mantine/core'
+import { Checkbox, Stack, Table, Text, Tooltip } from '@mantine/core'
+import { Fragment } from 'react'
 import type { MemberResult, PlannerOptions } from '../../api'
 import { Section } from '../../components/Layout'
 import { ACTS, useParty } from '../../party'
@@ -15,30 +16,46 @@ export function BuffsTab({ options, result }: { options: PlannerOptions; result:
   const toggleCondition = (value: string) => update(selected, (b) => ({
     ...b, conditions: b.conditions.includes(value) ? b.conditions.filter((c) => c !== value) : [...b.conditions, value],
   }))
-  const spells = options.buffs.filter((b) => !b.key.startsWith('elixir:'))
-  const elixirs = options.buffs.filter((b) => b.key.startsWith('elixir:'))
-  const chips = (act: string, list: typeof options.buffs) => (
-    <Group gap={4}>
-      {list.filter((b) => b.act <= Number(act)).map((b) => (
-        <Tooltip key={b.key} label={b.notes || b.name} multiline w={280} openDelay={300}>
-          <Chip size="xs" checked={(build.buffs[act] ?? []).includes(b.key)} onChange={() => toggleBuff(act, b.key)} variant={b.modelled ? 'filled' : 'outline'}>
-            {b.name.replace('Elixir of ', '')}
-          </Chip>
-        </Tooltip>
-      ))}
-    </Group>
-  )
+  const groups: [string, typeof options.buffs][] = [
+    ['Spells', options.buffs.filter((b) => !b.key.startsWith('elixir:'))],
+    ['Elixirs (one at a time)', options.buffs.filter((b) => b.key.startsWith('elixir:'))],
+  ]
 
   return (
     <Stack gap="md">
-      {ACTS.map((a) => (
-        <Section key={a} title={options.acts.find((x) => x.key === a)?.label} padding="sm">
-          <Text size="xs" c="dimmed">Spells</Text>
-          {chips(a, spells)}
-          <Text size="xs" c="dimmed">Elixirs</Text>
-          {chips(a, elixirs)}
-        </Section>
-      ))}
+      <Table.ScrollContainer minWidth={300}>
+        <Table verticalSpacing={3} horizontalSpacing={8} fz="sm">
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>Active in fights</Table.Th>
+              {ACTS.map((a) => <Table.Th key={a} ta="center" w={64}>Act {a}</Table.Th>)}
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
+            {groups.map(([label, list]) => (
+              <Fragment key={label}>
+                <Table.Tr><Table.Td colSpan={ACTS.length + 1} pt="sm"><Text className="section-label">{label}</Text></Table.Td></Table.Tr>
+                {list.map((b) => (
+                  <Table.Tr key={b.key}>
+                    <Table.Td>
+                      <Tooltip label={b.notes || b.name} multiline w={300} openDelay={300}>
+                        <Text size="sm" span>{b.name.replace('Elixir of ', '')}{!b.modelled && <Text span size="xs" c="dimmed"> · not in the damage</Text>}</Text>
+                      </Tooltip>
+                    </Table.Td>
+                    {ACTS.map((a) => (
+                      <Table.Td key={a} ta="center">
+                        {b.act <= Number(a)
+                          ? <Checkbox size="xs" aria-label={`${b.name}, Act ${a}`} checked={(build.buffs[a] ?? []).includes(b.key)} onChange={() => toggleBuff(a, b.key)} styles={{ root: { display: 'inline-flex' } }} />
+                          : <Tooltip label={`Found from Act ${b.act}`}><Text span size="xs" c="dimmed">–</Text></Tooltip>}
+                      </Table.Td>
+                    ))}
+                  </Table.Tr>
+                ))}
+              </Fragment>
+            ))}
+          </Table.Tbody>
+        </Table>
+      </Table.ScrollContainer>
       <Section title="Conditional item effects" padding="sm">
         <Text size="xs" c="dimmed">Effects that need the build to set something up. Tick the ones it does every fight.</Text>
         {result?.conditions.length ? result.conditions.map((c) => (

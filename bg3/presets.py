@@ -32,9 +32,10 @@ PALADIN_WEAPONS = [
 
 PRESETS = {b.name: b for b in [
     Bg3Build("Lae'zel (Champion, GWM)", "fighter_gwm", equipment={
-        "1": {"melee_main": "bg3:everburn_blade", "ring_1": "bg3:caustic_band"},
-        "2": {"melee_main": "bg3:moonlight_glaive", "gloves": "bg3:flawed_helldusk_gloves", "ring_2": "bg3:callous_glow_ring"},
-        "3": {"gloves": "bg3:gauntlets_of_hill_giant_strength", "helmet": "bg3:sarevok_s_horned_helmet"},
+        "1": {"melee_main": "bg3:everburn_blade", "ring_1": "bg3:caustic_band", "armour": "bg3:githyanki_half_plate"},
+        "2": {"melee_main": "bg3:moonlight_glaive", "gloves": "bg3:flawed_helldusk_gloves", "ring_2": "bg3:callous_glow_ring",
+              "armour": "bg3:flawed_helldusk_armour"},
+        "3": {"gloves": "bg3:gauntlets_of_hill_giant_strength", "helmet": "bg3:sarevok_s_horned_helmet", "armour": "bg3:helldusk_armour"},
     }),
     Bg3Build("Karlach (Berserker)", "barbarian_berserker", equipment={
         "1": {"melee_main": "bg3:very_heavy_greataxe", "ring_1": "bg3:caustic_band"},
@@ -43,7 +44,9 @@ PRESETS = {b.name: b for b in [
     }),
     Bg3Build("Astarion (Assassin, dual wield)", "rogue_assassin", equipment={
         "1": {"melee_main": "bg3:the_baneful", "melee_off": "bg3:steelforged_sword"},
-        "2": {"melee_main": "bg3:sword_of_life_stealing", "melee_off": "bg3:render_of_mind_and_body", "helmet": "bg3:covert_cowl"},
+        "2": {"melee_main": "bg3:sword_of_life_stealing", "melee_off": "bg3:render_of_mind_and_body", "helmet": "bg3:covert_cowl",
+              "armour": "bg3:studded_leather_armour_2"},
+        "3": {"armour": "bg3:bhaalist_armour"},
     }),
     Bg3Build("Gale (Evoker)", "wizard_fireball", equipment={
         "1": {"melee_main": "bg3:melf_s_first_staff", "amulet": "bg3:necklace_of_elemental_augmentation"},

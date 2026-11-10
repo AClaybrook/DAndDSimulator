@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { bg3, type Evaluation, type PlannerOptions } from '../../api'
 import { ACTS, useParty } from '../../party'
 import { classLine } from '../../format'
-import { COLORS } from '../../store'
+import { colorAt, useColors } from '../../theme'
 
 // The party at a glance: each member's damage in every act; click one to edit it
 export function PartyStrip({ options, evaluation, enemies }: { options: PlannerOptions; evaluation: Evaluation | undefined; enemies: number }) {
@@ -13,6 +13,7 @@ export function PartyStrip({ options, evaluation, enemies }: { options: PlannerO
   const [adding, setAdding] = useState<'example' | 'preset' | null>(null)
   const [choice, setChoice] = useState<string | null>(null)
   const full = party.length >= options.maxPartySize
+  const colors = useColors()
   const queryClient = useQueryClient()
   const [importOpen, setImportOpen] = useState(false)
   const [docUrl, setDocUrl] = useState('')
@@ -54,7 +55,7 @@ export function PartyStrip({ options, evaluation, enemies }: { options: PlannerO
           const result = evaluation?.members[i]
           return (
             <Paper key={b.uid} p="sm" withBorder onClick={() => select(i)}
-              style={{ cursor: 'pointer', borderTop: `3px solid ${COLORS[i % COLORS.length]}`, outline: i === selected ? `2px solid ${COLORS[i % COLORS.length]}` : undefined }}>
+              style={{ cursor: 'pointer', borderTop: `3px solid ${colorAt(colors, i)}`, outline: i === selected ? `2px solid ${colorAt(colors, i)}` : undefined }}>
               <Group justify="space-between" wrap="nowrap" align="flex-start">
                 <div style={{ minWidth: 0 }}>
                   <Text fw={600} truncate>{b.name}</Text>
@@ -71,10 +72,14 @@ export function PartyStrip({ options, evaluation, enemies }: { options: PlannerO
                     <Text fw={700} className="numeric">{result ? result.acts[a].damage[enemies - 1].toFixed(1) : '–'}</Text>
                   </div>
                 ))}
-                <div>
-                  <Text size="10px" c="dimmed" tt="uppercase">AC</Text>
-                  <Text fw={700} className="numeric">{result ? ACTS.map((a) => result.acts[a].ac).join('/') : '–'}</Text>
-                </div>
+                <Tooltip multiline w={320} disabled={!result} label={result && ACTS.map((a) => (
+                  <div key={a}>Act {a}: {result.acts[a].acParts.map((p) => `${p.source} ${p.value}`).join(' + ')} (hit {Math.round(100 * result.acts[a].hitChance)}% of the time)</div>
+                ))}>
+                  <div>
+                    <Text size="10px" c="dimmed" tt="uppercase">AC</Text>
+                    <Text fw={700} className="numeric">{result ? ACTS.map((a) => result.acts[a].ac).join('/') : '–'}</Text>
+                  </div>
+                </Tooltip>
               </Group>
             </Paper>
           )
@@ -97,7 +102,7 @@ export function PartyStrip({ options, evaluation, enemies }: { options: PlannerO
           <Select searchable label={adding === 'example' ? 'Build' : 'Class preset'} value={choice} onChange={setChoice}
             data={adding === 'example' ? options.examples.map((e) => ({ value: e.name, label: e.name })) : options.presets.map((p) => ({ value: p.key, label: p.label }))} />
           <Button leftSection={<IconPlus size={14} />} onClick={addChosen} disabled={!choice}>Add</Button>
-          {adding === 'example' && (
+          {adding === 'example' && !options.readOnly && (
             <>
               <Button variant="subtle" size="xs" leftSection={<IconFileImport size={14} />} onClick={() => setImportOpen((o) => !o)}>
                 Re-import builds from the build doc

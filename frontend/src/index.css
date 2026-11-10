@@ -82,3 +82,14 @@ body {
 [data-mantine-color-scheme='light'] .bar-track {
   background: var(--mantine-color-gray-2);
 }
+
+/* Build names in the leaderboard: as much as fits, less on a phone so the numbers stay in view */
+.build-name {
+  max-width: 300px;
+}
+
+@media (max-width: 48em) {
+  .build-name {
+    max-width: 132px;
+  }
+}

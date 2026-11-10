@@ -1,5 +1,5 @@
-import { ActionIcon, Badge, Button, Divider, Drawer, Grid, Group, NavLink, NumberInput, ScrollArea, Select, SimpleGrid, Stack, Tabs, Text, Textarea, TextInput, Tooltip } from '@mantine/core'
-import { IconCopy, IconPlus, IconTrash } from '@tabler/icons-react'
+import { ActionIcon, Badge, Button, Divider, Grid, Group, NavLink, NumberInput, Paper, ScrollArea, Select, SimpleGrid, Stack, Tabs, Text, Textarea, TextInput, Tooltip } from '@mantine/core'
+import { IconArrowLeft, IconCopy, IconPlus, IconTrash } from '@tabler/icons-react'
 import { useState } from 'react'
 import { api, type Attack, type Options, type Value } from '../../api'
 import { FieldGroups, FieldInput } from '../../components/FieldInput'
@@ -10,17 +10,22 @@ interface Props {
   id: string | null
   options: Options
   attackDamage: number[] // Expected damage per round of each attack, in order
+  damagePerRound: number | undefined
+  onSelect: (id: string) => void
   onClose: () => void
 }
 
-// Everything about one character in tabs. Attacks: the list on the left, the selected attack's fields on the right
-export function CharacterEditor({ id, options, attackDamage, onClose }: Props) {
+// Everything about one character in tabs, in the page beside the results (not over them), so every edit shows in the chart.
+// Attacks: the list on the left, the selected attack's fields on the right
+export function CharacterEditor({ id, options, attackDamage, damagePerRound, onSelect, onClose }: Props) {
+  const characters = useSimulator((s) => s.characters)
+  const everyone = characters.map((c) => ({ value: c.uid!, label: c.name }))
   const character = useSimulator((s) => s.characters.find((c) => c.uid === id))
   const { updateCharacter, updateAttack, addAttacks, removeAttack } = useSimulator()
   const ruleset = useSimulator((s) => s.settings.ruleset)
   const [template, setTemplate] = useState<string | null>(null)
   const [attackIndex, setAttackIndex] = useState(0)
-  if (!character || !id) return <Drawer opened={false} onClose={onClose} />
+  if (!character || !id) return null
   const set = (key: string, value: Value) => updateCharacter(id, { [key]: value })
   const index = Math.min(attackIndex, character.attacks.length - 1)
   const attack: Attack | undefined = character.attacks[index]
@@ -34,7 +39,14 @@ export function CharacterEditor({ id, options, attackDamage, onClose }: Props) {
   }
 
   return (
-    <Drawer opened onClose={onClose} position="right" size="xl" title={<Text fw={600} size="lg">{character.name}</Text>}>
+    <Paper p="md" withBorder>
+      <Group justify="space-between" wrap="nowrap" mb="sm" gap="xs">
+        <Button size="xs" variant="subtle" leftSection={<IconArrowLeft size={14} />} onClick={onClose}>Characters</Button>
+        <Select size="xs" aria-label="Character to edit" data={everyone} value={id} onChange={(v) => v && onSelect(v)} allowDeselect={false} style={{ flex: 1, maxWidth: 280 }} />
+        <Tooltip label="Exact expected damage per round against the enemy">
+          <Text fw={700} className="numeric">{damagePerRound !== undefined ? damagePerRound.toFixed(1) : '–'}</Text>
+        </Tooltip>
+      </Group>
       <Tabs defaultValue="stats">
         <Tabs.List mb="md">
           <Tabs.Tab value="stats">Stats</Tabs.Tab>
@@ -48,7 +60,7 @@ export function CharacterEditor({ id, options, attackDamage, onClose }: Props) {
               <TextInput size="xs" label="Name" value={character.name} onChange={(e) => set('name', e.currentTarget.value)} />
               <NumberInput size="xs" label="Level" value={character.level} min={1} max={20} onChange={(v) => set('level', Number(v) || 1)} />
             </Group>
-            <SimpleGrid cols={6} spacing={6}>
+            <SimpleGrid cols={{ base: 3, sm: 6 }} spacing={6}>
               {STATS.map((s) => (
                 <NumberInput key={s} size="xs" label={statLabel(s)} value={Number(character[s])} min={1} max={30} hideControls
                   onChange={(v) => set(s, Number(v) || 10)} />
@@ -61,8 +73,8 @@ export function CharacterEditor({ id, options, attackDamage, onClose }: Props) {
 
         <Tabs.Panel value="attacks">
           <Grid gap="md">
-            <Grid.Col span={4}>
-              <ScrollArea.Autosize mah="60vh">
+            <Grid.Col span={{ base: 12, sm: 4 }}>
+              <ScrollArea.Autosize mah={{ base: 180, sm: '60vh' }}>
                 {character.attacks.map((a: Attack, i: number) => (
                   <NavLink key={i} active={i === index} onClick={() => setAttackIndex(i)} label={a.name}
                     description={`${a.damage} ${String(a.damage_type ?? '')}${attackDamage[i] !== undefined ? ` · ${attackDamage[i].toFixed(1)}/round` : ''}`} />
@@ -77,7 +89,7 @@ export function CharacterEditor({ id, options, attackDamage, onClose }: Props) {
                 </Group>
               </Stack>
             </Grid.Col>
-            <Grid.Col span={8}>
+            <Grid.Col span={{ base: 12, sm: 8 }}>
               {attack ? (
                 <Stack gap="sm">
                   <Group justify="space-between">
@@ -87,7 +99,7 @@ export function CharacterEditor({ id, options, attackDamage, onClose }: Props) {
                       <Tooltip label="Delete"><ActionIcon variant="subtle" color="red" onClick={() => removeAttack(id, index)}><IconTrash size={16} /></ActionIcon></Tooltip>
                     </Group>
                   </Group>
-                  <SimpleGrid cols={3} spacing="xs" verticalSpacing={4}>
+                  <SimpleGrid cols={{ base: 2, lg: 3 }} spacing="xs" verticalSpacing={4}>
                     {ATTACK_MAIN.map((field) => (
                       <FieldInput key={field.key} field={field} value={attack[field.key]} onChange={(v) => updateAttack(id, index, { [field.key]: v })} />
                     ))}
@@ -103,6 +115,6 @@ export function CharacterEditor({ id, options, attackDamage, onClose }: Props) {
           <FieldGroups groups={CHARACTER_GROUPS} values={character} onChange={set} columns={3} />
         </Tabs.Panel>
       </Tabs>
-    </Drawer>
+    </Paper>
   )
 }

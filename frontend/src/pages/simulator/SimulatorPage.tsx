@@ -1,4 +1,4 @@
-import { Button, Center, Grid, Loader, Menu, NumberInput, Popover, SegmentedControl, Select, Stack, Switch, Text } from '@mantine/core'
+import { Button, Center, Grid, Loader, Menu, NumberInput, Popover, ScrollArea, SegmentedControl, Select, Stack, Switch, Text } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { useShortcuts } from '../../hotkeys'
 import { IconAdjustments, IconDice5, IconDownload } from '@tabler/icons-react'
@@ -89,21 +89,28 @@ export function SimulatorPage() {
           </Menu>
           <Button size="xs" leftSection={<IconDice5 size={14} />} loading={simulation.isPending} onClick={() => run()}>Simulate again</Button>
         </>} />
-      <SegmentedControl fullWidth data={options.data.graphs.map((g) => g.key)} value={settings.graph} onChange={(g) => updateSettings({ graph: g })} />
+      <ScrollArea type="never">
+        <SegmentedControl fullWidth data={options.data.graphs.map((g) => g.key)} value={settings.graph} onChange={(g) => updateSettings({ graph: g })} style={{ minWidth: 640 }} />
+      </ScrollArea>
       <Text size="xs" c="dimmed" mt={6} mb="md">{graph?.description}</Text>
       <Grid gap="md">
-        <Grid.Col span={{ base: 12, md: 4 }}>
-          <Stack gap="md">
-            <PartyPanel options={options.data} expected={expected.data} onEdit={setEditing} />
-            <EnemyPanel options={options.data} />
-          </Stack>
+        {/* Editing takes over the left column (and a little more room), the results stay in view and follow every change */}
+        <Grid.Col span={{ base: 12, md: editingIndex >= 0 ? 6 : 4 }}>
+          {editingIndex >= 0 ? (
+            <CharacterEditor id={editing} options={options.data} attackDamage={attackDamage} damagePerRound={expected.data?.characters?.[editingIndex]?.damagePerRound}
+              onSelect={setEditing} onClose={() => setEditing(null)} />
+          ) : (
+            <Stack gap="md">
+              <PartyPanel options={options.data} expected={expected.data} onEdit={setEditing} />
+              <EnemyPanel options={options.data} />
+            </Stack>
+          )}
         </Grid.Col>
-        <Grid.Col span={{ base: 12, md: 8 }}>
+        <Grid.Col span={{ base: 12, md: editingIndex >= 0 ? 6 : 8 }}>
           {simulation.isError && <Text c="red" size="sm">{String(simulation.error)}</Text>}
           <Results result={simulation.data} />
         </Grid.Col>
       </Grid>
-      <CharacterEditor id={editing} options={options.data} attackDamage={attackDamage} onClose={() => setEditing(null)} />
     </>
   )
 }

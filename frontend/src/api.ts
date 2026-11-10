@@ -38,8 +38,24 @@ export interface Headline {
   values: { name: string; value: number }[]
 }
 
+interface Box { q1: number; median: number; q3: number; low: number; high: number; mean: number }
+export interface DistributionChart {
+  kind: 'distribution'; title: string; xTitle: string; binWidth: number
+  series: { name: string; owner: number; start: number[]; percent: number[]; box: Box; curve: { kind: 'exact' | 'fit'; start: number[]; percent: number[] } | null
+    stats: { mean: number; sd: number; skew: number; allMiss: number | null } }[]
+}
+export interface SweepChart {
+  kind: 'sweep'; title: string; xTitle: string; yTitle: string
+  series: { name: string; owner: number; x: number[]; mean: number[]; median: number[]; q1: number[]; q3: number[] }[]
+}
+export interface LinesChart {
+  kind: 'lines'; title: string; xTitle: string; yTitle: string; x: number[]; yMax: number | null; unit: string
+  series: { name: string; owner: number; y: number[] }[]
+}
+export type Chart = DistributionChart | SweepChart | LinesChart
+
 export interface SimulationResult {
-  figure?: { data: object[]; layout: Record<string, unknown> }
+  chart?: Chart
   headline?: Headline
   tables?: Table[]
   problems?: string[]
@@ -128,6 +144,7 @@ export interface PlannerOptions {
   roleLabels: Record<string, string>
   coreRoles: string[]
   defaultParty: Build[]
+  readOnly: boolean // A shared copy: no doc import, no saved leaderboard runs
 }
 
 export interface ActResult {
@@ -174,6 +191,7 @@ export interface LeaderboardOptions {
   sources: string[]
   referenceEnemies: Record<string, string>
   roundsPerFight: number
+  readOnly: boolean
 }
 
 export interface LeaderboardEntry {

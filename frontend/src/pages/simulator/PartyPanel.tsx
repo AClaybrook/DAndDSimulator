@@ -2,7 +2,8 @@ import { ActionIcon, Button, Group, Menu, Modal, NumberInput, Paper, Select, Sta
 import { IconCopy, IconPencil, IconPlus, IconTrash } from '@tabler/icons-react'
 import { useState } from 'react'
 import { api, type Expected, type Options } from '../../api'
-import { COLORS, MAX_CHARACTERS, useSimulator } from '../../store'
+import { MAX_CHARACTERS, useSimulator } from '../../store'
+import { colorAt, useColors } from '../../theme'
 
 interface Props {
   options: Options
@@ -18,6 +19,7 @@ export function PartyPanel({ options, expected, onEdit }: Props) {
   const [preset, setPreset] = useState<string | null>('fighter_gwm')
   const [level, setLevel] = useState<number>(5)
   const best = Math.max(1, ...(expected?.characters ?? []).map((c) => c.damagePerRound))
+  const colors = useColors()
 
   const addPreset = async () => {
     if (!preset) return
@@ -53,7 +55,7 @@ export function PartyPanel({ options, expected, onEdit }: Props) {
         {characters.map((c, i) => {
           const dpr = expected?.characters?.[i]?.damagePerRound
           return (
-            <Paper key={c.uid} p="xs" radius="md" withBorder style={{ borderLeft: `4px solid ${COLORS[i % COLORS.length]}`, cursor: 'pointer' }} onClick={() => onEdit(c.uid!)}>
+            <Paper key={c.uid} p="xs" radius="md" withBorder style={{ borderLeft: `4px solid ${colorAt(colors, i)}`, cursor: 'pointer' }} onClick={() => onEdit(c.uid!)}>
               <Group justify="space-between" wrap="nowrap" gap="xs">
                 <div style={{ minWidth: 0, flex: 1 }}>
                   <Text size="sm" fw={500} truncate>{c.name}</Text>
@@ -79,7 +81,7 @@ export function PartyPanel({ options, expected, onEdit }: Props) {
               </Group>
               {dpr !== undefined && (
                 <div className="bar-track" style={{ marginTop: 4 }}>
-                  <div className="bar-fill" style={{ width: `${(100 * dpr) / best}%`, background: COLORS[i % COLORS.length] }} />
+                  <div className="bar-fill" style={{ width: `${(100 * dpr) / best}%`, background: colorAt(colors, i) }} />
                 </div>
               )}
             </Paper>
