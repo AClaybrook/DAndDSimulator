@@ -131,3 +131,15 @@ def test_a_shared_copy_is_read_only(monkeypatch):
     assert client.post("/api/leaderboard/save", json={"party": [], "label": "x"}).status_code == 403
     assert client.get("/api/planner/options").json()["readOnly"] is True
     assert client.post("/api/planner/evaluate", json={"party": []}).status_code == 200 # Everything that only computes still works
+
+def test_front_end_types_are_current():
+    """ frontend/src/api-types.ts is generated from the API's schema; after a change to api/schemas.py run `uv run python -m api.openapi` """
+    from api.openapi import PATH, types_text
+    assert PATH.read_text(encoding="utf-8") == types_text(), "Run: uv run python -m api.openapi"
+
+def test_builds_are_checked_on_the_way_in():
+    """ A malformed build is refused with what is wrong, instead of failing somewhere inside the planner """
+    response = client.post("/api/planner/evaluate", json={"party": [{"name": "Tav", "equipment": {"1": "a sword"}}]})
+    assert response.status_code == 422 and "equipment" in response.text
+    ok = client.post("/api/planner/evaluate", json={"party": [{"name": "Tav", "preset": "fighter_gwm", "unknown_field": 1}]})
+    assert ok.status_code == 200 and ok.json()["members"][0]["name"] == "Tav"

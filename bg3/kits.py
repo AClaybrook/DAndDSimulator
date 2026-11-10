@@ -106,7 +106,7 @@ def describe_variant(variant):
     if variant.get("buffs"):
         from bg3.buffs import BUFFS # pylint: disable=import-outside-toplevel
         parts.append("buffs: " + ", ".join(BUFFS[b].name if b in BUFFS else b for b in variant["buffs"]))
-    if variant.get("toggles", {}).get("advantage"):
+    if (variant.get("toggles") or {}).get("advantage"):
         parts.append("advantage")
     return "; ".join(parts) or "same as the build"
 

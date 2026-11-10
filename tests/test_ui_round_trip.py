@@ -82,3 +82,10 @@ def test_planner_characters_survive_json():
         for act in "123":
             character = compile_build(build, act)
             assert round_trip(character) == character, (build.name, act)
+
+def test_values_that_are_not_numbers_are_named():
+    character = build_character("fighter_gwm", 5).to_dict()
+    bad = {**character, "level": "x", "attacks": [{**character["attacks"][0], "crit_on": "high"}]}
+    problems = validation_errors(bad, bad["attacks"])
+    assert "Level 'x' should be a number" in problems and any("Crit on 'high' should be a number" in p for p in problems)
+    assert validation_errors({**character, "strength": ""}, character["attacks"]) == ["Strength is empty"]

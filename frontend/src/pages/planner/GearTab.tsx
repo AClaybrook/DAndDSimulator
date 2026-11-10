@@ -25,7 +25,7 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
     return (group: string) => (cache[group] ??= group.split('+').flatMap((g) => options.items[g] ?? []))
   }, [options.items])
   const dataFor = (group: string, act: string) =>
-    itemsFor(group).filter((o) => o.act === null || o.act <= Number(act)).map((o) => ({ value: o.value, label: o.label }))
+    itemsFor(group).filter((o) => o.act == null || o.act <= Number(act)).map((o) => ({ value: o.value, label: o.label }))
   const titles = useMemo(() => Object.fromEntries(Object.values(options.items).flat().map((o) => [o.value, o.title])), [options.items])
 
   if (!build) return null
