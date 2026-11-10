@@ -109,6 +109,7 @@ TOGGLES = {
     "starry_form": "Starry Form: Archer (Circle of Stars)", "symbiotic": "Symbiotic Entity (Circle of Spores)",
     "storm_close": "Enemies within 6 m when casting (Heart of the Storm)",
     "booming_blade": "Booming Blade on the first melee attack each turn",
+    "spiritual_weapon": "Spiritual Weapon every fight (Cleric 3: a summoned weapon with its own attack each round, for a level 2+ slot)",
     "bladesong": "Bladesong in fights (+2/+3/+4 AC without medium or heavy armour or a shield)",
     "horde_breaker": "Horde Breaker instead of Colossus Slayer (an extra attack on a second enemy, needs 2+ enemies)",
     "reactions": "Reaction attacks: Polearm Master when an enemy enters your reach (about once a fight), Sentinel when an enemy next to you "
@@ -118,14 +119,14 @@ TOGGLES = {
     "advantage": "Attack with advantage (Shadow Blade in darkness or dim light, hiding, Dirty Tricks, Faerie Fire, Darkness with Devil's Sight)",
 }
 # Toggles that are off unless ticked: advantage depends on the fight, so it isn't assumed
-TOGGLE_DEFAULTS = {"advantage": False, "horde_breaker": False, "honour_mode": False}
+TOGGLE_DEFAULTS = {"advantage": False, "horde_breaker": False, "honour_mode": False, "spiritual_weapon": False}
 # The class (and subclass) each toggle is for, so the builder only offers the ones that matter
 TOGGLE_FOR = {"rage": ("barbarian", ""), "reckless": ("barbarian", ""), "smite": ("paladin", ""), "vow": ("paladin", ""),
               "curse": ("warlock", "The Hexblade"), "surprise": ("rogue", "Assassin"), "manifestation": ("monk", "Way of the Open Hand"),
               "damaged_target": ("ranger", "Hunter"), "starry_form": ("druid", "Circle of Stars"), "symbiotic": ("druid", "Circle of Spores"),
               "storm_close": ("sorcerer", "Storm Sorcery"),
               "booming_blade": [("wizard", ""), ("sorcerer", ""), ("warlock", ""), ("fighter", "Eldritch Knight"), ("rogue", "Arcane Trickster")],
-              "horde_breaker": ("ranger", "Hunter"), "reactions": [(cls, "") for cls in CLASSES], "honour_mode": [(cls, "") for cls in CLASSES], "bladesong": ("wizard", "Bladesinging"), "advantage": [(cls, "") for cls in CLASSES]}
+              "horde_breaker": ("ranger", "Hunter"), "spiritual_weapon": ("cleric", ""), "reactions": [(cls, "") for cls in CLASSES], "honour_mode": [(cls, "") for cls in CLASSES], "bladesong": ("wizard", "Bladesinging"), "advantage": [(cls, "") for cls in CLASSES]}
 
 def relevant_toggles(classes):
     """ Toggles for a [class, subclass, levels] list """
@@ -255,10 +256,11 @@ def compile_character(character, level=MAX_LEVEL, main_finesse=None):
         if a.is_weapon and not is_proficient(weapon_base(a), profs):
             a.proficient = False
             notes.append(f"Not proficient with {weapon_base(a)}s")
-    c.attacks = attacks + _spirit_guardians(character, c, levels, subs, notes)
+    c.attacks = attacks
     if character.toggle("booming_blade") and "booming_blade" in relevant_toggles(character.classes):
         _booming_blade(c, character)
     _class_features(character, c, levels, subs, notes, main_finesse)
+    _cleric_spells(character, c, levels, subs, notes)
     split = " / ".join(f"{cls.title()} {n}" + (f" ({subs[cls]})" if subs.get(cls) else "") for cls, n in levels.items())
     c.description = f"{character.race}, {split}. Feats: {', '.join(feats) or 'none'}"
     return c, notes
@@ -294,21 +296,66 @@ def _class_extra_attacks(levels, subs, character):
         attacks = 2
     return attacks
 
-def _spirit_guardians(character, c, levels, subs, notes):
-    """ Spirit Guardians as the build's spell: cast once (a level 3 slot), the aura then damages the enemies around the caster every round
-        of the fight (3 by default), WIS save for half. Fights without a free slot go without it """
-    if character.spell != "Spirit Guardians":
-        return []
-    slots = spell_slots(caster_level(levels, subs))
-    pact, pact_level = warlock_pact_slots(levels.get("warlock", 0))
-    casts = per_fight(per_long_rest=sum(slots[2:]), per_short_rest=pact if pact_level >= 3 else 0)
-    if not casts or not levels.get("cleric"):
-        notes.append("Spirit Guardians needs a Cleric with a level 3 spell slot")
-        return []
-    aura = spell_attacks("Spirit Guardians", ability_stat="wisdom", slot_level=3, ruleset="bg3")[0]
-    # Lasts 10 turns, so one cast covers a fight; uses per fight is the rounds it's up
-    return [replace(aura, name="Spirit Guardians (aura)", label="aura", tags=["aura"], damage_type="radiant", uses_per_fight=10 * min(casts, 1.0),
-                    once_per_turn_eligible=False)]
+SPIRIT_GUARDIANS, SPIRITUAL_WEAPON = "Spirit Guardians", "Spiritual Weapon"
+# Fights are taken as this long when a spell only covers some of the day's fights: its rounds are spread as that share of every fight
+ROUNDS_PER_FIGHT = 3
+
+def cleric_slots(character, levels, subs):
+    """ The slot levels a Cleric spends on (Spirit Guardians, Spiritual Weapon) in a day, one cast of each per fight while slots last.
+        Spirit Guardians takes the best slots. Spiritual Weapon takes the best of the rest, or the lowest when the build casts another
+        damage spell with its high slots """
+    cleric = levels.get("cleric", 0)
+    slots = sorted((lv for lv, n in enumerate(spell_slots(caster_level(levels, subs)), start=1) for _ in range(n)), reverse=True)
+    guardians = []
+    if character.spell == SPIRIT_GUARDIANS and cleric >= 5:
+        guardians = [lv for lv in slots if lv >= 3][:FIGHTS_PER_LONG_REST]
+        for lv in guardians:
+            slots.remove(lv)
+    weapon = []
+    if character.toggle("spiritual_weapon") and cleric >= 3:
+        pool = slots if character.spell in ("", SPIRIT_GUARDIANS) else slots[::-1]
+        weapon = [lv for lv in pool if lv >= 2][:FIGHTS_PER_LONG_REST]
+    return guardians, weapon
+
+def _fight_rounds(casts):
+    """ Rounds per fight a spell that lasts the whole fight is up, from its casts a day: every round with a cast for each fight,
+        else that share of the rounds """
+    return 10.0 if casts >= FIGHTS_PER_LONG_REST else round(casts / FIGHTS_PER_LONG_REST * ROUNDS_PER_FIGHT, 2)
+
+def _dice(mean, die=8):
+    """ An average number of dice as whole dice plus the rest as a flat bonus: 4.5 -> ('4d8', 2) """
+    whole = int(mean)
+    return f"{whole}d{die}", round((mean - whole) * (die + 1) / 2)
+
+def _cleric_spells(character, c, levels, subs, notes):
+    """ Spirit Guardians and Spiritual Weapon (bg3.wiki), added to the character's attacks.
+        Spirit Guardians: an action and a level 3+ slot, 3d8 (+1d8 a slot level) radiant to every enemy within 3 m each round, WIS save for
+        half, for the fight. Casting it takes the action of round 1, so the attacks made with the action start in round 2.
+        Spiritual Weapon: a bonus action and a level 2+ slot, a summoned weapon that attacks on its own turn every round for
+        1d8 + 1 + the spellcasting modifier force (+1d8 per two slot levels), with the caster's spell attack bonus """
+    guardians, weapon = cleric_slots(character, levels, subs)
+    wisdom = max(c.wisdom_ability_modifier, 0)
+    if character.spell == SPIRIT_GUARDIANS and not guardians:
+        notes.append("Spirit Guardians needs a level 5 Cleric with a level 3 spell slot")
+    if guardians:
+        dice, rest = _dice(sum(lv for lv in guardians) / len(guardians)) # 3d8 from a level 3 slot, one more die a level
+        necrotic = subs.get("cleric") == "Death Domain"
+        cast = Attack(name=f"{SPIRIT_GUARDIANS} (cast)", base=SPIRIT_GUARDIANS, label="cast", tags=["setup"], type="spell", ability_stat="wisdom", damage="0",
+                      always_hit=True, once_per_turn_eligible=False, uses_per_fight=round(min(len(guardians) / FIGHTS_PER_LONG_REST, 1.0), 2))
+        for a in c.attacks:
+            if a.action == "action" and not a.uses_per_fight and not a.fallback_for:
+                a.fallback_for, a.tags = cast.name, [*a.tags, "after_cast"]
+        aura = spell_attacks(SPIRIT_GUARDIANS, ability_stat="wisdom", slot_level=3, ruleset="bg3")[0]
+        aura = replace(aura, name=f"{SPIRIT_GUARDIANS} (aura)", label="aura", tags=["aura"], damage=dice + (f"+{rest}" if rest else ""),
+                       damage_type="necrotic" if necrotic else "radiant", uses_per_fight=_fight_rounds(len(guardians)), once_per_turn_eligible=False)
+        c.attacks = [cast, *c.attacks, aura]
+    if weapon:
+        dice, rest = _dice(sum(1 + (lv - 2) // 2 for lv in weapon) / len(weapon))
+        c.attacks.append(Attack(name=SPIRITUAL_WEAPON, base=SPIRITUAL_WEAPON, tags=["summon"], action="bonus", type="spell", ability_stat="wisdom",
+                                damage=f"{dice}+{1 + wisdom + rest}", damage_type="force", once_per_turn_eligible=False,
+                                uses_per_fight=_fight_rounds(len(weapon))))
+    elif character.toggle("spiritual_weapon") and levels.get("cleric"):
+        notes.append("Spiritual Weapon needs a level 3 Cleric with a level 2 spell slot")
 
 def _attacks(character, c, levels, subs, feats, notes, main_finesse=None):
     routine = character.routine
@@ -319,7 +366,7 @@ def _attacks(character, c, levels, subs, feats, notes, main_finesse=None):
         beams = spell_attacks(character.cantrip, ability_stat=stat, character_level=c.level, ruleset="bg3")
         cantrip = [replace(a, name=f"{a.name} {ii + 1}" if len(beams) > 1 else a.name) for ii, a in enumerate(beams)]
         druid = levels.get("druid", 0)
-        if not character.spell or character.spell == "Spirit Guardians":
+        if not character.spell or character.spell == SPIRIT_GUARDIANS:
             if druid >= 2 and subs.get("druid") == "Circle of Stars":
                 # Star Map: Guiding Bolt without a spell slot (2, 3 at 5, 4 at 9 per long rest)
                 bolts = [replace(a, uses_per_fight=per_fight(per_long_rest=2 + (druid >= 5) + (druid >= 9)))
@@ -331,7 +378,8 @@ def _attacks(character, c, levels, subs, feats, notes, main_finesse=None):
         spell_level = spells()[character.spell]["level"]
         slots = spell_slots(caster_level(levels, subs))
         pact, pact_level = warlock_pact_slots(levels.get("warlock", 0))
-        casts = per_fight(per_long_rest=sum(slots[spell_level - 1:]), per_short_rest=pact if pact_level >= spell_level else 0)
+        summoned = sum(lv >= spell_level for lv in cleric_slots(character, levels, subs)[1]) # Slots Spiritual Weapon takes
+        casts = per_fight(per_long_rest=sum(slots[spell_level - 1:]) - summoned, per_short_rest=pact if pact_level >= spell_level else 0)
         if not casts:
             notes.append(f"No spell slots of level {spell_level} or higher for {character.spell} yet")
             return cantrip
@@ -653,6 +701,11 @@ def _class_features(character, c, levels, subs, notes, main_finesse=None):
     if cleric >= 2 and subs.get("cleric") == "Death Domain" and character.routine in ("two_handed", "one_handed", "dual_wield", "unarmed"):
         # Touch of Death: Channel Divinity (1 charge, 2 from level 6, short rest) on a melee hit
         _limited_rider(c, "Touch of Death", per_fight(per_short_rest=1 + (cleric >= 6)), extra=f"{5 + 2 * cleric} necrotic")
+    if cleric and subs.get("cleric") == "Death Domain":
+        # Reaper: Necromancy cantrips that target one creature can target a second one (bg3.wiki: Toll the Dead, Bone Chill)
+        for a in c.attacks:
+            if a.type == "spell" and a.base in ("Toll the Dead", "Chill Touch"):
+                a.targets = max(a.targets, 2)
     if cleric >= 8 and subs.get("cleric") in ("Light Domain", "Knowledge Domain") and character.routine == "cantrip":
         # Potent Spellcasting: Wisdom to cleric cantrip damage
         for a in c.attacks:

@@ -311,3 +311,37 @@ def test_sneak_attack_and_smites_keep_separate_pools():
     # A ranged or thrown paladin can't smite
     archer, _ = compile_character(Bg3Character(classes=[["paladin", "Oath of Vengeance", 12]], routine="ranged"), 5)
     assert not archer.once_per_turn_die_mod_list and not archer.once_per_turn_extra
+
+def test_cleric_spirit_guardians_and_spiritual_weapon():
+    """ bg3.wiki: Spirit Guardians 3d8 + 1d8 a slot level, an action; Spiritual Weapon 1d8 + 1 + WIS force, +1d8 per two slot levels,
+        a bonus action, then its own attack every round """
+    from bg3.character import cleric_slots
+    wis = {"strength": 8, "dexterity": 14, "constitution": 14, "intelligence": 8, "wisdom": 17, "charisma": 10}
+    def cleric(domain="Light Domain", **fields):
+        return Bg3Character(**{"scores": wis, "bonus": {"wisdom": 2, "constitution": 1}, "classes": [["cleric", domain, 12]], "routine": "cantrip",
+                               "cantrip": "Sacred Flame", "feats": ["wisdom+2"], **fields})
+    both = cleric(spell="Spirit Guardians", toggles={"spiritual_weapon": True})
+    c, notes = compile_character(both, 12)
+    by_name = {a.name: a for a in c.attacks}
+    # The day's best four slots (6, 5, 5, 4) go to Spirit Guardians: 5d8 on average; the next four (4, 4, 3, 3) to the weapon: 1.5d8
+    assert cleric_slots(both, {"cleric": 12}, {"cleric": "Light Domain"}) == ([6, 5, 5, 4], [4, 4, 3, 3])
+    assert by_name["Spirit Guardians (aura)"].damage == "5d8" and by_name["Spirit Guardians (aura)"].targets == 3
+    weapon = by_name["Spiritual Weapon"]
+    assert weapon.damage == "1d8+8" and weapon.damage_type == "force" and weapon.action == "bonus" and weapon.uses_per_fight == 10 # 1 + WIS 5 + half a d8
+    assert by_name["Spirit Guardians (cast)"].uses_per_fight == 1 and by_name["Sacred Flame"].fallback_for == "Spirit Guardians (cast)" and not notes
+    # The weapon alone, with every slot free: the two best are level 6 and 5 (3d8 and 2d8)
+    alone, _ = compile_character(cleric(toggles={"spiritual_weapon": True}), 12)
+    assert next(a for a in alone.attacks if a.name == "Spiritual Weapon").damage == "2d8+7" # (3 + 2 + 2 + 2) / 4 dice, the quarter die as +1, on top of 1 + WIS 5
+    assert not any(a.name == "Spiritual Weapon" for a in compile_character(cleric(), 12)[0].attacks) # Off unless asked for
+    # Level 3: the weapon in half the fights (two level 2 slots a day), no Spirit Guardians yet
+    early, notes = compile_character(both, 3)
+    assert next(a for a in early.attacks if a.name == "Spiritual Weapon").uses_per_fight == 1.5 and any("Spirit Guardians needs" in n for n in notes)
+    # Death Domain: the aura is necrotic and Toll the Dead reaches a second creature (Reaper)
+    death, _ = compile_character(cleric("Death Domain", spell="Spirit Guardians", cantrip="Toll the Dead"), 12)
+    death = {a.name: a for a in death.attacks}
+    assert death["Spirit Guardians (aura)"].damage_type == "necrotic" and death["Toll the Dead"].targets == 2
+    # Haste's extra action attacks from round 1 while the action casts the spell
+    from bg3.build import Bg3Build, compile_build
+    hasted = compile_build(Bg3Build(name="Cleric", preset="", character=both.to_dict(), buffs={"3": ["haste"]}), "3")
+    extra = next(a for a in hasted.attacks if a.label == "Haste")
+    assert not extra.fallback_for and "after_cast" not in extra.tags

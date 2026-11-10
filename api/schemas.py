@@ -332,6 +332,40 @@ class KitResult(Model):
     placed: list[str]
     blocked: list[str]
 
+class GearChange(Model):
+    act: str
+    slot: str
+    before: str # Item names, '' for an empty slot
+    after: str
+
+class BestGear(Model):
+    build: Build
+    gear: dict[str, dict[str, str]] # Act: slot: item key, only what changed
+    changes: list[GearChange]
+    goal: str
+
+class Alternative(Model):
+    key: str
+    item: str
+    gain: float
+
+class DeconflictStep(Model):
+    act: str
+    item: str
+    keeper: str
+    member: str
+    slot: str
+    slotKey: str
+    replacement: str # '' when the slot is left empty
+    replacementKey: str
+    cost: float # Damage per round the member gives up
+    alternatives: list[Alternative]
+
+class Deconflict(Model):
+    party: list[Build]
+    steps: list[DeconflictStep]
+    remaining: int # Conflicts left that aren't shared items (story choices, wrong slots, concentration)
+
 class MemberRoles(Model):
     name: str
     roles: dict[str, str]

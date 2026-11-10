@@ -70,6 +70,16 @@ PRESETS = {b.name: b for b in [
     Bg3Build("Warlock (Eldritch Blast)", "warlock_eb", equipment={
         "3": {"helmet": "bg3:hood_of_the_weave", "armour": "bg3:robe_of_the_weave"},
     }),
+    # Clerics that walk into the enemy with Spirit Guardians up and a Spiritual Weapon beside them (damage shows best against 3 enemies)
+    Bg3Build("Light Cleric: Spirit Guardians + Spiritual Weapon", "fighter_gwm", equipment={
+        "1": {"armour": "bg3:luminous_armour", "amulet": "bg3:necklace_of_elemental_augmentation"},
+        "2": {"armour": "bg3:scale_mail_2"},
+    }, **custom("Light Cleric: Spirit Guardians + Spiritual Weapon", WISDOM, {"wisdom": 2, "constitution": 1}, [["cleric", "Light Domain", 12]],
+                ["wisdom+2", "War Caster", "Resilient"], "cantrip", cantrip="Sacred Flame", spell="Spirit Guardians", toggles={"spiritual_weapon": True})),
+    Bg3Build("Death Cleric: Spirit Guardians + Spiritual Weapon", "fighter_gwm", equipment={
+        "2": {"armour": "bg3:scale_mail_2"},
+    }, **custom("Death Cleric: Spirit Guardians + Spiritual Weapon", WISDOM, {"wisdom": 2, "constitution": 1}, [["cleric", "Death Domain", 12]],
+                ["wisdom+2", "War Caster", "Resilient"], "cantrip", cantrip="Toll the Dead", spell="Spirit Guardians", toggles={"spiritual_weapon": True})),
     # Custom characters, including Patch 8 subclasses
     Bg3Build("Swashbuckler Rogue (Patch 8)", "rogue_dual_wield", equipment={
         "1": {"melee_main": "bg3:knife_of_the_undermountain_king"},

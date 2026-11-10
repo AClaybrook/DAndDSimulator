@@ -218,6 +218,28 @@ def apply_kit_to(party_dicts, selected, kit_key, act, skip_taken=True, only_empt
     items = catalog()
     return {"build": member.to_dict(), "placed": [items[k].name for k in placed.values()], "blocked": [SLOT_LABELS.get(s, s) for s in blocked]}
 
+def best_gear_for(party_dicts, selected, acts, goal="damage", enemy_dict=None, rounds=3, enemies=1, attack_bonus=None, weapons=True, skip_taken=True):
+    """ The best gear a member can wear at the acts (bg3.loadout): the build with it, the gear on its own (to keep as a variant) and
+        what changed """
+    from bg3.loadout import GOALS, best_gear # pylint: disable=import-outside-toplevel
+    builds = [Bg3Build.from_dict(b) for b in party_dicts]
+    enemy = _enemy(enemy_dict)
+    bonus = int(attack_bonus) if attack_bonus not in (None, "") else attack_bonus_for(enemy)
+    goal = goal if goal in GOALS else "damage"
+    gear, changes = best_gear(builds, selected, [a for a in ACT_KEYS if a in acts], goal, enemy, rounds, enemies, bonus, weapons, skip_taken)
+    build = builds[selected]
+    for act, slots in gear.items():
+        build.equipment[act] = {**build.equipment.get(act, {}), **slots}
+    return {"build": build.to_dict(), "gear": gear, "changes": changes, "goal": GOALS[goal]}
+
+def deconflict(party_dicts, enemy_dict=None, rounds=3):
+    """ The party with every shared item settled (bg3.loadout.resolve_conflicts), the swaps that did it, and how many other conflicts
+        (story choices, wrong slots, concentration) are left for the player """
+    from bg3.loadout import resolve_conflicts # pylint: disable=import-outside-toplevel
+    builds = [Bg3Build.from_dict(b) for b in party_dicts]
+    party, steps = resolve_conflicts(builds, _enemy(enemy_dict), rounds)
+    return {"party": [b.to_dict() for b in party], "steps": steps, "remaining": len(party_conflicts(party))}
+
 def example(name):
     found = examples().get(name)
     return found.to_dict() if found else None

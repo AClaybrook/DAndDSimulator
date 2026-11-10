@@ -124,6 +124,21 @@
                     "applies_to": "unarmed"
                 }
             ]
+        },
+        "Balduran's Giantslayer": {
+            "effects": [
+                {
+                    "kind": "damage_bonus_ability",
+                    "stat": "strength",
+                    "applies_to": "self"
+                },
+                {
+                    "kind": "advantage",
+                    "applies_to": "self",
+                    "condition": "Against Large, Huge or Gargantuan creatures"
+                }
+            ],
+            "notes": "Giant Form"
         }
     }
 }

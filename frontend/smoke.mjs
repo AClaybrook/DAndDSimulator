@@ -35,6 +35,17 @@ await step('Planner: buffs grid changes the damage', async () => {
   await page.getByRole('checkbox', { name: 'Haste, Act 1' }).uncheck()
   await page.getByRole('tab', { name: 'Gear', exact: true }).click()
 })
+await step('Planner: settle shared items, then best in slot gear', async () => {
+  await page.getByRole('tab', { name: /Conflicts/ }).click()
+  await page.getByRole('button', { name: 'Settle shared items' }).click()
+  await visible(page.getByText('Proposed swaps'))
+  await page.getByRole('button', { name: 'Apply all' }).click()
+  await visible(page.getByText('No equipment conflicts.'))
+  await page.getByRole('tab', { name: 'Damage', exact: true }).click()
+  await page.getByRole('button', { name: 'Fill', exact: true }).click()
+  await visible(page.getByText(/Most damage gear at Act 3/))
+  await page.getByRole('button', { name: 'Undo' }).click()
+})
 await step('Planner: send the party to the simulator', async () => {
   await page.getByRole('button', { name: 'To simulator' }).click()
   await page.getByRole('menuitem', { name: /Whole party at/ }).first().click()

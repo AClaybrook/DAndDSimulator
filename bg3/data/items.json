@@ -12763,10 +12763,22 @@
      "two-handed"
     ]
    },
-   "effects": [],
-   "notes": "Giant Form; On a hit, double the damage from your Strength modifier; This weapon grants you advantage on attack rolls against Large, Huge or Gargantuan creatures",
+   "effects": [
+    {
+     "kind": "damage_bonus_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    },
+    {
+     "kind": "advantage",
+     "applies_to": "self",
+     "condition": "Against Large, Huge or Gargantuan creatures"
+    }
+   ],
+   "notes": "Giant Form",
    "location": "The Dragon's Sanctum",
-   "source": "https://bg3.wiki/wiki/Balduran%27s_Giantslayer"
+   "source": "https://bg3.wiki/wiki/Balduran%27s_Giantslayer",
+   "reviewed": true
   },
   {
    "key": "bg3:belm",

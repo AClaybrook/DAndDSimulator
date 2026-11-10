@@ -143,3 +143,19 @@ def test_builds_are_checked_on_the_way_in():
     assert response.status_code == 422 and "equipment" in response.text
     ok = client.post("/api/planner/evaluate", json={"party": [{"name": "Tav", "preset": "fighter_gwm", "unknown_field": 1}]})
     assert ok.status_code == 200 and ok.json()["members"][0]["name"] == "Tav"
+
+def test_best_gear_and_deconflict():
+    options = client.get("/api/planner/options").json()
+    party = options["defaultParty"]
+    best = client.post("/api/planner/best-gear", json={"party": party, "selected": 0, "acts": ["3"], "goal": "damage"}).json()
+    assert best["changes"] and all(c["act"] == "3" for c in best["changes"]) and best["goal"] == "Most damage"
+    before = client.post("/api/planner/evaluate", json={"party": party}).json()
+    after = client.post("/api/planner/evaluate", json={"party": [best["build"], *party[1:]]}).json()
+    assert after["members"][0]["acts"]["3"]["damage"][0] > before["members"][0]["acts"]["3"]["damage"][0]
+    assert after["members"][0]["acts"]["1"]["damage"] == before["members"][0]["acts"]["1"]["damage"] # Only the act asked for
+    # Nothing the rest of the party wears is taken, so no new conflicts
+    assert len([c for c in after["conflicts"] if c["kind"] == "shared"]) <= len([c for c in before["conflicts"] if c["kind"] == "shared"])
+    fixed = client.post("/api/planner/deconflict", json={"party": party}).json()
+    assert fixed["steps"] and fixed["steps"][0]["item"] == "Caustic Band" and fixed["steps"][0]["keeper"] != fixed["steps"][0]["member"]
+    settled = client.post("/api/planner/evaluate", json={"party": fixed["party"]}).json()
+    assert not [c for c in settled["conflicts"] if c["kind"] == "shared"] and before["conflicts"]

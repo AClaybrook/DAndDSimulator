@@ -24,8 +24,11 @@ def test_spirit_guardians_aura_and_horde_breaker():
     c, notes = compile_character(cleric, 5)
     aura = next(a for a in c.attacks if a.name == "Spirit Guardians (aura)")
     assert aura.targets == 3 and aura.uses_per_fight > 0 and not notes
-    assert any(a.name == "Sacred Flame" and not a.fallback_for for a in c.attacks) # The cantrip is still cast every round
-    assert expected_damage_vs_enemies(c, ENEMY, 3, 3) > expected_damage_vs_enemies(c, ENEMY, 3, 1) + 10
+    # Casting it takes the action of the first round, the cantrip follows from round 2
+    cast = next(a for a in c.attacks if a.name == "Spirit Guardians (cast)")
+    assert cast.uses_per_fight == 0.5 and aura.uses_per_fight == 1.5 # Two level 3 slots a day: half the fights, as half the rounds of each
+    assert any(a.name == "Sacred Flame" and a.fallback_for == cast.name and "after_cast" in a.tags for a in c.attacks)
+    assert expected_damage_vs_enemies(c, ENEMY, 3, 3) > expected_damage_vs_enemies(c, ENEMY, 3, 1) + 6
     hunter = Bg3Character(classes=[["ranger", "Hunter", 5]], routine="ranged", toggles={"horde_breaker": True})
     h, _ = compile_character(hunter, 5)
     assert any(a.min_enemies == 2 for a in h.attacks)

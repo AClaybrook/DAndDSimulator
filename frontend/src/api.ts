@@ -4,7 +4,7 @@ import type * as T from './api-types'
 
 export type {
   ActResult, Advice, Conflict, DistributionChart, Evaluation, Expected, Headline, ItemOption, LeaderboardEntry, LeaderboardOptions, LinesChart, MapData,
-  MapPoint, MemberResult, PartyAnalysis, PartyGear, PlannerOptions, Run, SimulationResult, SweepChart, Table, VariantRow,
+  MapPoint, MemberResult, Deconflict, DeconflictStep, PartyAnalysis, PartyGear, PlannerOptions, Run, SimulationResult, SweepChart, Table, VariantRow,
 } from './api-types'
 
 export type Value = string | number | boolean | null | string[] | undefined
@@ -77,6 +77,12 @@ export const bg3 = {
   useVariant: (build: Build, index: number) => call<Build>('/planner/use-variant', { build: strip([build])[0], index }),
   kit: (party: Build[], selected: number, kit: string, act: string, skipTaken: boolean, onlyEmpty: boolean) =>
     call<T.KitResult>('/planner/kit', { party: strip(party), selected, kit, act, skip_taken: skipTaken, only_empty: onlyEmpty }),
+  // The best gear a member can wear at the acts, from everything found by then (goal: damage, ac or score)
+  bestGear: (party: Build[], selected: number, acts: string[], goal: string, enemy: Enemy | null, rounds: number, enemies: number, attackBonus: number | null,
+    weapons: boolean, skipTaken: boolean) =>
+    call<T.BestGear>('/planner/best-gear', { party: strip(party), selected, acts, goal, enemy, rounds_per_fight: rounds, enemies, attack_bonus: attackBonus, weapons, skip_taken: skipTaken }),
+  // Settles the items several members wear: who keeps each one, and what the others wear instead
+  deconflict: (party: Build[], enemy: Enemy | null, rounds: number) => call<T.Deconflict>('/planner/deconflict', { party: strip(party), enemy, rounds_per_fight: rounds }),
   example: (name: string) => call<Build>(`/planner/example?name=${encodeURIComponent(name)}`),
   party: (party: Build[], act: string, active: string[] | null, enemy: Enemy | null, rounds: number, hitPoints: number) =>
     call<T.PartyAnalysis>('/planner/party', { party: strip(party), act, active, enemy, rounds_per_fight: rounds, hit_points: hitPoints }),

@@ -335,6 +335,12 @@ def parse_build(number, title, body, index, items):
         character.cantrip = "Eldritch Blast" if "eldritch blast" in body.lower() and any(c[0] == "warlock" for c in classes) else \
             "Fire Bolt" if "fire" in body.lower() else "Toll the Dead" if "toll the dead" in body.lower() else character.cantrip
         character.spell = "Scorching Ray" if "scorching ray" in body.lower() else ""
+    # Clerics whose write-up uses them: Spirit Guardians as the build's spell (from Cleric 5) and Spiritual Weapon (from Cleric 3)
+    cleric = sum(int(n) for cls, _, n in character.classes if cls == "cleric")
+    if cleric >= 5 and not character.spell and "spirit guardians" in body.lower():
+        character.spell = "Spirit Guardians"
+    if cleric >= 3 and "spiritual weapon" in body.lower():
+        character.toggles = {**character.toggles, "spiritual_weapon": True}
     roles = [r for r in ROLES if re.search(rf"\b{r}", field(body, "Roles", "Assigned Companion / Role", "Role").lower())]
     buffs = {act: parse_buffs(line) for act, line in re.findall(r"^Act ([123]) Buffs:\s*(.+)$", body, re.M)}
     build = Bg3Build(name=f"{number}. {character.name}", preset="fighter_gwm", equipment=trimmed, character=character.to_dict(),

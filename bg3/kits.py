@@ -88,6 +88,9 @@ def variant_build(build, variant):
     if variant.get("kit") in kits():
         kit_act = str(variant.get("act") or kits()[variant["kit"]]["act"])
         out, _, _ = apply_kit(out, variant["kit"], kit_act)
+    # Gear of its own (i.e. a best in slot set to compare): act: slot: item key
+    for act, gear in (variant.get("gear") or {}).items():
+        out.equipment[str(act)] = {**out.equipment.get(str(act), {}), **gear}
     extra = list(variant.get("buffs") or [])
     if extra:
         out.buffs = {act: list(dict.fromkeys([*out.buffs.get(act, []), *extra])) for act in ACT_KEYS}
@@ -103,6 +106,8 @@ def describe_variant(variant):
     parts = []
     if variant.get("kit") in kits():
         parts.append(f"kit: {kits()[variant['kit']]['name']}")
+    if variant.get("gear"):
+        parts.append("gear: " + ", ".join(f"Act {act} ({len(gear)} slots)" for act, gear in sorted(variant["gear"].items())))
     if variant.get("buffs"):
         from bg3.buffs import BUFFS # pylint: disable=import-outside-toplevel
         parts.append("buffs: " + ", ".join(BUFFS[b].name if b in BUFFS else b for b in variant["buffs"]))

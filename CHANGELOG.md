@@ -2,6 +2,19 @@
 
 ## 3.0.0 (in progress)
 
+- **Best in slot gear:** the planner's Gear tab can fill a character's gear for an act (or every act) with the best of everything found
+  by then, for the most damage, the highest armour class or the best overall score, the weapon included (one that fits the build's grip).
+  It is searched for the build against the current enemy, not a fixed list, and can leave the rest of the party's items alone. "Compare
+  first" keeps your gear and adds the set as a variant; Fill has an Undo.
+- **Settle shared items:** the Conflicts tab proposes who keeps each item two characters wear (whoever gains the most damage from it) and
+  the best item nobody wears for the others, with other options to pick instead. A slot left empty is filled in the first later act
+  that has something for it.
+- **Clerics:** Spiritual Weapon (a toggle: its own attack every round for 1d8 + 1 + Wisdom force, more from higher slots) and Spirit
+  Guardians cast with the day's best slots (3d8 + 1d8 a slot level), costing the action of the first round. Before, the aura was always
+  3d8 and counted in every fight even with two slots a day, which overstated level 5 clerics. Death Domain: a necrotic aura and Toll the
+  Dead on two creatures (Reaper). Two example clerics, and builds from the build doc that use these spells now have them (Deathreaper,
+  Tempest Bladesinger, Unstoppable Death Monk, Circle of the Stars / Light Cleric).
+- **Balduran's Giantslayer** doubles the Strength modifier's damage (and has advantage against Large creatures as a toggle).
 - **Review fixes, rules:** Haste and Bloodlust give a whole Attack action outside Honour Mode (Extra Attack included) and one attack in
   it; the Honour Mode toggle is now offered to every class. BG3 Savage Attacker and Great Weapon Fighting reach rider and once per turn
   dice (smites, Sneak Attack, item damage), and Savage Attacker a thrown weapon's own dice. Lifedrinker is necrotic, so the Resonance

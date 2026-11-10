@@ -206,6 +206,23 @@ def planner_use_variant(request: UseVariantRequest):
 def planner_kit(request: KitRequest):
     return planner.apply_kit_to(request.builds(), request.selected, request.kit, request.act, request.skip_taken, request.only_empty)
 
+class BestGearRequest(PlannerRequest):
+    selected: int
+    acts: list[str] = ["3"]
+    goal: str = "damage" # damage, ac or score
+    enemies: int = 1
+    weapons: bool = True
+    skip_taken: bool = True
+
+@app.post("/api/planner/best-gear", response_model=schemas.BestGear)
+def planner_best_gear(request: BestGearRequest):
+    return planner.best_gear_for(request.builds(), request.selected, request.acts, request.goal, request.enemy, request.rounds_per_fight,
+                                 request.enemies, request.attack_bonus, request.weapons, request.skip_taken)
+
+@app.post("/api/planner/deconflict", response_model=schemas.Deconflict)
+def planner_deconflict(request: PlannerRequest):
+    return planner.deconflict(request.builds(), request.enemy, request.rounds_per_fight)
+
 @app.get("/api/planner/example", response_model=schemas.Build)
 def planner_example(name: str):
     found = planner.example(name)

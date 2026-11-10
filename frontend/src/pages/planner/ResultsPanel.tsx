@@ -1,9 +1,9 @@
-import { Badge, Checkbox, Collapse, Group, MultiSelect, NumberInput, Select, Stack, Table, Tabs, Text, Tooltip, UnstyledButton } from '@mantine/core'
+import { Badge, Button, Checkbox, Collapse, Group, MultiSelect, NumberInput, Select, Stack, Table, Tabs, Text, Tooltip, UnstyledButton } from '@mantine/core'
 import { useDebouncedValue, useMediaQuery } from '@mantine/hooks'
-import { IconChevronDown, IconChevronRight } from '@tabler/icons-react'
+import { IconChevronDown, IconChevronRight, IconWand } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { bg3, type Evaluation, type MemberResult, type PlannerOptions } from '../../api'
+import { bg3, type Deconflict, type DeconflictStep, type Evaluation, type MemberResult, type PlannerOptions } from '../../api'
 import { Section } from '../../components/Layout'
 import { chartLayout, spread } from '../../format'
 import { Plot } from '../../components/Plot'
@@ -77,6 +77,7 @@ export function ResultsPanel({ options, evaluation }: { options: PlannerOptions;
       <Tabs.Panel value="conflicts">
         {!conflicts.length ? <Text size="sm" c="dimmed">No equipment conflicts.</Text> : (
           <Stack gap="xs">
+            {conflicts.some((c) => c.kind === 'shared') && <Settle />}
             {ACTS.map((a) => conflicts.filter((c) => c.act === a)).map((list, i) => list.length > 0 && (
               <div key={i}>
                 <Text size="xs" fw={600} c="dimmed" tt="uppercase">Act {ACTS[i]}</Text>
@@ -92,6 +93,64 @@ export function ResultsPanel({ options, evaluation }: { options: PlannerOptions;
       </Tabs.Panel>
       <Tabs.Panel value="party"><PartyAnalysisView options={options} count={party.length} /></Tabs.Panel>
     </Tabs>
+  )
+}
+
+// Settles the items several characters wear: whoever gains the most damage from an item keeps it, the others get the best item for
+// that slot nobody wears. Shown as a proposal first; each swap lists other options to pick instead
+function Settle() {
+  const { party, replace, update } = useParty()
+  const { enemy, rounds } = useSharedEnemy()
+  const [plan, setPlan] = useState<Deconflict | null>(null)
+  const [busy, setBusy] = useState(false)
+  const propose = async () => {
+    setBusy(true)
+    try { setPlan(await bg3.deconflict(party, enemy, rounds)) } finally { setBusy(false) }
+  }
+  const applyAll = () => {
+    plan?.party.forEach((b, i) => replace(i, b))
+    setPlan(null)
+  }
+  // One swap with another of its options: that member's slot at that act, the rest of the proposal untouched
+  const pick = (step: DeconflictStep, key: string) => {
+    const index = party.findIndex((b) => b.name === step.member)
+    if (index >= 0) update(index, (b) => ({ ...b, equipment: { ...b.equipment, [step.act]: { ...(b.equipment[step.act] ?? {}), [step.slotKey]: key } } }))
+    setPlan(null)
+  }
+  if (!plan) {
+    return (
+      <Group gap="xs">
+        <Button size="xs" variant="light" leftSection={<IconWand size={14} />} loading={busy} onClick={propose}>Settle shared items</Button>
+        <Text size="xs" c="dimmed">Proposes who keeps each contested item and what the others wear instead</Text>
+      </Group>
+    )
+  }
+  return (
+    <Section padding="sm" title="Proposed swaps" actions={<>
+      <Button size="compact-xs" onClick={applyAll}>Apply all</Button>
+      <Button size="compact-xs" variant="default" onClick={() => setPlan(null)}>Cancel</Button>
+    </>}>
+      {plan.steps.map((s, i) => (
+        <div key={i}>
+          <Text size="sm">
+            <Text span size="xs" c="dimmed">Act {s.act} · </Text><b>{s.item}</b> stays with {s.keeper.split(' (')[0]}. {s.member.split(' (')[0]}'s {s.slot.toLowerCase()}:{' '}
+            {s.replacement ? <b>{s.replacement}</b> : 'left empty (nothing else found by this act adds damage)'}
+            <Text span size="xs" c="dimmed"> · {s.cost >= 0 ? `gives up ${s.cost.toFixed(1)}` : `gains ${(-s.cost).toFixed(1)}`} a round</Text>
+          </Text>
+          {s.alternatives.length > 1 && (
+            <Group gap={4} mt={2}>
+              <Text size="xs" c="dimmed">Or:</Text>
+              {s.alternatives.slice(1).map((a) => (
+                <Tooltip key={a.key} label={`Wear ${a.item} there instead (+${a.gain.toFixed(1)} a round over an empty slot)`}>
+                  <Button size="compact-xs" variant="default" onClick={() => pick(s, a.key)}>{a.item} +{a.gain.toFixed(1)}</Button>
+                </Tooltip>
+              ))}
+            </Group>
+          )}
+        </div>
+      ))}
+      {plan.remaining > 0 && <Text size="xs" c="dimmed">{plan.remaining} other conflict{plan.remaining === 1 ? '' : 's'} (story choices, slots, concentration) are yours to decide.</Text>}
+    </Section>
   )
 }
 

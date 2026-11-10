@@ -143,7 +143,8 @@ BLOODLUST_KILLS_PER_FIGHT = 1.5
 def _action_attacks(character):
     """ The attacks of one Attack action (or cantrip cast): not bonus action, reaction, off hand or limited use attacks """
     def plain(a):
-        return a.action == "action" and not (a.offhand or a.uses_per_fight or a.fallback_for or a.min_enemies > 1)
+        waits = a.fallback_for and "after_cast" not in a.tags # After a spell cast with the action (Spirit Guardians) is still a plain attack
+        return a.action == "action" and not (a.offhand or a.uses_per_fight or waits or a.min_enemies > 1)
     weapons = [a for a in character.attacks if (a.is_weapon or a.type == "unarmed") and plain(a)]
     return weapons or [a for a in character.attacks if a.type == "spell" and plain(a)]
 
@@ -153,7 +154,9 @@ def extra_action(character, label, honour_mode=False, uses=0):
     attacks = _action_attacks(character)
     if honour_mode and attacks and attacks[0].type != "spell":
         attacks = attacks[:1]
-    character.attacks += [a.variant(label, action="extra", uses_per_fight=uses) for a in attacks]
+    # The extra action attacks from round 1, even when the action itself goes to casting a spell first
+    character.attacks += [a.variant(label, action="extra", uses_per_fight=uses, fallback_for="", tags=[t for t in a.tags if t != "after_cast"])
+                          for a in attacks]
 
 def apply_effect(character, effect, own_attacks=(), honour_mode=False):
     """ Applies one effect to a character (in place). own_attacks are the attacks made with the item's weapon """
@@ -235,7 +238,7 @@ def reverberation_hits(character):
     """ Attacks per round that deal thunder, lightning or radiant damage (the damage type or a rider) """
     def elemental(a):
         return a.damage_type in REVERBERATION_TYPES or any(t in r for r in a.extra_damage_list for t in REVERBERATION_TYPES)
-    return sum(1 for a in character.attacks if elemental(a) and not a.fallback_for)
+    return sum(1 for a in character.attacks if elemental(a) and (not a.fallback_for or "after_cast" in a.tags) and "setup" not in a.tags)
 
 def reverberation_per_round(character, gear_keys):
     """ Expected turns of Reverberation added per round: Gloves of Belligerent Skies add 2 per thunder, lightning or radiant hit, and Boots of

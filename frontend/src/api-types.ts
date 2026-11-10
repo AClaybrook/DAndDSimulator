@@ -39,9 +39,35 @@ export interface AdviceRequest {
   slot: string
 }
 
+export interface Alternative {
+  key: string
+  item: string
+  gain: number
+}
+
 export interface AttackDamage {
   name: string
   damage: number
+}
+
+export interface BestGear {
+  build: Build
+  gear: Record<string, Record<string, string>>
+  changes: GearChange[]
+  goal: string
+}
+
+export interface BestGearRequest {
+  party: Build[]
+  enemy?: Record<string, unknown> | null
+  rounds_per_fight: number
+  attack_bonus?: number | null
+  selected: number
+  acts: string[]
+  goal: string
+  enemies: number
+  weapons: boolean
+  skip_taken: boolean
 }
 
 export interface Box {
@@ -134,6 +160,25 @@ export interface Curve {
   percent: number[]
 }
 
+export interface Deconflict {
+  party: Build[]
+  steps: DeconflictStep[]
+  remaining: number
+}
+
+export interface DeconflictStep {
+  act: string
+  item: string
+  keeper: string
+  member: string
+  slot: string
+  slotKey: string
+  replacement: string
+  replacementKey: string
+  cost: number
+  alternatives: Alternative[]
+}
+
 export interface Described {
   key: string
   description: string
@@ -204,6 +249,13 @@ export interface Fight {
   share: Record<string, number>
   rounds: number
   hit_points: number
+}
+
+export interface GearChange {
+  act: string
+  slot: string
+  before: string
+  after: string
 }
 
 export interface Headline {

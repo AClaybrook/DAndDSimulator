@@ -75,7 +75,9 @@
    "carried": [
     "Resonance Stone"
    ],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [
    "Resonance Stone"
@@ -164,7 +166,9 @@
    "carried": [
     "Resonance Stone"
    ],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [
    "Resonance Stone"
@@ -255,7 +259,9 @@
     "level_order": []
    },
    "carried": [],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [],
@@ -353,12 +359,16 @@
     "fighting_styles": [],
     "routine": "dual_wield",
     "cantrip": "Eldritch Blast",
-    "spell": "",
-    "toggles": {},
+    "spell": "Spirit Guardians",
+    "toggles": {
+     "spiritual_weapon": true
+    },
     "level_order": []
    },
    "carried": [],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [],
@@ -442,7 +452,9 @@
     "level_order": []
    },
    "carried": [],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [],
@@ -488,16 +500,16 @@
     "name": "Tempest Bladesinger",
     "race": "Human",
     "scores": {
-     "strength": 15,
-     "dexterity": 14,
-     "constitution": 15,
-     "intelligence": 8,
+     "strength": 8,
+     "dexterity": 15,
+     "constitution": 14,
+     "intelligence": 15,
      "wisdom": 10,
      "charisma": 8
     },
     "bonus": {
-     "strength": 2,
-     "constitution": 1
+     "dexterity": 2,
+     "intelligence": 1
     },
     "classes": [
      [
@@ -511,22 +523,29 @@
       6
      ]
     ],
-    "feats": [],
+    "feats": [
+     "dexterity+2",
+     "dexterity+1,intelligence+1"
+    ],
     "fighting_styles": [],
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
-    "spell": "",
+    "spell": "Spirit Guardians",
     "toggles": {},
     "level_order": []
    },
    "carried": [],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Ability scores guessed: 15 Dexterity +2, 15 Intelligence +1, point buy",
+   "Feats guessed: ability improvements to the main stats"
   ],
   "companion": "",
   "themes": [],
@@ -567,15 +586,15 @@
     "name": "Patch 8 Hexadin / Lockadin",
     "race": "Human",
     "scores": {
-     "strength": 15,
+     "strength": 8,
      "dexterity": 14,
      "constitution": 15,
      "intelligence": 8,
      "wisdom": 10,
-     "charisma": 8
+     "charisma": 15
     },
     "bonus": {
-     "strength": 2,
+     "charisma": 2,
      "constitution": 1
     },
     "classes": [
@@ -590,7 +609,10 @@
       6
      ]
     ],
-    "feats": [],
+    "feats": [
+     "charisma+2",
+     "charisma+1,constitution+1"
+    ],
     "fighting_styles": [],
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
@@ -599,13 +621,17 @@
     "level_order": []
    },
    "carried": [],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Ability scores guessed: 15 Charisma +2, 15 Constitution +1, point buy",
+   "Feats guessed: ability improvements to the main stats"
   ],
   "companion": "",
   "themes": [],
@@ -648,16 +674,16 @@
     "name": "Shadow Sorcadin",
     "race": "Human",
     "scores": {
-     "strength": 15,
-     "dexterity": 14,
-     "constitution": 15,
+     "strength": 8,
+     "dexterity": 15,
+     "constitution": 14,
      "intelligence": 8,
      "wisdom": 10,
-     "charisma": 8
+     "charisma": 15
     },
     "bonus": {
-     "strength": 2,
-     "constitution": 1
+     "dexterity": 2,
+     "charisma": 1
     },
     "classes": [
      [
@@ -671,7 +697,10 @@
       6
      ]
     ],
-    "feats": [],
+    "feats": [
+     "dexterity+2",
+     "dexterity+1,charisma+1"
+    ],
     "fighting_styles": [],
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
@@ -680,13 +709,17 @@
     "level_order": []
    },
    "carried": [],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Ability scores guessed: 15 Dexterity +2, 15 Charisma +1, point buy",
+   "Feats guessed: ability improvements to the main stats"
   ],
   "companion": "",
   "themes": [],
@@ -727,16 +760,16 @@
     "name": "Hexblade Sorlock",
     "race": "Human",
     "scores": {
-     "strength": 15,
-     "dexterity": 14,
-     "constitution": 15,
+     "strength": 8,
+     "dexterity": 15,
+     "constitution": 14,
      "intelligence": 8,
      "wisdom": 10,
-     "charisma": 8
+     "charisma": 15
     },
     "bonus": {
-     "strength": 2,
-     "constitution": 1
+     "charisma": 2,
+     "dexterity": 1
     },
     "classes": [
      [
@@ -750,7 +783,10 @@
       6
      ]
     ],
-    "feats": [],
+    "feats": [
+     "charisma+2",
+     "charisma+1,dexterity+1"
+    ],
     "fighting_styles": [],
     "routine": "shadow_blade",
     "cantrip": "Eldritch Blast",
@@ -759,13 +795,17 @@
     "level_order": []
    },
    "carried": [],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Ability scores guessed: 15 Charisma +2, 15 Dexterity +1, point buy",
+   "Feats guessed: ability improvements to the main stats"
   ],
   "companion": "",
   "themes": [],
@@ -791,18 +831,23 @@
     "name": "Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid",
     "race": "Human",
     "scores": {
-     "strength": 15,
-     "dexterity": 14,
-     "constitution": 15,
-     "intelligence": 8,
+     "strength": 8,
+     "dexterity": 15,
+     "constitution": 14,
+     "intelligence": 15,
      "wisdom": 10,
      "charisma": 8
     },
     "bonus": {
-     "strength": 2,
-     "constitution": 1
+     "dexterity": 2,
+     "intelligence": 1
     },
     "classes": [
+     [
+      "wizard",
+      "Bladesinging",
+      10
+     ],
      [
       "druid",
       "Circle of Stars",
@@ -823,13 +868,17 @@
     "level_order": []
    },
    "carried": [],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Class split: repeated class rows dropped or a class from the title added (wizard 10 / druid 2)",
+   "Ability scores guessed: 15 Dexterity +2, 15 Intelligence +1, point buy"
   ],
   "companion": "",
   "themes": [],
@@ -915,7 +964,9 @@
     "striker",
     "face",
     "summoner"
-   ]
+   ],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [
@@ -998,12 +1049,14 @@
     "fighting_styles": [],
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
-    "spell": "",
+    "spell": "Spirit Guardians",
     "toggles": {},
     "level_order": []
    },
    "carried": [],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [],
@@ -1048,16 +1101,16 @@
     "name": "Jedi Consular",
     "race": "Human",
     "scores": {
-     "strength": 15,
-     "dexterity": 14,
-     "constitution": 15,
-     "intelligence": 8,
+     "strength": 8,
+     "dexterity": 15,
+     "constitution": 14,
+     "intelligence": 15,
      "wisdom": 10,
      "charisma": 8
     },
     "bonus": {
-     "strength": 2,
-     "constitution": 1
+     "dexterity": 2,
+     "intelligence": 1
     },
     "classes": [
      [
@@ -1069,14 +1122,13 @@
       "wizard",
       "Bladesinging",
       5
-     ],
-     [
-      "fighter",
-      "Eldritch Knight",
-      11
      ]
     ],
-    "feats": [],
+    "feats": [
+     "dexterity+2",
+     "dexterity+1,intelligence+1",
+     "constitution+2"
+    ],
     "fighting_styles": [],
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
@@ -1085,13 +1137,18 @@
     "level_order": []
    },
    "carried": [],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Class split: repeated class rows dropped or a class from the title added (fighter 7 / wizard 5)",
+   "Ability scores guessed: 15 Dexterity +2, 15 Intelligence +1, point buy",
+   "Feats guessed: ability improvements to the main stats"
   ],
   "companion": "Lae'zel, Gale, or Tav — Multi-Attack War Magic + Booming Blade Melee/Caster Hybrid.",
   "themes": [],
@@ -1134,15 +1191,15 @@
     "name": "Death Cleric Necromancer",
     "race": "Human",
     "scores": {
-     "strength": 15,
+     "strength": 8,
      "dexterity": 14,
      "constitution": 15,
-     "intelligence": 8,
+     "intelligence": 15,
      "wisdom": 10,
      "charisma": 8
     },
     "bonus": {
-     "strength": 2,
+     "intelligence": 2,
      "constitution": 1
     },
     "classes": [
@@ -1157,7 +1214,10 @@
       6
      ]
     ],
-    "feats": [],
+    "feats": [
+     "intelligence+2",
+     "intelligence+1,constitution+1"
+    ],
     "fighting_styles": [],
     "routine": "cantrip",
     "cantrip": "Eldritch Blast",
@@ -1168,7 +1228,9 @@
    "carried": [],
    "roles": [
     "summoner"
-   ]
+   ],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [
@@ -1176,7 +1238,9 @@
   ],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Ability scores guessed: 15 Intelligence +2, 15 Constitution +1, point buy",
+   "Feats guessed: ability improvements to the main stats"
   ],
   "companion": "Gale or Shadowheart — Undead Summoner & Immortal Level 6 Circle of Death Nuker.",
   "themes": [],
@@ -1216,15 +1280,15 @@
     "race": "Human",
     "scores": {
      "strength": 15,
-     "dexterity": 14,
-     "constitution": 15,
+     "dexterity": 15,
+     "constitution": 14,
      "intelligence": 8,
      "wisdom": 10,
      "charisma": 8
     },
     "bonus": {
      "strength": 2,
-     "constitution": 1
+     "dexterity": 1
     },
     "classes": [
      [
@@ -1235,11 +1299,6 @@
      [
       "monk",
       "Way of the Open Hand",
-      6
-     ],
-     [
-      "druid",
-      "Circle of Stars",
       6
      ]
     ],
@@ -1260,7 +1319,9 @@
    "roles": [
     "striker",
     "control"
-   ]
+   ],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [
@@ -1269,7 +1330,9 @@
   ],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Class split: repeated class rows dropped or a class from the title added (druid 6 / monk 6)",
+   "Ability scores guessed: 15 Strength +2, 15 Dexterity +1, point buy"
   ],
   "companion": "Jaheira, Halsin, Shadowheart, or Karlach — Radiant/Force Unarmed Striker & Cosmic Omen Dice Controller.",
   "themes": [],
@@ -1352,7 +1415,9 @@
    "carried": [],
    "roles": [
     "control"
-   ]
+   ],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [
@@ -1360,7 +1425,8 @@
   ],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Ability scores guessed: 15 Strength +2, 15 Constitution +1, point buy"
   ],
   "companion": "Karlach — Thunder/Lightning All-Weapon Thrower & Enemy Suplex Controller.",
   "themes": [],
@@ -1404,16 +1470,16 @@
     "name": "Skald Dual-Wielding Bard",
     "race": "Human",
     "scores": {
-     "strength": 15,
-     "dexterity": 14,
-     "constitution": 15,
+     "strength": 8,
+     "dexterity": 15,
+     "constitution": 14,
      "intelligence": 8,
      "wisdom": 10,
-     "charisma": 8
+     "charisma": 15
     },
     "bonus": {
-     "strength": 2,
-     "constitution": 1
+     "dexterity": 2,
+     "charisma": 1
     },
     "classes": [
      [
@@ -1427,7 +1493,11 @@
       4
      ]
     ],
-    "feats": [],
+    "feats": [
+     "dexterity+2",
+     "dexterity+1,charisma+1",
+     "constitution+2"
+    ],
     "fighting_styles": [],
     "routine": "dual_wield",
     "cantrip": "Eldritch Blast",
@@ -1439,7 +1509,9 @@
    "roles": [
     "striker",
     "face"
-   ]
+   ],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [
@@ -1448,7 +1520,9 @@
   ],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Ability scores guessed: 15 Dexterity +2, 15 Charisma +1, point buy",
+   "Feats guessed: ability improvements to the main stats"
   ],
   "companion": "Astarion or Tav (Party Face & Sleight of Hand Skill Monkey) — Dual-Wielding Piercing Crit Striker.",
   "themes": [],
@@ -1492,15 +1566,15 @@
     "name": "The 11/1 Fire Sorlock",
     "race": "Human",
     "scores": {
-     "strength": 15,
+     "strength": 8,
      "dexterity": 14,
      "constitution": 15,
      "intelligence": 8,
      "wisdom": 10,
-     "charisma": 8
+     "charisma": 15
     },
     "bonus": {
-     "strength": 2,
+     "charisma": 2,
      "constitution": 1
     },
     "classes": [
@@ -1515,7 +1589,10 @@
       1
      ]
     ],
-    "feats": [],
+    "feats": [
+     "charisma+2",
+     "charisma+1,constitution+1"
+    ],
     "fighting_styles": [],
     "routine": "cantrip",
     "cantrip": "Fire Bolt",
@@ -1527,7 +1604,9 @@
    "roles": [
     "control",
     "face"
-   ]
+   ],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [
@@ -1536,7 +1615,9 @@
   ],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Ability scores guessed: 15 Charisma +2, 15 Constitution +1, point buy",
+   "Feats guessed: ability improvements to the main stats"
   ],
   "companion": "Tav / Dark Urge (Party Face) or Gale — Quadratic AoE Nuker, Single-Target Boss Melter & 6-Target Command Controller.",
   "themes": [],
@@ -1579,16 +1660,16 @@
     "name": "The 10/2 Smite Swords Bard — SSB",
     "race": "Human",
     "scores": {
-     "strength": 15,
-     "dexterity": 14,
-     "constitution": 15,
+     "strength": 8,
+     "dexterity": 15,
+     "constitution": 14,
      "intelligence": 8,
      "wisdom": 10,
-     "charisma": 8
+     "charisma": 15
     },
     "bonus": {
-     "strength": 2,
-     "constitution": 1
+     "dexterity": 2,
+     "charisma": 1
     },
     "classes": [
      [
@@ -1602,7 +1683,10 @@
       2
      ]
     ],
-    "feats": [],
+    "feats": [
+     "dexterity+2",
+     "dexterity+1,charisma+1"
+    ],
     "fighting_styles": [],
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
@@ -1613,7 +1697,9 @@
    "carried": [],
    "roles": [
     "control"
-   ]
+   ],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [
@@ -1621,7 +1707,9 @@
   ],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Ability scores guessed: 15 Dexterity +2, 15 Charisma +1, point buy",
+   "Feats guessed: ability improvements to the main stats"
   ],
   "companion": "Tav / Dark Urge, Minthara, or Astarion — AoE Auto-Crit Edge of Darkness Divine Smiter & Unresistable Crowd Controller.",
   "themes": [],
@@ -1661,16 +1749,16 @@
     "name": "Shadow Blade Eldritch Knight",
     "race": "Human",
     "scores": {
-     "strength": 15,
-     "dexterity": 14,
-     "constitution": 15,
+     "strength": 8,
+     "dexterity": 15,
+     "constitution": 14,
      "intelligence": 8,
      "wisdom": 10,
-     "charisma": 8
+     "charisma": 15
     },
     "bonus": {
-     "strength": 2,
-     "constitution": 1
+     "charisma": 2,
+     "dexterity": 1
     },
     "classes": [
      [
@@ -1684,7 +1772,11 @@
       1
      ]
     ],
-    "feats": [],
+    "feats": [
+     "charisma+2",
+     "charisma+1,dexterity+1",
+     "constitution+2"
+    ],
     "fighting_styles": [],
     "routine": "shadow_blade",
     "cantrip": "Eldritch Blast",
@@ -1695,7 +1787,9 @@
    "carried": [
     "Resonance Stone"
    ],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [
    "Resonance Stone"
@@ -1703,7 +1797,9 @@
   "roles": [],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Ability scores guessed: 15 Charisma +2, 15 Dexterity +1, point buy",
+   "Feats guessed: ability improvements to the main stats"
   ],
   "companion": "Lae'zel or Tav — 5-to-8 Attack Per Turn Shadow Blade + Helmet of Grit Boss Blender.",
   "themes": [],
@@ -1729,15 +1825,15 @@
     "name": "5/4/3 Gloom Stalker / Assassin / Arcane Archer",
     "race": "Human",
     "scores": {
-     "strength": 15,
-     "dexterity": 14,
+     "strength": 8,
+     "dexterity": 15,
      "constitution": 15,
-     "intelligence": 8,
-     "wisdom": 10,
+     "intelligence": 10,
+     "wisdom": 14,
      "charisma": 8
     },
     "bonus": {
-     "strength": 2,
+     "dexterity": 2,
      "constitution": 1
     },
     "classes": [
@@ -1757,22 +1853,30 @@
       3
      ]
     ],
-    "feats": [],
+    "feats": [
+     "dexterity+2",
+     "dexterity+1,constitution+1"
+    ],
     "fighting_styles": [],
-    "routine": "one_handed",
+    "routine": "ranged",
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {},
     "level_order": []
    },
    "carried": [],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Routine guessed from the classes: ranged",
+   "Ability scores guessed: 15 Dexterity +2, 15 Constitution +1, point buy",
+   "Feats guessed: ability improvements to the main stats"
   ],
   "companion": "Astarion — Out-of-Combat Stealth Clearer & 6-Crit Turn-1 Alpha-Strike Archer.",
   "themes": [],
@@ -1799,15 +1903,15 @@
     "race": "Human",
     "scores": {
      "strength": 15,
-     "dexterity": 14,
-     "constitution": 15,
+     "dexterity": 15,
+     "constitution": 14,
      "intelligence": 8,
      "wisdom": 10,
      "charisma": 8
     },
     "bonus": {
      "strength": 2,
-     "constitution": 1
+     "dexterity": 1
     },
     "classes": [
      [
@@ -1819,29 +1923,35 @@
       "rogue",
       "Thief",
       4
-     ],
-     [
-      "monk",
-      "Way of the Open Hand",
-      9
      ]
     ],
-    "feats": [],
+    "feats": [
+     "Tavern Brawler",
+     "strength+2",
+     "strength+1,dexterity+1"
+    ],
     "fighting_styles": [],
-    "routine": "one_handed",
+    "routine": "unarmed",
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {},
     "level_order": []
    },
    "carried": [],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Class split: repeated class rows dropped or a class from the title added (monk 8 / rogue 4)",
+   "Feat from the title: Tavern Brawler",
+   "Routine guessed from the classes: unarmed",
+   "Ability scores guessed: 15 Strength +2, 15 Dexterity +1, point buy",
+   "Feats guessed: ability improvements to the main stats"
   ],
   "companion": "Karlach (using Soul Coins for +2d4 Fire damage on every punch all day) or Ascended Astarion (+1d10 Necrotic on every punch).",
   "themes": [],
@@ -1867,15 +1977,15 @@
     "name": "Eldritch Blast Sorlock",
     "race": "Human",
     "scores": {
-     "strength": 15,
+     "strength": 8,
      "dexterity": 14,
      "constitution": 15,
      "intelligence": 8,
      "wisdom": 10,
-     "charisma": 8
+     "charisma": 15
     },
     "bonus": {
-     "strength": 2,
+     "charisma": 2,
      "constitution": 1
     },
     "classes": [
@@ -1895,7 +2005,10 @@
       2
      ]
     ],
-    "feats": [],
+    "feats": [
+     "charisma+2",
+     "charisma+1,constitution+1"
+    ],
     "fighting_styles": [],
     "routine": "cantrip",
     "cantrip": "Eldritch Blast",
@@ -1904,13 +2017,17 @@
     "level_order": []
    },
    "carried": [],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Ability scores guessed: 15 Charisma +2, 15 Constitution +1, point buy",
+   "Feats guessed: ability improvements to the main stats"
   ],
   "companion": "Wyll or Tav — Resourceless Machine-Gun Blaster & Prone/Frightened Turn-Skipper.",
   "themes": [],
@@ -1936,16 +2053,16 @@
     "name": "Circle of the Stars / Light Cleric RadOrb Tank",
     "race": "Human",
     "scores": {
-     "strength": 15,
-     "dexterity": 14,
-     "constitution": 15,
-     "intelligence": 8,
-     "wisdom": 10,
+     "strength": 8,
+     "dexterity": 15,
+     "constitution": 14,
+     "intelligence": 10,
+     "wisdom": 15,
      "charisma": 8
     },
     "bonus": {
-     "strength": 2,
-     "constitution": 1
+     "dexterity": 2,
+     "wisdom": 1
     },
     "classes": [
      [
@@ -1959,22 +2076,29 @@
       10
      ]
     ],
-    "feats": [],
+    "feats": [
+     "dexterity+2",
+     "dexterity+1,wisdom+1"
+    ],
     "fighting_styles": [],
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
-    "spell": "",
+    "spell": "Spirit Guardians",
     "toggles": {},
     "level_order": []
    },
    "carried": [],
-   "roles": []
+   "roles": [],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Ability scores guessed: 15 Dexterity +2, 15 Wisdom +1, point buy",
+   "Feats guessed: ability improvements to the main stats"
   ],
   "companion": "Shadowheart — Unbreakable Concentration Spirit Guardians & Bonus Action Dazzling Breath Radiating Orb Spreader.",
   "themes": [],
@@ -2004,12 +2128,17 @@
    },
    "buffs": {
     "1": [
-     "haste"
+     "mage_armour",
+     "haste",
+     "shield_of_faith",
+     "warding_bond"
     ],
     "2": [
+     "mage_armour",
      "haste"
     ],
     "3": [
+     "mage_armour",
      "haste"
     ]
    },
@@ -2079,7 +2208,9 @@
     "frontline",
     "striker",
     "healer"
-   ]
+   ],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [
@@ -2167,7 +2298,9 @@
     "striker",
     "face",
     "summoner"
-   ]
+   ],
+   "variants": [],
+   "advantage": false
   },
   "carried": [
    "Drakethroat Glaive"
@@ -2209,22 +2342,26 @@
    "name": "27. Improved Divine Smite Hex-Crown Paladin",
    "preset": "fighter_gwm",
    "equipment": {},
-   "buffs": {},
+   "buffs": {
+    "1": [
+     "shield_of_faith"
+    ]
+   },
    "conditions": [],
    "levels": {},
    "character": {
     "name": "Improved Divine Smite Hex-Crown Paladin",
     "race": "Human",
     "scores": {
-     "strength": 15,
+     "strength": 8,
      "dexterity": 14,
      "constitution": 15,
      "intelligence": 8,
      "wisdom": 10,
-     "charisma": 8
+     "charisma": 15
     },
     "bonus": {
-     "strength": 2,
+     "charisma": 2,
      "constitution": 1
     },
     "classes": [
@@ -2239,7 +2376,10 @@
       1
      ]
     ],
-    "feats": [],
+    "feats": [
+     "charisma+2",
+     "charisma+1,constitution+1"
+    ],
     "fighting_styles": [],
     "routine": "two_handed",
     "cantrip": "Eldritch Blast",
@@ -2266,7 +2406,9 @@
     "striker",
     "support",
     "face"
-   ]
+   ],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [
@@ -2277,7 +2419,9 @@
   ],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Ability scores guessed: 15 Charisma +2, 15 Constitution +1, point buy",
+   "Feats guessed: ability improvements to the main stats"
   ],
   "companion": "Minthara, Wyll, Tav",
   "themes": [
@@ -2314,15 +2458,15 @@
     "name": "Darkness Dirty Trickster",
     "race": "Human",
     "scores": {
-     "strength": 15,
+     "strength": 8,
      "dexterity": 14,
      "constitution": 15,
      "intelligence": 8,
      "wisdom": 10,
-     "charisma": 8
+     "charisma": 15
     },
     "bonus": {
-     "strength": 2,
+     "charisma": 2,
      "constitution": 1
     },
     "classes": [
@@ -2342,7 +2486,10 @@
       2
      ]
     ],
-    "feats": [],
+    "feats": [
+     "charisma+2",
+     "charisma+1,constitution+1"
+    ],
     "fighting_styles": [
      "Two-Weapon Fighting"
     ],
@@ -2359,7 +2506,9 @@
     "control",
     "face",
     "skills"
-   ]
+   ],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [
@@ -2371,7 +2520,9 @@
   ],
   "unmatched": [],
   "notes": [
-   "No ability scores found"
+   "No ability scores found",
+   "Ability scores guessed: 15 Charisma +2, 15 Constitution +1, point buy",
+   "Feats guessed: ability improvements to the main stats"
   ],
   "companion": "Astarion, Wyll, Tav",
   "themes": [
@@ -2410,7 +2561,17 @@
      "amulet": "bg3:spellcrux_amulet"
     }
    },
-   "buffs": {},
+   "buffs": {
+    "1": [
+     "warding_bond"
+    ],
+    "2": [
+     "warding_bond"
+    ],
+    "3": [
+     "warding_bond"
+    ]
+   },
    "conditions": [],
    "levels": {},
    "character": {
@@ -2451,7 +2612,9 @@
    "roles": [
     "healer",
     "support"
-   ]
+   ],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [
@@ -2531,7 +2694,9 @@
    "roles": [
     "healer",
     "support"
-   ]
+   ],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [
@@ -2577,7 +2742,17 @@
      "amulet": "bg3:khalid_s_gift"
     }
    },
-   "buffs": {},
+   "buffs": {
+    "1": [
+     "mage_armour"
+    ],
+    "2": [
+     "mage_armour"
+    ],
+    "3": [
+     "mage_armour"
+    ]
+   },
    "conditions": [],
    "levels": {},
    "character": {
@@ -2645,7 +2820,9 @@
    "roles": [
     "support",
     "skills"
-   ]
+   ],
+   "variants": [],
+   "advantage": false
   },
   "carried": [],
   "roles": [
