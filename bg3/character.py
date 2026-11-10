@@ -98,9 +98,10 @@ DEFAULT_WEAPONS = {"two_handed": "Greatsword", "polearm": "Glaive", "one_handed"
 RANGED_ROUTINES = ("ranged", "dual_hand_crossbows")
 # Damage spells cast with spell slots before falling back to the attack cantrip
 LEVELLED_SPELLS = ["Magic Missile", "Guiding Bolt", "Inflict Wounds", "Burning Hands", "Thunderwave", "Scorching Ray", "Shatter", "Fireball", "Spirit Guardians",
-                   "Lightning Bolt", "Blight", "Cone of Cold", "Chain Lightning", "Disintegrate"]
+                   "Lightning Bolt", "Blight", "Cone of Cold", "Dethrone", "Chain Lightning", "Disintegrate", "Circle of Death"]
 POLEARMS = {"Glaive", "Halberd", "Pike", "Quarterstaff", "Spear"}
-CANTRIPS = ["Eldritch Blast", "Fire Bolt", "Ray of Frost", "Sacred Flame", "Toll the Dead", "Chill Touch", "Shocking Grasp", "Produce Flame"]
+CANTRIPS = ["Eldritch Blast", "Fire Bolt", "Ray of Frost", "Sacred Flame", "Toll the Dead", "Chill Touch", "Shocking Grasp", "Produce Flame", "Thorn Whip",
+            "Bursting Sinew"]
 # Options that need the build to set something up, all on by default
 TOGGLES = {
     "rage": "Rage every fight", "reckless": "Reckless Attack (advantage)", "smite": "Smite with spell slots", "vow": "Oath: Vow of Enmity, "
@@ -109,6 +110,8 @@ TOGGLES = {
     "starry_form": "Starry Form: Archer (Circle of Stars)", "symbiotic": "Symbiotic Entity (Circle of Spores)",
     "storm_close": "Enemies within 6 m when casting (Heart of the Storm)",
     "booming_blade": "Booming Blade on the first melee attack each turn",
+    "offhand_crossbow": "Bonus action: a shot with an off-hand hand crossbow (casters with two hand crossbows in the ranged slots)",
+    "spirit_guardians": "Spirit Guardians first, then the build's own spell (Cleric 5; pick it as the levelled spell to cast nothing else)",
     "spiritual_weapon": "Spiritual Weapon every fight (Cleric 3: a summoned weapon with its own attack each round, for a level 2+ slot)",
     "bladesong": "Bladesong in fights (+2/+3/+4 AC without medium or heavy armour or a shield)",
     "horde_breaker": "Horde Breaker instead of Colossus Slayer (an extra attack on a second enemy, needs 2+ enemies)",
@@ -119,14 +122,14 @@ TOGGLES = {
     "advantage": "Attack with advantage (Shadow Blade in darkness or dim light, hiding, Dirty Tricks, Faerie Fire, Darkness with Devil's Sight)",
 }
 # Toggles that are off unless ticked: advantage depends on the fight, so it isn't assumed
-TOGGLE_DEFAULTS = {"advantage": False, "horde_breaker": False, "honour_mode": False, "spiritual_weapon": False}
+TOGGLE_DEFAULTS = {"advantage": False, "horde_breaker": False, "honour_mode": False, "spiritual_weapon": False, "offhand_crossbow": False, "spirit_guardians": False}
 # The class (and subclass) each toggle is for, so the builder only offers the ones that matter
 TOGGLE_FOR = {"rage": ("barbarian", ""), "reckless": ("barbarian", ""), "smite": ("paladin", ""), "vow": ("paladin", ""),
               "curse": ("warlock", "The Hexblade"), "surprise": ("rogue", "Assassin"), "manifestation": ("monk", "Way of the Open Hand"),
               "damaged_target": ("ranger", "Hunter"), "starry_form": ("druid", "Circle of Stars"), "symbiotic": ("druid", "Circle of Spores"),
               "storm_close": ("sorcerer", "Storm Sorcery"),
               "booming_blade": [("wizard", ""), ("sorcerer", ""), ("warlock", ""), ("fighter", "Eldritch Knight"), ("rogue", "Arcane Trickster")],
-              "horde_breaker": ("ranger", "Hunter"), "spiritual_weapon": ("cleric", ""), "reactions": [(cls, "") for cls in CLASSES], "honour_mode": [(cls, "") for cls in CLASSES], "bladesong": ("wizard", "Bladesinging"), "advantage": [(cls, "") for cls in CLASSES]}
+              "horde_breaker": ("ranger", "Hunter"), "spirit_guardians": ("cleric", ""), "spiritual_weapon": ("cleric", ""), "offhand_crossbow": [(cls, "") for cls in ("bard", "cleric", "druid", "sorcerer", "warlock", "wizard")], "reactions": [(cls, "") for cls in CLASSES], "honour_mode": [(cls, "") for cls in CLASSES], "bladesong": ("wizard", "Bladesinging"), "advantage": [(cls, "") for cls in CLASSES]}
 
 def relevant_toggles(classes):
     """ Toggles for a [class, subclass, levels] list """
@@ -249,6 +252,9 @@ def compile_character(character, level=MAX_LEVEL, main_finesse=None):
         c.attack_reroll_on = 1 # Halfling Luck
 
     attacks = _attacks(character, c, levels, subs, feats, notes, main_finesse)
+    if character.routine == "cantrip" and character.toggle("offhand_crossbow"):
+        # A caster with two hand crossbows: the action goes to spells, the bonus action to an off-hand shot
+        attacks.append(weapon_attack("Hand Crossbow", ability_stat="dexterity", offhand=True))
     profs = weapon_proficiencies(character, level)
     if "Weapon Master" in feats:
         profs |= {weapon_base(a) for a in attacks} # Four weapons of your choice, assumed to be the ones used
@@ -300,20 +306,33 @@ SPIRIT_GUARDIANS, SPIRITUAL_WEAPON = "Spirit Guardians", "Spiritual Weapon"
 # Fights are taken as this long when a spell only covers some of the day's fights: its rounds are spread as that share of every fight
 ROUNDS_PER_FIGHT = 3
 
+def wants_guardians(character):
+    """ Spirit Guardians as the build's spell, or cast first on top of another spell (the toggle) """
+    return character.spell == SPIRIT_GUARDIANS or character.toggle("spirit_guardians")
+
 def cleric_slots(character, levels, subs):
     """ The slot levels a Cleric spends on (Spirit Guardians, Spiritual Weapon) in a day, one cast of each per fight while slots last.
-        Spirit Guardians takes the best slots. Spiritual Weapon takes the best of the rest, or the lowest when the build casts another
-        damage spell with its high slots """
+        Spirit Guardians takes the best slots and Spiritual Weapon the best of the rest. Another damage spell changes that: one of
+        level 4 or more keeps its own slots, a lower one leaves Spiritual Weapon the lowest """
     cleric = levels.get("cleric", 0)
     slots = sorted((lv for lv, n in enumerate(spell_slots(caster_level(levels, subs)), start=1) for _ in range(n)), reverse=True)
+    # A spell of level 4 or more keeps its own slots (one, when it is cast once a day), Spirit Guardians has the best of the rest
+    other = spells().get(character.spell) if character.spell not in ("", SPIRIT_GUARDIANS) else None
+    kept = sorted(lv for lv in slots if lv >= other["level"]) if other and other["level"] > 3 else []
+    kept = kept[:1] if other and other.get("recharge") else kept
     guardians = []
-    if character.spell == SPIRIT_GUARDIANS and cleric >= 5:
-        guardians = [lv for lv in slots if lv >= 3][:FIGHTS_PER_LONG_REST]
+    if wants_guardians(character) and cleric >= 5:
+        free = list(slots)
+        for lv in kept:
+            free.remove(lv)
+        guardians = [lv for lv in free if lv >= 3][:FIGHTS_PER_LONG_REST]
         for lv in guardians:
             slots.remove(lv)
     weapon = []
     if character.toggle("spiritual_weapon") and cleric >= 3:
-        pool = slots if character.spell in ("", SPIRIT_GUARDIANS) else slots[::-1]
+        for lv in kept:
+            slots.remove(lv)
+        pool = slots if kept or not other else slots[::-1] # A low level spell is cast with every slot left, so it has the better ones
         weapon = [lv for lv in pool if lv >= 2][:FIGHTS_PER_LONG_REST]
     return guardians, weapon
 
@@ -335,16 +354,17 @@ def _cleric_spells(character, c, levels, subs, notes):
         1d8 + 1 + the spellcasting modifier force (+1d8 per two slot levels), with the caster's spell attack bonus """
     guardians, weapon = cleric_slots(character, levels, subs)
     wisdom = max(c.wisdom_ability_modifier, 0)
-    if character.spell == SPIRIT_GUARDIANS and not guardians:
+    if wants_guardians(character) and not guardians:
         notes.append("Spirit Guardians needs a level 5 Cleric with a level 3 spell slot")
     if guardians:
         dice, rest = _dice(sum(lv for lv in guardians) / len(guardians)) # 3d8 from a level 3 slot, one more die a level
         necrotic = subs.get("cleric") == "Death Domain"
         cast = Attack(name=f"{SPIRIT_GUARDIANS} (cast)", base=SPIRIT_GUARDIANS, label="cast", tags=["setup"], type="spell", ability_stat="wisdom", damage="0",
                       always_hit=True, once_per_turn_eligible=False, uses_per_fight=round(min(len(guardians) / FIGHTS_PER_LONG_REST, 1.0), 2))
+        # Whatever the action does first (a limited spell or rider included) waits for the cast; what follows it chains on
         for a in c.attacks:
-            if a.action == "action" and not a.uses_per_fight and not a.fallback_for:
-                a.fallback_for, a.tags = cast.name, [*a.tags, "after_cast"]
+            if a.action == "action" and not a.fallback_for:
+                a.fallback_for, a.tags = cast.name, [*a.tags, *([] if a.uses_per_fight else ["after_cast"])]
         aura = spell_attacks(SPIRIT_GUARDIANS, ability_stat="wisdom", slot_level=3, ruleset="bg3")[0]
         aura = replace(aura, name=f"{SPIRIT_GUARDIANS} (aura)", label="aura", tags=["aura"], damage=dice + (f"+{rest}" if rest else ""),
                        damage_type="necrotic" if necrotic else "radiant", uses_per_fight=_fight_rounds(len(guardians)), once_per_turn_eligible=False)
@@ -378,8 +398,11 @@ def _attacks(character, c, levels, subs, feats, notes, main_finesse=None):
         spell_level = spells()[character.spell]["level"]
         slots = spell_slots(caster_level(levels, subs))
         pact, pact_level = warlock_pact_slots(levels.get("warlock", 0))
-        summoned = sum(lv >= spell_level for lv in cleric_slots(character, levels, subs)[1]) # Slots Spiritual Weapon takes
-        casts = per_fight(per_long_rest=sum(slots[spell_level - 1:]) - summoned, per_short_rest=pact if pact_level >= spell_level else 0)
+        # Less the slots Spirit Guardians and Spiritual Weapon take
+        spent = sum(lv >= spell_level for taken in cleric_slots(character, levels, subs) for lv in taken)
+        casts = per_fight(per_long_rest=sum(slots[spell_level - 1:]) - spent, per_short_rest=pact if pact_level >= spell_level else 0)
+        if casts and spells()[character.spell].get("recharge") == "long_rest":
+            casts = min(casts, round(1 / FIGHTS_PER_LONG_REST, 2)) # Once a day, i.e. Dethrone
         if not casts:
             notes.append(f"No spell slots of level {spell_level} or higher for {character.spell} yet")
             return cantrip
@@ -530,16 +553,31 @@ def _booming_blade(c, character):
         c.attacks[c.attacks.index(first)] = first.variant("Booming Blade", tags=[*first.tags, "booming_blade"],
                                                           extra_damage_list=[*first.extra_damage_list, f"{1 + (c.level >= 11)}d8 thunder"])
 
-def _limited_rider(c, label, uses, bonus=None, extra=None):
-    """ A limited use rider on one attack each round (manoeuvres, Arcane Shots, Blade Flourish), until its uses per fight run out:
-        the first plain weapon attack becomes a limited attack with the rider, with the plain attack as its fallback """
-    main = next((a for a in c.attacks if a.is_weapon or a.type == "unarmed"), None)
-    if main is None or not uses or main.uses_per_fight or main.fallback_for:
+def _limited_rider(c, label, uses, bonus=None, extra=None, main=None, tags=()):
+    """ A limited use rider on one attack each round (manoeuvres, Arcane Shots, Blade Flourish, Touch of Death), until its uses per
+        fight run out: the attack (the first plain weapon attack unless main is given) gets a limited copy with the rider, made first,
+        and follows it. A carrier that is itself limited (a levelled spell) shares its uses with the copy; one that already follows
+        another attack (the cantrip after the spell slots) keeps its place in the chain """
+    spell_carrier = main is not None
+    main = main or next((a for a in c.attacks if a.is_weapon or a.type == "unarmed"), None)
+    if main is None or not uses or (not spell_carrier and (main.uses_per_fight or main.fallback_for)):
         return
-    rider = main.variant(label, uses_per_fight=uses, bonus_damage_die_mod_list=[*main.bonus_damage_die_mod_list, *([bonus] if bonus else [])],
+    with_rider = min(uses, main.uses_per_fight) if main.uses_per_fight else uses
+    rider = main.variant(label, uses_per_fight=round(with_rider, 2), tags=[*main.tags, *tags],
+                         bonus_damage_die_mod_list=[*main.bonus_damage_die_mod_list, *([bonus] if bonus else [])],
                          extra_damage_list=[*main.extra_damage_list, *([extra] if extra else [])])
+    index = c.attacks.index(main)
+    if main.uses_per_fight and main.uses_per_fight - with_rider < 0.01:
+        # Every cast carries the rider: the copy takes the attack's place, and whatever followed the attack follows the copy
+        for a in c.attacks:
+            if a.fallback_for == main.name:
+                a.fallback_for = rider.name
+        c.attacks[index] = rider
+        return
+    if main.uses_per_fight:
+        main.uses_per_fight = round(main.uses_per_fight - with_rider, 2)
     main.fallback_for = rider.name
-    c.attacks.insert(c.attacks.index(main), rider)
+    c.attacks.insert(index, rider)
 
 def _quickened(c, quickens):
     """ Quickened Spell: a second cast with the bonus action for 3 sorcery points (sorcery points = sorcerer level per long rest).
@@ -693,18 +731,31 @@ def _class_features(character, c, levels, subs, notes, main_finesse=None):
     if sorcerer >= 3 and character.routine == "cantrip":
         _quickened(c, per_fight(per_long_rest=sorcerer // 3))
     c.empowered_evocation = wizard >= 10 and subs.get("wizard") == "Evocation School"
-    if cleric >= 8 and subs.get("cleric") in ("War Domain", "Tempest Domain", "Death Domain", "Life Domain", "Nature Domain", "Trickery Domain") and weapon:
-        _once_per_turn(c, "Divine Strike", "1d8")
+    if cleric >= 8 and subs.get("cleric") in ("War Domain", "Tempest Domain", "Death Domain", "Life Domain", "Nature Domain", "Trickery Domain") and \
+            (weapon or character.toggle("offhand_crossbow")):
+        # Divine Strike: once per turn on a weapon hit, in the domain's damage type
+        strike = {"Death Domain": "necrotic", "Life Domain": "radiant", "Tempest Domain": "thunder", "Trickery Domain": "poison"}
+        _once_per_turn(c, "Divine Strike", "1d8", damage_type=strike.get(subs.get("cleric"), ""))
+        for a in c.attacks:
+            if a.type == "spell":
+                a.once_per_turn_eligible = False
     if bard >= 3 and subs.get("bard") == "College of Swords" and weapon:
         inspirations = 3 + (bard >= 5) + (bard >= 10)
         _limited_rider(c, "Blade Flourish", per_fight(per_short_rest=inspirations), bonus="1d10" if bard >= 10 else "1d8" if bard >= 5 else "1d6")
-    if cleric >= 2 and subs.get("cleric") == "Death Domain" and character.routine in ("two_handed", "one_handed", "dual_wield", "unarmed"):
-        # Touch of Death: Channel Divinity (1 charge, 2 from level 6, short rest) on a melee hit
-        _limited_rider(c, "Touch of Death", per_fight(per_short_rest=1 + (cleric >= 6)), extra=f"{5 + 2 * cleric} necrotic")
+    if cleric >= 2 and subs.get("cleric") == "Death Domain":
+        # Touch of Death: Channel Divinity (1 charge, 2 from level 6, short rest) on a melee hit, 5 + twice the Cleric level necrotic.
+        # A melee weapon or unarmed hit, or a melee spell attack (Inflict Wounds, Shocking Grasp, Thorn Whip's 9 m reach)
+        touch = {"uses": per_fight(per_short_rest=1 + (cleric >= 6)), "extra": f"{5 + 2 * cleric} necrotic", "tags": ["channel_divinity"]}
+        if character.routine in ("two_handed", "one_handed", "dual_wield", "unarmed"):
+            _limited_rider(c, "Touch of Death", **touch)
+        else:
+            carrier = next((a for a in c.attacks if a.type == "spell" and "melee" in a.tags and a.action == "action"), None)
+            if carrier is not None:
+                _limited_rider(c, "Touch of Death", main=carrier, **touch)
     if cleric and subs.get("cleric") == "Death Domain":
         # Reaper: Necromancy cantrips that target one creature can target a second one (bg3.wiki: Toll the Dead, Bone Chill)
         for a in c.attacks:
-            if a.type == "spell" and a.base in ("Toll the Dead", "Chill Touch"):
+            if a.type == "spell" and a.base in ("Toll the Dead", "Chill Touch") and a.action == "action":
                 a.targets = max(a.targets, 2)
     if cleric >= 8 and subs.get("cleric") in ("Light Domain", "Knowledge Domain") and character.routine == "cantrip":
         # Potent Spellcasting: Wisdom to cleric cantrip damage
@@ -721,6 +772,12 @@ def _class_features(character, c, levels, subs, notes, main_finesse=None):
         # Starry Form: Archer lasts until a long rest, Luminous Arrow is a bonus action each turn
         c.attacks.append(Attack(name="Luminous Arrow", type="spell", ability_stat="wisdom", damage_type="radiant",
                                 damage=f"{1 + (druid >= 10)}d8+{max(c.wisdom_ability_modifier, 0)}"))
+    if druid >= 2 and subs.get("druid") == "Circle of Spores":
+        # Halo of Spores: a reaction on your own turn, necrotic to one enemy within 6 m (CON save negates), doubled by Symbiotic Entity
+        die = 4 + 2 * ((druid >= 6) + (druid >= 10))
+        c.attacks.append(Attack(name="Halo of Spores", base="Halo of Spores", action="reaction", type="spell", ability_stat="wisdom", damage_type="necrotic",
+                                damage=f"{2 if character.toggle('symbiotic') else 1}d{die}", saving_throw=True, saving_throw_stat="constitution",
+                                saving_throw_success_multiplier=0, once_per_turn_eligible=False))
     if druid >= 2 and subs.get("druid") == "Circle of Spores" and character.toggle("symbiotic"):
         for a in c.attacks:
             if a.is_weapon or a.type == "unarmed":

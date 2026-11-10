@@ -81,7 +81,9 @@ def armour_class(build, act):
     if kind == "light":
         parts.append((f"{items[gear['armour']].name} (light)", armour.get("ac", 11) + dex))
     elif kind == "medium":
-        parts.append((f"{items[gear['armour']].name} (medium)", armour.get("ac", 13) + min(dex, 3 if "Medium Armour Master" in feats else 2)))
+        # Some medium armour takes the whole Dexterity modifier (Armour of Agility, Yuan-Ti Scale Mail)
+        full = "full dexterity modifier" in (items[gear["armour"]].notes or "").lower()
+        parts.append((f"{items[gear['armour']].name} (medium)", armour.get("ac", 13) + (dex if full else min(dex, 3 if "Medium Armour Master" in feats else 2))))
     elif kind == "heavy":
         parts.append((f"{items[gear['armour']].name} (heavy)", armour.get("ac", 16)))
     else:

@@ -107,10 +107,14 @@ def spell_attacks(name, ability_stat="charisma", character_level=1, slot_level=N
         saving_throw=s["attack"] == "save",
         saving_throw_stat=s.get("save", "dexterity"),
         saving_throw_success_multiplier=s.get("on_save", 0),
+        save_dc=s.get("save_dc", 0),
         bonus_damage_die_mod_list=list(bonus_damage or []),
         targets=s.get("targets", 1),
+        # What other rules key on: the school (necromancy) and melee spell attacks (Touch of Death)
+        tags=[*([s["school"]] if s.get("school") else []), *(["melee"] if s.get("melee") else []), *(["recharge"] if s.get("recharge") else [])],
     )
-    return [attack] + [Attack(**{**attack.to_dict(), "bonus_damage_die_mod_list": list(attack.bonus_damage_die_mod_list)}) for _ in range(projectiles - 1)]
+    return [attack] + [Attack(**{**attack.to_dict(), "bonus_damage_die_mod_list": list(attack.bonus_damage_die_mod_list), "tags": list(attack.tags)})
+                       for _ in range(projectiles - 1)]
 
 def enemy_from_monster(name):
     """ Builds an Enemy from the monster database """

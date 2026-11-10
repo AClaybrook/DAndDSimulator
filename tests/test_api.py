@@ -69,6 +69,19 @@ def test_planner_endpoints():
     assert any(c["kind"] == "shared" for c in evaluation["conflicts"]) # The default party shares a Caustic Band on purpose
     rows = client.post("/api/planner/variants", json={"build": {**party[0], "variants": [{"name": "Bless", "buffs": ["bless"]}]}}).json()
     assert [r["name"] for r in rows][1] == "Bless" and rows[1]["damage"][0] > rows[0]["damage"][0]
+    assert all(len(r["byEnemies"]) == 3 and len(r["byEnemies"][0]) == 4 and r["byEnemies"][0][0] == r["damage"][0] for r in rows)
+    # A caster: its spell save DC per act, each saving throw with the enemy's chance to fail, and play modes as variants
+    reaper = client.get("/api/planner/example", params={"name": "4. Deathreaper"}).json()
+    acts = client.post("/api/planner/evaluate", json={"party": [reaper]}).json()["members"][0]["acts"]
+    assert acts["3"]["spellDc"] > acts["1"]["spellDc"] >= 13
+    toll = next(s for s in acts["3"]["saves"] if s["name"] == "Toll the Dead")
+    assert toll["stat"] == "wisdom" and toll["dc"] == acts["3"]["spellDc"] and toll["disadvantage"] and 0.5 < toll["fail"] <= 1
+    modes = client.post("/api/planner/variants", json={"build": reaper, "enemies": 3}).json()
+    by_name = {r["name"]: r for r in modes}
+    assert {"Build as planned", "Circle of Death", "Thorn Whip"} <= set(by_name) and by_name["Circle of Death"]["spellDc"] == modes[0]["spellDc"]
+    assert by_name["Thorn Whip"]["byEnemies"][2][0] > modes[0]["byEnemies"][2][0] # Touch of Death on one target
+    assert by_name["Circle of Death"]["byEnemies"][2][3] > modes[0]["byEnemies"][2][3] # The area spell against four
+    assert by_name["Circle of Death"]["damage"][2] == by_name["Circle of Death"]["byEnemies"][2][2]
     kit = client.post("/api/planner/kit", json={"party": party, "selected": 0, "kit": "thunder"}).json()
     assert kit["placed"] and kit["build"]["equipment"]["1"]
     analysis = client.post("/api/planner/party", json={"party": party, "act": "2"}).json()

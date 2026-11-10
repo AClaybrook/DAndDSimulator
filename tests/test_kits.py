@@ -1,7 +1,7 @@
 """ Item kits and build variants """
 from bg3.build import Bg3Build, compile_build, equipment_at
 from bg3.items import catalog
-from bg3.kits import QUICK_VARIANTS, apply_kit, kit_gear, kits, taken_by_others, variant_build, variant_damage
+from bg3.kits import QUICK_VARIANTS, apply_kit, describe_variant, kit_gear, kits, taken_by_others, variant_build, variant_damage
 from bg3.presets import examples
 from game_data import enemy_from_monster
 
@@ -52,6 +52,12 @@ def test_variants_compare_without_changing_the_build():
     preset = Bg3Build("Fighter", "fighter_gwm", variants=[dict(QUICK_VARIANTS["advantage"])])
     assert compile_build(variant_build(preset, preset.variants[0]), "1").advantage
     assert Bg3Build.from_dict(godblade.to_dict()).variants == godblade.variants # Saved with the party
+    # A play mode: other fields of the custom character, the build's own left alone
+    mode = {"name": "Fire Bolt", "character": {"routine": "cantrip", "cantrip": "Fire Bolt"}, "toggles": {"booming_blade": False}}
+    played = variant_build(godblade, mode)
+    assert played.character["routine"] == "cantrip" and played.character["scores"] == godblade.character["scores"]
+    assert godblade.character["routine"] != "cantrip" and [a.name for a in compile_build(played, "1").attacks][0] == "Fire Bolt"
+    assert describe_variant(mode) == "plays cantrip, Fire Bolt" and "after Spirit Guardians" in describe_variant({"toggles": {"spirit_guardians": True}})
 
 def test_reverberation_bursts_and_prone():
     from bg3 import synergy
@@ -64,8 +70,8 @@ def test_reverberation_bursts_and_prone():
     infused = [a.name for a in attacks if "1d4" in a.bonus_damage_die_mod_list]
     assert infused == ["Knife of the Undermountain King (Offhand)"]
     assert not any(a.name.startswith("Reverberation") for a in compile_build(ex["1. The Godblade"], "1").attacks)
-    party = [godblade, ex["4. Deathreaper"]]
+    party = [godblade, ex["12. Unstoppable Death Monk"]]
     enemy = enemy_from_monster("Mind Flayer")
     assert "prone_reverb" in synergy.available(party, "1") and 0 < synergy.prone_share(party, "1", enemy) < 1
     plain, prone = (dict((n, d) for n, _, d in synergy.party_damage(party, "1", enemy, 3, active)) for active in ([], ["prone_reverb"]))
-    assert prone["4. Deathreaper"] > plain["4. Deathreaper"] # Melee advantage against a Prone target
+    assert prone["12. Unstoppable Death Monk"] > plain["12. Unstoppable Death Monk"] # Melee advantage against a Prone target

@@ -178,7 +178,7 @@ function ScoreView({ member, options }: { member: MemberResult; options: Planner
     <Section padding="sm" title={<Text fw={600}>Overall score <Text span size="xs" c="dimmed" fw={400}>· {member.name.split(' (')[0]}, 0 to 100</Text></Text>}>
       <Plot figure={figure} height={170} />
       <UnstyledButton onClick={() => setOpen((o) => !o)}>
-        <Group gap={4}>{open ? <IconChevronDown size={14} /> : <IconChevronRight size={14} />}<Text size="xs" c="dimmed">The numbers, armour class and how each part is scored</Text></Group>
+        <Group gap={4}>{open ? <IconChevronDown size={14} /> : <IconChevronRight size={14} />}<Text size="xs" c="dimmed">The numbers, armour class, spell saves and how each part is scored</Text></Group>
       </UnstyledButton>
       <Collapse expanded={open}>
         <Table fz="xs" className="numeric">
@@ -201,6 +201,18 @@ function ScoreView({ member, options }: { member: MemberResult; options: Planner
                 </Table.Td>
               ))}
             </Table.Tr>
+            {ACTS.some((a) => member.acts[a].saves.length > 0) && (
+              <Table.Tr>
+                <Table.Td c="dimmed">Spell saves the enemy fails</Table.Td>
+                {ACTS.map((a) => (
+                  <Table.Td key={a}>
+                    {member.acts[a].saves.map((s) => (
+                      <div key={s.name}>{s.name}: {s.stat.slice(0, 3).toUpperCase()} DC {s.dc} · {Math.round(100 * s.fail)}%{s.disadvantage ? ' (disadv.)' : ''}</div>
+                    ))}
+                  </Table.Td>
+                ))}
+              </Table.Tr>
+            )}
           </Table.Tbody>
         </Table>
       </Collapse>

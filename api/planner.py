@@ -9,13 +9,15 @@ from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_S
 from bg3.checkpoints import ACTS, act_level
 from bg3.defence import armour_class, attack_bonus_for, hit_chance
 from bg3.items import SLOT_LABELS, SLOTS, catalog, condition_id
-from bg3.kits import QUICK_VARIANTS, apply_kit, kits, taken_by_others, variant_build, variant_damage
+from bg3.kits import QUICK_VARIANTS, apply_kit, kits, taken_by_others, variant_build, variant_builds
 from bg3.party import MAX_PARTY_SIZE, party_conflicts
 from bg3.presets import DEFAULT_PARTY, PRESETS, examples
 from bg3.roles import CORE_ROLES, ROLE_LABELS, party_roles
 from bg3.score import WEIGHTS, score
-from computations.analytic import expected_damage_vs_enemies
-from computations.models import STATS, Enemy
+from dataclasses import asdict
+
+from computations.analytic import expected_damage_vs_enemies, hit_and_crit_chance
+from computations.models import STATS, Enemy, calculate_attack_and_damage_context
 from game_data.classes import BUILDS
 
 ENEMY_COUNTS = [1, 2, 3, 4]
@@ -29,7 +31,8 @@ def effect_text(effect):
             "damage_bonus_ability": f"+{effect.stat.title()} modifier to damage", "extra_damage": f"+{effect.value} damage",
             "crit_damage": f"+{effect.value} on a crit", "crit_range": f"crit range +{effect.value}", "advantage": "advantage",
             "spell_dc": f"+{effect.value} spell DC", "damage_reroll": f"reroll damage dice of {effect.value} or less",
-            "miss_damage_ability": f"{effect.stat.title()} modifier damage on a miss", "once_per_turn_bonus": f"+{effect.value} Sneak Attack damage", "extra_action": "another action each turn", "extra_action_on_kill": "another action after a kill", "flag": str(effect.value),
+            "miss_damage_ability": f"{effect.stat.title()} modifier damage on a miss", "once_per_turn_bonus": f"+{effect.value} Sneak Attack damage", "extra_action": "another action each turn", "save_disadvantage": "enemies have disadvantage on the save",
+            "free_cast": f"{effect.value} more cast a fight", "channel_divinity": f"+{effect.value} Channel Divinity charge", "extra_action_on_kill": "another action after a kill", "flag": str(effect.value),
             "lightning_charges": f"{effect.value} Lightning Charges on a hit: +1 to hit and 1 lightning damage on every attack"}.get(effect.kind, effect.kind)
     return what + target + (f" [toggle: {effect.condition}]" if effect.condition else "")
 
@@ -158,6 +161,17 @@ def _builder_summary(build):
             "split": {a: class_levels(character, lv) for a, lv in zip(ACT_KEYS, levels)}, "problems": problems, "notes": notes,
             "toggles": [{"value": k, "label": TOGGLES[k], "on": TOGGLE_DEFAULTS.get(k, True)} for k in relevant_toggles(character.classes)]}
 
+def saving_throws(character, enemy):
+    """ The saving throws a build forces on the enemy, one line per spell, and its spell save DC (None when nothing uses it) """
+    contexts, _ = calculate_attack_and_damage_context(character, enemy)
+    lines = {}
+    for attack, a in zip(character.attacks, contexts):
+        if a.saving_throw and attack.name not in lines:
+            lines[attack.name] = {"name": attack.name, "stat": attack.saving_throw_stat, "dc": a.difficulty_class, "fixed": bool(attack.save_dc),
+                                  "fail": round(hit_and_crit_chance(**asdict(a))[0], 3), "disadvantage": bool(a.disadvantage)}
+    own = [line["dc"] for line in lines.values() if not line["fixed"]]
+    return list(lines.values()), max(own) if own else None
+
 def _member(build, enemy, rounds, attack_bonus, flagged):
     acts = {}
     items = catalog()
@@ -167,7 +181,9 @@ def _member(build, enemy, rounds, attack_bonus, flagged):
         result = score(build, act, enemy, rounds, attack_bonus)
         gear = equipment_at(build, act)
         before = equipment_at(build, ACT_KEYS[ACT_KEYS.index(act) - 1]) if act != "1" else {}
+        saves, spell_dc = saving_throws(character, enemy)
         acts[act] = {
+            "spellDc": spell_dc, "saves": saves,
             "level": act_level(act, build.levels),
             "damage": [round(expected_damage_vs_enemies(character, enemy, rounds, n), 2) for n in ENEMY_COUNTS],
             "ac": ac, "acParts": [{"source": s, "value": v} for s, v in ac_parts], "hitChance": round(hit_chance(ac, attack_bonus), 3),
@@ -195,12 +211,15 @@ def evaluate(party_dicts, enemy_dict=None, rounds=3, attack_bonus=None):
     return {"attackBonus": bonus, "members": [_member(b, enemy, rounds, bonus, flagged.get(b.name, set())) for b in builds], "conflicts": out}
 
 def variants(build_dict, enemy_dict=None, rounds=3, enemies=1, attack_bonus=6):
-    """ The build and each of its variants: damage, AC and score by act """
+    """ The build and each of its variants: damage (against the chosen number of enemies, and against 1 to 4), spell save DC, AC and score by act """
     build = Bg3Build.from_dict(build_dict)
     enemy = _enemy(enemy_dict)
     rows = []
-    for name, description, values, built in variant_damage(build, enemy, rounds, enemies):
-        rows.append({"name": name, "description": description, "damage": [round(v, 2) for v in values],
+    for name, description, built in variant_builds(build):
+        compiled = [compile_build(built, a) for a in ACT_KEYS]
+        by_enemies = [[round(expected_damage_vs_enemies(c, enemy, rounds, n), 2) for n in ENEMY_COUNTS] for c in compiled]
+        rows.append({"name": name, "description": description, "damage": [values[min(max(int(enemies), 1), len(ENEMY_COUNTS)) - 1] for values in by_enemies],
+                     "byEnemies": by_enemies, "spellDc": [saving_throws(c, enemy)[1] for c in compiled],
                      "ac": [armour_class(built, a)[0] for a in ACT_KEYS], "score": [score(built, a, enemy, rounds, attack_bonus).total for a in ACT_KEYS]})
     return rows
 

@@ -281,9 +281,19 @@ class AcPart(Model):
     source: str
     value: float
 
+class SavingThrow(Model):
+    name: str # The spell
+    stat: str # The enemy's saving throw
+    dc: int
+    fixed: bool # A DC of the spell's own (Dethrone), not the build's
+    fail: float # The enemy's chance to fail it
+    disadvantage: bool
+
 class ActResult(Model):
     level: int
     damage: list[float] # Against 1, 2, 3 and 4 enemies
+    spellDc: int | None = None # None when the build forces no saving throws
+    saves: list[SavingThrow]
     ac: int
     acParts: list[AcPart]
     hitChance: float
@@ -323,7 +333,9 @@ class Evaluation(Model):
 class VariantRow(Model):
     name: str
     description: str
-    damage: list[float]
+    damage: list[float] # By act, against the chosen number of enemies
+    byEnemies: list[list[float]] # By act: against 1, 2, 3 and 4 enemies
+    spellDc: list[int | None]
     ac: list[int]
     score: list[float]
 

@@ -30,3 +30,11 @@ def test_armour_rules():
                     bonus={"dexterity": 2, "wisdom": 1}).to_dict())
     assert armour_class(monk, "1")[0] == 10 + 3 + 3
     assert hit_chance(30, 6) == 0.05 and hit_chance(5, 6) == 0.95 and hit_chance(16, 6) == 0.55
+
+def test_armour_of_agility_takes_the_whole_dexterity_modifier():
+    scores = {"strength": 8, "dexterity": 17, "constitution": 14, "intelligence": 8, "wisdom": 15, "charisma": 10}
+    nimble = Bg3Build("Nimble", "", character=Bg3Character(scores=scores, bonus={"dexterity": 2, "wisdom": 1}, classes=[["cleric", "Death Domain", 12]],
+                                                           feats=["dexterity+1"]).to_dict(),
+                      equipment={"3": {"armour": "bg3:armour_of_agility"}, "2": {"armour": "bg3:scale_mail_2"}})
+    assert armour_class(nimble, "3")[0] == 17 + 5 # Medium armour, but DEX 20 counts in full (bg3.wiki)
+    assert armour_class(nimble, "2")[0] == armour_data()["bg3:scale_mail_2"]["ac"] + 2 # Other medium armour stops at +2

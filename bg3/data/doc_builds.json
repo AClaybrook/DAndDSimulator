@@ -301,7 +301,9 @@
      "gloves": "bg3:luminous_gloves",
      "ring_1": "bg3:coruscation_ring",
      "ring_2": "bg3:callous_glow_ring",
-     "cloak": "bg3:fleshmelter_cloak"
+     "cloak": "bg3:fleshmelter_cloak",
+     "ranged_main": "bg3:hand_crossbow_1",
+     "ranged_off": "bg3:hand_crossbow_1"
     },
     "3": {
      "melee_main": "bg3:staff_of_cherished_necromancy",
@@ -314,7 +316,8 @@
      "amulet": "bg3:amulet_of_the_devout",
      "ring_1": "bg3:callous_glow_ring",
      "ring_2": "bg3:coruscation_ring",
-     "ranged_main": "bg3:hellfire_hand_crossbow"
+     "ranged_main": "bg3:ne_er_misser",
+     "ranged_off": "bg3:hellfire_hand_crossbow"
     }
    },
    "buffs": {},
@@ -357,24 +360,76 @@
      "Dual Wielder"
     ],
     "fighting_styles": [],
-    "routine": "dual_wield",
-    "cantrip": "Eldritch Blast",
+    "routine": "cantrip",
+    "cantrip": "Toll the Dead",
     "spell": "Spirit Guardians",
     "toggles": {
-     "spiritual_weapon": true
+     "spiritual_weapon": true,
+     "booming_blade": false,
+     "offhand_crossbow": true
     },
     "level_order": []
    },
    "carried": [],
    "roles": [],
-   "variants": [],
+   "variants": [
+    {
+     "name": "Circle of Death",
+     "character": {
+      "spell": "Circle of Death"
+     },
+     "toggles": {
+      "spirit_guardians": true
+     },
+     "conditions": [
+      "bg3:staff_of_cherished_necromancy#2"
+     ]
+    },
+    {
+     "name": "Dethrone, once a day",
+     "character": {
+      "spell": "Dethrone"
+     },
+     "toggles": {
+      "spirit_guardians": true
+     }
+    },
+    {
+     "name": "Inflict Wounds in melee",
+     "character": {
+      "spell": "Inflict Wounds"
+     },
+     "toggles": {
+      "spirit_guardians": true
+     },
+     "conditions": [
+      "bg3:staff_of_cherished_necromancy#2"
+     ]
+    },
+    {
+     "name": "Thorn Whip",
+     "character": {
+      "cantrip": "Thorn Whip"
+     }
+    },
+    {
+     "name": "Shocking Grasp in melee",
+     "character": {
+      "cantrip": "Shocking Grasp"
+     }
+    },
+    {
+     "name": "Bursting Sinew (needs a corpse)",
+     "character": {
+      "cantrip": "Bursting Sinew"
+     }
+    }
+   ],
    "advantage": false
   },
   "carried": [],
   "roles": [],
-  "unmatched": [
-   "Hand Crossbows"
-  ],
+  "unmatched": [],
   "notes": [],
   "companion": "Shadowheart or Wood Half-Elf.",
   "themes": [],
@@ -448,7 +503,9 @@
     "routine": "ranged",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
@@ -617,7 +674,9 @@
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
@@ -705,7 +764,9 @@
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
@@ -791,7 +852,9 @@
     "routine": "shadow_blade",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
@@ -864,7 +927,9 @@
     "routine": "shadow_blade",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
@@ -1050,7 +1115,9 @@
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
     "spell": "Spirit Guardians",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
@@ -1220,16 +1287,37 @@
     ],
     "fighting_styles": [],
     "routine": "cantrip",
-    "cantrip": "Eldritch Blast",
+    "cantrip": "Toll the Dead",
     "spell": "",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
    "roles": [
     "summoner"
    ],
-   "variants": [],
+   "variants": [
+    {
+     "name": "Circle of Death",
+     "character": {
+      "spell": "Circle of Death"
+     },
+     "conditions": [
+      "bg3:staff_of_cherished_necromancy#2"
+     ]
+    },
+    {
+     "name": "Inflict Wounds in melee",
+     "character": {
+      "spell": "Inflict Wounds"
+     },
+     "conditions": [
+      "bg3:staff_of_cherished_necromancy#2"
+     ]
+    }
+   ],
    "advantage": false
   },
   "carried": [],
@@ -1312,7 +1400,9 @@
     "routine": "unarmed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
@@ -1409,7 +1499,9 @@
     "routine": "thrown",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
@@ -1502,7 +1594,9 @@
     "routine": "dual_wield",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
@@ -1597,7 +1691,9 @@
     "routine": "cantrip",
     "cantrip": "Fire Bolt",
     "spell": "Scorching Ray",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
@@ -1691,7 +1787,9 @@
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
@@ -1861,7 +1959,9 @@
     "routine": "ranged",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
@@ -1934,7 +2034,9 @@
     "routine": "unarmed",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
@@ -2013,7 +2115,9 @@
     "routine": "cantrip",
     "cantrip": "Eldritch Blast",
     "spell": "",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
@@ -2084,7 +2188,9 @@
     "routine": "one_handed",
     "cantrip": "Eldritch Blast",
     "spell": "Spirit Guardians",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
@@ -2605,7 +2711,9 @@
     "routine": "cantrip",
     "cantrip": "Sacred Flame",
     "spell": "",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],
@@ -2687,7 +2795,9 @@
     "routine": "cantrip",
     "cantrip": "Produce Flame",
     "spell": "",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": []
    },
    "carried": [],

@@ -7,6 +7,7 @@ from pathlib import Path
 
 from computations.models import STATS, Attack
 from game_data import weapons
+from game_data.classes import FIGHTS_PER_LONG_REST
 
 DATA = Path(__file__).parent / "data"
 
@@ -37,6 +38,7 @@ APPLIES_TO = {
     "thrown": lambda a: a.type == "thrown",
     "unarmed": lambda a: a.type == "unarmed",
     "spell": lambda a: a.type == "spell",
+    "necromancy": lambda a: a.type == "spell" and "necromancy" in a.tags,
 }
 
 @dataclass
@@ -47,7 +49,9 @@ class Effect:
               extra_damage (typed, i.e. '1d4 fire'), crit_damage (extra damage on a crit), crit_range (crit on value lower),
               advantage, damage_reroll (reroll damage dice at or below value), miss_damage_ability (the stat's modifier on a miss, Tenacity),
               once_per_turn_bonus (more Sneak Attack damage), spell_dc, extra_action (Haste), lightning_charges (gained on hits of applies_to),
-              flag (turns on a Character option, i.e. savage_attacker)
+              flag (turns on a Character option, i.e. savage_attacker), save_disadvantage (enemies roll saves against these attacks twice
+              and keep the lower), free_cast (value more casts a fight of the limited spell it applies to), channel_divinity (value more
+              Channel Divinity charges per long rest)
         applies_to: a key of APPLIES_TO, or 'self' for the attacks made with the item's own weapon
         condition: when set, the effect only counts while the condition is toggled on, i.e. 'while raging' """
     kind: str
@@ -173,6 +177,21 @@ def apply_effect(character, effect, own_attacks=(), honour_mode=False):
     elif kind == "extra_action_on_kill":
         # Another Attack action whenever a kill happens on your turn
         extra_action(character, "Bloodlust", honour_mode, uses=float(value))
+    elif kind == "channel_divinity":
+        # One more charge a long rest for whatever spends them (Touch of Death)
+        more = float(value) / FIGHTS_PER_LONG_REST
+        for a in character.attacks:
+            if "channel_divinity" in a.tags:
+                a.uses_per_fight = round(a.uses_per_fight + more, 2)
+                # A limited spell carrying the charge is cast as often as before: the cast moves over from the ones without a charge
+                rest = next((b for b in character.attacks if b.fallback_for == a.name and b.uses_per_fight), None)
+                if rest is not None:
+                    rest.uses_per_fight = max(round(rest.uses_per_fight - more, 2), 0.01)
+    elif kind == "free_cast":
+        # More casts of the build's limited spell of that kind, i.e. the Staff of Cherished Necromancy's Life Essence
+        spell = next((a for a in _attacks_for(character, effect, own_attacks) if a.uses_per_fight and a.action == "action" and not {"setup", "recharge", "channel_divinity"} & set(a.tags)), None)
+        if spell is not None:
+            spell.uses_per_fight = round(spell.uses_per_fight + float(value), 2)
     elif kind == "once_per_turn_bonus":
         # Only adds to once per turn damage the character already has every round, i.e. Sneak Attack (not to limited smites)
         if character.once_per_turn_die_mod_list and not character.once_per_turn_uses_per_fight:
@@ -194,6 +213,8 @@ def apply_effect(character, effect, own_attacks=(), honour_mode=False):
                 a.crit_on = max(2, min(a.crit_on, character.crit_on) - int(value))
             elif kind == "advantage":
                 a.advantage = True
+            elif kind == "save_disadvantage":
+                a.save_disadvantage = True
             elif kind == "miss_damage_ability":
                 a.bonus_miss_die_mod_list = [*a.bonus_miss_die_mod_list, str(max(1, character.ability_modifier(effect.stat or a.ability_stat)))]
             elif kind == "damage_reroll":

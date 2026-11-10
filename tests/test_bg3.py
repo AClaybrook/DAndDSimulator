@@ -266,3 +266,30 @@ def test_lightning_charges():
     wizard = Bg3Build("Gale", "wizard_fireball", equipment={"1": {"melee_main": "bg3:the_spellsparkler"}})
     assert all("1 lightning" in a.extra_damage_list for a in compile_build(wizard, 1).attacks if a.type == "spell")
     assert expected_damage_per_round(character, ENEMY, 3) > expected_damage_per_round(compile_build(replace(rogue, equipment={}), 1), ENEMY, 3)
+
+def test_necromancy_staff_and_amulet_of_the_devout():
+    """ bg3.wiki: Staff of Cherished Necromancy gives enemies disadvantage on saves against necromancy spells, and a free necromancy
+        cast after a kill (Life Essence); Amulet of the Devout +2 spell save DC and one more Channel Divinity charge """
+    from bg3.character import Bg3Character
+    scores = {"strength": 8, "dexterity": 14, "constitution": 14, "intelligence": 8, "wisdom": 17, "charisma": 10}
+    def build(gear, conditions=(), **fields):
+        character = Bg3Character(scores=scores, bonus={"wisdom": 2, "constitution": 1}, classes=[["cleric", "Death Domain", 12]], routine="cantrip",
+                                 cantrip="Toll the Dead", **fields)
+        return Bg3Build(name="Reaper", preset="", character=character.to_dict(), equipment={"3": gear}, conditions=list(conditions))
+    staff, amulet = "bg3:staff_of_cherished_necromancy", "bg3:amulet_of_the_devout"
+    bare, held = compile_build(build({}), "3"), compile_build(build({"melee_main": staff}), "3")
+    toll = next(a for a in held.attacks if a.name == "Toll the Dead")
+    assert toll.save_disadvantage and not bare.attacks[0].save_disadvantage
+    enemy = Enemy(armor_class=15, wisdom_save=4)
+    assert expected_damage_per_round(held, enemy, 3) > expected_damage_per_round(bare, enemy, 3)
+    # +2 DC from the amulet
+    devout = compile_build(build({"amulet": amulet}), "3")
+    assert devout.additional_spell_dc == bare.additional_spell_dc + 2
+    assert expected_damage_per_round(devout, enemy, 3) > expected_damage_per_round(bare, enemy, 3)
+    # Inflict Wounds: 16 slots a day are 4 casts a fight, 1.5 of them with Touch of Death. The amulet's charge moves a quarter cast over,
+    # Life Essence (a condition) adds a cast, and never to the Channel Divinity ones
+    def casts(gear, conditions=()):
+        by_name = {a.name: a.uses_per_fight for a in compile_build(build(gear, conditions, spell="Inflict Wounds"), "3").attacks}
+        return by_name["Inflict Wounds (Touch of Death)"], by_name["Inflict Wounds"]
+    assert casts({}) == (1.5, 2.5) and casts({"amulet": amulet}) == (1.75, 2.25)
+    assert casts({"melee_main": staff}) == (1.5, 2.5) and casts({"melee_main": staff}, [condition_id(staff, 2)]) == (1.5, 3.5)

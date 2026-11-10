@@ -14,6 +14,8 @@ export interface Act {
 export interface ActResult {
   level: number
   damage: number[]
+  spellDc?: number | null
+  saves: SavingThrow[]
   ac: number
   acParts: AcPart[]
   hitChance: number
@@ -543,6 +545,15 @@ export interface Saved {
   rows: number
 }
 
+export interface SavingThrow {
+  name: string
+  stat: string
+  dc: number
+  fixed: boolean
+  fail: number
+  disadvantage: boolean
+}
+
 export interface Scenario {
   key: string
   label: string
@@ -682,6 +693,8 @@ export interface VariantRow {
   name: string
   description: string
   damage: number[]
+  byEnemies: number[][]
+  spellDc: (number | null)[]
   ac: number[]
   score: number[]
 }

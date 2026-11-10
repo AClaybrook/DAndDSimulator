@@ -46,6 +46,14 @@ await step('Planner: settle shared items, then best in slot gear', async () => {
   await visible(page.getByText(/Most damage gear at Act 3/))
   await page.getByRole('button', { name: 'Undo' }).click()
 })
+await step('Planner: a variant and the ways to play chart', async () => {
+  await page.getByRole('tab', { name: 'Variants', exact: true }).click()
+  await page.getByRole('button', { name: 'Bless', exact: true }).click()
+  await visible(page.getByText('Ways to play'))
+  await page.getByRole('button', { name: 'Delete variant' }).click()
+  await page.getByText('Ways to play').waitFor({ state: 'hidden', timeout: 15000 })
+  await page.getByRole('tab', { name: 'Gear', exact: true }).click()
+})
 await step('Planner: send the party to the simulator', async () => {
   await page.getByRole('button', { name: 'To simulator' }).click()
   await page.getByRole('menuitem', { name: /Whole party at/ }).first().click()

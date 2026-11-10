@@ -139,6 +139,39 @@
                 }
             ],
             "notes": "Giant Form"
+        },
+        "Staff of Cherished Necromancy": {
+            "effects": [
+                {
+                    "kind": "extra_damage",
+                    "value": "1d4 necrotic",
+                    "applies_to": "self"
+                },
+                {
+                    "kind": "save_disadvantage",
+                    "applies_to": "necromancy"
+                },
+                {
+                    "kind": "free_cast",
+                    "value": 1,
+                    "applies_to": "necromancy",
+                    "condition": "Life Essence: a spell kill pays for a necromancy spell, about one a fight"
+                }
+            ],
+            "notes": "Life Essence lasts until a long rest and is gained again with every spell kill"
+        },
+        "Amulet of the Devout": {
+            "effects": [
+                {
+                    "kind": "spell_dc",
+                    "value": 2
+                },
+                {
+                    "kind": "channel_divinity",
+                    "value": 1
+                }
+            ],
+            "notes": ""
         }
     }
 }

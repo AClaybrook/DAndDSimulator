@@ -17,8 +17,9 @@ from bg3.buffs import BUFFS
 from bg3.build import Bg3Build
 from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_SPELLS, RACES, ROUTINES, SHADOW_BLADE, SUBCLASSES, Bg3Character,
                            feat_opportunities)
-from bg3.items import catalog
+from bg3.items import catalog, condition_id
 from computations.models import STATS
+from game_data import spells
 
 OUT = Path(__file__).parent / "data" / "doc_builds.json"
 STAT_NAMES = {s[:3].upper(): s for s in STATS}
@@ -96,6 +97,9 @@ def place_gear(names, index, carried, unmatched, equipment=None):
         if name.lower() in CARRIED:
             carried.add(name.title())
             continue
+        if re.fullmatch(r"(dual |two )?hand crossbows", name.lower()): # A plain pair, one in each hand
+            equipment.update({"ranged_main": "bg3:hand_crossbow_1", "ranged_off": "bg3:hand_crossbow_1"})
+            continue
         item = match_item(name, index)
         if item is None:
             unmatched.append(name)
@@ -108,6 +112,8 @@ def place_gear(names, index, carried, unmatched, equipment=None):
             ranged = item.weapon.get("kind") == "ranged"
             off = hint == "off" or (not ranged and "melee_main" in equipment and equipment["melee_main"] != item.key and "two-handed" not in
                                     item.weapon.get("properties", []))
+            # A second hand crossbow goes in the off hand
+            off = off or (ranged and item.weapon.get("base") == "Hand Crossbow" and equipment.get("ranged_main") not in (None, item.key))
             slot = ("ranged_off" if off else "ranged_main") if ranged else ("melee_off" if off else "melee_main")
         else:
             slot = item.slot
@@ -165,10 +171,50 @@ def parse_feats(text):
             found.append((m.start(), m.group(0)))
     return [f for _, f in sorted(found)]
 
-def guess_routine(text, equipment, items):
+FULL_CASTERS = ("bard", "cleric", "druid", "sorcerer", "warlock", "wizard")
+# Other ways a caster build plays, offered as variants when its write-up names the spell: (mention, name, what changes on the character)
+MODE_SPELLS = [
+    ("circle of death", "Circle of Death", {"spell": "Circle of Death"}),
+    ("dethrone", "Dethrone, once a day", {"spell": "Dethrone"}),
+    ("inflict wounds", "Inflict Wounds in melee", {"spell": "Inflict Wounds"}),
+    ("thorn whip", "Thorn Whip", {"cantrip": "Thorn Whip"}),
+    ("shocking grasp", "Shocking Grasp in melee", {"cantrip": "Shocking Grasp"}),
+    ("bursting sinew", "Bursting Sinew (needs a corpse)", {"cantrip": "Bursting Sinew"}),
+    ("spirit guardians", "Spirit Guardians", {"spell": "Spirit Guardians"}),
+]
+
+def play_modes(character, body, gear):
+    """ Variants for the other play patterns a caster's write-up describes: the same character and gear casting a different spell or
+        cantrip, compared next to its main one in the planner. Limited spells show what a fight with the slots for them looks like.
+        Conditional item effects a mode relies on are switched on for it (Life Essence for necromancy spells) """
+    if character.routine != "cantrip":
+        return []
+    lowered = body.lower()
+    catalogue = catalog()
+    modes = []
+    for mention, name, changes in MODE_SPELLS:
+        if mention not in lowered or all(getattr(character, k) == v for k, v in changes.items()):
+            continue
+        if "Bursting Sinew" in changes.values() and not any(sub == "Death Domain" for _, sub, _ in character.classes):
+            continue # A Death Domain cantrip
+        spell = changes.get("spell")
+        necromancy = bool(spell) and spells()[spell].get("school") == "necromancy" and not spells()[spell].get("recharge")
+        conditions = [condition_id(key, ii) for key in gear.values() if key in catalogue for ii, e in enumerate(catalogue[key].effects)
+                      if necromancy and e.kind == "free_cast" and e.condition]
+        # A build that opens with Spirit Guardians keeps doing so around its other spells
+        keeps_aura = bool(spell) and character.spell == "Spirit Guardians"
+        modes.append({"name": name, "character": changes, **({"toggles": {"spirit_guardians": True}} if keeps_aura else {}),
+                      **({"conditions": conditions} if conditions else {})})
+    return modes
+
+def guess_routine(text, equipment, items, classes=()):
     """ The attack routine from what the build fights with """
     lowered = text.lower()
     main = items.get(equipment.get("melee_main", ""))
+    # Mostly a spellcaster holding a staff: the staff is there for its spell bonuses, the build casts
+    casting = sum(int(n) for cls, _, n in classes if cls in FULL_CASTERS)
+    if main and main.weapon and main.weapon.get("base") == "Quarterstaff" and classes and casting >= 0.75 * sum(int(n) for _, _, n in classes):
+        return "cantrip"
     if "shadow blade" in lowered and re.search(r"shadow blade[^.]{0,40}(main hand|primary)|shadow blade \+|main hand\)?: ?shadow blade|"
                                                r"shadow blade \(main", lowered):
         return "shadow_blade"
@@ -306,7 +352,7 @@ def parse_build(number, title, body, index, items):
         flat.update(trimmed.get(act, {}))
     routine = next((r for r, label in ROUTINES.items() if field(body, "Routine").lower() in (r, label.lower())), None) if field(body, "Routine") \
         else None
-    routine = routine or guess_routine(body, flat, items)
+    routine = routine or guess_routine(body, flat, items, classes)
     race = next((r for r in RACES if r.lower() in field(body, "Recommended Character/Race", "Race").lower()), "Human")
     character = Bg3Character(name=title.split(" (")[0].replace('"', "").strip(), race=race, scores=scores or Bg3Character().scores,
                              bonus=bonus or Bg3Character().bonus, classes=classes or [["fighter", "Champion", 12]],
@@ -332,8 +378,10 @@ def parse_build(number, title, body, index, items):
         if skipped and routine == "cantrip":
             notes.append(f"Not a modelled damage spell: {', '.join(skipped)}")
     elif routine == "cantrip":
+        natural = {"cleric": "Sacred Flame", "druid": "Produce Flame", "wizard": "Fire Bolt", "sorcerer": "Fire Bolt", "warlock": "Eldritch Blast"}
         character.cantrip = "Eldritch Blast" if "eldritch blast" in body.lower() and any(c[0] == "warlock" for c in classes) else \
-            "Fire Bolt" if "fire" in body.lower() else "Toll the Dead" if "toll the dead" in body.lower() else character.cantrip
+            "Toll the Dead" if "toll the dead" in body.lower() else "Fire Bolt" if "fire" in body.lower().replace("hellfire", "") else \
+            "Toll the Dead" if any(sub == "Death Domain" for _, sub, _ in classes) else natural.get(character.classes[0][0], character.cantrip)
         character.spell = "Scorching Ray" if "scorching ray" in body.lower() else ""
     # Clerics whose write-up uses them: Spirit Guardians as the build's spell (from Cleric 5) and Spiritual Weapon (from Cleric 3)
     cleric = sum(int(n) for cls, _, n in character.classes if cls == "cleric")
@@ -341,10 +389,17 @@ def parse_build(number, title, body, index, items):
         character.spell = "Spirit Guardians"
     if cleric >= 3 and "spiritual weapon" in body.lower():
         character.toggles = {**character.toggles, "spiritual_weapon": True}
+    # Booming Blade only for builds whose write-up uses it (the builder would add it for any Wizard, Sorcerer or Warlock level)
+    if "booming blade" not in body.lower():
+        character.toggles = {**character.toggles, "booming_blade": False}
+    # A caster with hand crossbows shoots the off-hand one with the bonus action
+    if character.routine == "cantrip" and any(items.get(k) and items[k].weapon and items[k].weapon.get("base") == "Hand Crossbow" for k in flat.values()):
+        character.toggles = {**character.toggles, "offhand_crossbow": True}
+    modes = play_modes(character, body, flat)
     roles = [r for r in ROLES if re.search(rf"\b{r}", field(body, "Roles", "Assigned Companion / Role", "Role").lower())]
     buffs = {act: parse_buffs(line) for act, line in re.findall(r"^Act ([123]) Buffs:\s*(.+)$", body, re.M)}
     build = Bg3Build(name=f"{number}. {character.name}", preset="fighter_gwm", equipment=trimmed, character=character.to_dict(),
-                     buffs={a: b for a, b in buffs.items() if b}, carried=sorted(carried), roles=roles)
+                     buffs={a: b for a, b in buffs.items() if b}, carried=sorted(carried), roles=roles, variants=modes)
     return {"number": number, "title": title, "source": field(body, "Source", "Source / Creator"), "build": build.to_dict(),
             "carried": sorted(carried), "roles": roles, "unmatched": unmatched, "notes": notes,
             "companion": field(body, "Recommended Character/Race", "Assigned Companion / Role", "Companion"),

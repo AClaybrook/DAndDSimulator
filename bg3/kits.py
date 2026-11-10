@@ -91,6 +91,9 @@ def variant_build(build, variant):
     # Gear of its own (i.e. a best in slot set to compare): act: slot: item key
     for act, gear in (variant.get("gear") or {}).items():
         out.equipment[str(act)] = {**out.equipment.get(str(act), {}), **gear}
+    # Another way to play the same character (a different spell or cantrip, a routine): fields of the custom character
+    if variant.get("character") and out.character:
+        out.character = {**out.character, **variant["character"]}
     extra = list(variant.get("buffs") or [])
     if extra:
         out.buffs = {act: list(dict.fromkeys([*out.buffs.get(act, []), *extra])) for act in ACT_KEYS}
@@ -106,6 +109,10 @@ def describe_variant(variant):
     parts = []
     if variant.get("kit") in kits():
         parts.append(f"kit: {kits()[variant['kit']]['name']}")
+    if variant.get("character"):
+        parts.append("plays " + ", ".join(str(v) for v in variant["character"].values() if v))
+    if (variant.get("toggles") or {}).get("spirit_guardians"):
+        parts.append("after Spirit Guardians")
     if variant.get("gear"):
         parts.append("gear: " + ", ".join(f"Act {act} ({len(gear)} slots)" for act, gear in sorted(variant["gear"].items())))
     if variant.get("buffs"):
@@ -115,15 +122,15 @@ def describe_variant(variant):
         parts.append("advantage")
     return "; ".join(parts) or "same as the build"
 
+def variant_builds(build):
+    """ [(name, description, build)] for the build and each of its variants """
+    return [("Build as planned", "its own gear and buffs", build),
+            *((v.get("name") or "Variant", describe_variant(v), variant_build(build, v)) for v in build.variants)]
+
 def variant_damage(build, enemy, rounds_per_fight, enemies=1):
     """ [(name, description, [damage per round per act], build)] for the build and each of its variants, against a group of enemies """
     from computations.analytic import expected_damage_vs_enemies # pylint: disable=import-outside-toplevel
-    def per_act(b):
-        return [expected_damage_vs_enemies(compile_build(b, act), enemy, rounds_per_fight, enemies) for act in ACT_KEYS]
-    rows = [("Build as planned", "its own gear and buffs", per_act(build), build)]
-    for variant in build.variants:
-        built = variant_build(build, variant)
-        rows.append((variant.get("name") or "Variant", describe_variant(variant), per_act(built), built))
-    return rows
+    return [(name, description, [expected_damage_vs_enemies(compile_build(b, act), enemy, rounds_per_fight, enemies) for act in ACT_KEYS], b)
+            for name, description, b in variant_builds(build)]
 
-__all__ = ["kits", "kit_gear", "apply_kit", "taken_by_others", "variant_build", "variant_damage", "describe_variant", "QUICK_VARIANTS", "Bg3Build"]
+__all__ = ["kits", "kit_gear", "apply_kit", "taken_by_others", "variant_build", "variant_builds", "variant_damage", "describe_variant", "QUICK_VARIANTS", "Bg3Build"]

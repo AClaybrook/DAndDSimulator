@@ -159,8 +159,8 @@ def replace_toggle(character, key):
 
 def test_builder_only_offers_toggles_for_its_classes():
     assert relevant_toggles([["fighter", "Champion", 12]]) == ["reactions", "honour_mode", "advantage"]
-    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse", "booming_blade", "reactions", "honour_mode", "advantage"]
-    assert relevant_toggles([["warlock", "The Fiend", 12]]) == ["booming_blade", "reactions", "honour_mode", "advantage"]
+    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse", "booming_blade", "offhand_crossbow", "reactions", "honour_mode", "advantage"]
+    assert relevant_toggles([["warlock", "The Fiend", 12]]) == ["booming_blade", "offhand_crossbow", "reactions", "honour_mode", "advantage"]
 
 
 def test_shadow_blade_and_booming_blade():
@@ -345,3 +345,62 @@ def test_cleric_spirit_guardians_and_spiritual_weapon():
     hasted = compile_build(Bg3Build(name="Cleric", preset="", character=both.to_dict(), buffs={"3": ["haste"]}), "3")
     extra = next(a for a in hasted.attacks if a.label == "Haste")
     assert not extra.fallback_for and "after_cast" not in extra.tags
+
+WIS17 = {"strength": 8, "dexterity": 14, "constitution": 14, "intelligence": 8, "wisdom": 17, "charisma": 10}
+
+def reaper(**fields):
+    """ Death Domain 8 / Necromancy 2 / Spores 2, WIS 20: Touch of Death deals 5 + 2 x 8 """
+    return Bg3Character(**{"scores": WIS17, "bonus": {"wisdom": 2, "constitution": 1}, "routine": "cantrip", "cantrip": "Toll the Dead", "feats": ["wisdom+2"],
+                           "classes": [["cleric", "Death Domain", 8], ["wizard", "Necromancy School", 2], ["druid", "Circle of Spores", 2]], **fields})
+
+def attacks_of(character, level=12):
+    return {a.name: a for a in compile_character(character, level)[0].attacks}
+
+def test_death_domain_spells_and_touch_of_death():
+    """ bg3.wiki: Touch of Death rides melee spell attacks; Reaper gives necromancy cantrips a second target; Dethrone has its own DC 18
+        once a long rest; Circle of Death 8d6; Bursting Sinew 1d10 a tier in a 3 m burst; Thorn Whip 1d6 a tier """
+    plain = attacks_of(reaper())
+    assert plain["Toll the Dead"].damage == "3d12" and plain["Toll the Dead"].targets == 2 and "necromancy" in plain["Toll the Dead"].tags
+    assert not any("Touch of Death" in name for name in plain) # A saving throw cantrip has nothing to carry it
+    # Two charges a short rest: 1.5 casts a fight carry it, the cantrip goes on without
+    whip = attacks_of(reaper(cantrip="Thorn Whip"))
+    carrier = whip["Thorn Whip (Touch of Death)"]
+    assert carrier.damage == "3d6" and carrier.extra_damage_list == ["21 necrotic"] and carrier.uses_per_fight == 1.5 and "channel_divinity" in carrier.tags
+    assert whip["Thorn Whip"].fallback_for == carrier.name and not whip["Thorn Whip"].uses_per_fight
+    # A limited spell splits its casts: 16 slots over four fights, 1.5 of the four casts a fight with a charge
+    wounds = attacks_of(reaper(spell="Inflict Wounds"))
+    assert wounds["Inflict Wounds (Touch of Death)"].uses_per_fight == 1.5 and wounds["Inflict Wounds"].uses_per_fight == 2.5
+    assert wounds["Inflict Wounds"].fallback_for == "Inflict Wounds (Touch of Death)" and wounds["Toll the Dead"].fallback_for == "Inflict Wounds"
+    dethrone = attacks_of(reaper(spell="Dethrone"))["Dethrone"]
+    assert dethrone.damage == "10d6+20" and dethrone.save_dc == 18 and dethrone.uses_per_fight == 0.25 and dethrone.saving_throw_stat == "constitution"
+    sinew = attacks_of(reaper(cantrip="Bursting Sinew"))["Bursting Sinew"]
+    assert sinew.damage == "3d10" and sinew.targets == 3 and sinew.saving_throw_stat == "dexterity"
+    # Halo of Spores: a reaction every round, 1d4 necrotic doubled by Symbiotic Entity, CON save
+    halo = plain["Halo of Spores"]
+    assert halo.action == "reaction" and halo.damage == "2d4" and halo.saving_throw_stat == "constitution" and not halo.uses_per_fight
+    assert attacks_of(reaper(toggles={"symbiotic": False}))["Halo of Spores"].damage == "1d4"
+
+def test_spirit_guardians_around_another_spell():
+    """ Spirit Guardians cast first with another spell as the build's own: a spell of level 4 or more keeps its slots """
+    from bg3.character import cleric_slots
+    levels, subs = {"cleric": 8, "wizard": 2, "druid": 2}, {"cleric": "Death Domain"}
+    both = {"spirit_guardians": True, "spiritual_weapon": True}
+    circle = reaper(spell="Circle of Death", toggles=both)
+    assert cleric_slots(circle, levels, subs) == ([5, 5, 4, 4], [4, 3, 3, 3]) # The level 6 slot is Circle of Death's
+    assert cleric_slots(reaper(spell="Dethrone", toggles=both), levels, subs) == ([6, 5, 4, 4], [4, 3, 3, 3]) # Once a day: one level 5 slot kept
+    assert cleric_slots(reaper(spell="Spirit Guardians", toggles={"spiritual_weapon": True}), levels, subs) == ([6, 5, 5, 4], [4, 4, 3, 3])
+    assert cleric_slots(reaper(spell="Inflict Wounds", toggles=both), levels, subs) == ([6, 5, 5, 4], [2, 2, 2, 3]) # Cast with every slot left
+    by_name = attacks_of(circle)
+    assert by_name["Circle of Death"].uses_per_fight == 0.25 and by_name["Circle of Death"].targets == 4
+    # Round 1 casts the aura, then Circle of Death, then the cantrip
+    assert by_name["Circle of Death"].fallback_for == "Spirit Guardians (cast)" and by_name["Toll the Dead"].fallback_for == "Circle of Death"
+    assert by_name["Spirit Guardians (aura)"].uses_per_fight == 10 and "spirit_guardians" in relevant_toggles(circle.classes)
+
+def test_divine_strike_is_typed_and_weapon_only():
+    from computations.models import once_per_turn_pools
+    melee, _ = compile_character(Bg3Character(scores=WIS17, classes=[["cleric", "Death Domain", 8]], routine="one_handed"), 8)
+    assert melee.once_per_turn_die_mod_list == ["1d8"] and melee.once_per_turn_damage_type == "necrotic"
+    # A caster only gets it on the bonus action crossbow shot, never on a spell
+    caster, _ = compile_character(reaper(toggles={"offhand_crossbow": True}), 12)
+    assert once_per_turn_pools(caster) and all(not a.once_per_turn_eligible for a in caster.attacks if a.type == "spell")
+    assert not once_per_turn_pools(compile_character(reaper(), 12)[0])

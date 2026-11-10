@@ -14,6 +14,24 @@
   3d8 and counted in every fight even with two slots a day, which overstated level 5 clerics. Death Domain: a necrotic aura and Toll the
   Dead on two creatures (Reaper). Two example clerics, and builds from the build doc that use these spells now have them (Deathreaper,
   Tempest Bladesinger, Unstoppable Death Monk, Circle of the Stars / Light Cleric).
+- **Play modes:** a variant can be another way to play the same character: a different routine, cantrip or levelled spell, with or
+  without Spirit Guardians cast first ("Play mode" in the Variants tab). The tab leads with a chart of each way's gain over the build as
+  planned against one to four enemies, since a single target spell and an area spell trade places as enemies are added. Builds imported
+  from the build doc get a mode for each other damage spell their write-up names (the Deathreaper: Circle of Death, Dethrone, Inflict
+  Wounds, Thorn Whip, Shocking Grasp, Bursting Sinew).
+- **Spell save DC** on each party card, by act, for builds that force saving throws; hover for each spell's save, its DC and the
+  enemy's chance to fail. The same lines are in the score details, and the DC is a column of the variants table.
+- **Death Domain, Necromancy and Spores:** Circle of Death, Dethrone (its own DC 18, once a long rest), Thorn Whip and Bursting Sinew;
+  Touch of Death on melee spell attacks (Inflict Wounds, Shocking Grasp, Thorn Whip) as well as weapon hits, with a limited spell's casts
+  split between the ones that carry a charge and the rest; Reaper on every necromancy cantrip; Divine Strike in the domain's damage type
+  and only on weapon hits; Halo of Spores as a reaction every round; a bonus action shot with an off hand hand crossbow for casters (a
+  toggle). Spirit Guardians can be cast first around another spell, which keeps its own slots when it is level 4 or higher.
+- **Items:** Staff of Cherished Necromancy (enemies save against necromancy spells with disadvantage; Life Essence's free cast as a
+  toggle), Amulet of the Devout (+2 spell save DC and one more Channel Divinity charge), Armour of Agility's full Dexterity modifier.
+- **Engine:** saving throws rolled with disadvantage, a spell's own fixed DC, and fallbacks that chain (cast A while its uses last, then
+  B while its uses last, then C), in the analytic, exact and simulated engines.
+- **Build doc import:** a full caster holding a staff casts its cantrip instead of swinging the staff, Toll the Dead is recognised, a
+  second hand crossbow goes in the off hand, and Booming Blade is only assumed when the write-up names it.
 - **Balduran's Giantslayer** doubles the Strength modifier's damage (and has advantage against Large creatures as a toggle).
 - **Review fixes, rules:** Haste and Bloodlust give a whole Attack action outside Honour Mode (Extra Attack included) and one attack in
   it; the Honour Mode toggle is now offered to every class. BG3 Savage Attacker and Great Weapon Fighting reach rider and once per turn
