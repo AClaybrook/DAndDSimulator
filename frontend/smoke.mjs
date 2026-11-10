@@ -27,6 +27,14 @@ await step('Party planner: example party and its damage', async () => {
   await visible(page.getByText("Lae'zel", { exact: false }))
   await visible(page.getByRole('tab', { name: 'Gear' }))
 })
+await step('Planner: buffs grid changes the damage', async () => {
+  const before = await page.locator('.numeric').first().innerText()
+  await page.getByRole('tab', { name: 'Buffs', exact: true }).click()
+  await page.getByRole('checkbox', { name: 'Haste, Act 1' }).check()
+  await page.waitForFunction((was) => document.querySelector('.numeric')?.textContent !== was, before, { timeout: 15000 })
+  await page.getByRole('checkbox', { name: 'Haste, Act 1' }).uncheck()
+  await page.getByRole('tab', { name: 'Gear', exact: true }).click()
+})
 await step('Planner: send the party to the simulator', async () => {
   await page.getByRole('button', { name: 'To simulator' }).click()
   await page.getByRole('menuitem', { name: /Whole party at/ }).first().click()
@@ -36,6 +44,15 @@ await step('Simulator: results and a table tab', async () => {
   await visible(page.getByText('damage per round'))
   await page.getByRole('tab', { name: 'Attack breakdown' }).click()
   await visible(page.getByRole('button', { name: 'Download CSV' }))
+})
+await step('Simulator: edit a character beside the results', async () => {
+  await page.getByRole('tab', { name: 'Chart' }).click()
+  await page.getByRole('button', { name: 'Edit' }).first().click()
+  await page.getByRole('tab', { name: /Attacks/ }).click()
+  await visible(page.getByText('Crit on'))
+  await visible(page.getByText('damage per round')) // The results stay in view while editing
+  await page.getByRole('button', { name: 'Characters' }).click()
+  await visible(page.getByRole('button', { name: 'Add' }))
 })
 await step('Leaderboard: rankings, filters kept in the URL', async () => {
   await page.keyboard.press('2')

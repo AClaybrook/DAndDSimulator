@@ -65,6 +65,9 @@ def weapon_attack(name, ability_stat=None, two_handed=None, offhand=False, enhan
         damage = w["versatile_damage"]
     return Attack(
         name=attack_name or (f"{name} (Offhand)" if offhand else name),
+        base=name,
+        label="" if attack_name or not offhand else "Offhand",
+        action="bonus" if offhand else "action",
         type=attack_type,
         ability_stat=ability_stat,
         damage=damage,
@@ -94,6 +97,8 @@ def spell_attacks(name, ability_stat="charisma", character_level=1, slot_level=N
     label = name if s["level"] == 0 or not slot_level or slot_level == s["level"] else f"{name} (Level {slot_level})"
     attack = Attack(
         name=label,
+        base=name,
+        label="" if label == name else label[len(name) + 2:-1],
         type="spell",
         ability_stat=ability_stat,
         damage=damage,

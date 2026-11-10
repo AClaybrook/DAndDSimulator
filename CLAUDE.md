@@ -19,5 +19,7 @@
 ## Checks
 
 - `uv run ruff check .` and `uv run pytest` (CI runs both, plus `uv run python -m benchmarks.benchmark`).
-- Front end: `cd frontend && npm run build` (type checks) and `npm run lint`; `npm run smoke` clicks through every page with the app
-  running (`uv run python -m api`). CI runs all three.
+- Front end: `cd frontend && npm run build` (type checks), `npm run lint` and `npm test` (unit tests); `npm run smoke` clicks through
+  every page with the app running (`uv run python -m api`). CI runs all four.
+- After changing `api/schemas.py` (the API's request and response shapes): `uv run python -m api.openapi` regenerates the front end's
+  types (`frontend/src/api-types.ts`); a test fails when they are out of date.

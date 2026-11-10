@@ -1,23 +1,17 @@
 import { ActionIcon, Badge, Checkbox, Group, NumberInput, SegmentedControl, Select, SimpleGrid, Stack, Text, TextInput } from '@mantine/core'
 import { IconPlus, IconX } from '@tabler/icons-react'
-import type { Build, MemberResult, PlannerOptions } from '../../api'
+import type { Build, BuilderCharacter as Character, MemberResult, PlannerOptions } from '../../api'
 import { Section } from '../../components/Layout'
 import { STATS, statLabel } from '../../fields'
 import { ACTS, useParty } from '../../party'
-
-type Character = {
-  name: string; race: string; scores: Record<string, number>; bonus: Record<string, number>; classes: [string, string, number][]
-  feats: string[]; fighting_styles: string[]; routine: string; cantrip: string; spell: string; toggles: Record<string, boolean>
-  [key: string]: unknown
-}
 
 export function BuildTab({ options, result }: { options: PlannerOptions; result: MemberResult | undefined }) {
   const { party, selected, update } = useParty()
   const build = party[selected]
   if (!build) return null
   const set = (change: Partial<Build>) => update(selected, (b) => ({ ...b, ...change }))
-  const character = build.character as Character | null
-  const setChar = (change: Partial<Character>) => update(selected, (b) => ({ ...b, character: { ...(b.character as Character), ...change } }))
+  const character = build.character ?? null
+  const setChar = (change: Partial<Character>) => update(selected, (b) => (b.character ? { ...b, character: { ...b.character, ...change } } : b))
   const b = options.builder
   const summary = result?.builder
 
@@ -103,7 +97,7 @@ export function BuildTab({ options, result }: { options: PlannerOptions; result:
             {summary && summary.toggles.length > 0 && (
               <Group gap="md">
                 {summary.toggles.map((t) => (
-                  <Checkbox key={t.value} size="xs" label={t.label} checked={character.toggles?.[t.value] ?? !['advantage', 'horde_breaker'].includes(t.value)}
+                  <Checkbox key={t.value} size="xs" label={t.label} checked={Boolean(character.toggles?.[t.value] ?? t.on)}
                     onChange={(e) => setChar({ toggles: { ...character.toggles, [t.value]: e.currentTarget.checked } })} />
                 ))}
               </Group>

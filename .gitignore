@@ -1,7 +1,7 @@
 *.prof
 *.pyc
 *.txt
-random/*
+
 __pycache__
 .venv/
 .pytest_cache/

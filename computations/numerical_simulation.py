@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from computations.models import calculate_attack_and_damage_context
-from utilities.helper_functions import timeit
+from computations.timing import timeit
 
 # Set random seed for reproducibility
 SEED = 1
@@ -89,13 +89,15 @@ def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multi
                 advantage=False, disadvantage=False, reroll_on=0,
                 miss_num_die=None, miss_damage_die=None, miss_damage_modifier=0, save_success_multiplier=0,
                 crit_num_die=None, crit_damage_die=None, crit_damage_modifier=0,
-                once_num_die=None, once_die_size=None, once_modifier=0, once_mask=None, once_damage_multiplier=None,
+                once_pools=None, once_masks=None, rider_advantage=False,
                 rider_num_die=None, rider_die_size=None, rider_modifier=None, rider_multiplier=None, per_die_advantage=False, rng=RNG, **_):
     """ Roll damage for each hit, crit and miss.
         Resistances/vulnerabilities and damage reduction are applied to the total damage of the attack (rounded down)"""
     num_die = num_die or []
     die_size = die_size or []
     dice_kwargs = {"advantage": advantage, "disadvantage": disadvantage, "reroll_on": reroll_on, "rng": rng, "per_die": per_die_advantage}
+    # Riders and once per turn dice: rerolled like the weapon's, and with BG3 Savage Attacker the higher of two rolls per die
+    extra_kwargs = {"advantage": rider_advantage, "reroll_on": reroll_on, "rng": rng, "per_die": True}
 
     num_rolls = len(hit)
     miss = ~hit
@@ -115,18 +117,22 @@ def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multi
                          + crit_damage_modifier)
 
     # Once per turn damage on the first hit of the round, i.e. sneak attack, dice are doubled on a crit
-    # With its own damage type (a radiant smite on a psychic Shadow Blade) it's added after, with its own multiplier
-    once_hit = once_crit = None
-    if once_mask is not None and once_mask.any() and (once_num_die or once_modifier):
-        once_hits = once_mask & hit
-        once_crits = once_mask & crit
-        separate = once_damage_multiplier is not None
-        once_hit = np.zeros(num_rolls, dtype='int32') if separate else hit_damage
-        once_crit = np.zeros(num_rolls, dtype='int32') if separate else crit_damage
-        once_hit[once_hits] += roll_dice(int(once_hits.sum()), once_num_die or [], once_die_size or [], reroll_on=reroll_on, rng=rng) + once_modifier
-        once_crit[once_crits] += roll_dice(int(once_crits.sum()), once_num_die or [], once_die_size or [], reroll_on=reroll_on, rng=rng)
-        if not separate:
-            once_hit = once_crit = None
+    # A pool with its own damage type (a radiant smite on a psychic Shadow Blade) is added after, with its own multiplier
+    separate = []
+    negative_once = False
+    for pool, mask in zip(once_pools or [], once_masks or []):
+        if mask is None or not mask.any():
+            continue
+        once_hits = mask & hit
+        once_crits = mask & crit
+        negative_once = negative_once or pool["modifier"] < 0
+        own = pool["multiplier"] is not None
+        once_hit = np.zeros(num_rolls, dtype='int32') if own else hit_damage
+        once_crit = np.zeros(num_rolls, dtype='int32') if own else crit_damage
+        once_hit[once_hits] += roll_damage_dice(int(once_hits.sum()), pool["num_die"], pool["die_size"], **extra_kwargs) + pool["modifier"]
+        once_crit[once_crits] += roll_damage_dice(int(once_crits.sum()), pool["num_die"], pool["die_size"], **extra_kwargs)
+        if own:
+            separate.append((once_hit, once_crit, pool["multiplier"]))
 
     # Roll damage for misses/successful saving throws
     miss_damage = np.zeros(num_rolls, dtype='int32')
@@ -139,7 +145,7 @@ def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multi
 
     # Track total, hit, crit, and miss/fail damage
     total_damage = hit_damage + crit_damage + miss_damage
-    if modifier < 0 or miss_damage_modifier < 0 or crit_damage_modifier < 0 or once_modifier < 0:
+    if modifier < 0 or miss_damage_modifier < 0 or crit_damage_modifier < 0 or negative_once:
         np.maximum(total_damage, 0, out=total_damage)
     if damage_multiplier != 1:
         total_damage = np.floor(total_damage * damage_multiplier).astype('int32')
@@ -148,7 +154,7 @@ def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multi
         crit_damage = np.floor(crit_damage * damage_multiplier).astype('int32')
         miss_damage = np.floor(miss_damage * damage_multiplier).astype('int32')
 
-    if once_hit is not None:
+    for once_hit, once_crit, once_damage_multiplier in separate:
         once_total = np.floor(np.maximum(once_hit + once_crit, 0) * once_damage_multiplier).astype('int32')
         once_hit_part = np.floor(np.maximum(once_hit, 0) * once_damage_multiplier).astype('int32')
         total_damage = total_damage + once_total
@@ -158,9 +164,9 @@ def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multi
     # Extra damage of other types on a hit, each rounded down with its own resistance multiplier
     for r_num_die, r_die_size, r_modifier, r_multiplier in zip(rider_num_die or [], rider_die_size or [], rider_modifier or [], rider_multiplier or []):
         r_hit = np.zeros(num_rolls, dtype='int32')
-        r_hit[hit] = np.maximum(roll_dice(num_hits, r_num_die, r_die_size, rng=rng) + r_modifier, 0)
+        r_hit[hit] = np.maximum(roll_damage_dice(num_hits, r_num_die, r_die_size, **extra_kwargs) + r_modifier, 0)
         r_crit = np.zeros(num_rolls, dtype='int32')
-        r_crit[crit] = roll_dice(num_crits, r_num_die, r_die_size, rng=rng)
+        r_crit[crit] = roll_damage_dice(num_crits, r_num_die, r_die_size, **extra_kwargs)
         r_total = r_hit + r_crit
         if r_multiplier != 1:
             r_total = np.floor(r_total * r_multiplier).astype('int32')
@@ -174,10 +180,10 @@ def damage_roll(hit, crit, num_die=None, die_size=None, modifier=0, damage_multi
         total_damage = np.maximum(total_damage - damage_reduction, 0)
     return total_damage, hit_damage, crit_damage, miss_damage
 
-def attack(num_rolls, attack_context, damage_context, rng=RNG, once_mask=None):
+def attack(num_rolls, attack_context, damage_context, rng=RNG, once_masks=None):
     """ Roll attack and damage rolls for num_rolls dice, using attack_context and damage_context"""
     attack_rolls, rolls, hit, crit = attack_roll(num_rolls, **attack_context, rng=rng)
-    total_damage, hit_damage, crit_damage, miss_damage = damage_roll(hit, crit, **damage_context, once_mask=once_mask, rng=rng)
+    total_damage, hit_damage, crit_damage, miss_damage = damage_roll(hit, crit, **damage_context, once_masks=once_masks, rng=rng)
     return attack_rolls, rolls, hit, crit, total_damage, hit_damage, crit_damage, miss_damage
 
 STAT_NAMES = ['mean', 'min', '25%', '50%', '75%', 'max']
@@ -232,13 +238,29 @@ def describe(g):
 RESULT_COLUMNS = ['Round', 'Damage', 'Damage (From Hit)', 'Damage (From Crit)', 'Damage (Miss/Fail)', 'Attack Roll', 'Attack Roll (Die)', 'Hit', 'Hit (Non-Crit)', 'Hit (Crit)']
 
 def has_once_damage(d):
-    return bool(d.get("once_per_turn_eligible") and (d.get("once_num_die") or d.get("once_modifier")))
+    return bool(d.get("once_pools"))
 
 def has_fight_limits(damage_contexts):
-    """ True if any attack or the once per turn damage is limited per fight, or the first round is special,
+    """ True if any attack or once per turn damage is limited per fight, or the first round is special,
         which needs the slower fight by fight simulation """
-    return any(d.get("uses_per_fight") or (d.get("once_uses_per_fight") and has_once_damage(d))
+    return any(d.get("uses_per_fight") or any(pool["uses"] for pool in d.get("once_pools") or ())
                or d.get("first_round_advantage") or d.get("first_round_auto_crit") for d in damage_contexts)
+
+def once_masks_for(d, hit, crit, hit_already, once_left=None):
+    """ For each once per turn pool the attack can carry, the rounds it goes on this attack: the first hit (or crit) of the round that
+        can take it, while uses are left. Updates hit_already ({pool id: rounds already used}) and once_left ({pool id: uses left}) """
+    masks = []
+    for pool in d.get("once_pools") or ():
+        trigger = crit if pool["crit_only"] else hit
+        used = hit_already.get(pool["id"])
+        mask = trigger if used is None else trigger & ~used
+        left = once_left.get(pool["id"]) if once_left else None
+        if left is not None:
+            mask = mask & (left > 0)
+            left -= mask
+        hit_already[pool["id"]] = trigger if used is None else used | trigger
+        masks.append(mask)
+    return masks
 
 def is_fallback(d):
     return d.get("fallback_index", -1) >= 0
@@ -274,19 +296,14 @@ def simulate_attacks(attack_contexts, damage_contexts, num_rounds=10000, rng=RNG
     # Without fights, limited attacks are made every round so their fallback attacks are never needed
     rolled = [None if is_fallback(d) else attack_roll(num_rounds, **a, rng=rng) for a, d in zip(attack_contexts, damage_contexts)]
 
-    hit_already = np.zeros(num_rounds, dtype=bool)
+    hit_already = {}
     results = []
     for rolls_k, d in zip(rolled, damage_contexts):
         if rolls_k is None:
             results.append(inactive_results(num_rounds, damage_only))
             continue
         attack_rolls, rolls, hit, crit = rolls_k
-        once_mask = None
-        if d.get("once_per_turn_eligible") and (d.get("once_num_die") or d.get("once_modifier")):
-            trigger = crit if d.get("once_crit_only") else hit
-            once_mask = trigger & ~hit_already
-            hit_already |= trigger
-        damage, hit_damage, crit_damage, miss_damage = damage_roll(hit, crit, **d, once_mask=once_mask, rng=rng)
+        damage, hit_damage, crit_damage, miss_damage = damage_roll(hit, crit, **d, once_masks=once_masks_for(d, hit, crit, hit_already), rng=rng)
         if damage_only:
             results.append(damage)
             continue
@@ -303,35 +320,31 @@ def simulate_fight_attacks(attack_contexts, damage_contexts, num_rounds, rounds_
         so the first num_rounds results are returned like simulate_attacks """
     num_fights = -(-num_rounds // rounds_per_fight)
     attack_uses = [uses_per_fight(d["uses_per_fight"], num_fights, rng) if d.get("uses_per_fight") else None for d in damage_contexts]
-    once_average = next((d.get("once_uses_per_fight") for d in damage_contexts if has_once_damage(d)), 0)
-    once_left = uses_per_fight(once_average, num_fights, rng) if once_average else None
+    limited_pools = {pool["id"]: pool["uses"] for d in damage_contexts for pool in d.get("once_pools") or () if pool["uses"]}
+
+    once_left = {pool_id: uses_per_fight(average, num_fights, rng) for pool_id, average in limited_pools.items()}
 
     per_attack = [[] for _ in damage_contexts]
     rounds = np.arange(1, num_fights + 1, dtype='int32')
     for r in range(rounds_per_fight):
         rolled = [attack_roll(num_fights, **({**a, "advantage": True} if r == 0 and d.get("first_round_advantage") else a), rng=rng)
                   for a, d in zip(attack_contexts, damage_contexts)]
-        hit_already = np.zeros(num_fights, dtype=bool)
+        hit_already = {}
         for k, ((attack_rolls, rolls, hit, crit), d) in enumerate(zip(rolled, damage_contexts)):
             if r == 0 and d.get("first_round_auto_crit"):
                 crit = hit.copy()
             if is_fallback(d):
                 # Made once the limited attack it replaces is used up, never if that attack isn't limited
+                # (and with uses of its own, only for that many rounds after)
                 limited_uses = attack_uses[d["fallback_index"]]
                 active = limited_uses <= r if limited_uses is not None else np.zeros(num_fights, dtype=bool)
+                if attack_uses[k] is not None:
+                    active = active & (limited_uses + attack_uses[k] > r)
             else:
                 active = attack_uses[k] > r if attack_uses[k] is not None else None
             if active is not None:
                 hit, crit = hit & active, crit & active
-            once_mask = None
-            if has_once_damage(d):
-                trigger = crit if d.get("once_crit_only") else hit
-                once_mask = trigger & ~hit_already
-                if once_left is not None:
-                    once_mask &= once_left > 0
-                    once_left -= once_mask
-                hit_already |= trigger
-            columns = damage_roll(hit, crit, **d, once_mask=once_mask, rng=rng)
+            columns = damage_roll(hit, crit, **d, once_masks=once_masks_for(d, hit, crit, hit_already, once_left), rng=rng)
             if active is not None:
                 # Unused attacks don't happen, so they deal no damage (not even on a miss) and have no rolls
                 columns = [np.where(active, col, 0) for col in columns]

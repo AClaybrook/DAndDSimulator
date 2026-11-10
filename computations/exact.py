@@ -11,7 +11,7 @@ import numpy as np
 
 from computations.analytic import _uses_realizations, adv_dis_pmf, dice_sum_pmf, hit_and_crit_chance
 from computations.models import calculate_attack_and_damage_context
-from computations.numerical_simulation import has_fight_limits, has_once_damage
+from computations.numerical_simulation import has_fight_limits
 
 class Dist:
     """ A distribution over integers: probs[i] is the probability of offset + i """
@@ -66,6 +66,12 @@ def dice(num_die, die_size, reroll_on=0):
         return ZERO
     return Dist(dice_sum_pmf(num_die, die_size, reroll_on))
 
+def extra_dice(d, num_die, die_size):
+    """ Rider or once per turn dice: rerolled like the weapon's, and with BG3 Savage Attacker the higher of two rolls per die """
+    if not num_die:
+        return ZERO
+    return Dist(dice_sum_pmf(num_die, die_size, d["reroll_on"], advantage=bool(d.get("rider_advantage"))))
+
 def damage_dice(d):
     """ The attack's damage dice with damage advantage (whole set or per die, BG3 Savage Attacker) and rerolls """
     if not d["num_die"]:
@@ -77,37 +83,39 @@ def damage_dice(d):
 def _floor_times(multiplier):
     return lambda v: int(np.floor(v * multiplier))
 
-def outcome_damage(d, outcome, once=False):
-    """ Damage of one attack given its outcome ('hit', 'crit' or 'miss'), with once per turn damage when once """
+def outcome_damage(d, outcome, pools=()):
+    """ Damage of one attack given its outcome ('hit', 'crit' or 'miss'), with the once per turn pools that go on it """
     base = damage_dice(d) + d["modifier"]
+    pools = [] if outcome == "miss" else list(pools)
     if outcome == "miss":
         main = dice(d["miss_num_die"], d["miss_damage_die"]) + d["miss_damage_modifier"]
         if d["save_success_multiplier"]:
             main = main + base.mapped(_floor_times(d["save_success_multiplier"]))
     else:
         main = base
-        separate = once and d.get("once_damage_multiplier") is not None # Its own damage type: added after the attack's multiplier
-        if once and not separate:
-            main = main + dice(d["once_num_die"], d["once_die_size"], d["reroll_on"]) + d["once_modifier"]
         if outcome == "crit":
             main = main + damage_dice(d) + dice(d["crit_num_die"], d["crit_damage_die"], d["reroll_on"]) + d["crit_damage_modifier"]
-            if once and not separate:
-                main = main + dice(d["once_num_die"], d["once_die_size"], d["reroll_on"])
-    if d["modifier"] < 0 or d["miss_damage_modifier"] < 0 or d["crit_damage_modifier"] < 0 or d["once_modifier"] < 0:
+        for pool in pools:
+            if pool["multiplier"] is None: # The attack's own damage type
+                main = main + extra_dice(d, pool["num_die"], pool["die_size"]) + pool["modifier"]
+                if outcome == "crit":
+                    main = main + extra_dice(d, pool["num_die"], pool["die_size"])
+    if d["modifier"] < 0 or d["miss_damage_modifier"] < 0 or d["crit_damage_modifier"] < 0 or any(pool["modifier"] < 0 for pool in pools):
         main = main.mapped(lambda v: max(v, 0))
     if d["damage_multiplier"] != 1:
         main = main.mapped(_floor_times(d["damage_multiplier"]))
-    if outcome != "miss" and once and d.get("once_damage_multiplier") is not None:
-        extra = dice(d["once_num_die"], d["once_die_size"], d["reroll_on"]) + d["once_modifier"]
-        if outcome == "crit":
-            extra = extra + dice(d["once_num_die"], d["once_die_size"], d["reroll_on"])
-        main = main + extra.mapped(lambda v, mult=d["once_damage_multiplier"]: int(np.floor(max(v, 0) * mult)))
+    for pool in pools:
+        if pool["multiplier"] is not None: # Its own damage type: added after the attack's multiplier
+            extra = extra_dice(d, pool["num_die"], pool["die_size"]) + pool["modifier"]
+            if outcome == "crit":
+                extra = extra + extra_dice(d, pool["num_die"], pool["die_size"])
+            main = main + extra.mapped(lambda v, mult=pool["multiplier"]: int(np.floor(max(v, 0) * mult)))
     if outcome != "miss":
         for n, s, m, mult in zip(d.get("rider_num_die") or [], d.get("rider_die_size") or [], d.get("rider_modifier") or [],
                                  d.get("rider_multiplier") or []):
-            rider = (dice(n, s) + m).mapped(lambda v: max(v, 0))
+            rider = (extra_dice(d, n, s) + m).mapped(lambda v: max(v, 0))
             if outcome == "crit":
-                rider = rider + dice(n, s)
+                rider = rider + extra_dice(d, n, s)
             if mult != 1:
                 rider = rider.mapped(_floor_times(mult))
             main = main + rider
@@ -115,82 +123,87 @@ def outcome_damage(d, outcome, once=False):
         main = main.mapped(lambda v, dr=d["damage_reduction"]: max(v - dr, 0))
     return main
 
-def _round(contexts, active, once_available):
-    """ (damage distribution of one round, chance once per turn damage triggered) for the attacks made this round.
-        contexts: [(attack dict, damage dict, auto crit)], active: which are made """
-    ready = ZERO.scaled(1.0 if once_available else 0.0) # Once per turn damage not used yet this round
-    spent = ZERO.scaled(0.0 if once_available else 1.0) # Already used, or not available
+def _round(contexts, active, available):
+    """ (damage distribution of one round, {pool id: chance it was used}) for the attacks made this round.
+        contexts: [(attack dict, damage dict, auto crit)], active: which are made, available: ids of the once per turn pools that can be
+        used this round. The state is the set of pools already used this round, each with its partial damage distribution """
+    states = {frozenset(): ZERO}
     for (a, d, auto_crit), made in zip(contexts, active):
         if not made:
             continue
         p_hit, p_crit = hit_and_crit_chance(**a)
         if auto_crit:
             p_crit = p_hit
-        outcomes = {"crit": p_crit, "hit": p_hit - p_crit, "miss": 1 - p_hit}
-        plain = {o: outcome_damage(d, o) for o, p in outcomes.items() if p > 0}
-        attack_plain = None
-        for o, p in outcomes.items():
-            if p > 0:
-                part = plain[o].scaled(p)
-                attack_plain = part if attack_plain is None else attack_plain.mix(part)
-        if not has_once_damage(d):
-            ready, spent = ready + attack_plain, spent + attack_plain
-            continue
-        triggers = ("crit",) if d.get("once_crit_only") else ("crit", "hit")
-        new_ready, new_spent = None, spent + attack_plain
-        for o, p in outcomes.items():
-            if p <= 0:
-                continue
-            if o in triggers:
-                part = ready + outcome_damage(d, o, once=True).scaled(p)
-                new_spent = new_spent.mix(part)
-            else:
-                part = ready + plain[o].scaled(p)
-                new_ready = part if new_ready is None else new_ready.mix(part)
-        ready = new_ready if new_ready is not None else ZERO.scaled(0.0)
-        spent = new_spent
-    triggered = 1.0 - ready.total() if once_available else 0.0
-    return ready.mix(spent), triggered
+        outcomes = {o: p for o, p in {"crit": p_crit, "hit": p_hit - p_crit, "miss": 1 - p_hit}.items() if p > 0}
+        pools = [pool for pool in d.get("once_pools") or () if pool["id"] in available]
+        cache, new_states = {}, {}
+        for spent, dist in states.items():
+            for o, p in outcomes.items():
+                triggers = () if o == "miss" else tuple(pool["id"] for pool in pools if pool["id"] not in spent and (o == "crit" or not pool["crit_only"]))
+                if (o, triggers) not in cache:
+                    cache[o, triggers] = outcome_damage(d, o, [pool for pool in pools if pool["id"] in triggers]).scaled(p)
+                part = dist + cache[o, triggers]
+                key = spent | frozenset(triggers)
+                new_states[key] = part if key not in new_states else new_states[key].mix(part)
+        states = new_states
+    total, used = None, {pool_id: 0.0 for pool_id in available}
+    for spent, dist in states.items():
+        total = dist if total is None else total.mix(dist)
+        for pool_id in spent:
+            used[pool_id] += dist.total()
+    return total, used
 
 def damage_per_round(character, enemy, rounds_per_fight=None):
-    """ The exact distribution of a character's damage per round against an enemy, as an array indexed by damage """
+    """ The exact distribution of a character's damage per round against an enemy, as an array indexed by damage.
+        Exact with any number of once per turn pools when at most one of them is limited per fight; with several limited pools their
+        remaining uses are treated as independent of each other """
     attack_contexts, damage_contexts = calculate_attack_and_damage_context(character, enemy)
     attacks = [asdict(a) for a in attack_contexts]
     damages = [asdict(d) for d in damage_contexts]
     limited = bool(rounds_per_fight) and has_fight_limits(damages)
     plain_contexts = [(a, d, False) for a, d in zip(attacks, damages)]
+    pool_uses = {pool["id"]: pool["uses"] for d in damages for pool in d.get("once_pools") or ()}
     if not limited:
         # Every round the same: limited attacks every round, their fallbacks never
-        dist, _ = _round(plain_contexts, [d.get("fallback_index", -1) < 0 for d in damages], True)
+        dist, _ = _round(plain_contexts, [d.get("fallback_index", -1) < 0 for d in damages], set(pool_uses))
         return dist.as_array()
     first_contexts = [({**a, "advantage": True} if d.get("first_round_advantage") else a, d, bool(d.get("first_round_auto_crit")))
                       for a, d in zip(attacks, damages)]
-    once_average = next((d.get("once_uses_per_fight") for d in damages if has_once_damage(d)), 0)
-    averages = [d.get("uses_per_fight") or 0 for d in damages] + [once_average]
+    pool_ids = sorted(pool_uses)
+    averages = [d.get("uses_per_fight") or 0 for d in damages] + [pool_uses[p] for p in pool_ids]
     total = None
     for probability, uses in _uses_realizations(averages):
-        attack_uses, once_uses = uses[:-1], uses[-1]
-        used = np.array([1.0]) # Distribution of once per turn uses spent so far in the fight
+        attack_uses = uses[:len(damages)]
+        once_uses = dict(zip(pool_ids, uses[len(damages):]))
+        limited_ids = [p for p in pool_ids if once_uses[p] is not None]
+        unlimited = {p for p in pool_ids if once_uses[p] is None}
+        used = {p: np.array([1.0]) for p in limited_ids} # Distribution of each limited pool's uses spent so far in the fight
         for r in range(rounds_per_fight):
             active = []
             for u, d in zip(attack_uses, damages):
                 if d.get("fallback_index", -1) >= 0:
                     replaced = attack_uses[d["fallback_index"]]
-                    active.append(replaced is not None and r >= replaced)
+                    active.append(replaced is not None and r >= replaced and (u is None or r < replaced + u))
                 else:
                     active.append(u is None or r < u)
             contexts = first_contexts if r == 0 else plain_contexts
-            p_available = 1.0 if once_uses is None else float(used[:once_uses].sum())
-            with_once, q = _round(contexts, active, True)
-            without, _ = _round(contexts, active, False)
-            round_dist = with_once.scaled(p_available).mix(without.scaled(1 - p_available)) if p_available < 1 else with_once
-            part = round_dist.scaled(probability / rounds_per_fight)
-            total = part if total is None else total.mix(part)
-            if once_uses is not None:
-                # Only rounds where it was available can spend a use
-                can = np.arange(len(used)) < once_uses
-                step = np.where(can, used * q, 0)
-                used = np.concatenate([used - step, [0]]) + np.concatenate([[0], step])
+            p_available = {p: float(used[p][:once_uses[p]].sum()) for p in limited_ids}
+            spent_chance = {p: 0.0 for p in limited_ids}
+            # Every combination of limited pools that still have a use this round
+            combos = [(1.0, frozenset())]
+            for p in limited_ids:
+                combos = [(w * q, have | extra) for w, have in combos for q, extra in ((p_available[p], frozenset([p])), (1 - p_available[p], frozenset())) if q > 0]
+            for weight, have in combos:
+                dist, chance = _round(contexts, active, unlimited | have)
+                part = dist.scaled(weight * probability / rounds_per_fight)
+                total = part if total is None else total.mix(part)
+                for p in have:
+                    spent_chance[p] += weight * chance[p] / p_available[p]
+            for p in limited_ids:
+                # Only rounds where it was available can spend a use; spent_chance is the chance given that it was
+                can = np.arange(len(used[p])) < once_uses[p]
+                step = np.where(can, used[p] * spent_chance[p], 0)
+                used[p] = np.concatenate([used[p] - step, [0]]) + np.concatenate([[0], step])
     return total.as_array()
 
 def binned(probs, low, width, bins):

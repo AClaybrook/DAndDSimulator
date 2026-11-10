@@ -8,7 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "smoke": "node smoke.mjs"
+    "smoke": "node smoke.mjs",
+    "types": "cd .. && uv run python -m api.openapi",
+    "test": "vitest run"
   },
   "dependencies": {
     "@mantine/core": "^9.7.5",
@@ -33,7 +35,8 @@
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
     "typescript": "~7.0.2",
-    "vite": "^8.3.6"
+    "vite": "^8.3.6",
+    "vitest": "^5.1.0"
   },
   "engines": {
     "node": ">=22.12"

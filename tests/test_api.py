@@ -28,18 +28,23 @@ def test_expected_matches_the_engine(session):
 
 def test_simulation_matches_the_engine(session):
     result = client.post("/api/simulator/simulate", json={**session, "num_rounds": 5000, "seed": 4}).json()
-    characters = [Character.from_dict(c) for c in session["characters"]]
-    _, df_by_rounds, _ = simulate_rounds_from_characters(characters, Enemy.from_dict(session["enemy"]), num_rounds=5000, save_memory=True,
+    characters, enemy = [Character.from_dict(c) for c in session["characters"]], Enemy.from_dict(session["enemy"])
+    _, df_by_rounds, _ = simulate_rounds_from_characters(characters, enemy, num_rounds=5000, save_memory=True,
                                                          rng=set_seed(4), rounds_per_fight=3)
     means = {c.name: df["Damage"].mean() for c, df in zip(characters, df_by_rounds)}
-    assert {v["name"]: v["value"] for v in result["headline"]["values"]} == pytest.approx({k: round(v, 2) for k, v in means.items()})
-    assert result["figure"]["data"] and any(t["name"].endswith("(exact)") for t in result["figure"]["data"] if t.get("name"))
-    assert [t["title"] for t in result["tables"]] == ["Leaderboard", "Attack breakdown"]
+    # The headline is the exact expected damage (the number on each card), the simulated rounds agree with it
+    headline = {v["name"]: v["value"] for v in result["headline"]["values"]}
+    exact = {c.name: expected_damage_per_round(c, enemy, 3) for c in characters}
+    assert headline == pytest.approx({k: round(v, 2) for k, v in exact.items()}) and headline == pytest.approx(dict(means), rel=0.03)
+    chart = result["chart"]
+    assert chart["kind"] == "distribution" and [s["name"] for s in chart["series"]] == [c.name for c in characters]
+    assert all(s["curve"]["kind"] == "exact" and sum(s["percent"]) == pytest.approx(100, abs=0.1) for s in chart["series"])
+    assert [t["title"] for t in result["tables"]] == ["Simulated rounds", "Attack breakdown"]
 
 @pytest.mark.parametrize("graph", ["DPA Distribution", "DPR Sweep", "DPA Sweep", "Rounds to Kill", "Damage per Fight"])
 def test_every_graph(session, graph):
     result = client.post("/api/simulator/simulate", json={**session, "graph": graph, "num_rounds": 2000}).json()
-    assert result["figure"]["data"] and result["headline"]["values"] and result["tables"]
+    assert result["chart"]["series"] and result["headline"]["values"] and result["tables"]
 
 def test_problems_are_readable(session):
     broken = {**session, "characters": [{**session["characters"][0], "strength": None}]}
@@ -113,4 +118,28 @@ def test_build_doc_import(monkeypatch, tmp_path):
     result = client.post("/api/planner/import-doc", json={"source": "https://docs.google.com/document/d/x/edit"}).json()
     assert [b["name"] for b in result["builds"]] == ["1. Test Champion"] and (tmp_path / "doc_builds.json").exists()
     monkeypatch.setattr(doc_import, "fetch_text", lambda source: "nothing here")
-    assert client.post("/api/planner/import-doc", json={"source": "https://example.com"}).json()["problems"]
+    assert client.post("/api/planner/import-doc", json={"source": "https://docs.google.com/document/d/y/edit"}).json()["problems"]
+    # The server fetches the link itself, so only Google Docs links are followed
+    for link in ["https://example.com", "http://169.254.169.254/latest/meta-data", "https://docs.google.com.evil.example/document/d/x"]:
+        assert "Google Doc" in client.post("/api/planner/import-doc", json={"source": link}).json()["problems"][0]
+
+def test_a_shared_copy_is_read_only(monkeypatch):
+    """ With DAMAGE_LAB_READ_ONLY set (a hosted copy), visitors can't replace the example builds or write leaderboard runs """
+    import api.main as main
+    monkeypatch.setattr(main, "READ_ONLY", True)
+    assert client.post("/api/planner/import-doc", json={"source": "https://docs.google.com/document/d/x/edit"}).status_code == 403
+    assert client.post("/api/leaderboard/save", json={"party": [], "label": "x"}).status_code == 403
+    assert client.get("/api/planner/options").json()["readOnly"] is True
+    assert client.post("/api/planner/evaluate", json={"party": []}).status_code == 200 # Everything that only computes still works
+
+def test_front_end_types_are_current():
+    """ frontend/src/api-types.ts is generated from the API's schema; after a change to api/schemas.py run `uv run python -m api.openapi` """
+    from api.openapi import PATH, types_text
+    assert PATH.read_text(encoding="utf-8") == types_text(), "Run: uv run python -m api.openapi"
+
+def test_builds_are_checked_on_the_way_in():
+    """ A malformed build is refused with what is wrong, instead of failing somewhere inside the planner """
+    response = client.post("/api/planner/evaluate", json={"party": [{"name": "Tav", "equipment": {"1": "a sword"}}]})
+    assert response.status_code == 422 and "equipment" in response.text
+    ok = client.post("/api/planner/evaluate", json={"party": [{"name": "Tav", "preset": "fighter_gwm", "unknown_field": 1}]})
+    assert ok.status_code == 200 and ok.json()["members"][0]["name"] == "Tav"

@@ -1,12 +1,13 @@
 """ A BG3 build: a class preset with equipment, buffs and toggled conditions for each act.
     compile_build turns it into a plain Character at an act checkpoint, which the simulator uses as is """
 from copy import deepcopy
-from dataclasses import asdict, dataclass, field, fields, replace
+from dataclasses import asdict, dataclass, field, fields
 
 from bg3.buffs import BUFFS
 from bg3.character import Bg3Character, compile_character, is_proficient, weapon_proficiencies
 from bg3.checkpoints import ACTS, act_level
-from bg3.items import SLOT_LABELS, SLOTS, active_effects, apply_effect, apply_lightning_charges, apply_reverberation, catalog, equip_weapon, REACTION_ADVANTAGE
+from bg3.items import (REACTION_ADVANTAGE, SLOT_LABELS, SLOTS, active_effects, apply_effect, apply_lightning_charges, apply_reverberation, catalog,
+                       equip_weapon, extra_action)
 from game_data.classes import BUILDS, build_character
 
 ACT_KEYS = [str(a) for a in ACTS]
@@ -48,7 +49,7 @@ def buffs_at(build, act):
 
 def _weapon_slot(attack):
     """ The equipment slot an attack is made with, None for unarmed attacks, spells and conjured weapons (Shadow Blade) """
-    if attack.name.startswith("Shadow Blade"):
+    if "conjured" in attack.tags:
         return None
     if attack.type == "weapon (melee)":
         return "melee_off" if attack.offhand else "melee_main"
@@ -97,7 +98,7 @@ def compile_build(build, act, items=None):
         attacks.append(attack)
     if any(item.key in REACTION_ADVANTAGE for item in gear.values()):
         for attack in attacks:
-            if "reaction)" in attack.name:
+            if attack.action == "reaction":
                 attack.advantage = True
     for attack in attacks:
         if attack.fallback_for in names:
@@ -109,20 +110,20 @@ def compile_build(build, act, items=None):
     sources += [(f"buff:{b.key}", b.effects, []) for b in buffs_at(build, act)]
     effects = [(e, own) for key, effects_, own in sources for e in active_effects(key, effects_, build.conditions)]
     effects.sort(key=lambda pair: not pair[0].kind.startswith("ability"))
-    extra_attacks = 0
+    honour_mode = bool(build.character) and Bg3Character.from_dict(build.character).toggle("honour_mode")
+    extra_actions = 0
     for effect, own in effects:
-        if effect.kind == "extra_attack":
-            extra_attacks += int(effect.value)
+        if effect.kind == "extra_action":
+            extra_actions += int(effect.value)
         elif effect.kind != "lightning_charges":
-            apply_effect(character, effect, own)
+            apply_effect(character, effect, own, honour_mode)
     # Charges from several items don't stack their bonuses
     apply_lightning_charges(character, [(e, own) for e, own in effects if e.kind == "lightning_charges"])
     apply_reverberation(character, {item.key for item in gear.values()})
 
-    # Haste: one more attack with the main weapon each round
-    main = next((a for a in character.attacks if a.is_weapon and not a.offhand and not a.uses_per_fight and not a.fallback_for), None)
-    if main is not None:
-        character.attacks += [replace(main, name=f"{main.name.split(' (')[0]} (Haste)") for _ in range(extra_attacks)]
+    # Haste: one more action each round (the Hastened condition doesn't stack, so one at most)
+    if extra_actions:
+        extra_action(character, "Haste", honour_mode)
 
     if build.advantage:
         character.advantage = True

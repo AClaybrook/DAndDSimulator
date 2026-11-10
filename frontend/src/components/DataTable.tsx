@@ -16,6 +16,8 @@ interface SortTableProps<T> {
   toolbar?: ReactNode // Extra controls left of the filter
   description?: ReactNode
   onRowClick?: (row: T) => void
+  onRowHover?: (row: T | null) => void
+  dense?: boolean
   rowStyle?: (row: T) => CSSProperties | undefined
   maxHeight?: number | string
   filterable?: boolean
@@ -23,7 +25,7 @@ interface SortTableProps<T> {
 }
 
 // A sortable, filterable table with a column picker. Click a header to sort, type to filter every column
-export function SortTable<T>({ data, columns, initialSorting = [], hidden = [], toolbar, description, onRowClick, rowStyle, maxHeight, filterable = true, title = 'table' }: SortTableProps<T>) {
+export function SortTable<T>({ data, columns, initialSorting = [], hidden = [], toolbar, description, onRowClick, onRowHover, dense, rowStyle, maxHeight, filterable = true, title = 'table' }: SortTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>(initialSorting)
   const [filter, setFilter] = useState('')
   const [visibility, setVisibility] = useState<VisibilityState>(Object.fromEntries(hidden.map((h) => [h, false])))
@@ -68,8 +70,8 @@ export function SortTable<T>({ data, columns, initialSorting = [], hidden = [], 
           </Group>
         </Group>
       )}
-      <Table.ScrollContainer minWidth={500} maxHeight={maxHeight}>
-        <Table striped highlightOnHover stickyHeader fz="xs" className="numeric" verticalSpacing={6}>
+      <Table.ScrollContainer minWidth={dense ? 420 : 500} maxHeight={maxHeight}>
+        <Table striped highlightOnHover stickyHeader fz="xs" className="numeric" verticalSpacing={dense ? 3 : 6} horizontalSpacing={dense ? 8 : undefined}>
           <Table.Thead>
             {model.getHeaderGroups().map((group) => (
               <Table.Tr key={group.id}>
@@ -88,6 +90,7 @@ export function SortTable<T>({ data, columns, initialSorting = [], hidden = [], 
           <Table.Tbody>
             {model.getRowModel().rows.map((row) => (
               <Table.Tr key={row.id} onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+                onMouseEnter={onRowHover ? () => onRowHover(row.original) : undefined} onMouseLeave={onRowHover ? () => onRowHover(null) : undefined}
                 style={{ cursor: onRowClick ? 'pointer' : undefined, ...rowStyle?.(row.original) }}>
                 {row.getVisibleCells().map((cell) => <Table.Td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Table.Td>)}
               </Table.Tr>

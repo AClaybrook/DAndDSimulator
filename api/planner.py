@@ -4,7 +4,7 @@ from bg3.abilities import point_buy_cost, point_buy_problems
 from bg3.analysis import item_values, shared_item_gains, slot_suggestions
 from bg3.buffs import BUFFS
 from bg3.build import ACT_KEYS, Bg3Build, compile_build, equipment_at
-from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_SPELLS, RACES, ROUTINES, SUBCLASSES, TOGGLES, Bg3Character,
+from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_SPELLS, RACES, ROUTINES, SUBCLASSES, TOGGLE_DEFAULTS, TOGGLES, Bg3Character,
                            class_levels, class_order, compile_character, feat_opportunities, relevant_toggles)
 from bg3.checkpoints import ACTS, act_level
 from bg3.defence import armour_class, attack_bonus_for, hit_chance
@@ -29,7 +29,7 @@ def effect_text(effect):
             "damage_bonus_ability": f"+{effect.stat.title()} modifier to damage", "extra_damage": f"+{effect.value} damage",
             "crit_damage": f"+{effect.value} on a crit", "crit_range": f"crit range +{effect.value}", "advantage": "advantage",
             "spell_dc": f"+{effect.value} spell DC", "damage_reroll": f"reroll damage dice of {effect.value} or less",
-            "miss_damage_ability": f"{effect.stat.title()} modifier damage on a miss", "once_per_turn_bonus": f"+{effect.value} Sneak Attack damage", "extra_attack": "extra attack", "flag": str(effect.value),
+            "miss_damage_ability": f"{effect.stat.title()} modifier damage on a miss", "once_per_turn_bonus": f"+{effect.value} Sneak Attack damage", "extra_action": "another action each turn", "extra_action_on_kill": "another action after a kill", "flag": str(effect.value),
             "lightning_charges": f"{effect.value} Lightning Charges on a hit: +1 to hit and 1 lightning damage on every attack"}.get(effect.kind, effect.kind)
     return what + target + (f" [toggle: {effect.condition}]" if effect.condition else "")
 
@@ -125,9 +125,10 @@ def options():
                   "slots": {slot: [catalog()[i].name for i in options_ if i in catalog()] for slot, options_ in k_["slots"].items()}}
                  for k, k_ in kits().items()],
         "quickVariants": [{"key": k, **v} for k, v in QUICK_VARIANTS.items()],
-        "builder": {"races": RACES, "classes": CLASSES, "subclasses": SUBCLASSES, "improvements": improvements, "fightingStyles": FIGHTING_STYLES,
+        "builder": {"races": RACES, "classes": CLASSES, "subclasses": SUBCLASSES, "improvements": improvements, "fightingStyles": list(FIGHTING_STYLES),
                     "routines": [{"value": k, "label": v} for k, v in ROUTINES.items()], "cantrips": CANTRIPS, "spells": LEVELLED_SPELLS,
-                    "toggles": [{"value": k, "label": v} for k, v in TOGGLES.items()], "defaultCharacter": Bg3Character().to_dict()},
+                    "toggles": [{"value": k, "label": v, "on": TOGGLE_DEFAULTS.get(k, True)} for k, v in TOGGLES.items()],
+                    "defaultCharacter": Bg3Character().to_dict()},
         "scoreWeights": WEIGHTS,
         "partLabels": PART_LABELS,
         "roleLabels": ROLE_LABELS,
@@ -155,7 +156,7 @@ def _builder_summary(build):
     _, notes = compile_character(character, max(levels))
     return {"pointBuy": cost, "featLevels": [lv for lv, _ in feat_opportunities(character)],
             "split": {a: class_levels(character, lv) for a, lv in zip(ACT_KEYS, levels)}, "problems": problems, "notes": notes,
-            "toggles": [{"value": k, "label": TOGGLES[k]} for k in relevant_toggles(character.classes)]}
+            "toggles": [{"value": k, "label": TOGGLES[k], "on": TOGGLE_DEFAULTS.get(k, True)} for k in relevant_toggles(character.classes)]}
 
 def _member(build, enemy, rounds, attack_bonus, flagged):
     acts = {}
@@ -262,10 +263,12 @@ def import_doc(source):
     """ Re-imports the example builds from a build reference document link (bg3.doc_import), replacing bg3/data/doc_builds.json.
         Returns {builds: [{name, notes}]} or {problems} """
     import json
+    import re
     import urllib.error
     from bg3.doc_import import OUT, fetch_text, import_text
-    if not source.startswith(("https://", "http://")):
-        return {"problems": ["Paste a link to the document (https://...)"]}
+    # Only Google Docs links: the server fetches the link itself, so it mustn't be pointed at anything else
+    if not re.match(r"https://docs\.google\.com/document/d/[\w-]+", source):
+        return {"problems": ["Paste a link to a Google Doc (https://docs.google.com/document/d/...)"]}
     try:
         builds = import_text(fetch_text(source))
     except (urllib.error.URLError, TimeoutError, ValueError) as e:

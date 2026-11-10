@@ -3,8 +3,6 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { Attack, Character, Enemy, Settings } from './api'
 
-// Plotly's default colors, the same order as the backend's plots, so a character's color matches its trace
-export const COLORS = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52']
 export const MAX_CHARACTERS = 8
 
 export const uid = () => Math.random().toString(36).slice(2, 10)

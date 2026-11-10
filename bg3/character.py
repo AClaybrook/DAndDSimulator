@@ -113,7 +113,8 @@ TOGGLES = {
     "horde_breaker": "Horde Breaker instead of Colossus Slayer (an extra attack on a second enemy, needs 2+ enemies)",
     "reactions": "Reaction attacks: Polearm Master when an enemy enters your reach (about once a fight), Sentinel when an enemy next to you "
     "attacks an ally (about every other round)",
-    "honour_mode": "Honour Mode rules: Pact of the Blade's Extra Attack doesn't stack with another class's (it does in other modes)",
+    "honour_mode": "Honour Mode rules: Haste's and Bloodlust's extra action is one attack (not a full Attack action), and Pact of the Blade's "
+    "Extra Attack doesn't stack with another class's",
     "advantage": "Attack with advantage (Shadow Blade in darkness or dim light, hiding, Dirty Tricks, Faerie Fire, Darkness with Devil's Sight)",
 }
 # Toggles that are off unless ticked: advantage depends on the fight, so it isn't assumed
@@ -124,7 +125,7 @@ TOGGLE_FOR = {"rage": ("barbarian", ""), "reckless": ("barbarian", ""), "smite":
               "damaged_target": ("ranger", "Hunter"), "starry_form": ("druid", "Circle of Stars"), "symbiotic": ("druid", "Circle of Spores"),
               "storm_close": ("sorcerer", "Storm Sorcery"),
               "booming_blade": [("wizard", ""), ("sorcerer", ""), ("warlock", ""), ("fighter", "Eldritch Knight"), ("rogue", "Arcane Trickster")],
-              "horde_breaker": ("ranger", "Hunter"), "honour_mode": ("warlock", ""), "reactions": [(cls, "") for cls in CLASSES], "bladesong": ("wizard", "Bladesinging"), "advantage": [(cls, "") for cls in CLASSES]}
+              "horde_breaker": ("ranger", "Hunter"), "reactions": [(cls, "") for cls in CLASSES], "honour_mode": [(cls, "") for cls in CLASSES], "bladesong": ("wizard", "Bladesinging"), "advantage": [(cls, "") for cls in CLASSES]}
 
 def relevant_toggles(classes):
     """ Toggles for a [class, subclass, levels] list """
@@ -193,12 +194,13 @@ def caster_level(levels, subclasses):
     full = sum(n for cls, n in levels.items() if CASTER.get(cls) == "full")
     half = [n for cls, n in levels.items() if CASTER.get(cls) == "half"]
     third = sum(n for cls, n in levels.items() if subclasses.get(cls) in ("Eldritch Knight", "Arcane Trickster"))
-    casting_classes = sum(1 for cls in levels if cls in CASTER) + (third > 0)
+    casting_classes = sum(1 for cls in levels if cls in CASTER) + sum(1 for cls in levels if subclasses.get(cls) in ("Eldritch Knight", "Arcane Trickster"))
     if casting_classes == 1 and len(half) == 1:
         return ceil(half[0] / 2) if half[0] >= 2 else 0
     if casting_classes == 1 and third and not full:
         return ceil(third / 3) if third >= 3 else 0 # Single class third casters round up too: level 2 slots at 7, level 3 at 13
-    return full + sum(n // 2 for n in half) + third // 3
+    # Several casting classes: the fractions are summed first, then rounded down (bg3.wiki, Spells: effective spellcaster level)
+    return (6 * full + 3 * sum(half) + 2 * third) // 6
 
 def warlock_pact_slots(warlock_level):
     """ (pact slots per short rest, pact slot level) """
@@ -248,11 +250,11 @@ def compile_character(character, level=MAX_LEVEL, main_finesse=None):
     attacks = _attacks(character, c, levels, subs, feats, notes, main_finesse)
     profs = weapon_proficiencies(character, level)
     if "Weapon Master" in feats:
-        profs |= {weapon_base(a.name) for a in attacks} # Four weapons of your choice, assumed to be the ones used
+        profs |= {weapon_base(a) for a in attacks} # Four weapons of your choice, assumed to be the ones used
     for a in attacks:
-        if a.is_weapon and not is_proficient(weapon_base(a.name), profs):
+        if a.is_weapon and not is_proficient(weapon_base(a), profs):
             a.proficient = False
-            notes.append(f"Not proficient with {weapon_base(a.name)}s")
+            notes.append(f"Not proficient with {weapon_base(a)}s")
     c.attacks = attacks + _spirit_guardians(character, c, levels, subs, notes)
     if character.toggle("booming_blade") and "booming_blade" in relevant_toggles(character.classes):
         _booming_blade(c, character)
@@ -261,9 +263,9 @@ def compile_character(character, level=MAX_LEVEL, main_finesse=None):
     c.description = f"{character.race}, {split}. Feats: {', '.join(feats) or 'none'}"
     return c, notes
 
-def weapon_base(attack_name):
-    """ 'Greatsword (Action Surge)' -> 'Greatsword' """
-    return attack_name.split(" (")[0]
+def weapon_base(attack):
+    """ The base weapon of an attack: 'Greatsword' for 'Greatsword (Action Surge)' or a named greatsword """
+    return attack.base or attack.stem
 
 def _extra_attacks(levels, subs, character):
     """ Attacks with the Attack action. Pact of the Blade's Extra Attack (Warlock 5) stacks with another class's outside Honour Mode
@@ -305,7 +307,8 @@ def _spirit_guardians(character, c, levels, subs, notes):
         return []
     aura = spell_attacks("Spirit Guardians", ability_stat="wisdom", slot_level=3, ruleset="bg3")[0]
     # Lasts 10 turns, so one cast covers a fight; uses per fight is the rounds it's up
-    return [replace(aura, name="Spirit Guardians (aura)", damage_type="radiant", uses_per_fight=10 * min(casts, 1.0), once_per_turn_eligible=False)]
+    return [replace(aura, name="Spirit Guardians (aura)", label="aura", tags=["aura"], damage_type="radiant", uses_per_fight=10 * min(casts, 1.0),
+                    once_per_turn_eligible=False)]
 
 def _attacks(character, c, levels, subs, feats, notes, main_finesse=None):
     routine = character.routine
@@ -339,7 +342,9 @@ def _attacks(character, c, levels, subs, feats, notes, main_finesse=None):
             a.fallback_for = character.spell # Cast once the slots run out
         return levelled + cantrip
 
-    hexblade = subs.get("warlock") == "The Hexblade" or levels.get("warlock", 0) >= 3 # Hex Warrior or Pact of the Blade use charisma
+    # Bind Hexed Weapon (Hexblade) or Pact of the Blade (Warlock 3): the bound main hand melee weapon uses Charisma. One weapon only,
+    # so not the off hand, and it can't be thrown (bg3.wiki, Bind Pact Weapon)
+    hexblade = (subs.get("warlock") == "The Hexblade" or levels.get("warlock", 0) >= 3) and routine not in (*RANGED_ROUTINES, "thrown")
     def stat_for(weapon_stat):
         if hexblade and c.charisma > getattr(c, weapon_stat):
             return "charisma"
@@ -352,51 +357,50 @@ def _attacks(character, c, levels, subs, feats, notes, main_finesse=None):
         strike = Attack(name="Unarmed Strike", type="unarmed", ability_stat=stat, damage=f"1d{die}" if die else "1", damage_type="bludgeoning")
         attacks = [replace(strike) for _ in range(count)]
         if monk:
-            attacks.append(replace(strike, name="Unarmed Strike (Martial Arts)")) # Bonus action strike
+            attacks.append(strike.variant("Martial Arts", action="bonus")) # Bonus action strike
             ki = monk + 1
-            attacks.append(replace(strike, name="Flurry of Blows", uses_per_fight=per_fight(per_short_rest=ki)))
+            attacks.append(replace(strike, name="Flurry of Blows", uses_per_fight=per_fight(per_short_rest=ki), action="bonus"))
         return attacks
 
     if routine in ("shadow_blade", "shadow_blade_shield"):
         blades = _shadow_blade_attacks(c, levels, subs, count, stat_for, notes, shield=routine == "shadow_blade_shield")
-        return blades + _reaction_attacks(character, blades[0], weapon_base(blades[0].name), feats, routine)
+        return blades + _reaction_attacks(character, blades[0], weapon_base(blades[0]), feats, routine)
     name = DEFAULT_WEAPONS[routine]
     weapon_stat = "dexterity" if routine in ("ranged", "dual_wield", "dual_hand_crossbows") else "strength"
     if routine == "one_handed" and c.dexterity > c.strength:
         name, weapon_stat = "Rapier", "dexterity" # Finesse
     main = weapon_attack(name, ability_stat=stat_for(weapon_stat))
     if routine == "thrown":
-        main = replace(main, type="thrown", name=f"{name} (Thrown)")
+        main = replace(main, type="thrown", name=f"{name} (Thrown)", label="Thrown")
     attacks = [replace(main) for _ in range(count)]
     bonus_actions = 2 if levels.get("rogue", 0) >= 3 and subs.get("rogue") == "Thief" else 1 # Fast Hands
     if routine in ("dual_wield", "dual_hand_crossbows"):
         # The off-hand attack takes the bonus action; it adds the ability modifier only with Two-Weapon Fighting
-        offhand = weapon_attack("Longsword" if "Dual Wielder" in feats and routine == "dual_wield" else name, ability_stat=stat_for(weapon_stat),
-                                offhand=True)
+        offhand = weapon_attack("Longsword" if "Dual Wielder" in feats and routine == "dual_wield" else name, ability_stat=weapon_stat, offhand=True)
         attacks += [replace(offhand) for _ in range(bonus_actions)]
         bonus_actions = 0
     # Bonus action attacks: Frenzy, Polearm Master butt end, Swashbuckler Dirty Tricks, War Priest
     if bonus_actions and levels.get("barbarian", 0) >= 3 and subs.get("barbarian") == "Berserker" and character.toggle("rage"):
         # Frenzied Strike, or Enraged Throw for throwing builds
-        attacks.append(replace(main, name=f"{weapon_base(main.name)} ({'Enraged Throw' if routine == 'thrown' else 'Frenzy'})"))
+        attacks.append(main.variant("Enraged Throw" if routine == "thrown" else "Frenzy", action="bonus"))
         bonus_actions -= 1
     if bonus_actions and "Polearm Master" in feats and name in POLEARMS:
         # The other end of the same weapon: Great Weapon Fighting and Great Weapon Master apply to it as to the blade
-        attacks.append(replace(main, name="Polearm Butt End", damage="1d4", damage_type="bludgeoning"))
+        attacks.append(replace(main, name="Polearm Butt End", label="", damage="1d4", damage_type="bludgeoning", action="bonus", tags=["butt_end"]))
         bonus_actions -= 1
     finesse = _finesse_or_ranged(main) if main_finesse is None else main_finesse
     if bonus_actions and levels.get("rogue", 0) >= 4 and subs.get("rogue") == "Swashbuckler" and routine not in RANGED_ROUTINES and finesse:
         # Dirty Trick: Flick o' the Wrist needs a finesse weapon in the main hand (bg3.wiki)
-        attacks.append(replace(main, name=f"{main.name} (Flick o' the Wrist)"))
+        attacks.append(main.variant("Flick o' the Wrist", action="bonus"))
         bonus_actions -= 1
     if bonus_actions and levels.get("cleric") and subs.get("cleric") == "War Domain":
         charges = 3 + (levels["cleric"] >= 5) + (levels["cleric"] >= 8) + (levels["cleric"] >= 11)
-        attacks.append(replace(main, name=f"{main.name} (War Priest)", uses_per_fight=per_fight(per_long_rest=charges)))
+        attacks.append(main.variant("War Priest", action="bonus", uses_per_fight=per_fight(per_long_rest=charges)))
     attacks += _reaction_attacks(character, main, name, feats, routine)
     if levels.get("fighter", 0) >= 2:
         attacks += action_surge(levels["fighter"], "bg3", replace(main))
     if levels.get("ranger", 0) >= 3 and subs.get("ranger") == "Gloom Stalker":
-        attacks.append(replace(main, name=f"{main.name} (Dread Ambusher)", uses_per_fight=1, bonus_damage_die_mod_list=["1d8"]))
+        attacks.append(main.variant("Dread Ambusher", uses_per_fight=1, bonus_damage_die_mod_list=[*main.bonus_damage_die_mod_list, "1d8"]))
     return attacks
 
 # Flexible Casting (Sorcerer 2): sorcery points into a spell slot, the cost by slot level (5e and BG3)
@@ -435,10 +439,10 @@ def _reaction_attacks(character, main, name, feats, routine):
         return []
     out = []
     if "Polearm Master" in feats and name in POLEARMS:
-        out.append(replace(main, name=f"{weapon_base(main.name)} (Polearm Master reaction)", uses_per_fight=POLEARM_REACTIONS,
-                           advantage=main.advantage or "Sentinel" in feats))
+        out.append(main.variant("Polearm Master reaction", action="reaction", uses_per_fight=POLEARM_REACTIONS,
+                                advantage=main.advantage or "Sentinel" in feats))
     if "Sentinel" in feats:
-        out.append(replace(main, name=f"{weapon_base(main.name)} (Sentinel reaction)", uses_per_fight=SENTINEL_REACTIONS))
+        out.append(main.variant("Sentinel reaction", action="reaction", uses_per_fight=SENTINEL_REACTIONS))
     return out
 
 def shadow_blade_dice(levels, subs):
@@ -462,10 +466,11 @@ def _shadow_blade_attacks(c, levels, subs, count, stat_for, notes, shield=False)
         notes.append(f"Shadow Blade needs {why}, using a {fallback} until then")
         main = weapon_attack(fallback, ability_stat=stat_for("strength" if fallback == "Longsword" else stat))
     else:
-        main = Attack(name=SHADOW_BLADE, type="weapon (melee)", ability_stat=stat, damage=f"{dice}d8", damage_type="psychic", weapon_enhancement=0)
+        main = Attack(name=SHADOW_BLADE, base=SHADOW_BLADE, tags=["conjured"], type="weapon (melee)", ability_stat=stat, damage=f"{dice}d8",
+                      damage_type="psychic", weapon_enhancement=0)
     if shield:
         return [replace(main) for _ in range(count)]
-    offhand = weapon_attack("Dagger", ability_stat=stat, offhand=True)
+    offhand = weapon_attack("Dagger", ability_stat="dexterity" if c.dexterity >= c.strength else "strength", offhand=True)
     return [replace(main) for _ in range(count)] + [offhand]
 
 def _booming_blade(c, character):
@@ -474,8 +479,8 @@ def _booming_blade(c, character):
         return
     first = next((a for a in c.attacks if a.type == "weapon (melee)" and not a.offhand and not a.uses_per_fight and not a.fallback_for), None)
     if first is not None:
-        first.name = f"{first.name.split(' (')[0]} (Booming Blade)"
-        first.extra_damage_list = [*first.extra_damage_list, f"{1 + (c.level >= 11)}d8 thunder"]
+        c.attacks[c.attacks.index(first)] = first.variant("Booming Blade", tags=[*first.tags, "booming_blade"],
+                                                          extra_damage_list=[*first.extra_damage_list, f"{1 + (c.level >= 11)}d8 thunder"])
 
 def _limited_rider(c, label, uses, bonus=None, extra=None):
     """ A limited use rider on one attack each round (manoeuvres, Arcane Shots, Blade Flourish), until its uses per fight run out:
@@ -483,28 +488,62 @@ def _limited_rider(c, label, uses, bonus=None, extra=None):
     main = next((a for a in c.attacks if a.is_weapon or a.type == "unarmed"), None)
     if main is None or not uses or main.uses_per_fight or main.fallback_for:
         return
-    name = f"{main.name.split(' (')[0]} ({label})"
-    rider = replace(main, name=name, uses_per_fight=uses,
-                    bonus_damage_die_mod_list=[*main.bonus_damage_die_mod_list, *([bonus] if bonus else [])],
-                    extra_damage_list=[*main.extra_damage_list, *([extra] if extra else [])])
-    main.fallback_for = name
+    rider = main.variant(label, uses_per_fight=uses, bonus_damage_die_mod_list=[*main.bonus_damage_die_mod_list, *([bonus] if bonus else [])],
+                         extra_damage_list=[*main.extra_damage_list, *([extra] if extra else [])])
+    main.fallback_for = rider.name
     c.attacks.insert(c.attacks.index(main), rider)
+
+def _quickened(c, quickens):
+    """ Quickened Spell: a second cast with the bonus action for 3 sorcery points (sorcery points = sorcerer level per long rest).
+        A quickened levelled spell spends one of the same spell slots, so the slots are shared between the two casts; quickens left
+        over go on the cantrip once the slots have run out """
+    spells_cast = [a for a in c.attacks if a.type == "spell" and a.action == "action" and "aura" not in a.tags]
+    levelled = [a for a in spells_cast if a.uses_per_fight]
+    if not quickens or not spells_cast:
+        return
+    def quick(a, uses, **changes):
+        return replace(a, name=f"Quickened {a.name}", uses_per_fight=round(uses, 2), action="bonus", tags=[*a.tags, "quickened"], **changes)
+    if not levelled:
+        c.attacks += [quick(a, quickens) for a in spells_cast]
+        return
+    slots = levelled[0].uses_per_fight
+    on_spell = min(quickens, slots / 2)
+    for a in levelled:
+        a.uses_per_fight = round(slots - on_spell, 2)
+    c.attacks += [quick(a, on_spell) for a in levelled]
+    if quickens - on_spell > 0.01:
+        c.attacks += [quick(a, quickens - on_spell) for a in spells_cast if a.fallback_for]
 
 def _finesse_or_ranged(attack):
     """ Shadow Blade is finesse; other weapons by their base weapon's properties """
-    from game_data import weapons # pylint: disable=import-outside-toplevel
-    base = weapon_base(attack.name)
+    base = weapon_base(attack)
     if base == SHADOW_BLADE or attack.type in ("weapon (ranged)",):
         return True
     data = weapons().get(base)
     return bool(data) and (data["kind"] == "ranged" or "finesse" in data.get("properties", []))
 
-def _once_per_turn(c, dice, uses=0, crit_only=False):
-    """ Adds once per turn damage. The engine has one pool, so a second source adds its dice to the first """
-    c.once_per_turn_die_mod_list = [*c.once_per_turn_die_mod_list, dice]
-    if uses and not c.once_per_turn_uses_per_fight:
-        c.once_per_turn_uses_per_fight = uses
-    c.once_per_turn_crit_only = c.once_per_turn_crit_only or crit_only
+def _once_per_turn(c, name, dice, uses=0, damage_type=""):
+    """ Adds once per turn damage. Sources with the same limit and damage type share a pool; others get their own (Sneak Attack every
+        round next to radiant smites that run out), so each keeps its uses and its resistances. Unlimited damage of the weapon's type
+        takes the main pool, which items that add Sneak Attack damage build on """
+    dice = dice if isinstance(dice, list) else [dice]
+    main = {"dice": c.once_per_turn_die_mod_list, "uses_per_fight": c.once_per_turn_uses_per_fight, "damage_type": c.once_per_turn_damage_type}
+    def same(pool):
+        return (pool.get("uses_per_fight") or 0) == uses and (pool.get("damage_type") or "") == damage_type
+    if not main["dice"] or same(main):
+        c.once_per_turn_die_mod_list = [*c.once_per_turn_die_mod_list, *dice]
+        c.once_per_turn_uses_per_fight, c.once_per_turn_damage_type = uses, damage_type
+        return
+    if not uses and not damage_type:
+        # Swap: the limited or typed pool moves out, this one becomes the main pool
+        c.once_per_turn_extra = [*c.once_per_turn_extra, {"name": "Divine Smite" if main["damage_type"] == "radiant" else "Limited", **main}]
+        c.once_per_turn_die_mod_list, c.once_per_turn_uses_per_fight, c.once_per_turn_damage_type = list(dice), 0, ""
+        return
+    for pool in c.once_per_turn_extra:
+        if same(pool):
+            pool["dice"] = [*pool["dice"], *dice]
+            return
+    c.once_per_turn_extra = [*c.once_per_turn_extra, {"name": name, "dice": list(dice), "uses_per_fight": uses, "damage_type": damage_type, "crit_only": False}]
 
 def _class_features(character, c, levels, subs, notes, main_finesse=None):
     weapon = character.routine not in ("cantrip",)
@@ -539,16 +578,14 @@ def _class_features(character, c, levels, subs, notes, main_finesse=None):
         c.advantage = True
     c.brutal_critical = barbarian >= 9
     # Paladin
-    if paladin >= 2 and character.toggle("smite") and weapon:
+    if paladin >= 2 and character.toggle("smite") and character.routine not in (*RANGED_ROUTINES, "cantrip", "thrown", "unarmed"):
         day = smite_slots(character, levels, subs)
         if day:
             # Each smite is the day's average: 2d8 from a level 1 slot, +1d8 a level, at most 5d8. Fractions of a die as a flat bonus
+            # Radiant, with its own uses: a melee hit only (not thrown or ranged attacks)
             mean = sum(min(1 + level, 5) for level in day) / len(day)
             dice, rest = int(mean), round((mean - int(mean)) * 4.5)
-            _once_per_turn(c, f"{dice}d8", round(len(day) / FIGHTS_PER_LONG_REST, 2))
-            c.once_per_turn_damage_type = "radiant"
-            if rest:
-                c.once_per_turn_die_mod_list = [*c.once_per_turn_die_mod_list, str(rest)]
+            _once_per_turn(c, "Divine Smite", [f"{dice}d8", *([str(rest)] if rest else [])], round(len(day) / FIGHTS_PER_LONG_REST, 2), "radiant")
     if paladin >= 11 and weapon:
         # Improved Divine Smite: 1d8 radiant on every melee weapon hit, typed so it takes radiant resistance or vulnerability
         for a in c.attacks:
@@ -566,21 +603,21 @@ def _class_features(character, c, levels, subs, notes, main_finesse=None):
     if ranger >= 3 and subs.get("ranger") == "Hunter" and character.toggle("horde_breaker") and weapon:
         main = next((a for a in c.attacks if a.is_weapon and not a.offhand and not a.uses_per_fight), None)
         if main is not None:
-            c.attacks.append(replace(main, name=f"{main.name.split(' (')[0]} (Horde Breaker)", min_enemies=2))
+            c.attacks.append(main.variant("Horde Breaker", min_enemies=2))
     elif ranger >= 3 and subs.get("ranger") == "Hunter" and character.toggle("damaged_target") and weapon:
-        _once_per_turn(c, "1d8")
+        _once_per_turn(c, "Colossus Slayer", "1d8")
     if ranger >= 3 and subs.get("ranger") == "Swarmkeeper":
-        _once_per_turn(c, "1d8" if ranger >= 11 else "1d6")
+        _once_per_turn(c, "Gathered Swarm", "1d8" if ranger >= 11 else "1d6")
     # Rogue: Sneak Attack, never on off-hand attacks, and only with a finesse or ranged weapon (not a greatsword or a glaive)
     finesse = any(a.is_weapon and not a.offhand and _finesse_or_ranged(a) for a in c.attacks) if main_finesse is None else main_finesse
     if rogue and character.routine != "unarmed" and not finesse:
         notes.append("Sneak Attack needs a finesse or ranged weapon, so this weapon gets none")
     if rogue and character.routine != "unarmed" and finesse:
-        _once_per_turn(c, f"{ceil(rogue / 2)}d6")
+        _once_per_turn(c, "Sneak Attack", f"{ceil(rogue / 2)}d6")
         for a in c.attacks:
             if a.offhand:
                 a.once_per_turn_eligible = False
-            if "reaction)" in a.name:
+            if a.action == "reaction":
                 # Sneak Attack is once per turn, and a reaction attack is on an enemy's turn: it gets its own
                 a.once_per_turn_eligible = False
                 a.extra_damage_list = [*a.extra_damage_list, f"{ceil(rogue / 2)}d6 {a.damage_type}"]
@@ -606,12 +643,10 @@ def _class_features(character, c, levels, subs, notes, main_finesse=None):
             if a.type == "spell" and a.damage_type == ancestry:
                 a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(max(c.charisma_ability_modifier, 0))]
     if sorcerer >= 3 and character.routine == "cantrip":
-        # Quickened Spell: a second cast for 3 sorcery points, sorcery points = sorcerer level per long rest
-        uses = per_fight(per_long_rest=sorcerer // 3)
-        c.attacks += [replace(a, name=f"Quickened {a.name}", uses_per_fight=uses) for a in list(c.attacks) if a.type == "spell"]
+        _quickened(c, per_fight(per_long_rest=sorcerer // 3))
     c.empowered_evocation = wizard >= 10 and subs.get("wizard") == "Evocation School"
     if cleric >= 8 and subs.get("cleric") in ("War Domain", "Tempest Domain", "Death Domain", "Life Domain", "Nature Domain", "Trickery Domain") and weapon:
-        _once_per_turn(c, "1d8") # Divine Strike
+        _once_per_turn(c, "Divine Strike", "1d8")
     if bard >= 3 and subs.get("bard") == "College of Swords" and weapon:
         inspirations = 3 + (bard >= 5) + (bard >= 10)
         _limited_rider(c, "Blade Flourish", per_fight(per_short_rest=inspirations), bonus="1d10" if bard >= 10 else "1d8" if bard >= 5 else "1d6")
@@ -621,7 +656,7 @@ def _class_features(character, c, levels, subs, notes, main_finesse=None):
     if cleric >= 8 and subs.get("cleric") in ("Light Domain", "Knowledge Domain") and character.routine == "cantrip":
         # Potent Spellcasting: Wisdom to cleric cantrip damage
         for a in c.attacks:
-            if a.type == "spell" and a.name.split(" (")[0].rstrip(" 0123456789") in ("Sacred Flame", "Toll the Dead", "Produce Flame"):
+            if a.type == "spell" and a.base in ("Sacred Flame", "Toll the Dead", "Produce Flame"):
                 a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(max(c.wisdom_ability_modifier, 0))]
     if paladin >= 7 and subs.get("paladin") == "Oathbreaker":
         # Aura of Hate: Charisma to melee weapon damage

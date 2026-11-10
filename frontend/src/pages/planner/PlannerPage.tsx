@@ -69,8 +69,14 @@ export function PlannerPage() {
       <PartyStrip options={o} evaluation={evaluation.data} enemies={enemies} />
       {party.length > 0 && (
         <Grid mt="md" gap="md">
+          <Grid.Col span={{ base: 12, lg: 5 }}>
+            <Paper p="md" withBorder style={{ position: 'sticky', top: 64 }}>
+              <ResultsPanel options={o} evaluation={evaluation.data} />
+            </Paper>
+          </Grid.Col>
           <Grid.Col span={{ base: 12, lg: 7 }}>
             <Paper p="md" withBorder>
+              <Text className="section-label" mb={6}>{party[selected]?.name}</Text>
               <Tabs defaultValue="gear" keepMounted={false}>
                 <Tabs.List mb="md">
                   <Tabs.Tab value="gear">Gear</Tabs.Tab>
@@ -85,11 +91,6 @@ export function PlannerPage() {
                 <Tabs.Panel value="variants"><VariantsTab options={o} attackBonus={evaluation.data?.attackBonus ?? 6} /></Tabs.Panel>
                 <Tabs.Panel value="advice"><AdviceTab options={o} /></Tabs.Panel>
               </Tabs>
-            </Paper>
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, lg: 5 }}>
-            <Paper p="md" withBorder style={{ position: 'sticky', top: 64 }}>
-              <ResultsPanel options={o} evaluation={evaluation.data} />
             </Paper>
           </Grid.Col>
         </Grid>

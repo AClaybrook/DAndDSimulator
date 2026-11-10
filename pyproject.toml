@@ -9,7 +9,6 @@ dependencies = [
     "numpy>=2.0",
     "orjson>=3.10",
     "pandas>=2.2",
-    "plotly>=6.0",
     "uvicorn>=0.32",
 ]
 
@@ -31,7 +30,7 @@ pythonpath = ["."]
 [tool.ruff]
 line-length = 160
 target-version = "py311"
-extend-exclude = ["random"]
+extend-exclude = []
 
 [tool.ruff.format]
 quote-style = "preserve"

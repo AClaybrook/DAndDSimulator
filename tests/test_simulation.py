@@ -167,12 +167,13 @@ def test_rounds_to_kill_uses_fights_for_limited_resources():
 
 def test_damage_per_fight_outputs():
     from computations.numerical_simulation import simulate_fights
-    from api.plots import fight_export, fight_summary, generate_fight_plot
+    from api.charts import fight, fight_export, fight_summary
     characters = [FIGHT_CASES["action_surge"][1], CASES["basic"]]
     characters[0] = Character(**{**characters[0].__dict__, "name": "Surge"})
     fights = simulate_fights(characters, Enemy(), num_fights=500, rounds_per_fight=4)
     assert {name: damage.shape for name, damage in fights.items()} == {"Surge": (4, 500), "Character": (4, 500)}
-    assert len(generate_fight_plot(fights).data) == 2 and not fight_summary(fights).empty
+    chart = fight(fights)
+    assert [len(s["y"]) for s in chart["series"]] == [4, 4] and chart["x"] == [1, 2, 3, 4] and not fight_summary(fights).empty
     export = fight_export(fights)
     assert len(export) == 1000 and list(export.columns[:3]) == ["Name", "Fight", "Total"]
     assert (export["Total"] == export[[f"Round {r}" for r in range(1, 5)]].sum(axis=1)).all()

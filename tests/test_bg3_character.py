@@ -158,9 +158,9 @@ def replace_toggle(character, key):
     return compile_character(off, 6)[0]
 
 def test_builder_only_offers_toggles_for_its_classes():
-    assert relevant_toggles([["fighter", "Champion", 12]]) == ["reactions", "advantage"]
-    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse", "booming_blade", "honour_mode", "reactions", "advantage"]
-    assert relevant_toggles([["warlock", "The Fiend", 12]]) == ["booming_blade", "honour_mode", "reactions", "advantage"]
+    assert relevant_toggles([["fighter", "Champion", 12]]) == ["reactions", "honour_mode", "advantage"]
+    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse", "booming_blade", "reactions", "honour_mode", "advantage"]
+    assert relevant_toggles([["warlock", "The Fiend", 12]]) == ["booming_blade", "reactions", "honour_mode", "advantage"]
 
 
 def test_shadow_blade_and_booming_blade():
@@ -265,3 +265,49 @@ def test_reaction_attacks_get_their_own_sneak_attack():
     reactions = [a for a in c.attacks if "reaction)" in a.name]
     assert len(reactions) == 2 and all("3d6 slashing" in a.extra_damage_list and not a.once_per_turn_eligible for a in reactions)
     assert c.once_per_turn_die_mod_list == ["3d6"]
+
+def test_quickened_spell_shares_slots_and_sorcery_points():
+    """ A quickened levelled spell spends the same slots, and there is one quicken a fight at Sorcerer 12 (12 points, 3 each, 4 fights) """
+    sorcerer = Bg3Character(classes=[["sorcerer", "Draconic Bloodline", 12]], routine="cantrip", cantrip="Fire Bolt", spell="Fireball")
+    c, _ = compile_character(sorcerer, 12)
+    uses = {a.name: a.uses_per_fight for a in c.attacks}
+    assert uses == {"Fireball": 1.25, "Fire Bolt": 0, "Quickened Fireball": 1.0} # 2.25 slots a fight in all, no quickens left for the cantrip
+    assert [a.action for a in c.attacks] == ["action", "action", "bonus"]
+    # Few slots, more points: the quickens left over go on the cantrip, after the slots run out and only for that many rounds
+    c, _ = compile_character(sorcerer, 6)
+    quick = {a.name: (a.uses_per_fight, a.fallback_for) for a in c.attacks if "quickened" in a.tags}
+    assert quick == {"Quickened Fireball": (0.38, ""), "Quickened Fire Bolt": (0.12, "Fireball")}
+    assert sum(a.uses_per_fight for a in c.attacks if a.base == "Fireball") == pytest.approx(0.75, abs=0.02) # 3 level 3 slots over 4 fights
+    # Without a levelled spell every quicken is a cantrip
+    blaster, _ = compile_character(Bg3Character(classes=[["sorcerer", "Storm Sorcery", 12]], routine="cantrip", cantrip="Fire Bolt"), 12)
+    assert [(a.name, a.uses_per_fight) for a in blaster.attacks] == [("Fire Bolt", 0), ("Quickened Fire Bolt", 1.0)]
+
+def test_pact_weapon_charisma_is_main_hand_melee_only():
+    cha = {"strength": 8, "dexterity": 14, "constitution": 14, "intelligence": 8, "wisdom": 10, "charisma": 17}
+    def stats(routine):
+        c, _ = compile_character(Bg3Character(scores=cha, bonus={"charisma": 2, "constitution": 1}, classes=[["warlock", "The Hexblade", 12]],
+                                              routine=routine, toggles={"booming_blade": False}), 5)
+        return {(a.offhand, a.ability_stat) for a in c.attacks}
+    assert stats("one_handed") == {(False, "charisma")}
+    assert stats("dual_wield") == {(False, "charisma"), (True, "dexterity")}
+    assert stats("shadow_blade") == {(False, "charisma"), (True, "dexterity")}
+    assert stats("ranged") == {(False, "dexterity")} and stats("thrown") == {(False, "strength")}
+
+def test_multiclass_caster_level_sums_fractions():
+    """ bg3.wiki: with several spellcasting classes the fractional levels are summed, then rounded down """
+    assert caster_level({"paladin": 5, "ranger": 5}, {}) == 5 # 2.5 + 2.5, not 2 + 2
+    assert caster_level({"paladin": 7, "sorcerer": 5}, {}) == 8
+    assert caster_level({"fighter": 5, "rogue": 5}, {"fighter": "Eldritch Knight", "rogue": "Arcane Trickster"}) == 3 # 10 / 3
+    assert caster_level({"paladin": 5}, {}) == 3 and caster_level({"fighter": 7}, {"fighter": "Eldritch Knight"}) == 3 # Single class: rounded up
+
+def test_sneak_attack_and_smites_keep_separate_pools():
+    scores = {"strength": 8, "dexterity": 16, "constitution": 14, "intelligence": 8, "wisdom": 10, "charisma": 16}
+    build = Bg3Character(scores=scores, bonus={"dexterity": 1, "charisma": 2}, classes=[["paladin", "Oath of Vengeance", 6], ["rogue", "Thief", 6]],
+                         routine="one_handed")
+    c, _ = compile_character(build, 12)
+    assert c.once_per_turn_die_mod_list == ["3d6"] and not c.once_per_turn_uses_per_fight and not c.once_per_turn_damage_type # Sneak Attack every round
+    (smite,) = c.once_per_turn_extra
+    assert smite["damage_type"] == "radiant" and smite["uses_per_fight"] > 0 and smite["dice"][0].endswith("d8")
+    # A ranged or thrown paladin can't smite
+    archer, _ = compile_character(Bg3Character(classes=[["paladin", "Oath of Vengeance", 12]], routine="ranged"), 5)
+    assert not archer.once_per_turn_die_mod_list and not archer.once_per_turn_extra

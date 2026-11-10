@@ -2,6 +2,7 @@
 
     uv run uvicorn api.main:app --port 8000     (or: uv run python -m api)
     During front end development, `npm run dev` in frontend/ proxies /api here """
+import os
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -10,9 +11,16 @@ from fastapi.responses import FileResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from api import leaderboard, map as act_map, planner, simulator
+from api import leaderboard, map as act_map, planner, schemas, simulator
 
 app = FastAPI(title="D&D Damage Simulator")
+# A hosted copy is shared by its visitors, so nothing they send may change what the others see: set DAMAGE_LAB_READ_ONLY=1 there
+READ_ONLY = os.environ.get("DAMAGE_LAB_READ_ONLY", "").lower() in ("1", "true", "yes")
+
+def writable(what):
+    if READ_ONLY:
+        raise HTTPException(403, f"{what} is switched off on this shared copy. Run the app on your own machine to use it")
+
 app.add_middleware(GZipMiddleware, minimum_size=2000)
 ROOT = Path(__file__).parent.parent
 DIST = ROOT / "frontend" / "dist"
@@ -44,31 +52,31 @@ class TemplateRequest(BaseModel):
 def health():
     return {"ok": True}
 
-@app.get("/api/simulator/options")
+@app.get("/api/simulator/options", response_model=schemas.SimulatorOptions)
 def simulator_options():
     return simulator.options()
 
-@app.get("/api/simulator/default")
+@app.get("/api/simulator/default", response_model=schemas.Session)
 def simulator_default():
     return simulator.default_session()
 
-@app.post("/api/simulator/preset")
+@app.post("/api/simulator/preset", response_model=schemas.Loose)
 def simulator_preset(request: PresetRequest):
     return simulator.preset_character(request.preset, request.level, request.ruleset)
 
-@app.get("/api/simulator/enemy")
+@app.get("/api/simulator/enemy", response_model=schemas.Loose)
 def simulator_enemy(value: str):
     return simulator.enemy(value)
 
-@app.post("/api/simulator/template")
+@app.post("/api/simulator/template", response_model=list[schemas.Loose])
 def simulator_template(request: TemplateRequest):
     return simulator.template_attacks(request.value, request.ability_stat, request.level, request.ruleset)
 
-@app.post("/api/simulator/expected")
+@app.post("/api/simulator/expected", response_model=schemas.Expected, response_model_exclude_unset=True)
 def simulator_expected(inputs: Inputs):
     return simulator.expected(inputs.characters, inputs.enemy, inputs.rounds_per_fight)
 
-@app.post("/api/simulator/simulate")
+@app.post("/api/simulator/simulate", response_model=schemas.SimulationResult, response_model_exclude_unset=True)
 def simulator_simulate(sim: Simulation):
     return simulator.simulate(sim.characters, sim.enemy, sim.graph, sim.num_rounds, sim.rounds_per_fight, sim.sweep_parameter, sim.ruleset, sim.seed)
 
@@ -79,7 +87,7 @@ class VariantRequest(BaseModel):
 class ExportRequest(Simulation):
     kind: str = "Damage per round"
 
-@app.post("/api/simulator/variant")
+@app.post("/api/simulator/variant", response_model=schemas.VariantResult, response_model_exclude_unset=True)
 def simulator_variant(request: VariantRequest):
     return simulator.variant(request.character, request.key)
 
@@ -95,31 +103,36 @@ def simulator_export(request: ExportRequest):
 # ---------- Leaderboard
 
 class PartyRequest(BaseModel):
-    party: list[dict] = []
+    party: list[schemas.Build] = []
+
+    def builds(self):
+        """ The party as plain dictionaries, which the planner modules read """
+        return [b.model_dump(mode="json") for b in self.party]
 
 class SaveRequest(PartyRequest):
     label: str = ""
     with_variants: bool = False
 
-@app.get("/api/leaderboard/options")
+@app.get("/api/leaderboard/options", response_model=schemas.LeaderboardOptions)
 def leaderboard_options():
-    return leaderboard.options()
+    return {**leaderboard.options(), "readOnly": READ_ONLY}
 
-@app.post("/api/leaderboard/entries")
+@app.post("/api/leaderboard/entries", response_model=list[schemas.LeaderboardEntry])
 def leaderboard_entries(request: PartyRequest):
-    return leaderboard.entries(request.party)
+    return leaderboard.entries(request.builds())
 
-@app.get("/api/leaderboard/runs")
+@app.get("/api/leaderboard/runs", response_model=list[schemas.Run])
 def leaderboard_runs():
     return leaderboard.runs()
 
-@app.get("/api/leaderboard/runs/{run_id}")
+@app.get("/api/leaderboard/runs/{run_id}", response_model=list[schemas.LeaderboardEntry])
 def leaderboard_run(run_id: int):
     return leaderboard.run_entries(run_id)
 
-@app.post("/api/leaderboard/save")
+@app.post("/api/leaderboard/save", response_model=schemas.Saved)
 def leaderboard_save(request: SaveRequest):
-    return leaderboard.save(request.party, request.label, request.with_variants)
+    writable("Saving leaderboard runs")
+    return leaderboard.save(request.builds(), request.label, request.with_variants)
 
 @app.get("/api/leaderboard/build/{fingerprint}")
 def leaderboard_build(fingerprint: str):
@@ -130,13 +143,13 @@ def leaderboard_build(fingerprint: str):
 
 # ---------- Act 1 map
 
-@app.get("/api/map/data")
+@app.get("/api/map/data", response_model=schemas.MapData)
 def map_data():
     return act_map.data()
 
-@app.post("/api/map/party-gear")
+@app.post("/api/map/party-gear", response_model=list[schemas.PartyGear])
 def map_party_gear(request: PartyRequest, act: str = "1"):
-    return act_map.party_gear(request.party, act)
+    return act_map.party_gear(request.builds(), act)
 
 # ---------- Party planner
 
@@ -146,14 +159,14 @@ class PlannerRequest(PartyRequest):
     attack_bonus: int | None = None
 
 class VariantsRequest(BaseModel):
-    build: dict
+    build: schemas.Build
     enemy: dict | None = None
     rounds_per_fight: int = 3
     enemies: int = 1
     attack_bonus: int = 6
 
 class UseVariantRequest(BaseModel):
-    build: dict
+    build: schemas.Build
     index: int
 
 class KitRequest(PartyRequest):
@@ -169,59 +182,60 @@ class PartyFightRequest(PlannerRequest):
     hit_points: int = 300
 
 class AdviceRequest(PlannerRequest):
-    build: dict
+    build: schemas.Build
     act: str = "1"
     slot: str = "melee_main"
 
-@app.get("/api/planner/options")
+@app.get("/api/planner/options", response_model=schemas.PlannerOptions)
 def planner_options():
-    return planner.options()
+    return {**planner.options(), "readOnly": READ_ONLY}
 
-@app.post("/api/planner/evaluate")
+@app.post("/api/planner/evaluate", response_model=schemas.Evaluation)
 def planner_evaluate(request: PlannerRequest):
-    return planner.evaluate(request.party, request.enemy, request.rounds_per_fight, request.attack_bonus)
+    return planner.evaluate(request.builds(), request.enemy, request.rounds_per_fight, request.attack_bonus)
 
-@app.post("/api/planner/variants")
+@app.post("/api/planner/variants", response_model=list[schemas.VariantRow])
 def planner_variants(request: VariantsRequest):
-    return planner.variants(request.build, request.enemy, request.rounds_per_fight, request.enemies, request.attack_bonus)
+    return planner.variants(request.build.model_dump(mode="json"), request.enemy, request.rounds_per_fight, request.enemies, request.attack_bonus)
 
-@app.post("/api/planner/use-variant")
+@app.post("/api/planner/use-variant", response_model=schemas.Build)
 def planner_use_variant(request: UseVariantRequest):
-    return planner.use_variant(request.build, request.index)
+    return planner.use_variant(request.build.model_dump(mode="json"), request.index)
 
-@app.post("/api/planner/kit")
+@app.post("/api/planner/kit", response_model=schemas.KitResult)
 def planner_kit(request: KitRequest):
-    return planner.apply_kit_to(request.party, request.selected, request.kit, request.act, request.skip_taken, request.only_empty)
+    return planner.apply_kit_to(request.builds(), request.selected, request.kit, request.act, request.skip_taken, request.only_empty)
 
-@app.get("/api/planner/example")
+@app.get("/api/planner/example", response_model=schemas.Build)
 def planner_example(name: str):
     found = planner.example(name)
     if found is None:
         raise HTTPException(404, "No example build with that name")
     return found
 
-@app.post("/api/planner/party")
+@app.post("/api/planner/party", response_model=schemas.PartyAnalysis)
 def planner_party(request: PartyFightRequest):
-    return planner.party(request.party, request.act, request.active, request.enemy, request.rounds_per_fight, request.hit_points)
+    return planner.party(request.builds(), request.act, request.active, request.enemy, request.rounds_per_fight, request.hit_points)
 
 class ImportRequest(BaseModel):
     source: str # A link to the build reference document
 
-@app.post("/api/planner/import-doc")
+@app.post("/api/planner/import-doc", response_model=schemas.ImportResult, response_model_exclude_unset=True)
 def planner_import_doc(request: ImportRequest):
+    writable("Importing a build document")
     return planner.import_doc(request.source.strip())
 
 class SendRequest(PartyRequest):
     act: str | None = None # Every member at this act, or with selected: one member at every act
     selected: int | None = None
 
-@app.post("/api/planner/to-simulator")
+@app.post("/api/planner/to-simulator", response_model=list[schemas.Loose])
 def planner_to_simulator(request: SendRequest):
-    return planner.to_simulator(request.party, request.act, request.selected)
+    return planner.to_simulator(request.builds(), request.act, request.selected)
 
-@app.post("/api/planner/advice")
+@app.post("/api/planner/advice", response_model=schemas.Advice)
 def planner_advice(request: AdviceRequest):
-    return planner.advice(request.build, request.party, request.act, request.slot, request.enemy, request.rounds_per_fight)
+    return planner.advice(request.build.model_dump(mode="json"), request.builds(), request.act, request.slot, request.enemy, request.rounds_per_fight)
 
 # ---------- The front end
 

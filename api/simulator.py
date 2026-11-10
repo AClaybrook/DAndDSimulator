@@ -1,17 +1,16 @@
-""" The simulator's computations as JSON: options, presets, expected damage, and simulations with their figure, headline numbers and tables.
-    Figures come from api.plots """
-import json
+""" The simulator's computations as JSON: options, presets, expected damage, and simulations with their chart data (api.charts, drawn by
+    the front end), headline numbers and tables """
 from dataclasses import asdict
 
 import numpy as np
 import pandas as pd
 
-from api.plots import (fight_export, fight_summary, generate_damage_per_attack_histogram, generate_fight_plot, generate_line_plots,
-                       generate_plot_data, generate_rounds_to_kill_plot)
+from api import charts
+from api.charts import fight_export, fight_summary
 from api.sweeps import SWEEP_PARAMETERS, run_sweep
 from api.validation import validation_errors
 from api.variants import VARIANTS, make_variant
-from computations.analytic import attack_breakdown, attacks_per_round, expected_by_attack, power_attack_insights
+from computations.analytic import attack_breakdown, attacks_per_round, expected_by_attack, expected_damage_per_round, power_attack_insights
 from computations.exact import damage_per_round
 from computations.models import Attack, Character, Enemy
 from computations.numerical_simulation import set_seed, simulate_fights, simulate_rounds_from_characters, simulate_rounds_to_kill
@@ -32,7 +31,6 @@ GRAPH_DESCRIPTIONS = {
                         "using Rounds per fight.",
 }
 EXPORTS = ["Damage per round", "Damage per attack", "Sweep", "Rounds to kill", "Damage per fight"]
-TEMPLATE = "plotly_dark"
 MAX_ROUNDS_TO_KILL = 20
 ARMOR_CLASSES = range(10, 26)
 SWEEPS = {"DPR Sweep": True, "DPA Sweep": False}
@@ -100,9 +98,6 @@ def expected(characters, enemy_dict, rounds_per_fight=None):
                     "attacks": [{"name": a.name, "damage": float(v)} for a, v in zip(c.attacks, per_attack)]})
     return {"characters": out}
 
-def _figure(fig):
-    return json.loads(fig.to_json())
-
 def _table(title, df, description=""):
     df = df.reset_index() if not isinstance(df.index, pd.RangeIndex) else df
     df = df.replace({np.nan: None})
@@ -124,7 +119,7 @@ def _leaderboard(characters, df_by_rounds, rounds_per_fight):
                      "Attacks/Round": round(attacks_per_round(c, rounds_per_fight), 3),
                      "Hit %": round(100 * df["Hit"].mean() / attacks, 1), "Crit %": round(100 * df["Hit (Crit)"].mean() / attacks, 1)})
     rows.sort(key=lambda r: -r["Mean DPR"])
-    return _table("Leaderboard", pd.DataFrame(rows))
+    return _table("Simulated rounds", pd.DataFrame(rows), "What the simulated rounds came to. The headline numbers are the exact expected damage")
 
 def _headline(values, unit, higher_is_better=True, context=""):
     """ The headline: each character's number, best first, and the gap to the next """
@@ -134,7 +129,7 @@ def _headline(values, unit, higher_is_better=True, context=""):
 
 def simulate(characters, enemy_dict, graph="DPR Distribution", num_rounds=10000, rounds_per_fight=3, sweep_parameter="Armor Class",
              ruleset="bg3", seed=1):
-    """ Runs one graph type; returns {figure, headline, tables} or {problems} """
+    """ Runs one graph type; returns {chart, headline, tables} or {problems} """
     parsed, foe, problems = parse(characters, enemy_dict)
     if problems:
         return {"problems": problems}
@@ -147,17 +142,18 @@ def simulate(characters, enemy_dict, graph="DPR Distribution", num_rounds=10000,
         dfs, df_by_rounds, _ = simulate_rounds_from_characters(parsed, foe, num_rounds=num_rounds, save_memory=True, rng=rng,
                                                                rounds_per_fight=rounds_per_fight)
         if graph == "DPR Distribution":
-            fig = generate_plot_data(parsed, df_by_rounds, template=TEMPLATE, title="Damage Per Round Distribution", enemy=foe,
-                                     rounds_per_fight=rounds_per_fight)
+            chart = charts.damage_per_round(parsed, df_by_rounds, enemy=foe, rounds_per_fight=rounds_per_fight)
         else:
-            fig = generate_damage_per_attack_histogram(parsed, dfs, template=TEMPLATE, title="Damage Per Attack Distribution")
-        headline = _headline({c.name: df["Damage"].mean() for c, df in zip(parsed, df_by_rounds)}, "damage per round", context=f"against {foe.name}")
+            chart = charts.damage_per_attack(parsed, dfs)
+        # The exact expected damage, the same number as on each character's card (the simulated mean is in the table)
+        headline = _headline({c.name: expected_damage_per_round(c, foe, rounds_per_fight) for c in parsed}, "damage per round",
+                             context=f"against {foe.name}")
         tables.append(_leaderboard(parsed, df_by_rounds, rounds_per_fight))
     elif graph in SWEEPS:
         by_round = SWEEPS[graph]
         df = run_sweep(parsed, foe, sweep_parameter, by_round=by_round, ruleset=ruleset, num_rounds=num_rounds, rng=rng, rounds_per_fight=rounds_per_fight)
         order = [c.name for c in parsed]
-        fig = generate_line_plots(df, template=TEMPLATE, groupby="Character" if by_round else "Character-Attack", order=order, x_col=sweep_parameter)
+        chart = charts.sweep(df, groupby="Character" if by_round else "Character-Attack", order=order, x_col=sweep_parameter)
         means = df.groupby(["Character", sweep_parameter])["mean"].sum().groupby("Character").mean()
         headline = _headline({n: means[n] for n in order if n in means}, f"average damage per round over {sweep_parameter} "
                              f"{df[sweep_parameter].min()} to {df[sweep_parameter].max()}")
@@ -169,20 +165,20 @@ def simulate(characters, enemy_dict, graph="DPR Distribution", num_rounds=10000,
                 tables.append(_table("Power attack insights", pd.DataFrame(insights)))
     elif graph == "Rounds to Kill":
         df_rtk = simulate_rounds_to_kill(parsed, foe, num_rounds=num_rounds, max_rounds=MAX_ROUNDS_TO_KILL, rng=rng)
-        fig = generate_rounds_to_kill_plot(df_rtk, MAX_ROUNDS_TO_KILL, foe.hit_points, template=TEMPLATE)
+        chart = charts.rounds_to_kill(df_rtk, MAX_ROUNDS_TO_KILL, foe.hit_points)
         headline = _headline(df_rtk.mean().to_dict(), "rounds on average", higher_is_better=False, context=f"to kill {foe.name} ({foe.hit_points} HP)")
         summary = pd.DataFrame({"Mean": df_rtk.mean().round(2), "Median": df_rtk.median(), "25%": df_rtk.quantile(0.25), "75%": df_rtk.quantile(0.75)})
         tables.append(_table("Rounds to kill", summary.rename_axis("Character")))
     elif graph == "Damage per Fight":
         fights = simulate_fights(parsed, foe, num_fights=max(num_rounds // rounds_per_fight, 1), rounds_per_fight=rounds_per_fight, rng=rng)
-        fig = generate_fight_plot(fights, template=TEMPLATE)
+        chart = charts.fight(fights)
         headline = _headline({n: d.sum(axis=0).mean() for n, d in fights.items()}, f"damage per {rounds_per_fight} round fight", context=f"against {foe.name}")
         tables.append(_table("Damage per fight", fight_summary(fights), "Limited attacks are used in the first rounds of each fight, limited once "
                              "per turn damage on the first hits until it runs out"))
     else:
         return {"problems": [f"Unknown graph type {graph}"]}
     tables.append(_breakdown(parsed, foe, rounds_per_fight))
-    return {"figure": _figure(fig), "headline": headline, "tables": tables}
+    return {"chart": chart, "headline": headline, "tables": tables}
 
 def variant(character, key):
     """ A copy of the character with one change (copy menu), or {problems} when the change isn't possible """

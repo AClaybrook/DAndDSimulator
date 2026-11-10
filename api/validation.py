@@ -34,16 +34,27 @@ def _typed_damage_problems(values):
             problems += _dice_problems(["".join(dice)], LABELS["extra_damage_list"])
     return problems
 
+def _number_problem(values, field):
+    """ A numeric field that is empty or not a number, i.e. 'Level is empty', "Level 'x' should be a number" """
+    if field not in values:
+        return []
+    value = values[field]
+    if value is None or value == "":
+        return [f"{LABELS[field]} is empty"]
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return [f"{LABELS[field]} '{value}' should be a number"]
+    return []
+
 def validation_errors(character, attacks):
     """ Problems with a character dictionary and its attacks, empty if everything can be simulated """
-    problems = [f"{LABELS[f]} is empty" for f in NUMERIC_CHARACTER_FIELDS if f in character and character[f] is None]
+    problems = [p for f in NUMERIC_CHARACTER_FIELDS for p in _number_problem(character, f)]
     for key in DIE_MOD_LISTS:
         problems += _dice_problems(character.get(key), LABELS[key])
     if not attacks:
         problems.append("it has no attacks")
     for a in attacks:
         name = a.get("name") or "an attack"
-        problems += [f"attack '{name}': {LABELS[f]} is empty" for f in NUMERIC_ATTACK_FIELDS if f in a and a[f] is None]
+        problems += [f"attack '{name}': {p}" for f in NUMERIC_ATTACK_FIELDS for p in _number_problem(a, f)]
         problems += [f"attack '{name}': {p}" for key in DIE_MOD_LISTS[:4] for p in _dice_problems(a.get(key), LABELS[key])]
         problems += [f"attack '{name}': {p}" for p in _dice_problems([a.get("damage") or ""], LABELS["damage"])]
         problems += [f"attack '{name}': {p}" for p in _typed_damage_problems(a.get("extra_damage_list"))]
