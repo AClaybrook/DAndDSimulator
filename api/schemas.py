@@ -191,6 +191,7 @@ class Build(Model):
     roles: list[str] = []
     variants: list[dict[str, Any]] = []
     advantage: bool = False
+    assumptions: dict[str, float] = {} # bg3.build.ASSUMPTIONS, only the ones the player changed
 
 # ---------- Planner
 
@@ -208,6 +209,12 @@ class Act(Model):
 class Example(Model):
     name: str
     source: str
+
+class Assumption(Model):
+    key: str
+    label: str
+    default: float
+    help: str
 
 class Slot(Model):
     key: str
@@ -271,6 +278,7 @@ class PlannerOptions(Model):
     kits: list[Kit]
     quickVariants: list[QuickVariant]
     builder: BuilderOptions
+    assumptions: list[Assumption]
     scoreWeights: dict[str, float]
     partLabels: dict[str, str]
     roleLabels: dict[str, str]
@@ -293,6 +301,7 @@ class SavingThrow(Model):
 class ActResult(Model):
     level: int
     damage: list[float] # Against 1, 2, 3 and 4 enemies
+    together: list[float] # The same with the party's every-fight synergies (Evaluation.synergies)
     spellDc: int | None = None # None when the build forces no saving throws
     saves: list[SavingThrow]
     ac: int
@@ -330,6 +339,7 @@ class Evaluation(Model):
     attackBonus: int
     members: list[MemberResult]
     conflicts: list[Conflict]
+    synergies: dict[str, list[str]] # Act: the synergies the party sets up every fight, counted in ActResult.together
 
 class VariantRow(Model):
     name: str
@@ -352,10 +362,19 @@ class GearChange(Model):
     after: str
     gain: float = 0 # What the swap adds to the goal (damage per round, AC or score)
 
+class KeptItem(Model):
+    """ A worn item best in slot left alone: it has effects the damage doesn't count, so the numbers undersell it """
+    act: str
+    slot: str
+    item: str
+    preferred: str # What the numbers alone would have picked
+    gain: float
+
 class BestGear(Model):
     build: Build
     gear: dict[str, dict[str, str]] # Act: slot: item key, only what changed
     changes: list[GearChange]
+    kept: list[KeptItem] = []
     goal: str
 
 class Alternative(Model):

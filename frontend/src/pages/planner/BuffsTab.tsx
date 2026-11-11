@@ -1,4 +1,4 @@
-import { Checkbox, Stack, Table, Text, Tooltip } from '@mantine/core'
+import { Checkbox, Group, NumberInput, Stack, Table, Text, Tooltip } from '@mantine/core'
 import { Fragment } from 'react'
 import type { MemberResult, PlannerOptions } from '../../api'
 import { Section } from '../../components/Layout'
@@ -16,6 +16,19 @@ export function BuffsTab({ options, result }: { options: PlannerOptions; result:
   const toggleCondition = (value: string) => update(selected, (b) => ({
     ...b, conditions: b.conditions.includes(value) ? b.conditions.filter((c) => c !== value) : [...b.conditions, value],
   }))
+  // The guesses behind this build's numbers, only the ones it uses: kills with Bloodlust, reaction attacks from its feats
+  const feats = build.character?.feats ?? []
+  const uses: Record<string, boolean> = {
+    bloodlust_kills: ACTS.some((a) => (build.buffs[a] ?? []).includes('elixir:elixir_of_bloodlust')),
+    polearm_reactions: feats.includes('Polearm Master'), sentinel_reactions: feats.includes('Sentinel'),
+  }
+  const assumptions = options.assumptions.filter((a) => uses[a.key])
+  const setAssumption = (key: string, value: number | string) => update(selected, (b) => {
+    const next = { ...(b.assumptions ?? {}) }
+    if (value === '' || Number(value) === options.assumptions.find((a) => a.key === key)?.default) delete next[key]
+    else next[key] = Math.max(Number(value), 0)
+    return { ...b, assumptions: next }
+  })
   const groups: [string, typeof options.buffs][] = [
     ['Spells', options.buffs.filter((b) => !b.key.startsWith('elixir:'))],
     ['Elixirs (one at a time)', options.buffs.filter((b) => b.key.startsWith('elixir:'))],
@@ -56,6 +69,18 @@ export function BuffsTab({ options, result }: { options: PlannerOptions; result:
           </Table.Tbody>
         </Table>
       </Table.ScrollContainer>
+      {assumptions.length > 0 && (
+        <Section title="Estimates" padding="sm">
+          <Group gap="md" wrap="wrap">
+            {assumptions.map((a) => (
+              <Tooltip key={a.key} label={`${a.help}. Usually ${a.default}`} multiline w={260} openDelay={300}>
+                <NumberInput size="xs" w={210} label={a.label} min={0} max={6} step={0.5} decimalScale={1} placeholder={String(a.default)}
+                  value={build.assumptions?.[a.key] ?? a.default} onChange={(v) => setAssumption(a.key, v)} />
+              </Tooltip>
+            ))}
+          </Group>
+        </Section>
+      )}
       <Section title="Conditional item effects" padding="sm">
         <Text size="xs" c="dimmed">Effects that need the build to set something up. Tick the ones it does every fight.</Text>
         {result?.conditions.length ? result.conditions.map((c) => (

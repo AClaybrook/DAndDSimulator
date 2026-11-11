@@ -90,13 +90,12 @@ def default_active(builds, act):
     """ Synergies on by default: the ones the party sets up every fight (a Resonance Stone only when a build carries it) """
     return [k for k, members in available(builds, act).items() if SYNERGIES[k].default and members]
 
-def apply(builds, act, enemy, active):
-    """ The party's characters and the enemy with the active synergies applied """
+def party_enemy(builds, act, enemy, active=None):
+    """ The enemy as the party's synergies leave it (double psychic damage, lower saves). active: the default ones when None """
     act = str(act)
-    characters = [compile_build(b, act) for b in builds]
-    enemy = deepcopy(enemy)
     usable = available(builds, act)
-    active = [k for k in active if k in usable]
+    active = [k for k in (default_active(builds, act) if active is None else active) if k in usable]
+    enemy = deepcopy(enemy)
     if "resonance_stone" in active and "psychic" not in [v.lower() for v in enemy.vulnerabilities]:
         enemy.vulnerabilities = [*enemy.vulnerabilities, "psychic"]
         enemy.resistances = [r for r in enemy.resistances if r.lower() != "psychic"]
@@ -106,6 +105,13 @@ def apply(builds, act, enemy, active):
     if "paralysed" in active:
         for stat in ("strength", "dexterity"):
             setattr(enemy, f"{stat}_save", -100) # Automatically fails
+    return enemy, active
+
+def apply(builds, act, enemy, active):
+    """ The party's characters and the enemy with the active synergies applied """
+    act = str(act)
+    characters = [compile_build(b, act) for b in builds]
+    enemy, active = party_enemy(builds, act, enemy, active)
     for build, character in zip(builds, characters):
         sighted = "darkness" in active and sees_in_darkness(build, act)
         for attack in character.attacks:

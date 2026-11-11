@@ -1,4 +1,4 @@
-import { Badge, Button, Checkbox, Collapse, Group, MultiSelect, NumberInput, Select, Stack, Table, Tabs, Text, Tooltip, UnstyledButton } from '@mantine/core'
+import { Badge, Button, Checkbox, Collapse, Group, MultiSelect, NumberInput, Select, Stack, Switch, Table, Tabs, Text, Tooltip, UnstyledButton } from '@mantine/core'
 import { useDebouncedValue, useMediaQuery } from '@mantine/hooks'
 import { IconChevronDown, IconChevronRight, IconWand } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
@@ -16,8 +16,12 @@ const MAX_LINES = 8 // One colour slot per line, so the party and the compared b
 // Results: the party's damage across the acts first, then conflicts and how the party works together.
 // The damage numbers themselves live on the party cards above; this panel is the picture and the detail behind them
 export function ResultsPanel({ options, evaluation }: { options: PlannerOptions; evaluation: Evaluation | undefined }) {
-  const { party, selected, enemies, attackBonus } = useParty()
+  const { party, selected, enemies, attackBonus, together, setTogether } = useParty()
   const colors = useColors()
+  // With the synergies the party sets up every fight, or each character on their own
+  const synergies = evaluation?.synergies ?? {}
+  const anySynergy = ACTS.some((a) => synergies[a]?.length)
+  const dmg = (m: MemberResult, a: string) => (together ? m.acts[a].together ?? m.acts[a].damage : m.acts[a].damage)[enemies - 1]
   const conflicts = evaluation?.conflicts ?? []
   const member = evaluation?.members[selected]
   const { enemy, rounds } = useSharedEnemy()
@@ -35,17 +39,18 @@ export function ResultsPanel({ options, evaluation }: { options: PlannerOptions;
   // A name short enough to sit beside the line: 'Light Cleric: Spirit Guardians + ...' -> 'Light Cleric'
   const short = (name: string) => { const s = name.split(' (')[0].split(':')[0]; return s.length > 20 ? `${s.slice(0, 19)}…` : s }
   const line = (m: MemberResult, color: string, width: number, dash?: string) => ({
-    type: 'scatter', mode: 'lines+markers', name: m.name, x: ACTS.map((a) => `Act ${a}`), y: ACTS.map((a) => m.acts[a].damage[enemies - 1]),
-    customdata: ACTS.map((a) => m.acts[a].level), line: { color, width, dash }, marker: { size: dash ? 6 : 8, color },
-    hovertemplate: `${m.name} (level %{customdata}): %{y:.1f}<extra></extra>`,
+    type: 'scatter', mode: 'lines+markers', name: m.name, x: ACTS.map((a) => `Act ${a}`), y: ACTS.map((a) => dmg(m, a)),
+    customdata: ACTS.map((a) => [m.acts[a].level, together && dmg(m, a) - m.acts[a].damage[enemies - 1] > 0.05 ? `, ${m.acts[a].damage[enemies - 1].toFixed(1)} alone` : '']),
+    line: { color, width, dash }, marker: { size: dash ? 6 : 8, color },
+    hovertemplate: `${m.name} (level %{customdata[0]}): %{y:.1f}%{customdata[1]}<extra></extra>`,
   })
   const members = evaluation?.members ?? []
   const others = compare.length ? (compared.data ?? []) : []
   const lines = [...members.map((m, i) => ({ m, i })), ...others.map((m, i) => ({ m, i: party.length + i }))]
   // A name at the end of each line while there are few enough to read; with more, the legend names them
   const last = ACTS[ACTS.length - 1]
-  const ends = lines.map(({ m }) => m.acts[last].damage[enemies - 1])
-  const top = Math.max(1, ...lines.flatMap(({ m }) => ACTS.map((a) => m.acts[a].damage[enemies - 1])))
+  const ends = lines.map(({ m }) => dmg(m, last))
+  const top = Math.max(1, ...lines.flatMap(({ m }) => ACTS.map((a) => dmg(m, a))))
   const narrow = useMediaQuery('(max-width: 48em)')
   const labels = lines.length <= 4 && !narrow ? spread(ends, top * 0.075).map((y, k) => ({
     x: `Act ${last}`, y, xanchor: 'left', xshift: 8, showarrow: false, text: short(lines[k].m.name), font: { size: 11, color: colorAt(colors, lines[k].i) },
@@ -71,8 +76,15 @@ export function ResultsPanel({ options, evaluation }: { options: PlannerOptions;
       <Tabs.Panel value="damage">
         <Stack gap="sm">
           <Plot figure={figure} height={lines.length > 4 ? 520 : 460} />
-          <MultiSelect size="xs" searchable clearable placeholder="Compare with example builds..." data={options.examples.map((e) => e.name)}
-            value={compare} onChange={setCompare} maxValues={Math.max(MAX_LINES - party.length, 0)} rightSection={compared.isFetching ? <Text size="10px" c="dimmed">…</Text> : undefined} />
+          <Group gap="sm" wrap="wrap" align="center">
+            {anySynergy && (
+              <Tooltip multiline w={300} label={<>{ACTS.filter((a) => synergies[a]?.length).map((a) => <div key={a}>Act {a}: {synergies[a].join(', ')}</div>)}<div>Off: each character on their own. The Party tab has the situational ones.</div></>}>
+                <div><Switch size="xs" label="Party synergies" checked={together} onChange={(e) => setTogether(e.currentTarget.checked)} /></div>
+              </Tooltip>
+            )}
+            <MultiSelect size="xs" searchable clearable placeholder="Compare with example builds..." data={options.examples.map((e) => e.name)} style={{ flex: 1, minWidth: 220 }}
+              value={compare} onChange={setCompare} maxValues={Math.max(MAX_LINES - party.length, 0)} rightSection={compared.isFetching ? <Text size="10px" c="dimmed">…</Text> : undefined} />
+          </Group>
         </Stack>
       </Tabs.Panel>
       <Tabs.Panel value="score">{member && <ScoreView member={member} options={options} />}</Tabs.Panel>

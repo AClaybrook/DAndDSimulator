@@ -157,9 +157,12 @@ class PlannerRequest(PartyRequest):
     enemy: dict | None = None
     rounds_per_fight: int = 3
     attack_bonus: int | None = None
+    synergies: bool = False # Damage against the enemy as the party's every-fight synergies leave it
 
 class VariantsRequest(BaseModel):
     build: schemas.Build
+    party: list[schemas.Build] = []
+    synergies: bool = False
     enemy: dict | None = None
     rounds_per_fight: int = 3
     enemies: int = 1
@@ -196,7 +199,8 @@ def planner_evaluate(request: PlannerRequest):
 
 @app.post("/api/planner/variants", response_model=list[schemas.VariantRow])
 def planner_variants(request: VariantsRequest):
-    return planner.variants(request.build.model_dump(mode="json"), request.enemy, request.rounds_per_fight, request.enemies, request.attack_bonus)
+    return planner.variants(request.build.model_dump(mode="json"), request.enemy, request.rounds_per_fight, request.enemies, request.attack_bonus,
+                            [b.model_dump(mode="json") for b in request.party], request.synergies)
 
 @app.post("/api/planner/use-variant", response_model=schemas.Build)
 def planner_use_variant(request: UseVariantRequest):
@@ -213,11 +217,12 @@ class BestGearRequest(PlannerRequest):
     enemies: int = 1
     weapons: bool = True
     skip_taken: bool = True
+    keep_uncounted: bool = True # Worn items with effects the damage doesn't count are harder to swap out
 
 @app.post("/api/planner/best-gear", response_model=schemas.BestGear)
 def planner_best_gear(request: BestGearRequest):
     return planner.best_gear_for(request.builds(), request.selected, request.acts, request.goal, request.enemy, request.rounds_per_fight,
-                                 request.enemies, request.attack_bonus, request.weapons, request.skip_taken)
+                                 request.enemies, request.attack_bonus, request.weapons, request.skip_taken, request.synergies, request.keep_uncounted)
 
 @app.post("/api/planner/deconflict", response_model=schemas.Deconflict)
 def planner_deconflict(request: PlannerRequest):
@@ -252,7 +257,7 @@ def planner_to_simulator(request: SendRequest):
 
 @app.post("/api/planner/advice", response_model=schemas.Advice)
 def planner_advice(request: AdviceRequest):
-    return planner.advice(request.build.model_dump(mode="json"), request.builds(), request.act, request.slot, request.enemy, request.rounds_per_fight)
+    return planner.advice(request.build.model_dump(mode="json"), request.builds(), request.act, request.slot, request.enemy, request.rounds_per_fight, request.synergies)
 
 # ---------- The front end
 

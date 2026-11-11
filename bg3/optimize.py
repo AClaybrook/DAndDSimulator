@@ -130,12 +130,16 @@ def weapon_candidates(build, act, items=None):
     return slot, [i for i in items.values() if i.weapon and i.fits(slot) and (i.act or 3) <= int(act) and fits(i.weapon)
                   and i.key not in COMPANION_ONLY and (profs is None or is_proficient(i.weapon.get("base"), profs))]
 
-def optimise(build, act, objective, items=None, exclude=(), weapons=False, min_gain=0.0, guard=None):
+PARTLY_COUNTED_GAIN = 0.10 # Share of the objective needed to replace a worn item only some of whose effects are counted
+
+def optimise(build, act, objective, items=None, exclude=(), weapons=False, min_gain=0.0, guard=None, kept=None):
     """ The gear (slot: item key, '' for empty) that maximises objective(build) at an act, one slot at a time.
         exclude: unique items not to pick (worn by the rest of the party). weapons: also choose the main weapon, first, since the rest
         of the gear builds on it. min_gain: the share of the objective an item must add to replace one the build already wears (its
         unmodelled effects are worth something; empty slots take any gain). guard(build): a value a swap may not lower, i.e. armour
-        class when searching for damage """
+        class when searching for damage. kept: a dict to fill; when given, a worn item with effects the damage doesn't count (its notes)
+        is harder to replace, since the numbers undersell it: never when none of its effects are counted, and only for PARTLY_COUNTED_GAIN
+        when some are. kept[slot] = (its key, the item the numbers preferred, the gain they saw) for the ones that stayed """
     items = items or catalog()
     gear = {slot: equipment_at(build, act).get(slot, "") for slot in GEAR_SLOTS}
     slots = list(GEAR_SLOTS) + (["melee_off"] if shield_slot_free(build, act) else [])
@@ -160,6 +164,14 @@ def optimise(build, act, objective, items=None, exclude=(), weapons=False, min_g
             value = objective(worn)
             needed = abs(best) * min_gain if planned.get(slot) and gear.get(slot) == planned[slot] else 0
             if value > best + max(needed, 1e-6) and (guard is None or guard(worn) >= floor):
+                worn_item = items.get(gear.get(slot))
+                if kept is not None and worn_item is not None and worn_item.notes and gear.get(slot) == planned.get(slot):
+                    counted = worn_item.effects or worn_item.weapon
+                    if not counted or value - best < abs(best) * PARTLY_COUNTED_GAIN:
+                        if slot not in kept or value - best > kept[slot][2]:
+                            kept[slot] = (worn_item.key, item.key, value - best)
+                        continue
+                    kept.pop(slot, None)
                 best, gear = value, trial
     return {slot: key for slot, key in gear.items() if key or slot in equipment_at(build, act)}
 

@@ -38,6 +38,16 @@
   what it adds.
 - **Bigger charts, fewer panels:** the planner's damage chart and the leaderboard's scatter are taller and get half the page, the
   simulator's distributions are taller, the overall score moved into its own tab, and several helper texts are shorter.
+- **Party synergies on the damage chart:** the planner's chart and the party cards now show damage with the synergies the party sets up
+  every fight (a carried Resonance Stone doubling psychic damage, Reverberation lowering saves), with a "Party synergies" switch to see
+  each character alone. Best in slot, gear advice and variants follow the switch, so psychic items are valued against the enemy the
+  party really fights. Hovering a point shows the damage alone next to it.
+- **Your own estimates:** the Buffs tab has an Estimates box for the guesses behind a build's numbers, only the ones it uses: kills a
+  fight with the Elixir of Bloodlust (usually 1.5) and reaction attacks a fight from Polearm Master (1) and Sentinel (1.5). 0 turns one off.
+- **Best in slot leaves what it can't judge:** a worn item with effects the damage doesn't count is undersold by the numbers, so it now
+  stays when none of its effects are counted (Band of the Mystic Scoundrel, Helmet of Arcane Acuity) and needs a 10% gain when only
+  some are (Staff of Cherished Necromancy). The result lists what stayed and what the numbers alone preferred, with "Compare replacing
+  them" to see that set as a variant. Item names mark how much is counted: ✦ all, ◐ some, ○ none.
 - **Act 3 bows:** The Dead Shot adds the proficiency bonus twice to its own attack rolls (Keen Attack, which was only a note, so the
   bow was undersold). Gontr Mael's Promised Victory is advantage on about a quarter of its shots (a hit marks the target with Guiding
   Bolt for the next attack roll that turn, after a DC 15 Dexterity save) instead of a toggle that gave every shot advantage; Bolt of

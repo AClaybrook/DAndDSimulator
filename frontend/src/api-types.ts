@@ -14,6 +14,7 @@ export interface Act {
 export interface ActResult {
   level: number
   damage: number[]
+  together: number[]
   spellDc?: number | null
   saves: SavingThrow[]
   ac: number
@@ -36,6 +37,7 @@ export interface AdviceRequest {
   enemy?: Record<string, unknown> | null
   rounds_per_fight: number
   attack_bonus?: number | null
+  synergies: boolean
   build: Build
   act: string
   slot: string
@@ -47,6 +49,13 @@ export interface Alternative {
   gain: number
 }
 
+export interface Assumption {
+  key: string
+  label: string
+  default: number
+  help: string
+}
+
 export interface AttackDamage {
   name: string
   damage: number
@@ -56,6 +65,7 @@ export interface BestGear {
   build: Build
   gear: Record<string, Record<string, string>>
   changes: GearChange[]
+  kept: KeptItem[]
   goal: string
 }
 
@@ -64,12 +74,14 @@ export interface BestGearRequest {
   enemy?: Record<string, unknown> | null
   rounds_per_fight: number
   attack_bonus?: number | null
+  synergies: boolean
   selected: number
   acts: string[]
   goal: string
   enemies: number
   weapons: boolean
   skip_taken: boolean
+  keep_uncounted: boolean
 }
 
 export interface Box {
@@ -102,6 +114,7 @@ export interface Build {
   roles: string[]
   variants: Record<string, unknown>[]
   advantage: boolean
+  assumptions: Record<string, number>
 }
 
 /** A custom character (bg3.character.Bg3Character) */
@@ -216,6 +229,7 @@ export interface Evaluation {
   attackBonus: number
   members: MemberResult[]
   conflicts: Conflict[]
+  synergies: Record<string, string[]>
 }
 
 export interface Example {
@@ -305,6 +319,15 @@ export interface ItemValue {
   slot: string
   item: string
   summary: string
+  gain: number
+}
+
+/** A worn item best in slot left alone: it has effects the damage doesn't count, so the numbers undersell it */
+export interface KeptItem {
+  act: string
+  slot: string
+  item: string
+  preferred: string
   gain: number
 }
 
@@ -461,6 +484,7 @@ export interface PartyFightRequest {
   enemy?: Record<string, unknown> | null
   rounds_per_fight: number
   attack_bonus?: number | null
+  synergies: boolean
   act: string
   active?: string[] | null
   hit_points: number
@@ -492,6 +516,7 @@ export interface PlannerOptions {
   kits: Kit[]
   quickVariants: QuickVariant[]
   builder: BuilderOptions
+  assumptions: Assumption[]
   scoreWeights: Record<string, number>
   partLabels: Record<string, string>
   roleLabels: Record<string, string>
@@ -505,6 +530,7 @@ export interface PlannerRequest {
   enemy?: Record<string, unknown> | null
   rounds_per_fight: number
   attack_bonus?: number | null
+  synergies: boolean
 }
 
 export interface PresetRequest {
@@ -703,6 +729,8 @@ export interface VariantRow {
 
 export interface VariantsRequest {
   build: Build
+  party: Build[]
+  synergies: boolean
   enemy?: Record<string, unknown> | null
   rounds_per_fight: number
   enemies: number

@@ -358,7 +358,7 @@ def test_best_gear_keeps_armour_and_planned_items_unless_the_gain_is_real():
     doc = {e["build"]["name"]: e["build"] for e in doc_import.load()}
     party = [Bg3Build.from_dict(doc[n]) for n in ("1. The Godblade", "5. Arcane Deadeye")]
     for index, build in enumerate(party):
-        gear, changes = best_gear(party, index, ["2", "3"], "damage", Enemy(), 3, 1, 6, True, True)
+        gear, changes, _ = best_gear(party, index, ["2", "3"], "damage", Enemy(), 3, 1, 6, True, True)
         for act, slots in gear.items():
             after = replace(build, equipment={**build.equipment, act: {**build.equipment.get(act, {}), **slots}})
             assert armour_class(after, act)[0] >= armour_class(build, act)[0]
@@ -369,3 +369,41 @@ def test_best_gear_keeps_armour_and_planned_items_unless_the_gain_is_real():
     profs = weapon_proficiencies(Bg3Character.from_dict(wizard.character), 12)
     _, pool = weapon_candidates(wizard, "3")
     assert pool and all(is_proficient(i.weapon.get("base"), profs) for i in pool) and "bg3:infernal_rapier" not in {i.key for i in pool}
+
+def test_estimates_party_synergies_and_items_the_damage_cannot_judge():
+    """ A build's own estimates replace the defaults (kills with Bloodlust, reaction attacks); the planner gives damage with the party's
+        every-fight synergies next to damage alone; best in slot leaves a worn item whose effects aren't all counted, and says so """
+    from api import planner
+    from bg3 import doc_import
+    from bg3.character import Bg3Character
+    from bg3.loadout import best_gear
+    doc = {e["build"]["name"]: e["build"] for e in doc_import.load()}
+    def damage(build):
+        return expected_damage_per_round(compile_build(build, "3"), Enemy(), 3)
+    godblade = Bg3Build.from_dict(doc["1. The Godblade"])
+    thirsty = replace(godblade, buffs={"3": ["elixir:elixir_of_bloodlust"]})
+    none, usual, many = (damage(replace(thirsty, assumptions=a)) for a in ({"bloodlust_kills": 0}, {}, {"bloodlust_kills": 3}))
+    assert damage(replace(godblade, buffs={})) == pytest.approx(none) and none < usual < many
+    polearm = Bg3Build("Polearm", "", character=Bg3Character(feats=["Polearm Master", "Sentinel"], routine="polearm").to_dict())
+    quiet, normal, busy = (damage(replace(polearm, assumptions=a)) for a in ({"polearm_reactions": 0, "sentinel_reactions": 0}, {}, {"sentinel_reactions": 3}))
+    assert quiet < normal < busy
+    assert not [a for a in compile_build(replace(polearm, assumptions={"polearm_reactions": 0, "sentinel_reactions": 0}), "3").attacks if a.action == "reaction"]
+
+    # The Godblade carries the Resonance Stone and deals psychic damage: more with the party's synergies from Act 2, the same in Act 1
+    party = [Bg3Build.from_dict(doc[n]) for n in ("1. The Godblade", "5. Arcane Deadeye")]
+    result = planner.evaluate([b.to_dict() for b in party])
+    acts = result["members"][0]["acts"]
+    assert "Resonance Stone" in result["synergies"]["3"] and "Resonance Stone" not in result["synergies"]["1"]
+    assert acts["3"]["together"][0] > 1.3 * acts["3"]["damage"][0] and acts["1"]["together"] == acts["1"]["damage"]
+    assert {o["key"] for o in planner.options()["assumptions"]} == {"bloodlust_kills", "polearm_reactions", "sentinel_reactions"}
+
+    items = catalog()
+    names = {i.name: i for i in items.values()}
+    for index in range(len(party)):
+        _, changes, kept = best_gear(party, index, ["3"], "damage", Enemy(), 3, 1, 6, True, True)
+        # Replaced items are fully counted, or partly counted and beaten by a wide margin
+        base = expected_damage_per_round(compile_build(party[index], "3"), Enemy(), 3)
+        assert all((names[c["before"]].effects or names[c["before"]].weapon) and c["gain"] >= 0.09 * base for c in changes if c["before"] and names[c["before"]].notes)
+        assert all(names[k["item"]].notes and k["gain"] > 0 for k in kept)
+    _, changes, kept = best_gear(party, 1, ["3"], "damage", Enemy(), 3, 1, 6, True, True, keep_uncounted=False)
+    assert not kept and any(c["before"] and names[c["before"]].notes and not names[c["before"]].effects for c in changes)

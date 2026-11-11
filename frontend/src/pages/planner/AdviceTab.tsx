@@ -26,14 +26,14 @@ const suggestionColumns: ColumnDef<Suggestion, unknown>[] = [
 
 // What each worn item adds, and the best items for a slot, at an act
 export function AdviceTab({ options }: { options: PlannerOptions }) {
-  const { party, selected } = useParty()
+  const { party, selected, together } = useParty()
   const { enemy, rounds } = useSharedEnemy()
   const [act, setAct] = useState('1')
   const [slot, setSlot] = useState('melee_main')
   const build = party[selected]
   const advice = useQuery({
-    queryKey: ['advice', build, party, act, slot, enemy, rounds],
-    queryFn: () => bg3.advice(build, party, act, slot, enemy, rounds),
+    queryKey: ['advice', build, party, act, slot, enemy, rounds, together],
+    queryFn: () => bg3.advice(build, party, act, slot, enemy, rounds, together),
     enabled: Boolean(build && enemy), placeholderData: (p) => p,
   })
   if (!build) return null

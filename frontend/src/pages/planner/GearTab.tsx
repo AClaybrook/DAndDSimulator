@@ -11,7 +11,7 @@ const GOALS = [{ value: 'damage', label: 'Most damage' }, { value: 'ac', label: 
 // Slots down, acts across. An empty cell keeps the item from the act before (shown as its placeholder).
 // Only the slots with an item show until more are asked for; on a narrow screen one act at a time
 export function GearTab({ options, result }: { options: PlannerOptions; result: MemberResult | undefined }) {
-  const { party, selected, update, replace, enemies, attackBonus } = useParty()
+  const { party, selected, update, replace, enemies, attackBonus, together } = useParty()
   const { enemy, rounds } = useSharedEnemy()
   const [mode, setMode] = useState('best') // Quick fill: the best gear found by search, or a curated kit
   const [goal, setGoal] = useState('damage')
@@ -19,6 +19,7 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
   const [weapons, setWeapons] = useState(true)
   const [busy, setBusy] = useState(false)
   const [undo, setUndo] = useState<Build | null>(null) // The build before the last fill
+  const [kept, setKept] = useState<string | null>(null) // Worn items the search left alone, and what the numbers preferred
   const build = party[selected]
   const [kit, setKit] = useState<string | null>(null)
   const [kitAct, setKitAct] = useState('1')
@@ -48,12 +49,14 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
     })
   // Best in slot: searched from every item found by the act, for this build against the current enemy. apply: wear it; otherwise it
   // is kept as a variant to compare next to the build first
-  const fillBest = async (apply: boolean) => {
+  const fillBest = async (apply: boolean, keepUncounted = true) => {
     setBusy(true)
     try {
       const acts = bestActs === 'all' ? ACTS : [bestActs]
-      const result = await bg3.bestGear(party, selected, acts, goal, enemy, rounds, enemies, attackBonus, weapons, skipTaken)
+      const result = await bg3.bestGear(party, selected, acts, goal, enemy, rounds, enemies, attackBonus, weapons, skipTaken, together, keepUncounted)
       const where = bestActs === 'all' ? 'every act' : `Act ${bestActs}`
+      setKept((result.kept ?? []).map((k) => `${acts.length > 1 ? `Act ${k.act} ` : ''}${k.item} (numbers alone: ${k.preferred}, +${k.gain})`).join('; ') || null)
+      setUndo(null)
       if (!result.changes.length) { setMessage(`Nothing found by ${where} beats what ${build.name.split(' (')[0]} already wears for ${result.goal.toLowerCase()}.`); return }
       const listed = result.changes.map((c) => `${acts.length > 1 ? `Act ${c.act} ` : ''}${c.slot}: ${c.before || 'empty'} → ${c.after || 'empty'} (+${c.gain})`).join('; ')
       if (apply) {
@@ -119,8 +122,13 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
       </Group>
       {mode === 'kit' && chosenKit && <Text size="xs" c="dimmed">{chosenKit.trigger}. {chosenKit.fits ? `Fits ${chosenKit.fits}.` : ''}</Text>}
       {message && (
-        <Alert py={6} color="blue" withCloseButton onClose={() => { setMessage(null); setUndo(null) }}>
-          {message}{undo && <> <Anchor size="sm" component="button" onClick={() => { replace(selected, undo); setUndo(null); setMessage(null) }}>Undo</Anchor></>}
+        <Alert py={6} color="blue" withCloseButton onClose={() => { setMessage(null); setUndo(null); setKept(null) }}>
+          {message}{undo && <> <Anchor size="sm" component="button" onClick={() => { replace(selected, undo); setUndo(null); setMessage(null); setKept(null) }}>Undo</Anchor></>}
+          {kept && (
+            <Text size="xs" c="dimmed" mt={4}>
+              Left alone, their effects aren't all in the damage: {kept}. <Anchor size="xs" component="button" onClick={() => fillBest(false, false)}>Compare replacing them</Anchor>
+            </Text>
+          )}
         </Alert>
       )}
       {narrow && <SegmentedControl size="xs" fullWidth value={phoneAct} onChange={setPhoneAct} data={ACTS.map((a) => ({ value: a, label: `Act ${a}` }))} />}
@@ -163,7 +171,7 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
         )}
         <Switch size="xs" label="Every slot" checked={all} onChange={(e) => setAll(e.currentTarget.checked)} />
       </Group>
-      <Text size="xs" c="dimmed">↳ kept from the act before · red: conflict · ✦ modelled effects · ⚠ can be missed</Text>
+      <Text size="xs" c="dimmed">↳ kept from the act before · red: conflict · effects in the damage: ✦ all · ◐ some · ○ none · ⚠ can be missed</Text>
     </Stack>
   )
 }

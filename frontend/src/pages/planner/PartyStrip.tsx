@@ -9,7 +9,7 @@ import { colorAt, useColors } from '../../theme'
 
 // The party at a glance: each member's damage in every act; click one to edit it
 export function PartyStrip({ options, evaluation, enemies }: { options: PlannerOptions; evaluation: Evaluation | undefined; enemies: number }) {
-  const { party, selected, select, add, remove } = useParty()
+  const { party, selected, select, add, remove, together } = useParty()
   const [adding, setAdding] = useState<'example' | 'preset' | null>(null)
   const [choice, setChoice] = useState<string | null>(null)
   const full = party.length >= options.maxPartySize
@@ -41,12 +41,12 @@ export function PartyStrip({ options, evaluation, enemies }: { options: PlannerO
     if (!choice) return
     if (adding === 'example') add(await bg3.example(choice))
     else add({ name: options.presets.find((p) => p.key === choice)?.label ?? 'Character', preset: choice, equipment: {}, buffs: {}, conditions: [], levels: {},
-      character: null, carried: [], roles: [], variants: [], advantage: false })
+      character: null, carried: [], roles: [], variants: [], advantage: false, assumptions: {} })
     setAdding(null)
     setChoice(null)
   }
   const addCustom = () => add({ name: 'Custom character', preset: 'fighter_gwm', equipment: {}, buffs: {}, conditions: [], levels: {},
-    character: { ...options.builder.defaultCharacter, name: 'Custom character' }, carried: [], roles: [], variants: [], advantage: false })
+    character: { ...options.builder.defaultCharacter, name: 'Custom character' }, carried: [], roles: [], variants: [], advantage: false, assumptions: {} })
 
   return (
     <>
@@ -69,7 +69,7 @@ export function PartyStrip({ options, evaluation, enemies }: { options: PlannerO
                 {ACTS.map((a) => (
                   <div key={a}>
                     <Text size="10px" c="dimmed" tt="uppercase">Act {a}</Text>
-                    <Text fw={700} className="numeric">{result ? result.acts[a].damage[enemies - 1].toFixed(1) : '–'}</Text>
+                    <Text fw={700} className="numeric">{result ? (together ? result.acts[a].together : result.acts[a].damage)[enemies - 1].toFixed(1) : '–'}</Text>
                   </div>
                 ))}
                 <Tooltip multiline w={320} disabled={!result} label={result && ACTS.map((a) => (

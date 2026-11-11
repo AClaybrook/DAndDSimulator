@@ -9,7 +9,7 @@ import { uniqueName } from './store'
 import { SERIES, colorAt, themed, withAlpha } from './theme'
 
 const build = (changes: Partial<Build>): Build => ({
-  name: 'Tav', preset: 'fighter_gwm', equipment: {}, buffs: {}, conditions: [], levels: {}, character: null, carried: [], roles: [], variants: [], advantage: false, ...changes,
+  name: 'Tav', preset: 'fighter_gwm', equipment: {}, buffs: {}, conditions: [], levels: {}, character: null, carried: [], roles: [], variants: [], advantage: false, assumptions: {}, ...changes,
 })
 
 describe('gear', () => {

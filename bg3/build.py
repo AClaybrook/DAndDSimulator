@@ -1,12 +1,12 @@
 """ A BG3 build: a class preset with equipment, buffs and toggled conditions for each act.
     compile_build turns it into a plain Character at an act checkpoint, which the simulator uses as is """
 from copy import deepcopy
-from dataclasses import asdict, dataclass, field, fields
+from dataclasses import asdict, dataclass, field, fields, replace
 
 from bg3.buffs import BUFFS
-from bg3.character import Bg3Character, compile_character, is_proficient, weapon_proficiencies
+from bg3.character import POLEARM_REACTIONS, SENTINEL_REACTIONS, Bg3Character, compile_character, is_proficient, weapon_proficiencies
 from bg3.checkpoints import ACTS, act_level
-from bg3.items import (REACTION_ADVANTAGE, SLOT_LABELS, SLOTS, active_effects, apply_effect, apply_lightning_charges, apply_reverberation, catalog,
+from bg3.items import (BLOODLUST_KILLS_PER_FIGHT, REACTION_ADVANTAGE, SLOT_LABELS, SLOTS, active_effects, apply_effect, apply_lightning_charges, apply_reverberation, catalog,
                        equip_weapon, extra_action)
 from game_data.classes import BUILDS, build_character
 
@@ -28,6 +28,8 @@ class Bg3Build:
     # Named "what ifs" compared next to the build (bg3.kits): {"name", "kit", "act", "buffs", "toggles", "conditions"}. They never change the gear
     variants: list[dict] = field(default_factory=list)
     advantage: bool = False # Attacks with advantage (for class presets; custom characters have the "advantage" toggle)
+    # The player's own estimates, replacing the defaults (ASSUMPTIONS): kills a fight with Bloodlust, reaction attacks a fight
+    assumptions: dict[str, float] = field(default_factory=dict)
 
     def to_dict(self):
         return asdict(self)
@@ -36,6 +38,17 @@ class Bg3Build:
     def from_dict(cls, data):
         names = {f.name for f in fields(cls)}
         return cls(**{k: v for k, v in data.items() if k in names})
+
+# key: (label, default, what it means). How often things happen in a fight is a guess, so each build can set its own
+ASSUMPTIONS = {
+    "bloodlust_kills": ("Kills a fight (Bloodlust)", BLOODLUST_KILLS_PER_FIGHT, "Each kill on your turn gives one more action, once a turn"),
+    "polearm_reactions": ("Polearm Master reactions a fight", POLEARM_REACTIONS, "Attacks on enemies that walk into your reach"),
+    "sentinel_reactions": ("Sentinel reactions a fight", SENTINEL_REACTIONS, "Attacks on enemies next to you that hit an ally"),
+}
+
+def assumption(build, key):
+    value = build.assumptions.get(key)
+    return ASSUMPTIONS[key][1] if value is None else max(float(value), 0.0)
 
 def equipment_at(build, act):
     """ Slot: item key at an act, items carry over from earlier acts until replaced. An empty string clears a slot """
@@ -71,6 +84,13 @@ def compile_build(build, act, items=None):
         weapon = weapon.weapon if weapon is not None and weapon.weapon else None
         finesse = None if weapon is None else weapon.get("kind") == "ranged" or "finesse" in (weapon.get("properties") or [])
         character, _ = compile_character(bg3_character, level, finesse)
+        for key, label in (("polearm_reactions", "Polearm Master reaction"), ("sentinel_reactions", "Sentinel reaction")):
+            uses = assumption(build, key)
+            for attack in character.attacks:
+                if attack.action == "reaction" and attack.label == label:
+                    attack.uses_per_fight = uses
+            if not uses: # None at all: 0 uses would mean every turn
+                character.attacks = [a for a in character.attacks if not (a.action == "reaction" and a.label == label)]
     else:
         character = build_character(build.preset, level, "bg3")
 
@@ -117,6 +137,9 @@ def compile_build(build, act, items=None):
             extra_actions += int(effect.value)
         elif effect.kind == "limited_haste":
             limited_haste = max(limited_haste, float(effect.value))
+        elif effect.kind == "extra_action_on_kill":
+            if assumption(build, "bloodlust_kills") > 0: # No kills: no extra actions (0 uses would mean every turn)
+                apply_effect(character, replace(effect, value=assumption(build, "bloodlust_kills")), own, honour_mode)
         elif effect.kind != "lightning_charges":
             apply_effect(character, effect, own, honour_mode)
     # Charges from several items don't stack their bonuses
