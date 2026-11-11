@@ -266,3 +266,83 @@ def test_lightning_charges():
     wizard = Bg3Build("Gale", "wizard_fireball", equipment={"1": {"melee_main": "bg3:the_spellsparkler"}})
     assert all("1 lightning" in a.extra_damage_list for a in compile_build(wizard, 1).attacks if a.type == "spell")
     assert expected_damage_per_round(character, ENEMY, 3) > expected_damage_per_round(compile_build(replace(rogue, equipment={}), 1), ENEMY, 3)
+
+def test_necromancy_staff_and_amulet_of_the_devout():
+    """ bg3.wiki: Staff of Cherished Necromancy gives enemies disadvantage on saves against necromancy spells, and a free necromancy
+        cast after a kill (Life Essence); Amulet of the Devout +2 spell save DC and one more Channel Divinity charge """
+    from bg3.character import Bg3Character
+    scores = {"strength": 8, "dexterity": 14, "constitution": 14, "intelligence": 8, "wisdom": 17, "charisma": 10}
+    def build(gear, conditions=(), **fields):
+        character = Bg3Character(scores=scores, bonus={"wisdom": 2, "constitution": 1}, classes=[["cleric", "Death Domain", 12]], routine="cantrip",
+                                 cantrip="Toll the Dead", **fields)
+        return Bg3Build(name="Reaper", preset="", character=character.to_dict(), equipment={"3": gear}, conditions=list(conditions))
+    staff, amulet = "bg3:staff_of_cherished_necromancy", "bg3:amulet_of_the_devout"
+    bare, held = compile_build(build({}), "3"), compile_build(build({"melee_main": staff}), "3")
+    toll = next(a for a in held.attacks if a.name == "Toll the Dead")
+    assert toll.save_disadvantage and not bare.attacks[0].save_disadvantage
+    enemy = Enemy(armor_class=15, wisdom_save=4)
+    assert expected_damage_per_round(held, enemy, 3) > expected_damage_per_round(bare, enemy, 3)
+    # +2 DC from the amulet
+    devout = compile_build(build({"amulet": amulet}), "3")
+    assert devout.additional_spell_dc == bare.additional_spell_dc + 2
+    assert expected_damage_per_round(devout, enemy, 3) > expected_damage_per_round(bare, enemy, 3)
+    # Inflict Wounds: 16 slots a day are 4 casts a fight, 1.5 of them with Touch of Death. The amulet's charge moves a quarter cast over,
+    # Life Essence (a condition) adds a cast, and never to the Channel Divinity ones
+    def casts(gear, conditions=()):
+        by_name = {a.name: a.uses_per_fight for a in compile_build(build(gear, conditions, spell="Inflict Wounds"), "3").attacks}
+        return by_name["Inflict Wounds (Touch of Death)"], by_name["Inflict Wounds"]
+    assert casts({}) == (1.5, 2.5) and casts({"amulet": amulet}) == (1.75, 2.25)
+    assert casts({"melee_main": staff}) == (1.5, 2.5) and casts({"melee_main": staff}, [condition_id(staff, 2)]) == (1.5, 3.5)
+
+def test_arcane_synergy_gwm_in_two_hands_and_saving_throw_bonuses():
+    """ bg3.wiki: Arcane Synergy adds the spellcasting ability modifier to weapon attacks; Great Weapon Master: All In works with a
+        versatile weapon held in both hands; the Helmet of Arcane Acuity gives +1 to Dexterity saving throws, not Dexterity """
+    from bg3.character import Bg3Character
+    scores = {"strength": 8, "dexterity": 15, "constitution": 14, "intelligence": 8, "wisdom": 12, "charisma": 15}
+    hexblade = Bg3Character(scores=scores, bonus={"charisma": 2, "dexterity": 1}, classes=[["warlock", "The Hexblade", 12]], routine="two_handed",
+                            feats=["Great Weapon Master"], toggles={"curse": False, "booming_blade": False})
+    ring, phalar = "bg3:ring_of_arcane_synergy", "bg3:phalar_aluve"
+    def main_attack(gear, conditions=()):
+        build = Bg3Build(name="Hexblade", preset="", character=hexblade.to_dict(), equipment={"3": gear}, conditions=list(conditions))
+        return compile_build(build, "3").attacks[0]
+    bare = main_attack({"melee_main": phalar})
+    assert bare.heavy and bare.damage == "1d10" # A longsword in two hands: All In's -5/+10 applies
+    off, on = main_attack({"melee_main": phalar, "ring_1": ring}), main_attack({"melee_main": phalar, "ring_1": ring}, [condition_id(ring, 0)])
+    assert off.bonus_damage_die_mod_list == bare.bonus_damage_die_mod_list and on.bonus_damage_die_mod_list == [*bare.bonus_damage_die_mod_list, "3"] # CHA 17
+    helmet = catalog()["bg3:helmet_of_arcane_acuity"]
+    assert helmet.effects == [] and helmet.notes.startswith("Dexterity saving throws +1")
+    assert catalog()["bg3:khalid_s_gift"].effects[0].kind == "ability_bonus" # 'Wisdom +1 (up to 21)' is still an ability bonus
+
+def test_dead_shot_gontr_mael_and_one_hags_hair():
+    """ The Dead Shot adds the proficiency bonus twice to its own attack rolls; Gontr Mael's Guiding Bolt is advantage on a share of its
+        shots (the same in every engine), with its radiant rider and a part-time Haste; Auntie Ethel's Hair on two members is a conflict """
+    from bg3 import doc_import
+    from bg3.party import party_conflicts
+    doc = {e["build"]["name"]: e["build"] for e in doc_import.load()}
+    deadeye = Bg3Build.from_dict(doc["5. Arcane Deadeye"])
+    gontr = compile_build(deadeye, "3")
+    shot = next(a for a in gontr.attacks if a.name == "Gontr Mael")
+    assert shot.advantage_chance == 0.25 and not shot.advantage and "2 radiant" in shot.extra_damage_list
+    assert any("Celestial Haste" in a.name and a.uses_per_fight == 0.5 for a in gontr.attacks)
+    hasted = compile_build(replace(deadeye, buffs={"3": ["haste"]}), "3")
+    assert not any("Celestial Haste" in a.name for a in hasted.attacks) and any("(Haste)" in a.name for a in hasted.attacks)
+
+    dead_shot = compile_build(replace(deadeye, equipment={"3": {"ranged_main": "bg3:the_dead_shot"}}), "3")
+    shot = next(a for a in dead_shot.attacks if a.name == "The Dead Shot")
+    assert str(dead_shot.proficiency_bonus) in shot.bonus_attack_die_mod_list and shot.crit_on == 19
+
+    # Advantage on a share of the rolls sits between none and always, and the engines agree on it
+    from computations.models import Attack, Character
+    from tests.test_exact import check
+    enemy = Enemy(armor_class=18)
+    plain, some, always = (Character(name="a", level=5, dexterity=18, attacks=[Attack(name="Bow", type="weapon (ranged)", ability_stat="dexterity",
+                                                                                      damage="1d8", advantage_chance=q, advantage=q == 1)])
+                           for q in (0, 0.25, 1))
+    low, mid, high = (expected_damage_per_round(c, enemy) for c in (plain, some, always))
+    assert low < mid < high and mid == pytest.approx(0.75 * low + 0.25 * high)
+    check(some, enemy, 3)
+    check(gontr, enemy, 3)
+
+    party = (Bg3Build.from_dict(doc["1. The Godblade"]), deadeye)
+    assert any("Auntie Ethel's Hair" in c.message for c in party_conflicts(party, acts=("3",)))
+    assert not any("Auntie Ethel's Hair" in c.message for c in party_conflicts(party[:1], acts=("3",)))

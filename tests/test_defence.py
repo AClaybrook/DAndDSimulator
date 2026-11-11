@@ -12,12 +12,12 @@ def test_armour_data_from_the_wiki():
     assert data["bg3:wondrous_gloves"]["bonus"] == 1
 
 def test_godblade_high_ac_stack():
-    godblade = examples()["1. The Godblade"] # DEX 19, Bracers of Defence, Bladesinger 5 in Act 1
-    assert armour_class(godblade, "1")[0] == 10 + 4 + 2 + 3
+    godblade = examples()["1. The Godblade"] # DEX 20 (17, Auntie Ethel's Hair, +2 at level 4), Bracers of Defence, Bladesinger 5 in Act 1
+    assert armour_class(godblade, "1")[0] == 10 + 5 + 2 + 3
     buffed = variant_build(godblade, {"kit": "tank_unarmoured", "buffs": ["mage_armour", "shield_of_faith", "haste"]})
-    assert armour_class(buffed, "1")[0] == 13 + 4 + 2 + 3 + 1 + 2 + 2
+    assert armour_class(buffed, "1")[0] == 13 + 5 + 2 + 3 + 1 + 2 + 2
     off = variant_build(godblade, {"toggles": {"bladesong": False}})
-    assert armour_class(off, "1")[0] == 16
+    assert armour_class(off, "1")[0] == 17
 
 def test_armour_rules():
     heavy = Bg3Build("Tank", "fighter_gwm", character=Bg3Character(classes=[["fighter", "Champion", 5]], fighting_styles=["Defence"]).to_dict(),
@@ -30,3 +30,11 @@ def test_armour_rules():
                     bonus={"dexterity": 2, "wisdom": 1}).to_dict())
     assert armour_class(monk, "1")[0] == 10 + 3 + 3
     assert hit_chance(30, 6) == 0.05 and hit_chance(5, 6) == 0.95 and hit_chance(16, 6) == 0.55
+
+def test_armour_of_agility_takes_the_whole_dexterity_modifier():
+    scores = {"strength": 8, "dexterity": 17, "constitution": 14, "intelligence": 8, "wisdom": 15, "charisma": 10}
+    nimble = Bg3Build("Nimble", "", character=Bg3Character(scores=scores, bonus={"dexterity": 2, "wisdom": 1}, classes=[["cleric", "Death Domain", 12]],
+                                                           feats=["dexterity+1"]).to_dict(),
+                      equipment={"3": {"armour": "bg3:armour_of_agility"}, "2": {"armour": "bg3:scale_mail_2"}})
+    assert armour_class(nimble, "3")[0] == 17 + 5 # Medium armour, but DEX 20 counts in full (bg3.wiki)
+    assert armour_class(nimble, "2")[0] == armour_data()["bg3:scale_mail_2"]["ac"] + 2 # Other medium armour stops at +2

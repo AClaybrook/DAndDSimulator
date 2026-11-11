@@ -7,6 +7,7 @@ from pathlib import Path
 
 from computations.models import STATS, Attack
 from game_data import weapons
+from game_data.classes import FIGHTS_PER_LONG_REST
 
 DATA = Path(__file__).parent / "data"
 
@@ -37,17 +38,22 @@ APPLIES_TO = {
     "thrown": lambda a: a.type == "thrown",
     "unarmed": lambda a: a.type == "unarmed",
     "spell": lambda a: a.type == "spell",
+    "necromancy": lambda a: a.type == "spell" and "necromancy" in a.tags,
 }
 
 @dataclass
 class Effect:
     """ One modelled effect of an item or buff.
         kind: ability_min (stat becomes at least value), ability_bonus (+value, up to max_value), attack_bonus, attack_dice,
-              damage_bonus (same type as the attack), damage_bonus_ability (the stat's modifier, or the attack's own stat for 'spellcasting'),
+              damage_bonus (same type as the attack), damage_bonus_ability (the stat's modifier, the attack's own stat for 'spellcasting', the items' casting ability for 'casting'),
               extra_damage (typed, i.e. '1d4 fire'), crit_damage (extra damage on a crit), crit_range (crit on value lower),
               advantage, damage_reroll (reroll damage dice at or below value), miss_damage_ability (the stat's modifier on a miss, Tenacity),
               once_per_turn_bonus (more Sneak Attack damage), spell_dc, extra_action (Haste), lightning_charges (gained on hits of applies_to),
-              flag (turns on a Character option, i.e. savage_attacker)
+              flag (turns on a Character option, i.e. savage_attacker), save_disadvantage (enemies roll saves against these attacks twice
+              and keep the lower), free_cast (value more casts a fight of the limited spell it applies to), channel_divinity (value more
+              Channel Divinity charges per long rest), advantage_chance (advantage on that share of the attack rolls), limited_haste
+              (value more actions a fight from a Haste the item casts, unless Haste is already on). An attack_bonus of 'proficiency'
+              adds the proficiency bonus again (The Dead Shot)
         applies_to: a key of APPLIES_TO, or 'self' for the attacks made with the item's own weapon
         condition: when set, the effect only counts while the condition is toggled on, i.e. 'while raging' """
     kind: str
@@ -143,7 +149,8 @@ BLOODLUST_KILLS_PER_FIGHT = 1.5
 def _action_attacks(character):
     """ The attacks of one Attack action (or cantrip cast): not bonus action, reaction, off hand or limited use attacks """
     def plain(a):
-        return a.action == "action" and not (a.offhand or a.uses_per_fight or a.fallback_for or a.min_enemies > 1)
+        waits = a.fallback_for and "after_cast" not in a.tags # After a spell cast with the action (Spirit Guardians) is still a plain attack
+        return a.action == "action" and not (a.offhand or a.uses_per_fight or waits or a.min_enemies > 1)
     weapons = [a for a in character.attacks if (a.is_weapon or a.type == "unarmed") and plain(a)]
     return weapons or [a for a in character.attacks if a.type == "spell" and plain(a)]
 
@@ -153,7 +160,9 @@ def extra_action(character, label, honour_mode=False, uses=0):
     attacks = _action_attacks(character)
     if honour_mode and attacks and attacks[0].type != "spell":
         attacks = attacks[:1]
-    character.attacks += [a.variant(label, action="extra", uses_per_fight=uses) for a in attacks]
+    # The extra action attacks from round 1, even when the action itself goes to casting a spell first
+    character.attacks += [a.variant(label, action="extra", uses_per_fight=uses, fallback_for="", tags=[t for t in a.tags if t != "after_cast"])
+                          for a in attacks]
 
 def apply_effect(character, effect, own_attacks=(), honour_mode=False):
     """ Applies one effect to a character (in place). own_attacks are the attacks made with the item's weapon """
@@ -170,6 +179,21 @@ def apply_effect(character, effect, own_attacks=(), honour_mode=False):
     elif kind == "extra_action_on_kill":
         # Another Attack action whenever a kill happens on your turn
         extra_action(character, "Bloodlust", honour_mode, uses=float(value))
+    elif kind == "channel_divinity":
+        # One more charge a long rest for whatever spends them (Touch of Death)
+        more = float(value) / FIGHTS_PER_LONG_REST
+        for a in character.attacks:
+            if "channel_divinity" in a.tags:
+                a.uses_per_fight = round(a.uses_per_fight + more, 2)
+                # A limited spell carrying the charge is cast as often as before: the cast moves over from the ones without a charge
+                rest = next((b for b in character.attacks if b.fallback_for == a.name and b.uses_per_fight), None)
+                if rest is not None:
+                    rest.uses_per_fight = max(round(rest.uses_per_fight - more, 2), 0.01)
+    elif kind == "free_cast":
+        # More casts of the build's limited spell of that kind, i.e. the Staff of Cherished Necromancy's Life Essence
+        spell = next((a for a in _attacks_for(character, effect, own_attacks) if a.uses_per_fight and a.action == "action" and not {"setup", "recharge", "channel_divinity"} & set(a.tags)), None)
+        if spell is not None:
+            spell.uses_per_fight = round(spell.uses_per_fight + float(value), 2)
     elif kind == "once_per_turn_bonus":
         # Only adds to once per turn damage the character already has every round, i.e. Sneak Attack (not to limited smites)
         if character.once_per_turn_die_mod_list and not character.once_per_turn_uses_per_fight:
@@ -177,12 +201,18 @@ def apply_effect(character, effect, own_attacks=(), honour_mode=False):
     else:
         for a in _attacks_for(character, effect, own_attacks):
             if kind in ("attack_bonus", "attack_dice"):
-                a.bonus_attack_die_mod_list = [*a.bonus_attack_die_mod_list, str(value)]
+                bonus = character.proficiency_bonus if value == "proficiency" else value
+                a.bonus_attack_die_mod_list = [*a.bonus_attack_die_mod_list, str(bonus)]
             elif kind == "damage_bonus":
                 a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(value)]
             elif kind == "damage_bonus_ability":
-                stat = a.ability_stat if effect.stat in ("", "spellcasting") else effect.stat
-                a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(character.ability_modifier(stat))]
+                if effect.stat == "casting":
+                    # Arcane Synergy: the modifier of the ability the character's items cast with, on top of the weapon's own
+                    stat = getattr(character, "casting_stat", "") or max(("intelligence", "wisdom", "charisma"), key=character.ability_modifier)
+                    amount = max(character.ability_modifier(stat), 0)
+                else:
+                    amount = character.ability_modifier(a.ability_stat if effect.stat in ("", "spellcasting") else effect.stat)
+                a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(amount)]
             elif kind == "crit_damage":
                 a.bonus_crit_die_mod_list = [*a.bonus_crit_die_mod_list, str(value)]
             elif kind == "extra_damage":
@@ -191,6 +221,10 @@ def apply_effect(character, effect, own_attacks=(), honour_mode=False):
                 a.crit_on = max(2, min(a.crit_on, character.crit_on) - int(value))
             elif kind == "advantage":
                 a.advantage = True
+            elif kind == "advantage_chance":
+                a.advantage_chance = max(a.advantage_chance, float(value))
+            elif kind == "save_disadvantage":
+                a.save_disadvantage = True
             elif kind == "miss_damage_ability":
                 a.bonus_miss_die_mod_list = [*a.bonus_miss_die_mod_list, str(max(1, character.ability_modifier(effect.stat or a.ability_stat)))]
             elif kind == "damage_reroll":
@@ -215,14 +249,17 @@ def equip_weapon(attack, item):
     props = w.get("properties", [])
     two_handed = "two-handed" in props or (attack.two_handed and "versatile" in props and not attack.offhand)
     damage = w.get("versatile_damage") if two_handed and "versatile" in props and w.get("versatile_damage") else w["damage"]
+    # BG3's Great Weapon Master counts any melee weapon held in both hands, a versatile one included (bg3.wiki, All In): the engine's
+    # test for it is the heavy flag
+    heavy = "heavy" in props or (two_handed and w.get("kind") == "melee")
     suffix = f" ({attack.label})" if attack.label else ""
     if "butt_end" in attack.tags: # The other end of the new polearm: its enhancement and properties, still 1d4 bludgeoning
-        return replace(attack, base=w.get("base") or attack.base, weapon_enhancement=int(w.get("enhancement", 0)), two_handed=two_handed, heavy="heavy" in props,
+        return replace(attack, base=w.get("base") or attack.base, weapon_enhancement=int(w.get("enhancement", 0)), two_handed=two_handed, heavy=heavy,
                        bonus_attack_die_mod_list=list(attack.bonus_attack_die_mod_list), bonus_damage_die_mod_list=list(attack.bonus_damage_die_mod_list),
                        extra_damage_list=list(attack.extra_damage_list))
     return replace(attack, name=item.name + suffix, base=w.get("base") or attack.base, damage=damage, damage_type=w["damage_type"],
                    weapon_enhancement=int(w.get("enhancement", 0)),
-                   two_handed=two_handed, heavy="heavy" in props,
+                   two_handed=two_handed, heavy=heavy,
                    bonus_attack_die_mod_list=list(attack.bonus_attack_die_mod_list), bonus_damage_die_mod_list=list(attack.bonus_damage_die_mod_list),
                    extra_damage_list=list(attack.extra_damage_list))
 
@@ -235,7 +272,7 @@ def reverberation_hits(character):
     """ Attacks per round that deal thunder, lightning or radiant damage (the damage type or a rider) """
     def elemental(a):
         return a.damage_type in REVERBERATION_TYPES or any(t in r for r in a.extra_damage_list for t in REVERBERATION_TYPES)
-    return sum(1 for a in character.attacks if elemental(a) and not a.fallback_for)
+    return sum(1 for a in character.attacks if elemental(a) and (not a.fallback_for or "after_cast" in a.tags) and "setup" not in a.tags)
 
 def reverberation_per_round(character, gear_keys):
     """ Expected turns of Reverberation added per round: Gloves of Belligerent Skies add 2 per thunder, lightning or radiant hit, and Boots of

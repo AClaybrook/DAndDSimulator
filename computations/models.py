@@ -84,6 +84,7 @@ class Attack:
     always_hit: bool = False
     always_crit: bool = False
     hits_crit: bool = False # Every hit is a crit, i.e. melee attacks against paralysed targets
+    advantage_chance: float = 0.0 # Share of these rolls made with advantage, i.e. when an earlier hit may have set it up (Guiding Bolt)
     crit_on: int = 20
     # Weapon Specific
     weapon_enhancement: int = 0
@@ -94,6 +95,8 @@ class Attack:
     saving_throw: bool = False
     saving_throw_stat: Stat = 'dexterity'
     saving_throw_success_multiplier: float = 0.5
+    save_disadvantage: bool = False # The enemy rolls the save twice and keeps the lower (i.e. Staff of Cherished Necromancy)
+    save_dc: int = 0 # A fixed save DC instead of the caster's (i.e. Dethrone's 18), 0 for the caster's
     # Whether the character's once per turn damage (sneak attack, smite) can be added to this attack
     once_per_turn_eligible: bool = True
     # Limited attacks (i.e. Action Surge, quickened spells): average uses per fight, used in the first rounds. 0 means every round
@@ -374,6 +377,7 @@ class AttackContext:
     modifier: int = 0
     advantage: bool = False
     disadvantage: bool = False
+    advantage_chance: float = 0.0 # Share of rolls with advantage when it isn't certain
     crit_on: int = 20
     reroll_on: int = 0
     difficulty_class: int = 15
@@ -588,10 +592,11 @@ def calculate_attack_and_damage_context(character, enemy):
         crit_on = min(character.crit_on, attack.crit_on)
         if saving_throw:
             # The enemy rolls a saving throw against the character's spell save DC, so character attack roll bonuses don't apply
-            difficulty_class = character.spell_difficulty_class(attack.ability_stat)
+            difficulty_class = attack.save_dc or character.spell_difficulty_class(attack.ability_stat)
             attack_modifier = enemy.saving_throw_modifier(attack.saving_throw_stat) if isinstance(enemy, Enemy) else enemy.ability_modifier(attack.saving_throw_stat)
             attack_num_die, attack_die_sizes = [], []
-            advantage = disadvantage = False
+            # The roll is the enemy's, so only its own disadvantage counts
+            advantage, disadvantage = False, bool(attack.save_disadvantage)
             attack_reroll_on = 0
             save_success_multiplier = attack.saving_throw_success_multiplier
 
@@ -601,6 +606,7 @@ def calculate_attack_and_damage_context(character, enemy):
             modifier=attack_modifier,
             advantage=advantage,
             disadvantage=disadvantage,
+            advantage_chance=0.0 if saving_throw else attack.advantage_chance,
             crit_on=crit_on,
             reroll_on=attack_reroll_on,
             difficulty_class=difficulty_class,

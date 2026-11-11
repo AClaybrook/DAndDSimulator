@@ -1,9 +1,9 @@
-import { Badge, Checkbox, Collapse, Group, MultiSelect, NumberInput, Select, Stack, Table, Tabs, Text, Tooltip, UnstyledButton } from '@mantine/core'
+import { Badge, Button, Checkbox, Collapse, Group, MultiSelect, NumberInput, Select, Stack, Table, Tabs, Text, Tooltip, UnstyledButton } from '@mantine/core'
 import { useDebouncedValue, useMediaQuery } from '@mantine/hooks'
-import { IconChevronDown, IconChevronRight } from '@tabler/icons-react'
+import { IconChevronDown, IconChevronRight, IconWand } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { bg3, type Evaluation, type MemberResult, type PlannerOptions } from '../../api'
+import { bg3, type Deconflict, type DeconflictStep, type Evaluation, type MemberResult, type PlannerOptions } from '../../api'
 import { Section } from '../../components/Layout'
 import { chartLayout, spread } from '../../format'
 import { Plot } from '../../components/Plot'
@@ -32,7 +32,8 @@ export function ResultsPanel({ options, evaluation }: { options: PlannerOptions;
     enabled: compare.length > 0 && Boolean(enemy),
     placeholderData: (previous) => previous,
   })
-  const short = (name: string) => name.split(' (')[0]
+  // A name short enough to sit beside the line: 'Light Cleric: Spirit Guardians + ...' -> 'Light Cleric'
+  const short = (name: string) => { const s = name.split(' (')[0].split(':')[0]; return s.length > 20 ? `${s.slice(0, 19)}…` : s }
   const line = (m: MemberResult, color: string, width: number, dash?: string) => ({
     type: 'scatter', mode: 'lines+markers', name: m.name, x: ACTS.map((a) => `Act ${a}`), y: ACTS.map((a) => m.acts[a].damage[enemies - 1]),
     customdata: ACTS.map((a) => m.acts[a].level), line: { color, width, dash }, marker: { size: dash ? 6 : 8, color },
@@ -77,6 +78,7 @@ export function ResultsPanel({ options, evaluation }: { options: PlannerOptions;
       <Tabs.Panel value="conflicts">
         {!conflicts.length ? <Text size="sm" c="dimmed">No equipment conflicts.</Text> : (
           <Stack gap="xs">
+            {conflicts.some((c) => c.kind === 'shared') && <Settle />}
             {ACTS.map((a) => conflicts.filter((c) => c.act === a)).map((list, i) => list.length > 0 && (
               <div key={i}>
                 <Text size="xs" fw={600} c="dimmed" tt="uppercase">Act {ACTS[i]}</Text>
@@ -92,6 +94,64 @@ export function ResultsPanel({ options, evaluation }: { options: PlannerOptions;
       </Tabs.Panel>
       <Tabs.Panel value="party"><PartyAnalysisView options={options} count={party.length} /></Tabs.Panel>
     </Tabs>
+  )
+}
+
+// Settles the items several characters wear: whoever gains the most damage from an item keeps it, the others get the best item for
+// that slot nobody wears. Shown as a proposal first; each swap lists other options to pick instead
+function Settle() {
+  const { party, replace, update } = useParty()
+  const { enemy, rounds } = useSharedEnemy()
+  const [plan, setPlan] = useState<Deconflict | null>(null)
+  const [busy, setBusy] = useState(false)
+  const propose = async () => {
+    setBusy(true)
+    try { setPlan(await bg3.deconflict(party, enemy, rounds)) } finally { setBusy(false) }
+  }
+  const applyAll = () => {
+    plan?.party.forEach((b, i) => replace(i, b))
+    setPlan(null)
+  }
+  // One swap with another of its options: that member's slot at that act, the rest of the proposal untouched
+  const pick = (step: DeconflictStep, key: string) => {
+    const index = party.findIndex((b) => b.name === step.member)
+    if (index >= 0) update(index, (b) => ({ ...b, equipment: { ...b.equipment, [step.act]: { ...(b.equipment[step.act] ?? {}), [step.slotKey]: key } } }))
+    setPlan(null)
+  }
+  if (!plan) {
+    return (
+      <Group gap="xs">
+        <Button size="xs" variant="light" leftSection={<IconWand size={14} />} loading={busy} onClick={propose}>Settle shared items</Button>
+        <Text size="xs" c="dimmed">Proposes who keeps each contested item and what the others wear instead</Text>
+      </Group>
+    )
+  }
+  return (
+    <Section padding="sm" title="Proposed swaps" actions={<>
+      <Button size="compact-xs" onClick={applyAll}>Apply all</Button>
+      <Button size="compact-xs" variant="default" onClick={() => setPlan(null)}>Cancel</Button>
+    </>}>
+      {plan.steps.map((s, i) => (
+        <div key={i}>
+          <Text size="sm">
+            <Text span size="xs" c="dimmed">Act {s.act} · </Text><b>{s.item}</b> stays with {s.keeper.split(' (')[0]}. {s.member.split(' (')[0]}'s {s.slot.toLowerCase()}:{' '}
+            {s.replacement ? <b>{s.replacement}</b> : 'left empty (nothing else found by this act adds damage)'}
+            <Text span size="xs" c="dimmed"> · {s.cost >= 0 ? `gives up ${s.cost.toFixed(1)}` : `gains ${(-s.cost).toFixed(1)}`} a round</Text>
+          </Text>
+          {s.alternatives.length > 1 && (
+            <Group gap={4} mt={2}>
+              <Text size="xs" c="dimmed">Or:</Text>
+              {s.alternatives.slice(1).map((a) => (
+                <Tooltip key={a.key} label={`Wear ${a.item} there instead (+${a.gain.toFixed(1)} a round over an empty slot)`}>
+                  <Button size="compact-xs" variant="default" onClick={() => pick(s, a.key)}>{a.item} +{a.gain.toFixed(1)}</Button>
+                </Tooltip>
+              ))}
+            </Group>
+          )}
+        </div>
+      ))}
+      {plan.remaining > 0 && <Text size="xs" c="dimmed">{plan.remaining} other conflict{plan.remaining === 1 ? '' : 's'} (story choices, slots, concentration) are yours to decide.</Text>}
+    </Section>
   )
 }
 
@@ -118,7 +178,7 @@ function ScoreView({ member, options }: { member: MemberResult; options: Planner
     <Section padding="sm" title={<Text fw={600}>Overall score <Text span size="xs" c="dimmed" fw={400}>· {member.name.split(' (')[0]}, 0 to 100</Text></Text>}>
       <Plot figure={figure} height={170} />
       <UnstyledButton onClick={() => setOpen((o) => !o)}>
-        <Group gap={4}>{open ? <IconChevronDown size={14} /> : <IconChevronRight size={14} />}<Text size="xs" c="dimmed">The numbers, armour class and how each part is scored</Text></Group>
+        <Group gap={4}>{open ? <IconChevronDown size={14} /> : <IconChevronRight size={14} />}<Text size="xs" c="dimmed">The numbers, armour class, spell saves and how each part is scored</Text></Group>
       </UnstyledButton>
       <Collapse expanded={open}>
         <Table fz="xs" className="numeric">
@@ -141,6 +201,18 @@ function ScoreView({ member, options }: { member: MemberResult; options: Planner
                 </Table.Td>
               ))}
             </Table.Tr>
+            {ACTS.some((a) => member.acts[a].saves.length > 0) && (
+              <Table.Tr>
+                <Table.Td c="dimmed">Spell saves the enemy fails</Table.Td>
+                {ACTS.map((a) => (
+                  <Table.Td key={a}>
+                    {member.acts[a].saves.map((s) => (
+                      <div key={s.name}>{s.name}: {s.stat.slice(0, 3).toUpperCase()} DC {s.dc} · {Math.round(100 * s.fail)}%{s.disadvantage ? ' (disadv.)' : ''}</div>
+                    ))}
+                  </Table.Td>
+                ))}
+              </Table.Tr>
+            )}
           </Table.Tbody>
         </Table>
       </Collapse>

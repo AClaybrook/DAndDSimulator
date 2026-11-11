@@ -176,6 +176,7 @@ class BuilderCharacter(Model):
     spell: str = ""
     toggles: dict[str, bool | str] = {}
     level_order: list[str] = []
+    boons: dict[str, int] = {} # Permanent ability bonuses: Auntie Ethel's Hair (+1), Mirror of Loss (+2)
 
 class Build(Model):
     """ A planner build (bg3.build.Bg3Build) """
@@ -281,9 +282,19 @@ class AcPart(Model):
     source: str
     value: float
 
+class SavingThrow(Model):
+    name: str # The spell
+    stat: str # The enemy's saving throw
+    dc: int
+    fixed: bool # A DC of the spell's own (Dethrone), not the build's
+    fail: float # The enemy's chance to fail it
+    disadvantage: bool
+
 class ActResult(Model):
     level: int
     damage: list[float] # Against 1, 2, 3 and 4 enemies
+    spellDc: int | None = None # None when the build forces no saving throws
+    saves: list[SavingThrow]
     ac: int
     acParts: list[AcPart]
     hitChance: float
@@ -323,7 +334,9 @@ class Evaluation(Model):
 class VariantRow(Model):
     name: str
     description: str
-    damage: list[float]
+    damage: list[float] # By act, against the chosen number of enemies
+    byEnemies: list[list[float]] # By act: against 1, 2, 3 and 4 enemies
+    spellDc: list[int | None]
     ac: list[int]
     score: list[float]
 
@@ -331,6 +344,40 @@ class KitResult(Model):
     build: Build
     placed: list[str]
     blocked: list[str]
+
+class GearChange(Model):
+    act: str
+    slot: str
+    before: str # Item names, '' for an empty slot
+    after: str
+
+class BestGear(Model):
+    build: Build
+    gear: dict[str, dict[str, str]] # Act: slot: item key, only what changed
+    changes: list[GearChange]
+    goal: str
+
+class Alternative(Model):
+    key: str
+    item: str
+    gain: float
+
+class DeconflictStep(Model):
+    act: str
+    item: str
+    keeper: str
+    member: str
+    slot: str
+    slotKey: str
+    replacement: str # '' when the slot is left empty
+    replacementKey: str
+    cost: float # Damage per round the member gives up
+    alternatives: list[Alternative]
+
+class Deconflict(Model):
+    party: list[Build]
+    steps: list[DeconflictStep]
+    remaining: int # Conflicts left that aren't shared items (story choices, wrong slots, concentration)
 
 class MemberRoles(Model):
     name: str

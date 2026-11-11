@@ -89,18 +89,61 @@ def shield_slot_free(build, act):
     routine = (build.character or {}).get("routine") if build.character else ("one_handed" if "smite" in build.preset else "")
     return routine in ("one_handed", "shadow_blade", "shadow_blade_shield", "cantrip") and not equipment_at(build, act).get("melee_off")
 
-def optimise(build, act, objective, items=None):
-    """ The gear (slot: item key, '' for empty) that maximises objective(build) at an act, one slot at a time """
+def weapon_slot(build, act, items=None):
+    """ (slot, test) for the weapon a build attacks with at an act: the slot its main attack uses and which weapons can stand in for
+        the planned one (the same grip, so the build's routine and feats still apply), or (None, None) for unarmed, thrown and conjured
+        weapons. Casters get the main hand for a staff """
+    from bg3.build import compile_build # pylint: disable=import-outside-toplevel
+    from bg3.character import POLEARMS # pylint: disable=import-outside-toplevel
+    character = compile_build(build, act, items)
+    main = next((a for a in character.attacks if a.is_weapon and not a.offhand), None)
+    routine = (build.character or {}).get("routine", "") if build.character else ""
+    if main is None:
+        if any(a.type == "unarmed" for a in character.attacks):
+            return None, None
+        return "melee_main", lambda w: w.get("kind") != "ranged" # A caster's staff or blade, for its spell bonuses
+    if "conjured" in main.tags or main.type == "thrown":
+        return None, None
+    def props(w):
+        return w.get("properties") or []
+    if main.type == "weapon (ranged)":
+        hand = routine == "dual_hand_crossbows"
+        return "ranged_main", lambda w: w.get("kind") == "ranged" and (w.get("base") == "Hand Crossbow") == hand
+    if routine == "polearm":
+        return "melee_main", lambda w: w.get("kind") != "ranged" and w.get("base") in POLEARMS and ("two-handed" in props(w) or "versatile" in props(w))
+    if main.two_handed:
+        return "melee_main", lambda w: w.get("kind") != "ranged" and ("two-handed" in props(w) or "versatile" in props(w))
+    dual = any(a.is_weapon and a.offhand for a in character.attacks) and "Dual Wielder" not in ((build.character or {}).get("feats") or [])
+    return "melee_main", lambda w: w.get("kind") != "ranged" and "two-handed" not in props(w) and (not dual or "light" in props(w))
+
+def weapon_candidates(build, act, items=None):
+    """ (slot, [weapons found by the act that fit the build's grip]) """
+    items = items or catalog()
+    slot, fits = weapon_slot(build, act, items)
+    if slot is None:
+        return None, []
+    return slot, [i for i in items.values() if i.weapon and i.fits(slot) and (i.act or 3) <= int(act) and fits(i.weapon)]
+
+def optimise(build, act, objective, items=None, exclude=(), weapons=False):
+    """ The gear (slot: item key, '' for empty) that maximises objective(build) at an act, one slot at a time.
+        exclude: unique items not to pick (worn by the rest of the party). weapons: also choose the main weapon, first, since the rest
+        of the gear builds on it """
     items = items or catalog()
     gear = {slot: equipment_at(build, act).get(slot, "") for slot in GEAR_SLOTS}
     slots = list(GEAR_SLOTS) + (["melee_off"] if shield_slot_free(build, act) else [])
     if "melee_off" in slots:
         gear["melee_off"] = ""
+    pools = {}
+    if weapons:
+        slot, pool = weapon_candidates(build, act, items)
+        if slot:
+            gear = {slot: equipment_at(build, act).get(slot, ""), **gear}
+            slots, pools[slot] = [slot, *slots], pool
     best = objective(with_gear(build, act, gear))
     for slot in slots:
         taken = {gear.get(s) for s in ("ring_1", "ring_2") if s != slot} if slot.startswith("ring") else set()
-        for item in candidates(build, act, slot, items):
-            if item.key in taken or item.key == gear.get(slot):
+        for item in pools.get(slot) or candidates(build, act, slot, items):
+            if item.key in taken or item.key == gear.get(slot) or (item.unique and item.key in exclude):
                 continue
             trial = {**gear, slot: item.key}
             value = objective(with_gear(build, act, trial))

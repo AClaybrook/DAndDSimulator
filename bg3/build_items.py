@@ -127,6 +127,8 @@ def parse_effects(lines, own_weapon=False):
     effects, notes = [], []
     for line in lines:
         for sentence in [s.strip(" *.") for s in re.split(r"(?<=\.)\s+|\n|\* ", line) if s.strip(" *.")]:
+            # A saving throw bonus reads 'Dexteritys +1' once the wiki's template is stripped: a note, not an ability bonus
+            sentence = re.sub(rf"^({'|'.join(s.title() for s in STATS)})s \+", r"\1 saving throws +", sentence)
             found = _parse_sentence(sentence, own_weapon)
             if found:
                 effects += found
@@ -161,7 +163,8 @@ def _parse_sentence(sentence, own_weapon):
         stat = m.group(1).lower()
         if stat in STATS:
             return [{"kind": "ability_min", "stat": stat, "value": int(m.group(2))}]
-    if m := re.fullmatch(r"(\w+?)s? \+(\d+)(?: \(up to (\d+)\))?", sentence):
+    # 'Wisdom +1 (up to 21)'. Not 'Dexteritys +1', what is left of a saving throw bonus once the wiki's template is stripped
+    if m := re.fullmatch(r"(\w+) \+(\d+)(?: \(up to (\d+)\))?", sentence):
         stat = m.group(1).lower()
         if stat in STATS:
             return [{"kind": "ability_bonus", "stat": stat, "value": int(m.group(2)), **({"max_value": int(m.group(3))} if m.group(3) else {})}]

@@ -158,9 +158,9 @@ def replace_toggle(character, key):
     return compile_character(off, 6)[0]
 
 def test_builder_only_offers_toggles_for_its_classes():
-    assert relevant_toggles([["fighter", "Champion", 12]]) == ["reactions", "honour_mode", "advantage"]
-    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse", "booming_blade", "reactions", "honour_mode", "advantage"]
-    assert relevant_toggles([["warlock", "The Fiend", 12]]) == ["booming_blade", "reactions", "honour_mode", "advantage"]
+    assert relevant_toggles([["fighter", "Champion", 12]]) == ["reactions", "honour_mode", "illithid", "advantage"]
+    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse", "booming_blade", "offhand_crossbow", "reactions", "honour_mode", "illithid", "advantage"]
+    assert relevant_toggles([["warlock", "The Fiend", 12]]) == ["booming_blade", "offhand_crossbow", "reactions", "honour_mode", "illithid", "advantage"]
 
 
 def test_shadow_blade_and_booming_blade():
@@ -311,3 +311,136 @@ def test_sneak_attack_and_smites_keep_separate_pools():
     # A ranged or thrown paladin can't smite
     archer, _ = compile_character(Bg3Character(classes=[["paladin", "Oath of Vengeance", 12]], routine="ranged"), 5)
     assert not archer.once_per_turn_die_mod_list and not archer.once_per_turn_extra
+
+def test_cleric_spirit_guardians_and_spiritual_weapon():
+    """ bg3.wiki: Spirit Guardians 3d8 + 1d8 a slot level, an action; Spiritual Weapon 1d8 + 1 + WIS force, +1d8 per two slot levels,
+        a bonus action, then its own attack every round """
+    from bg3.character import cleric_slots
+    wis = {"strength": 8, "dexterity": 14, "constitution": 14, "intelligence": 8, "wisdom": 17, "charisma": 10}
+    def cleric(domain="Light Domain", **fields):
+        return Bg3Character(**{"scores": wis, "bonus": {"wisdom": 2, "constitution": 1}, "classes": [["cleric", domain, 12]], "routine": "cantrip",
+                               "cantrip": "Sacred Flame", "feats": ["wisdom+2"], **fields})
+    both = cleric(spell="Spirit Guardians", toggles={"spiritual_weapon": True})
+    c, notes = compile_character(both, 12)
+    by_name = {a.name: a for a in c.attacks}
+    # The day's best four slots (6, 5, 5, 4) go to Spirit Guardians: 5d8 on average; the next four (4, 4, 3, 3) to the weapon: 1.5d8
+    assert cleric_slots(both, {"cleric": 12}, {"cleric": "Light Domain"}) == ([6, 5, 5, 4], [4, 4, 3, 3])
+    assert by_name["Spirit Guardians (aura)"].damage == "5d8" and by_name["Spirit Guardians (aura)"].targets == 3
+    weapon = by_name["Spiritual Weapon"]
+    assert weapon.damage == "1d8+8" and weapon.damage_type == "force" and weapon.action == "bonus" and weapon.uses_per_fight == 10 # 1 + WIS 5 + half a d8
+    assert by_name["Spirit Guardians (cast)"].uses_per_fight == 1 and by_name["Sacred Flame"].fallback_for == "Spirit Guardians (cast)" and not notes
+    # The weapon alone, with every slot free: the two best are level 6 and 5 (3d8 and 2d8)
+    alone, _ = compile_character(cleric(toggles={"spiritual_weapon": True}), 12)
+    assert next(a for a in alone.attacks if a.name == "Spiritual Weapon").damage == "2d8+7" # (3 + 2 + 2 + 2) / 4 dice, the quarter die as +1, on top of 1 + WIS 5
+    assert not any(a.name == "Spiritual Weapon" for a in compile_character(cleric(), 12)[0].attacks) # Off unless asked for
+    # Level 3: the weapon in half the fights (two level 2 slots a day), no Spirit Guardians yet
+    early, notes = compile_character(both, 3)
+    assert next(a for a in early.attacks if a.name == "Spiritual Weapon").uses_per_fight == 1.5 and any("Spirit Guardians needs" in n for n in notes)
+    # Death Domain: the aura is necrotic and Toll the Dead reaches a second creature (Reaper)
+    death, _ = compile_character(cleric("Death Domain", spell="Spirit Guardians", cantrip="Toll the Dead"), 12)
+    death = {a.name: a for a in death.attacks}
+    assert death["Spirit Guardians (aura)"].damage_type == "necrotic" and death["Toll the Dead"].targets == 2
+    # Haste's extra action attacks from round 1 while the action casts the spell
+    from bg3.build import Bg3Build, compile_build
+    hasted = compile_build(Bg3Build(name="Cleric", preset="", character=both.to_dict(), buffs={"3": ["haste"]}), "3")
+    extra = next(a for a in hasted.attacks if a.label == "Haste")
+    assert not extra.fallback_for and "after_cast" not in extra.tags
+
+WIS17 = {"strength": 8, "dexterity": 14, "constitution": 14, "intelligence": 8, "wisdom": 17, "charisma": 10}
+
+def reaper(**fields):
+    """ Death Domain 8 / Necromancy 2 / Spores 2, WIS 20: Touch of Death deals 5 + 2 x 8 """
+    return Bg3Character(**{"scores": WIS17, "bonus": {"wisdom": 2, "constitution": 1}, "routine": "cantrip", "cantrip": "Toll the Dead", "feats": ["wisdom+2"],
+                           "classes": [["cleric", "Death Domain", 8], ["wizard", "Necromancy School", 2], ["druid", "Circle of Spores", 2]], **fields})
+
+def attacks_of(character, level=12):
+    return {a.name: a for a in compile_character(character, level)[0].attacks}
+
+def test_death_domain_spells_and_touch_of_death():
+    """ bg3.wiki: Touch of Death rides melee spell attacks; Reaper gives necromancy cantrips a second target; Dethrone has its own DC 18
+        once a long rest; Circle of Death 8d6; Bursting Sinew 1d10 a tier in a 3 m burst; Thorn Whip 1d6 a tier """
+    plain = attacks_of(reaper())
+    assert plain["Toll the Dead"].damage == "3d12" and plain["Toll the Dead"].targets == 2 and "necromancy" in plain["Toll the Dead"].tags
+    assert not any("Touch of Death" in name for name in plain) # A saving throw cantrip has nothing to carry it
+    # Two charges a short rest: 1.5 casts a fight carry it, the cantrip goes on without
+    whip = attacks_of(reaper(cantrip="Thorn Whip"))
+    carrier = whip["Thorn Whip (Touch of Death)"]
+    assert carrier.damage == "3d6" and carrier.extra_damage_list == ["21 necrotic"] and carrier.uses_per_fight == 1.5 and "channel_divinity" in carrier.tags
+    assert whip["Thorn Whip"].fallback_for == carrier.name and not whip["Thorn Whip"].uses_per_fight
+    # A limited spell splits its casts: 16 slots over four fights, 1.5 of the four casts a fight with a charge
+    wounds = attacks_of(reaper(spell="Inflict Wounds"))
+    assert wounds["Inflict Wounds (Touch of Death)"].uses_per_fight == 1.5 and wounds["Inflict Wounds"].uses_per_fight == 2.5
+    assert wounds["Inflict Wounds"].fallback_for == "Inflict Wounds (Touch of Death)" and wounds["Toll the Dead"].fallback_for == "Inflict Wounds"
+    dethrone = attacks_of(reaper(spell="Dethrone"))["Dethrone"]
+    assert dethrone.damage == "10d6+20" and dethrone.save_dc == 18 and dethrone.uses_per_fight == 0.25 and dethrone.saving_throw_stat == "constitution"
+    sinew = attacks_of(reaper(cantrip="Bursting Sinew"))["Bursting Sinew"]
+    assert sinew.damage == "3d10" and sinew.targets == 3 and sinew.saving_throw_stat == "dexterity"
+    # Halo of Spores: a reaction every round, 1d4 necrotic doubled by Symbiotic Entity, CON save
+    halo = plain["Halo of Spores"]
+    assert halo.action == "reaction" and halo.damage == "2d4" and halo.saving_throw_stat == "constitution" and not halo.uses_per_fight
+    assert attacks_of(reaper(toggles={"symbiotic": False}))["Halo of Spores"].damage == "1d4"
+
+def test_spirit_guardians_around_another_spell():
+    """ Spirit Guardians cast first with another spell as the build's own: a spell of level 4 or more keeps its slots """
+    from bg3.character import cleric_slots
+    levels, subs = {"cleric": 8, "wizard": 2, "druid": 2}, {"cleric": "Death Domain"}
+    both = {"spirit_guardians": True, "spiritual_weapon": True}
+    circle = reaper(spell="Circle of Death", toggles=both)
+    assert cleric_slots(circle, levels, subs) == ([5, 5, 4, 4], [4, 3, 3, 3]) # The level 6 slot is Circle of Death's
+    assert cleric_slots(reaper(spell="Dethrone", toggles=both), levels, subs) == ([6, 5, 4, 4], [4, 3, 3, 3]) # Once a day: one level 5 slot kept
+    assert cleric_slots(reaper(spell="Spirit Guardians", toggles={"spiritual_weapon": True}), levels, subs) == ([6, 5, 5, 4], [4, 4, 3, 3])
+    assert cleric_slots(reaper(spell="Inflict Wounds", toggles=both), levels, subs) == ([6, 5, 5, 4], [2, 2, 2, 3]) # Cast with every slot left
+    by_name = attacks_of(circle)
+    assert by_name["Circle of Death"].uses_per_fight == 0.25 and by_name["Circle of Death"].targets == 4
+    # Round 1 casts the aura, then Circle of Death, then the cantrip
+    assert by_name["Circle of Death"].fallback_for == "Spirit Guardians (cast)" and by_name["Toll the Dead"].fallback_for == "Circle of Death"
+    assert by_name["Spirit Guardians (aura)"].uses_per_fight == 10 and "spirit_guardians" in relevant_toggles(circle.classes)
+
+def test_divine_strike_is_typed_and_weapon_only():
+    from computations.models import once_per_turn_pools
+    melee, _ = compile_character(Bg3Character(scores=WIS17, classes=[["cleric", "Death Domain", 8]], routine="one_handed"), 8)
+    assert melee.once_per_turn_die_mod_list == ["1d8"] and melee.once_per_turn_damage_type == "necrotic"
+    # A caster only gets it on the bonus action crossbow shot, never on a spell
+    caster, _ = compile_character(reaper(toggles={"offhand_crossbow": True}), 12)
+    assert once_per_turn_pools(caster) and all(not a.once_per_turn_eligible for a in caster.attacks if a.type == "spell")
+    assert not once_per_turn_pools(compile_character(reaper(), 12)[0])
+
+def test_illithid_powers():
+    """ bg3.wiki: Psionic Overload +1d4 psychic on each attack; Favourable Beginnings the proficiency bonus on the first attack roll
+        against a target; Luck of the Far Realms turns a hit into a critical hit once a long rest """
+    plain, _ = compile_character(champion(), 12)
+    powered, _ = compile_character(Bg3Character.from_dict({**champion().to_dict(), "toggles": {"illithid": True}}), 12)
+    assert "illithid" in relevant_toggles(champion().classes) and all("1d4 psychic" not in a.extra_damage_list for a in plain.attacks)
+    assert all(a.extra_damage_list[-1] == "1d4 psychic" for a in powered.attacks)
+    lucky, first, main = powered.attacks[:3]
+    assert lucky.name == "Greatsword (Luck of the Far Realms)" and lucky.hits_crit and lucky.uses_per_fight == 0.25
+    assert first.name == "Greatsword (Favourable Beginnings)" and first.uses_per_fight == 1 and first.fallback_for == lucky.name
+    assert first.bonus_attack_die_mod_list[-1] == "4" and main.fallback_for == first.name and not main.uses_per_fight
+    assert len(powered.attacks) == len(plain.attacks) + 2 # The same attacks a round, two of them special once
+    gain = expected_damage_per_round(powered, ENEMY, 3) - expected_damage_per_round(plain, ENEMY, 3)
+    assert 5 < gain < 12 # 1d4 on about three hits a round, and the two once a fight extras
+    # A caster's saving throws aren't attacks: nothing on Toll the Dead or the aura, the crossbow shot gets the 1d4
+    caster, _ = compile_character(reaper(spell="Spirit Guardians", toggles={"illithid": True, "offhand_crossbow": True}), 12)
+    by_name = {a.name: a for a in caster.attacks}
+    assert by_name["Toll the Dead"].extra_damage_list == [] and "1d4 psychic" in by_name["Hand Crossbow (Offhand)"].extra_damage_list
+    assert not any("Luck of the Far Realms" in name for name in by_name)
+
+def test_illithid_powers_agree_across_the_engines():
+    from tests.test_exact import check
+    powered, _ = compile_character(Bg3Character.from_dict({**champion().to_dict(), "toggles": {"illithid": True}}), 12)
+    check(powered, ENEMY, 3)
+
+def test_permanent_boons_and_the_item_casting_ability():
+    from bg3.character import item_casting_stat
+    haired = Bg3Character(scores={**STR, "dexterity": 13}, bonus={"strength": 2, "constitution": 1}, classes=[["fighter", "Champion", 12]], boons={"strength": 1})
+    assert compile_character(haired, 1)[0].strength == 18 # 15 + 2, and Auntie Ethel's Hair
+    assert compile_character(Bg3Character.from_dict({**haired.to_dict(), "feats": ["strength+2", "strength+2"]}), 12)[0].strength == 20 # Stops at 20
+    # Items cast with the ability of the spellcasting class whose first level came last; a Swashbuckler or Champion has none
+    hexwing = Bg3Character(classes=[["rogue", "Swashbuckler", 4], ["warlock", "The Hexblade", 5], ["ranger", "Swarmkeeper", 3]])
+    assert item_casting_stat(hexwing) == "wisdom" and item_casting_stat(hexwing, 9) == "charisma" and item_casting_stat(champion()) == ""
+    hexwing.toggles["item_casting"] = "charisma" # A respec that takes the Warlock levels last
+    assert item_casting_stat(hexwing) == "charisma"
+    # Gathered Swarm is psychic (the Resonance Stone doubles it), in its own pool next to Sneak Attack
+    from computations.models import once_per_turn_pools
+    swarm = compile_character(Bg3Character(classes=[["ranger", "Swarmkeeper", 12]], routine="ranged"), 12)[0]
+    assert [(p["damage_type"]) for p in once_per_turn_pools(swarm)] == ["psychic"]

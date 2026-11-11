@@ -11,7 +11,7 @@ import numpy as np
 
 from computations.analytic import _uses_realizations, adv_dis_pmf, dice_sum_pmf, hit_and_crit_chance
 from computations.models import calculate_attack_and_damage_context
-from computations.numerical_simulation import has_fight_limits
+from computations.numerical_simulation import attack_windows, has_fight_limits
 
 class Dist:
     """ A distribution over integers: probs[i] is the probability of offset + i """
@@ -178,14 +178,9 @@ def damage_per_round(character, enemy, rounds_per_fight=None):
         limited_ids = [p for p in pool_ids if once_uses[p] is not None]
         unlimited = {p for p in pool_ids if once_uses[p] is None}
         used = {p: np.array([1.0]) for p in limited_ids} # Distribution of each limited pool's uses spent so far in the fight
+        windows = attack_windows(attack_uses, [d.get("fallback_index", -1) for d in damages])
         for r in range(rounds_per_fight):
-            active = []
-            for u, d in zip(attack_uses, damages):
-                if d.get("fallback_index", -1) >= 0:
-                    replaced = attack_uses[d["fallback_index"]]
-                    active.append(replaced is not None and r >= replaced and (u is None or r < replaced + u))
-                else:
-                    active.append(u is None or r < u)
+            active = [start <= r < end for start, end in windows]
             contexts = first_contexts if r == 0 else plain_contexts
             p_available = {p: float(used[p][:once_uses[p]].sum()) for p in limited_ids}
             spent_chance = {p: 0.0 for p in limited_ids}

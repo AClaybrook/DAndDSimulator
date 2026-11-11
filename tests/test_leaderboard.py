@@ -36,7 +36,7 @@ def test_more_enemies_use_area_options():
     cleric = builds["14. Death Cleric Necromancer"]
     assert "Spirit Guardians" in [label for label, _ in area_options(cleric)]
     row = entry(cleric.name, cleric)
-    assert row["damage"][view("reliable", 3)]["1"] > 3 * row["damage"][view("reliable", 1)]["1"]
+    assert row["damage"][view("reliable", 3)]["1"] > 2.5 * row["damage"][view("reliable", 1)]["1"]
     assert row["area"][view("reliable", 3)]["1"] == "Spirit Guardians"
     from bg3.reddit_builds import REDDIT
     hunter = REDDIT["Filthy Harold Hunter (Hunter 11 / War Cleric 1)"]

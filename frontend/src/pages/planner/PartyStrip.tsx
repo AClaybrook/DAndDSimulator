@@ -80,6 +80,16 @@ export function PartyStrip({ options, evaluation, enemies }: { options: PlannerO
                     <Text fw={700} className="numeric">{result ? ACTS.map((a) => result.acts[a].ac).join('/') : '–'}</Text>
                   </div>
                 </Tooltip>
+                {result && ACTS.some((a) => result.acts[a].spellDc != null) && (
+                  <Tooltip multiline w={340} label={ACTS.filter((a) => result.acts[a].saves.length).map((a) => (
+                    <div key={a}>Act {a}: {result.acts[a].saves.map((s) => `${s.name} ${s.stat.slice(0, 3).toUpperCase()} ${s.dc}, fails ${Math.round(100 * s.fail)}%${s.disadvantage ? ' (disadvantage)' : ''}`).join('; ')}</div>
+                  ))}>
+                    <div>
+                      <Text size="10px" c="dimmed" tt="uppercase">Spell DC</Text>
+                      <Text fw={700} className="numeric">{ACTS.map((a) => result.acts[a].spellDc ?? '–').join('/')}</Text>
+                    </div>
+                  </Tooltip>
+                )}
               </Group>
             </Paper>
           )

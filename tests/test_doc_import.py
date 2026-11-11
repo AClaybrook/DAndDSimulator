@@ -54,6 +54,8 @@ def test_helpers():
         [["rogue", "Swashbuckler", 4], ["warlock", "The Hexblade", 5], ["ranger", "Swarmkeeper", 3]]
     assert parse_classes("8 Death Domain Cleric / 2 Necromancy Wizard / 2 Circle of the Spores Druid")[2] == ["druid", "Circle of Spores", 2]
     assert split_gear("Staff (or Other), A + B (Off-Hand), X -> Y") == [("Staff", ""), ("A", ""), ("B", "off"), ("Y", "")]
+    pair = import_text("Build 60: Pair\nClass Split: 12 Thief Rogue.\nAct 2: Dual Hand Crossbows.\n")[0]
+    assert pair["build"]["equipment"]["2"] == {"ranged_main": "bg3:hand_crossbow_1", "ranged_off": "bg3:hand_crossbow_1"} and not pair["unmatched"]
     base, bonus = split_point_buy({"strength": 8, "dexterity": 14, "constitution": 16, "intelligence": 8, "wisdom": 10, "charisma": 17}, "charisma")
     assert bonus == {"charisma": 2, "constitution": 1} and base["charisma"] == 15
 
@@ -80,3 +82,47 @@ def test_free_text_fighting_style_and_phalar_buffs():
     build = import_text("Build 41: Archer\nClass Split: 12 Arcane Archer Fighter.\nLevels 1-11: Archery Fighting Style, Arcane Shot\n")[0]
     assert build["build"]["character"]["fighting_styles"] == ["Archery"]
     assert not BUFFS["phalar_sing"].concentration and BUFFS["phalar_shriek"].effects[0].value == "1d4 thunder"
+
+REAPER = """Build 50: Reaper
+Class Split: 8 Death Domain Cleric / 2 Necromancy Wizard / 2 Circle of the Spores Druid.
+Starting Ability Scores: STR 8, DEX 14, CON 14, INT 10, WIS 17, CHA 8.
+Spells: Spirit Guardians and Spiritual Weapon every fight, Toll the Dead, then Circle of Death, Dethrone, Inflict Wounds or Thorn Whip.
+Act 3: Staff of Cherished Necromancy (Main Hand), Amulet of the Devout, Armour of Agility, Ne'er Misser + Hellfire Hand Crossbow.
+"""
+
+def test_a_caster_with_a_staff_casts_and_gets_play_modes():
+    from bg3.kits import variant_build
+    entry = import_text(REAPER)[0]
+    build = Bg3Build.from_dict(entry["build"])
+    character = build.character
+    # A full caster holding a staff casts its cantrip; Booming Blade only when the write-up asks for it
+    assert character["routine"] == "cantrip" and character["cantrip"] == "Toll the Dead" and character["spell"] == "Spirit Guardians"
+    assert character["toggles"] == {"spiritual_weapon": True, "booming_blade": False, "offhand_crossbow": True}
+    # The second hand crossbow goes in the off hand, for the bonus action shot
+    assert build.equipment["3"]["ranged_main"] == "bg3:ne_er_misser" and build.equipment["3"]["ranged_off"] == "bg3:hellfire_hand_crossbow"
+    assert entry["unmatched"] == []
+    # The other spells it names are play modes: levelled ones keep Spirit Guardians up, necromancy turns on the staff's free cast
+    modes = {v["name"]: v for v in build.variants}
+    assert list(modes) == ["Circle of Death", "Dethrone, once a day", "Inflict Wounds in melee", "Thorn Whip"]
+    assert modes["Circle of Death"] == {"name": "Circle of Death", "character": {"spell": "Circle of Death"}, "toggles": {"spirit_guardians": True},
+                                        "conditions": ["bg3:staff_of_cherished_necromancy#2"]}
+    assert "conditions" not in modes["Dethrone, once a day"] and modes["Thorn Whip"] == {"name": "Thorn Whip", "character": {"cantrip": "Thorn Whip"}}
+    main = {a.name: a for a in compile_build(build, "3").attacks}
+    assert {"Spirit Guardians (aura)", "Spiritual Weapon", "Toll the Dead", "Hellfire Hand Crossbow (Offhand)", "Halo of Spores"} <= set(main)
+    circle = {a.name: a for a in compile_build(variant_build(build, modes["Circle of Death"]), "3").attacks}
+    assert circle["Circle of Death"].uses_per_fight == 1.25 and "Spirit Guardians (aura)" in circle # Its slot, and Life Essence's free cast
+    assert "Thorn Whip (Touch of Death)" in {a.name for a in compile_build(variant_build(build, modes["Thorn Whip"]), "3").attacks}
+
+def test_hags_hair_respec_note_and_conditions_always_met():
+    text = FREE_TEXT.replace("Level 3 (Wizard 3)", "Level 12: Respec at 12 to take Paladin at Level 1 so scrolls/items scale with INT.\nLevel 1: Booming Blade.\nLevel 3 (Wizard 3)") \
+        .replace("Caustic Band, Crusher's Ring", "Diadem of Arcane Synergy, Strange Conduit Ring")
+    godblade, deadeye = import_text(text + "Starting Ability Scores: STR 8, DEX 17, CON 14, INT 16, WIS 10, CHA 8 (reaches 20 DEX / 16 INT).\n"
+                                    "Feats: Sharpshooter, ASI (+2 DEX to 20), Alert.\n")
+    character = godblade["build"]["character"]
+    assert character["boons"] == {"dexterity": 1} and character["toggles"]["item_casting"] == "intelligence"
+    # Shadow Blade is concentration and Booming Blade a cantrip with a condition: the ring's and the diadem's effects are on
+    assert set(godblade["build"]["conditions"]) == {"bg3:diadem_of_arcane_synergy#0", "bg3:strange_conduit_ring#0"}
+    blade = compile_build(Bg3Build.from_dict(godblade["build"]), "1").attacks[0]
+    assert "1d4 psychic" in blade.extra_damage_list and blade.bonus_damage_die_mod_list[-1] == "3" # INT 16
+    # 17 + 2 from the feat is 19: the write-up reaches 20, so the hair is assumed and noted
+    assert deadeye["build"]["character"]["boons"] == {"dexterity": 1} and any("Auntie Ethel's Hair assumed" in n for n in deadeye["notes"])

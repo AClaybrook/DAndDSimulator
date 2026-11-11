@@ -2,6 +2,53 @@
 
 ## 3.0.0 (in progress)
 
+- **Best in slot gear:** the planner's Gear tab can fill a character's gear for an act (or every act) with the best of everything found
+  by then, for the most damage, the highest armour class or the best overall score, the weapon included (one that fits the build's grip).
+  It is searched for the build against the current enemy, not a fixed list, and can leave the rest of the party's items alone. "Compare
+  first" keeps your gear and adds the set as a variant; Fill has an Undo.
+- **Settle shared items:** the Conflicts tab proposes who keeps each item two characters wear (whoever gains the most damage from it) and
+  the best item nobody wears for the others, with other options to pick instead. A slot left empty is filled in the first later act
+  that has something for it.
+- **Clerics:** Spiritual Weapon (a toggle: its own attack every round for 1d8 + 1 + Wisdom force, more from higher slots) and Spirit
+  Guardians cast with the day's best slots (3d8 + 1d8 a slot level), costing the action of the first round. Before, the aura was always
+  3d8 and counted in every fight even with two slots a day, which overstated level 5 clerics. Death Domain: a necrotic aura and Toll the
+  Dead on two creatures (Reaper). Two example clerics, and builds from the build doc that use these spells now have them (Deathreaper,
+  Tempest Bladesinger, Unstoppable Death Monk, Circle of the Stars / Light Cleric).
+- **Play modes:** a variant can be another way to play the same character: a different routine, cantrip or levelled spell, with or
+  without Spirit Guardians cast first ("Play mode" in the Variants tab). The tab leads with a chart of each way's gain over the build as
+  planned against one to four enemies, since a single target spell and an area spell trade places as enemies are added. Builds imported
+  from the build doc get a mode for each other damage spell their write-up names (the Deathreaper: Circle of Death, Dethrone, Inflict
+  Wounds, Thorn Whip, Shocking Grasp, Bursting Sinew).
+- **Spell save DC** on each party card, by act, for builds that force saving throws; hover for each spell's save, its DC and the
+  enemy's chance to fail. The same lines are in the score details, and the DC is a column of the variants table.
+- **Death Domain, Necromancy and Spores:** Circle of Death, Dethrone (its own DC 18, once a long rest), Thorn Whip and Bursting Sinew;
+  Touch of Death on melee spell attacks (Inflict Wounds, Shocking Grasp, Thorn Whip) as well as weapon hits, with a limited spell's casts
+  split between the ones that carry a charge and the rest; Reaper on every necromancy cantrip; Divine Strike in the domain's damage type
+  and only on weapon hits; Halo of Spores as a reaction every round; a bonus action shot with an off hand hand crossbow for casters (a
+  toggle). Spirit Guardians can be cast first around another spell, which keeps its own slots when it is level 4 or higher.
+- **Items:** Staff of Cherished Necromancy (enemies save against necromancy spells with disadvantage; Life Essence's free cast as a
+  toggle), Amulet of the Devout (+2 spell save DC and one more Channel Divinity charge), Armour of Agility's full Dexterity modifier.
+- **Engine:** saving throws rolled with disadvantage, a spell's own fixed DC, and fallbacks that chain (cast A while its uses last, then
+  B while its uses last, then C), in the analytic, exact and simulated engines.
+- **Build doc import:** a full caster holding a staff casts its cantrip instead of swinging the staff, Toll the Dead is recognised, a
+  second hand crossbow goes in the off hand, and Booming Blade is only assumed when the write-up names it.
+- **Act 3 bows:** The Dead Shot adds the proficiency bonus twice to its own attack rolls (Keen Attack, which was only a note, so the
+  bow was undersold). Gontr Mael's Promised Victory is advantage on about a quarter of its shots (a hit marks the target with Guiding
+  Bolt for the next attack roll that turn, after a DC 15 Dexterity save) instead of a toggle that gave every shot advantage; Bolt of
+  Celestial Light's radiant rider and Celestial Haste (half an action a fight, nothing when Haste is already on) are counted. The
+  engine has advantage on a share of an attack's rolls (`advantage_chance`), the same in the analytic, exact and simulated numbers.
+- **Auntie Ethel's Hair** on more than one party member shows in the Conflicts tab (it is given once a playthrough).
+- **Illithid powers:** a checkbox for every custom character (off by default). Psionic Overload adds 1d4 psychic to every attack
+  roll, Favourable Beginnings the proficiency bonus to the first attack of a fight, and Luck of the Far Realms makes one hit a day a
+  critical hit. Psionic Overload is taken as already up, like a buff. Mind Blast, Concentrated Blast, Cull the Weak and Black Hole
+  aren't counted.
+- **Build audit (Godblade, Hexwing Phantom, Deathreaper, Arcane Deadeye):** Auntie Ethel's Hair as a permanent +1 (a select next to
+  the +2/+1, read from the build doc); Arcane Synergy on the ring and the diadem (the spellcasting ability modifier on weapon attacks,
+  with the ability of the casting class taken last); Great Weapon Master with a versatile weapon held in both hands (Phalar Aluve);
+  Gontr Mael's Guiding Bolt as a toggle; Gathered Swarm's damage is psychic. The Helmet of Arcane Acuity and Gloves of the Automaton
+  gave +1 to an ability score where the game gives +1 to its saving throws. Imported builds switch on item conditions they always
+  meet (Strange Conduit Ring while Shadow Blade is up, Arcane Synergy with Booming Blade).
+- **Balduran's Giantslayer** doubles the Strength modifier's damage (and has advantage against Large creatures as a toggle).
 - **Review fixes, rules:** Haste and Bloodlust give a whole Attack action outside Honour Mode (Extra Attack included) and one attack in
   it; the Honour Mode toggle is now offered to every class. BG3 Savage Attacker and Great Weapon Fighting reach rider and once per turn
   dice (smites, Sneak Attack, item damage), and Savage Attacker a thrown weapon's own dice. Lifedrinker is necrotic, so the Resonance

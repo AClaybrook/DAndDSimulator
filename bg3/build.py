@@ -111,10 +111,12 @@ def compile_build(build, act, items=None):
     effects = [(e, own) for key, effects_, own in sources for e in active_effects(key, effects_, build.conditions)]
     effects.sort(key=lambda pair: not pair[0].kind.startswith("ability"))
     honour_mode = bool(build.character) and Bg3Character.from_dict(build.character).toggle("honour_mode")
-    extra_actions = 0
+    extra_actions, limited_haste = 0, 0.0
     for effect, own in effects:
         if effect.kind == "extra_action":
             extra_actions += int(effect.value)
+        elif effect.kind == "limited_haste":
+            limited_haste = max(limited_haste, float(effect.value))
         elif effect.kind != "lightning_charges":
             apply_effect(character, effect, own, honour_mode)
     # Charges from several items don't stack their bonuses
@@ -124,6 +126,9 @@ def compile_build(build, act, items=None):
     # Haste: one more action each round (the Hastened condition doesn't stack, so one at most)
     if extra_actions:
         extra_action(character, "Haste", honour_mode)
+    elif limited_haste:
+        # A Haste the gear casts on some days (Gontr Mael's Celestial Haste): that many more actions in a typical fight
+        extra_action(character, "Celestial Haste", honour_mode, uses=limited_haste)
 
     if build.advantage:
         character.advantage = True

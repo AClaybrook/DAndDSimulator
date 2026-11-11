@@ -2068,10 +2068,18 @@
    "rarity": "Rare",
    "unique": true,
    "weapon": null,
-   "effects": [],
-   "notes": "When you inflict a condition, gain Arcane Synergy for 2 turns",
+   "effects": [
+    {
+     "kind": "damage_bonus_ability",
+     "stat": "casting",
+     "applies_to": "weapon",
+     "condition": "Arcane Synergy: after inflicting a condition (Booming Blade's counts), for 2 turns"
+    }
+   ],
+   "notes": "",
    "location": "Crèche Y'llek",
-   "source": "https://bg3.wiki/wiki/Diadem_of_Arcane_Synergy"
+   "source": "https://bg3.wiki/wiki/Diadem_of_Arcane_Synergy",
+   "reviewed": true
   },
   {
    "key": "bg3:frayed_drow_hood",
@@ -2458,10 +2466,18 @@
    "rarity": "Rare",
    "unique": true,
    "weapon": null,
-   "effects": [],
-   "notes": "When you deal damage with a Cantrip, you gain Arcane Synergy for 2 turns",
+   "effects": [
+    {
+     "kind": "damage_bonus_ability",
+     "stat": "casting",
+     "applies_to": "weapon",
+     "condition": "Arcane Synergy: after dealing damage with a cantrip (Booming Blade counts), for 2 turns"
+    }
+   ],
+   "notes": "",
    "location": "Crèche Y'llek",
-   "source": "https://bg3.wiki/wiki/Ring_of_Arcane_Synergy"
+   "source": "https://bg3.wiki/wiki/Ring_of_Arcane_Synergy",
+   "reviewed": true
   },
   {
    "key": "bg3:ring_of_being_really_invisible",
@@ -7519,14 +7535,8 @@
    "rarity": "Rare",
    "unique": true,
    "weapon": null,
-   "effects": [
-    {
-     "kind": "ability_bonus",
-     "stat": "strength",
-     "value": 1
-    }
-   ],
-   "notes": "Circuitry Interface",
+   "effects": [],
+   "notes": "Strength saving throws +1; Circuitry Interface",
    "location": "Last Light Inn",
    "source": "https://bg3.wiki/wiki/Gloves_of_the_Automaton"
   },
@@ -7905,14 +7915,8 @@
    "rarity": "Uncommon",
    "unique": true,
    "weapon": null,
-   "effects": [
-    {
-     "kind": "ability_bonus",
-     "stat": "dexterity",
-     "value": 1
-    }
-   ],
-   "notes": "Whenever you deal damage with a weapon attack, you gain Arcane Acuity for 2 turns",
+   "effects": [],
+   "notes": "Dexterity saving throws +1; Whenever you deal damage with a weapon attack, you gain Arcane Acuity for 2 turns",
    "location": "Mason's Guild",
    "source": "https://bg3.wiki/wiki/Helmet_of_Arcane_Acuity"
   },
@@ -10191,11 +10195,16 @@
     {
      "kind": "spell_dc",
      "value": 2
+    },
+    {
+     "kind": "channel_divinity",
+     "value": 1
     }
    ],
-   "notes": "You gain an additional use of chadiv; Once used, it is restored upon taking a Long Rest",
+   "notes": "",
    "location": "Stormshore Tabernacle",
-   "source": "https://bg3.wiki/wiki/Amulet_of_the_Devout"
+   "source": "https://bg3.wiki/wiki/Amulet_of_the_Devout",
+   "reviewed": true
   },
   {
    "key": "bg3:amulet_of_the_drunkard",
@@ -12763,10 +12772,22 @@
      "two-handed"
     ]
    },
-   "effects": [],
-   "notes": "Giant Form; On a hit, double the damage from your Strength modifier; This weapon grants you advantage on attack rolls against Large, Huge or Gargantuan creatures",
+   "effects": [
+    {
+     "kind": "damage_bonus_ability",
+     "stat": "strength",
+     "applies_to": "self"
+    },
+    {
+     "kind": "advantage",
+     "applies_to": "self",
+     "condition": "Against Large, Huge or Gargantuan creatures"
+    }
+   ],
+   "notes": "Giant Form",
    "location": "The Dragon's Sanctum",
-   "source": "https://bg3.wiki/wiki/Balduran%27s_Giantslayer"
+   "source": "https://bg3.wiki/wiki/Balduran%27s_Giantslayer",
+   "reviewed": true
   },
   {
    "key": "bg3:belm",
@@ -13576,10 +13597,26 @@
      "two-handed"
     ]
    },
-   "effects": [],
-   "notes": "Celestial Haste recharge=Long Rest; This object shines with a glowing light in a radius of ft=20 m=6; Toggle this to douse and rekindle the light; On a hit, possibly inflict Guiding Bolt upon the target",
+   "effects": [
+    {
+     "kind": "advantage_chance",
+     "value": 0.25,
+     "applies_to": "self"
+    },
+    {
+     "kind": "extra_damage",
+     "value": "2 radiant",
+     "applies_to": "self"
+    },
+    {
+     "kind": "limited_haste",
+     "value": 0.5
+    }
+   ],
+   "notes": "Promised Victory: a hit marks the target with Guiding Bolt (DEX save DC 15) for the next attack roll that turn, so about a quarter of shots have Advantage; Bolt of Celestial Light: +1d4 radiant on every shot for 10 turns after it, once a short rest (counted as 2 radiant a shot); Celestial Haste: an action, 5 turns of Haste once a long rest (about half an action a fight, nothing when Haste is already on)",
    "location": "Steel Watch Foundry",
-   "source": "https://bg3.wiki/wiki/Gontr_Mael"
+   "source": "https://bg3.wiki/wiki/Gontr_Mael",
+   "reviewed": true
   },
   {
    "key": "bg3:greataxe_2",
@@ -14837,11 +14874,22 @@
      "kind": "extra_damage",
      "value": "1d4 necrotic",
      "applies_to": "self"
+    },
+    {
+     "kind": "save_disadvantage",
+     "applies_to": "necromancy"
+    },
+    {
+     "kind": "free_cast",
+     "value": 1,
+     "applies_to": "necromancy",
+     "condition": "Life Essence: a spell kill pays for a necromancy spell, about one a fight"
     }
    ],
-   "notes": "Creatures have Disadvantage on SavingThrows against your necromancy spells; When the wielder kills a hostile creature with a spell, they greedily absorb its energy and gain Life Essence until their next Long Rest",
+   "notes": "Life Essence lasts until a long rest and is gained again with every spell kill",
    "location": "Philgrave's Mansion",
-   "source": "https://bg3.wiki/wiki/Staff_of_Cherished_Necromancy"
+   "source": "https://bg3.wiki/wiki/Staff_of_Cherished_Necromancy",
+   "reviewed": true
   },
   {
    "key": "bg3:staff_of_interruption",
@@ -15111,12 +15159,19 @@
    "effects": [
     {
      "kind": "crit_range",
-     "value": 1
+     "value": 1,
+     "applies_to": "all"
+    },
+    {
+     "kind": "attack_bonus",
+     "value": "proficiency",
+     "applies_to": "self"
     }
    ],
-   "notes": "This effect can stack; The wielder doubles their Proficiency Bonus when rolling ranged attacks with this weapon, unless they have Disadvantage",
+   "notes": "Keen Attack: the proficiency bonus is added twice to ranged attack rolls with this bow (not with Disadvantage)",
    "location": "Stormshore Armoury",
-   "source": "https://bg3.wiki/wiki/The_Dead_Shot"
+   "source": "https://bg3.wiki/wiki/The_Dead_Shot",
+   "reviewed": true
   },
   {
    "key": "bg3:the_long_arm_of_the_gur",

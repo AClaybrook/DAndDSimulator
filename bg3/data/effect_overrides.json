@@ -124,6 +124,110 @@
                     "applies_to": "unarmed"
                 }
             ]
+        },
+        "Balduran's Giantslayer": {
+            "effects": [
+                {
+                    "kind": "damage_bonus_ability",
+                    "stat": "strength",
+                    "applies_to": "self"
+                },
+                {
+                    "kind": "advantage",
+                    "applies_to": "self",
+                    "condition": "Against Large, Huge or Gargantuan creatures"
+                }
+            ],
+            "notes": "Giant Form"
+        },
+        "Staff of Cherished Necromancy": {
+            "effects": [
+                {
+                    "kind": "extra_damage",
+                    "value": "1d4 necrotic",
+                    "applies_to": "self"
+                },
+                {
+                    "kind": "save_disadvantage",
+                    "applies_to": "necromancy"
+                },
+                {
+                    "kind": "free_cast",
+                    "value": 1,
+                    "applies_to": "necromancy",
+                    "condition": "Life Essence: a spell kill pays for a necromancy spell, about one a fight"
+                }
+            ],
+            "notes": "Life Essence lasts until a long rest and is gained again with every spell kill"
+        },
+        "Amulet of the Devout": {
+            "effects": [
+                {
+                    "kind": "spell_dc",
+                    "value": 2
+                },
+                {
+                    "kind": "channel_divinity",
+                    "value": 1
+                }
+            ],
+            "notes": ""
+        },
+        "Ring of Arcane Synergy": {
+            "effects": [
+                {
+                    "kind": "damage_bonus_ability",
+                    "stat": "casting",
+                    "applies_to": "weapon",
+                    "condition": "Arcane Synergy: after dealing damage with a cantrip (Booming Blade counts), for 2 turns"
+                }
+            ],
+            "notes": ""
+        },
+        "Diadem of Arcane Synergy": {
+            "effects": [
+                {
+                    "kind": "damage_bonus_ability",
+                    "stat": "casting",
+                    "applies_to": "weapon",
+                    "condition": "Arcane Synergy: after inflicting a condition (Booming Blade's counts), for 2 turns"
+                }
+            ],
+            "notes": ""
+        },
+        "Gontr Mael": {
+            "effects": [
+                {
+                    "kind": "advantage_chance",
+                    "value": 0.25,
+                    "applies_to": "self"
+                },
+                {
+                    "kind": "extra_damage",
+                    "value": "2 radiant",
+                    "applies_to": "self"
+                },
+                {
+                    "kind": "limited_haste",
+                    "value": 0.5
+                }
+            ],
+            "notes": "Promised Victory: a hit marks the target with Guiding Bolt (DEX save DC 15) for the next attack roll that turn, so about a quarter of shots have Advantage; Bolt of Celestial Light: +1d4 radiant on every shot for 10 turns after it, once a short rest (counted as 2 radiant a shot); Celestial Haste: an action, 5 turns of Haste once a long rest (about half an action a fight, nothing when Haste is already on)"
+        },
+        "The Dead Shot": {
+            "effects": [
+                {
+                    "kind": "crit_range",
+                    "value": 1,
+                    "applies_to": "all"
+                },
+                {
+                    "kind": "attack_bonus",
+                    "value": "proficiency",
+                    "applies_to": "self"
+                }
+            ],
+            "notes": "Keen Attack: the proficiency bonus is added twice to ranged attack rolls with this bow (not with Disadvantage)"
         }
     }
 }

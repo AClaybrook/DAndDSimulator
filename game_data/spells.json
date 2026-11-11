@@ -1,5 +1,5 @@
 {
-    "_source": "Damage dealing spells from the 5e SRD 5.1 (CC-BY-4.0) that also exist in Baldur's Gate 3. attack is 'attack' (spell attack roll), 'save' or 'auto' (always hits). Cantrips scale with character level (BG3: levels 5 and 10, 5e: levels 5, 11 and 17). 'upcast' is the extra damage per slot level above the base level, 'projectiles' are separate attack rolls (beams, rays, darts). 'targets' is how many enemies of a group the area usually catches (BG3 planner's enemies setting), 1 when missing",
+    "_source": "Damage dealing spells from the 5e SRD 5.1 (CC-BY-4.0) that also exist in Baldur's Gate 3. attack is 'attack' (spell attack roll), 'save' or 'auto' (always hits). Cantrips scale with character level (BG3: levels 5 and 10, 5e: levels 5, 11 and 17). 'upcast' is the extra damage per slot level above the base level, 'projectiles' are separate attack rolls (beams, rays, darts). 'targets' is how many enemies of a group the area usually catches (BG3 planner's enemies setting), 1 when missing. 'school' is set where it matters (necromancy), 'melee' marks melee spell attacks, 'save_dc' a fixed save DC, 'recharge' a spell usable once per long rest",
     "spells": [
         {
             "name": "Eldritch Blast",
@@ -29,14 +29,17 @@
             "level": 0,
             "attack": "attack",
             "damage": "1d8",
-            "damage_type": "necrotic"
+            "damage_type": "necrotic",
+            "school": "necromancy",
+            "note": "Bone Chill in Baldur's Gate 3"
         },
         {
             "name": "Shocking Grasp",
             "level": 0,
             "attack": "attack",
             "damage": "1d8",
-            "damage_type": "lightning"
+            "damage_type": "lightning",
+            "melee": true
         },
         {
             "name": "Produce Flame",
@@ -88,9 +91,31 @@
             "attack": "save",
             "save": "wisdom",
             "on_save": 0,
-            "damage": "1d8",
+            "damage": "1d12",
             "damage_type": "necrotic",
-            "note": "1d12 against creatures that are missing hit points"
+            "note": "1d8 against a creature at full health, which a fight rarely leaves for long",
+            "school": "necromancy"
+        },
+        {
+            "name": "Thorn Whip",
+            "level": 0,
+            "attack": "attack",
+            "damage": "1d6",
+            "damage_type": "piercing",
+            "melee": true,
+            "note": "A melee spell attack with a 9 m reach, pulls the target 3 m closer"
+        },
+        {
+            "name": "Bursting Sinew",
+            "level": 0,
+            "attack": "save",
+            "save": "dexterity",
+            "on_save": 0,
+            "damage": "1d10",
+            "damage_type": "piercing",
+            "school": "necromancy",
+            "targets": 3,
+            "note": "Death Domain. Explodes a fresh corpse, so it needs one next to the enemies"
         },
         {
             "name": "Magic Missile",
@@ -115,7 +140,9 @@
             "attack": "attack",
             "damage": "3d10",
             "damage_type": "necrotic",
-            "upcast": "1d10"
+            "upcast": "1d10",
+            "school": "necromancy",
+            "melee": true
         },
         {
             "name": "Burning Hands",
@@ -200,7 +227,8 @@
             "on_save": 0.5,
             "damage": "8d8",
             "damage_type": "necrotic",
-            "upcast": "1d8"
+            "upcast": "1d8",
+            "school": "necromancy"
         },
         {
             "name": "Cone of Cold",
@@ -212,6 +240,19 @@
             "damage_type": "cold",
             "upcast": "1d8",
             "targets": 4
+        },
+        {
+            "name": "Dethrone",
+            "level": 5,
+            "attack": "save",
+            "save": "constitution",
+            "on_save": 0.5,
+            "damage": "10d6+20",
+            "damage_type": "necrotic",
+            "school": "necromancy",
+            "save_dc": 18,
+            "recharge": "long_rest",
+            "note": "Wizards only, scribed from its scroll. Its save DC is always 18, once per long rest"
         },
         {
             "name": "Chain Lightning",
@@ -232,6 +273,18 @@
             "damage": "10d6+40",
             "damage_type": "force",
             "upcast": "3d6"
+        },
+        {
+            "name": "Circle of Death",
+            "level": 6,
+            "attack": "save",
+            "save": "constitution",
+            "on_save": 0.5,
+            "damage": "8d6",
+            "damage_type": "necrotic",
+            "school": "necromancy",
+            "targets": 4,
+            "note": "9 m radius around a creature"
         }
     ]
 }

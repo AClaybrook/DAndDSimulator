@@ -85,6 +85,11 @@ def party_conflicts(builds, items=None, acts=None):
                     users[key].append(build.name)
         conflicts += concentration_conflicts(builds, act)
         conflicts += story_conflicts(builds, act, items)
+        # Auntie Ethel's Hair (a permanent +1 to one ability) is given once a playthrough, to one character
+        haired = [b.name for b in builds if b.character and any(b.character.get("boons", {}).values())]
+        if len(haired) > 1:
+            conflicts.append(Conflict(str(act), "story", "", haired, "Auntie Ethel's Hair is one per playthrough, but "
+                                      f"{', '.join(haired)} each count its +1. Set Hag's Hair to none on all but one (Build tab)"))
         for key, members in users.items():
             if len(members) > 1:
                 conflicts.append(Conflict(str(act), "shared", key, members, f"{items[key].name} is wanted by {', '.join(members)}"))

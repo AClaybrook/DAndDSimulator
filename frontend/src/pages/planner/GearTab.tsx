@@ -1,14 +1,24 @@
-import { Alert, Button, Checkbox, Group, SegmentedControl, Select, Stack, Switch, Table, Text, Tooltip } from '@mantine/core'
+import { Alert, Anchor, Button, Checkbox, Group, SegmentedControl, Select, Stack, Switch, Table, Text, Tooltip } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { IconWand } from '@tabler/icons-react'
 import { useMemo, useState } from 'react'
-import { bg3, type ItemOption, type MemberResult, type PlannerOptions } from '../../api'
+import { bg3, type Build, type ItemOption, type MemberResult, type PlannerOptions } from '../../api'
 import { ACTS, useParty } from '../../party'
+import { useSharedEnemy } from './usePlanner'
+
+const GOALS = [{ value: 'damage', label: 'Most damage' }, { value: 'ac', label: 'Highest armour class' }, { value: 'score', label: 'Best overall score' }]
 
 // Slots down, acts across. An empty cell keeps the item from the act before (shown as its placeholder).
 // Only the slots with an item show until more are asked for; on a narrow screen one act at a time
 export function GearTab({ options, result }: { options: PlannerOptions; result: MemberResult | undefined }) {
-  const { party, selected, update, replace } = useParty()
+  const { party, selected, update, replace, enemies, attackBonus } = useParty()
+  const { enemy, rounds } = useSharedEnemy()
+  const [mode, setMode] = useState('best') // Quick fill: the best gear found by search, or a curated kit
+  const [goal, setGoal] = useState('damage')
+  const [bestActs, setBestActs] = useState('3')
+  const [weapons, setWeapons] = useState(true)
+  const [busy, setBusy] = useState(false)
+  const [undo, setUndo] = useState<Build | null>(null) // The build before the last fill
   const build = party[selected]
   const [kit, setKit] = useState<string | null>(null)
   const [kitAct, setKitAct] = useState('1')
@@ -36,9 +46,30 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
       else delete gear[slot]
       return { ...b, equipment: { ...b.equipment, [act]: gear } }
     })
+  // Best in slot: searched from every item found by the act, for this build against the current enemy. apply: wear it; otherwise it
+  // is kept as a variant to compare next to the build first
+  const fillBest = async (apply: boolean) => {
+    setBusy(true)
+    try {
+      const acts = bestActs === 'all' ? ACTS : [bestActs]
+      const result = await bg3.bestGear(party, selected, acts, goal, enemy, rounds, enemies, attackBonus, weapons, skipTaken)
+      const where = bestActs === 'all' ? 'every act' : `Act ${bestActs}`
+      if (!result.changes.length) { setMessage(`Nothing found by ${where} beats what ${build.name.split(' (')[0]} already wears for ${result.goal.toLowerCase()}.`); return }
+      const listed = result.changes.map((c) => `${acts.length > 1 ? `Act ${c.act} ` : ''}${c.slot}: ${c.before || 'empty'} → ${c.after || 'empty'}`).join('; ')
+      if (apply) {
+        setUndo(build)
+        replace(selected, result.build)
+        setMessage(`${result.goal} gear at ${where}. ${listed}`)
+      } else {
+        update(selected, (b) => ({ ...b, variants: [...b.variants, { name: `${result.goal} gear (${where})`, gear: result.gear }] }))
+        setMessage(`Added as a variant to compare (Variants tab), your gear is unchanged. ${listed}`)
+      }
+    } finally { setBusy(false) }
+  }
   const applyKit = async () => {
     if (!kit) return
     const result = await bg3.kit(party, selected, kit, kitAct, skipTaken, onlyEmpty)
+    setUndo(build)
     replace(selected, result.build)
     setMessage(`Placed ${result.placed.join(', ') || 'nothing (every kit slot already had an item)'}` + (result.blocked.length ? `. Taken by another character: ${result.blocked.join(', ')}` : ''))
   }
@@ -56,15 +87,43 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
   return (
     <Stack gap="sm">
       <Group gap="xs" align="flex-end" wrap="wrap">
-        <Select size="xs" label="Quick gear from a kit" placeholder="Pick a kit..." w={200} value={kit} onChange={setKit} clearable
-          data={options.kits.map((k) => ({ value: k.key, label: k.name }))} />
-        <Select size="xs" label="At" w={90} value={kitAct} onChange={(v) => v && setKitAct(v)} allowDeselect={false} data={ACTS.map((a) => ({ value: a, label: `Act ${a}` }))} />
-        <Checkbox size="xs" label="Skip items others wear" checked={skipTaken} onChange={(e) => setSkipTaken(e.currentTarget.checked)} mb={6} />
-        <Checkbox size="xs" label="Only empty slots" checked={onlyEmpty} onChange={(e) => setOnlyEmpty(e.currentTarget.checked)} mb={6} />
-        <Button size="xs" leftSection={<IconWand size={14} />} disabled={!kit} onClick={applyKit}>Fill</Button>
+        <div>
+          <Text size="xs" fw={500} mb={2}>Quick gear</Text>
+          <SegmentedControl size="xs" value={mode} onChange={setMode} data={[{ value: 'best', label: 'Best in slot' }, { value: 'kit', label: 'Kit' }]} />
+        </div>
+        {mode === 'best' ? (
+          <>
+            <Select size="xs" label="For" w={180} value={goal} onChange={(v) => v && setGoal(v)} allowDeselect={false} data={GOALS} />
+            <Select size="xs" label="At" w={110} value={bestActs} onChange={(v) => v && setBestActs(v)} allowDeselect={false}
+              data={[...ACTS.map((a) => ({ value: a, label: `Act ${a}` })), { value: 'all', label: 'Every act' }]} />
+            <Checkbox size="xs" label="Weapon too" checked={weapons} onChange={(e) => setWeapons(e.currentTarget.checked)} mb={6} />
+          </>
+        ) : (
+          <>
+            <Select size="xs" label="Kit" placeholder="Pick a kit..." w={200} value={kit} onChange={setKit} clearable data={options.kits.map((k) => ({ value: k.key, label: k.name }))} />
+            <Select size="xs" label="At" w={90} value={kitAct} onChange={(v) => v && setKitAct(v)} allowDeselect={false} data={ACTS.map((a) => ({ value: a, label: `Act ${a}` }))} />
+            <Checkbox size="xs" label="Only empty slots" checked={onlyEmpty} onChange={(e) => setOnlyEmpty(e.currentTarget.checked)} mb={6} />
+          </>
+        )}
+        <Tooltip label="Leaves the rest of the party's items alone, so filling this character adds no conflicts" multiline w={260}>
+          <Checkbox size="xs" label="Skip items others wear" checked={skipTaken} onChange={(e) => setSkipTaken(e.currentTarget.checked)} mb={6} />
+        </Tooltip>
+        {mode === 'best' ? (
+          <>
+            <Button size="xs" leftSection={<IconWand size={14} />} loading={busy} onClick={() => fillBest(true)}>Fill</Button>
+            <Tooltip label="Keeps your gear and adds this set as a variant, shown next to the build in the Variants tab">
+              <Button size="xs" variant="default" disabled={busy} onClick={() => fillBest(false)}>Compare first</Button>
+            </Tooltip>
+          </>
+        ) : <Button size="xs" leftSection={<IconWand size={14} />} disabled={!kit} onClick={applyKit}>Fill</Button>}
       </Group>
-      {chosenKit && <Text size="xs" c="dimmed">{chosenKit.trigger}. {chosenKit.fits ? `Fits ${chosenKit.fits}.` : ''}</Text>}
-      {message && <Alert py={6} color="blue" withCloseButton onClose={() => setMessage(null)}>{message}</Alert>}
+      {mode === 'best' && <Text size="xs" c="dimmed">Searched from every item found by that act, for this build against the current enemy. Conditional item effects count once ticked in Buffs.</Text>}
+      {mode === 'kit' && chosenKit && <Text size="xs" c="dimmed">{chosenKit.trigger}. {chosenKit.fits ? `Fits ${chosenKit.fits}.` : ''}</Text>}
+      {message && (
+        <Alert py={6} color="blue" withCloseButton onClose={() => { setMessage(null); setUndo(null) }}>
+          {message}{undo && <> <Anchor size="sm" component="button" onClick={() => { replace(selected, undo); setUndo(null); setMessage(null) }}>Undo</Anchor></>}
+        </Alert>
+      )}
       {narrow && <SegmentedControl size="xs" fullWidth value={phoneAct} onChange={setPhoneAct} data={ACTS.map((a) => ({ value: a, label: `Act ${a}` }))} />}
       <Table.ScrollContainer minWidth={narrow ? 280 : 620}>
         <Table verticalSpacing={4} horizontalSpacing={6}>
