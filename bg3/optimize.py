@@ -116,18 +116,26 @@ def weapon_slot(build, act, items=None):
     dual = any(a.is_weapon and a.offhand for a in character.attacks) and "Dual Wielder" not in ((build.character or {}).get("feats") or [])
     return "melee_main", lambda w: w.get("kind") != "ranged" and "two-handed" not in props(w) and (not dual or "light" in props(w))
 
+# Weapons only one companion can get (Wyll's pact reward)
+COMPANION_ONLY = {"bg3:infernal_rapier"}
+
 def weapon_candidates(build, act, items=None):
-    """ (slot, [weapons found by the act that fit the build's grip]) """
+    """ (slot, [weapons found by the act that fit the build's grip and that it is proficient with]) """
+    from bg3.character import is_proficient, weapon_proficiencies # pylint: disable=import-outside-toplevel
     items = items or catalog()
     slot, fits = weapon_slot(build, act, items)
     if slot is None:
         return None, []
-    return slot, [i for i in items.values() if i.weapon and i.fits(slot) and (i.act or 3) <= int(act) and fits(i.weapon)]
+    profs = weapon_proficiencies(Bg3Character.from_dict(build.character), act_level(act, build.levels)) if build.character else None
+    return slot, [i for i in items.values() if i.weapon and i.fits(slot) and (i.act or 3) <= int(act) and fits(i.weapon)
+                  and i.key not in COMPANION_ONLY and (profs is None or is_proficient(i.weapon.get("base"), profs))]
 
-def optimise(build, act, objective, items=None, exclude=(), weapons=False):
+def optimise(build, act, objective, items=None, exclude=(), weapons=False, min_gain=0.0, guard=None):
     """ The gear (slot: item key, '' for empty) that maximises objective(build) at an act, one slot at a time.
         exclude: unique items not to pick (worn by the rest of the party). weapons: also choose the main weapon, first, since the rest
-        of the gear builds on it """
+        of the gear builds on it. min_gain: the share of the objective an item must add to replace one the build already wears (its
+        unmodelled effects are worth something; empty slots take any gain). guard(build): a value a swap may not lower, i.e. armour
+        class when searching for damage """
     items = items or catalog()
     gear = {slot: equipment_at(build, act).get(slot, "") for slot in GEAR_SLOTS}
     slots = list(GEAR_SLOTS) + (["melee_off"] if shield_slot_free(build, act) else [])
@@ -140,14 +148,18 @@ def optimise(build, act, objective, items=None, exclude=(), weapons=False):
             gear = {slot: equipment_at(build, act).get(slot, ""), **gear}
             slots, pools[slot] = [slot, *slots], pool
     best = objective(with_gear(build, act, gear))
+    planned = dict(gear)
+    floor = guard(with_gear(build, act, gear)) if guard else None
     for slot in slots:
         taken = {gear.get(s) for s in ("ring_1", "ring_2") if s != slot} if slot.startswith("ring") else set()
         for item in pools.get(slot) or candidates(build, act, slot, items):
             if item.key in taken or item.key == gear.get(slot) or (item.unique and item.key in exclude):
                 continue
             trial = {**gear, slot: item.key}
-            value = objective(with_gear(build, act, trial))
-            if value > best + 1e-6:
+            worn = with_gear(build, act, trial)
+            value = objective(worn)
+            needed = abs(best) * min_gain if planned.get(slot) and gear.get(slot) == planned[slot] else 0
+            if value > best + max(needed, 1e-6) and (guard is None or guard(worn) >= floor):
                 best, gear = value, trial
     return {slot: key for slot, key in gear.items() if key or slot in equipment_at(build, act)}
 

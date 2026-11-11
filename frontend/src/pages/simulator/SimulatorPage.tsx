@@ -60,7 +60,7 @@ export function SimulatorPage() {
 
   return (
     <>
-      <PageHeader title="Simulator" subtitle="Monte Carlo damage of your characters against one enemy, with the exact math alongside"
+      <PageHeader title="Simulator" subtitle="Simulated and exact damage against one enemy"
         actions={<>
           <Popover width={300} position="bottom-end" withArrow>
             <Popover.Target><Button size="xs" variant="default" leftSection={<IconAdjustments size={14} />}>Settings</Button></Popover.Target>

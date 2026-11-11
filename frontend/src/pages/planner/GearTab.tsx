@@ -55,7 +55,7 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
       const result = await bg3.bestGear(party, selected, acts, goal, enemy, rounds, enemies, attackBonus, weapons, skipTaken)
       const where = bestActs === 'all' ? 'every act' : `Act ${bestActs}`
       if (!result.changes.length) { setMessage(`Nothing found by ${where} beats what ${build.name.split(' (')[0]} already wears for ${result.goal.toLowerCase()}.`); return }
-      const listed = result.changes.map((c) => `${acts.length > 1 ? `Act ${c.act} ` : ''}${c.slot}: ${c.before || 'empty'} → ${c.after || 'empty'}`).join('; ')
+      const listed = result.changes.map((c) => `${acts.length > 1 ? `Act ${c.act} ` : ''}${c.slot}: ${c.before || 'empty'} → ${c.after || 'empty'} (+${c.gain})`).join('; ')
       if (apply) {
         setUndo(build)
         replace(selected, result.build)
@@ -117,7 +117,6 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
           </>
         ) : <Button size="xs" leftSection={<IconWand size={14} />} disabled={!kit} onClick={applyKit}>Fill</Button>}
       </Group>
-      {mode === 'best' && <Text size="xs" c="dimmed">Searched from every item found by that act, for this build against the current enemy. Conditional item effects count once ticked in Buffs.</Text>}
       {mode === 'kit' && chosenKit && <Text size="xs" c="dimmed">{chosenKit.trigger}. {chosenKit.fits ? `Fits ${chosenKit.fits}.` : ''}</Text>}
       {message && (
         <Alert py={6} color="blue" withCloseButton onClose={() => { setMessage(null); setUndo(null) }}>
@@ -164,7 +163,7 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
         )}
         <Switch size="xs" label="Every slot" checked={all} onChange={(e) => setAll(e.currentTarget.checked)} />
       </Group>
-      <Text size="xs" c="dimmed">Empty cells keep the item from the act before (↳). Red cells are in a conflict, see Conflicts. ✦ items have modelled effects, ⚠ items can be missed (hover for why).</Text>
+      <Text size="xs" c="dimmed">↳ kept from the act before · red: conflict · ✦ modelled effects · ⚠ can be missed</Text>
     </Stack>
   )
 }

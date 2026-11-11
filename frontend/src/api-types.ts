@@ -259,6 +259,7 @@ export interface GearChange {
   slot: string
   before: string
   after: string
+  gain: number
 }
 
 export interface Headline {

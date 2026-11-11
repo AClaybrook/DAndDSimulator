@@ -32,6 +32,12 @@
   B while its uses last, then C), in the analytic, exact and simulated engines.
 - **Build doc import:** a full caster holding a staff casts its cantrip instead of swinging the staff, Toll the Dead is recognised, a
   second hand crossbow goes in the off hand, and Booming Blade is only assumed when the write-up names it.
+- **Best in slot gear you can trust more:** searching for damage no longer trades armour for clothes with a small bonus (a swap may
+  not lower armour class), only offers weapons the build is proficient with, skips Wyll's Infernal Rapier, and replaces an item the
+  build already wears only when it adds 3% or more (planned items often have effects the model does not count). Each change shows
+  what it adds.
+- **Bigger charts, fewer panels:** the planner's damage chart and the leaderboard's scatter are taller and get half the page, the
+  simulator's distributions are taller, the overall score moved into its own tab, and several helper texts are shorter.
 - **Act 3 bows:** The Dead Shot adds the proficiency bonus twice to its own attack rolls (Keen Attack, which was only a note, so the
   bow was undersold). Gontr Mael's Promised Victory is advantage on about a quarter of its shots (a hit marks the target with Guiding
   Bolt for the next attack roll that turn, after a DC 15 Dexterity save) instead of a toggle that gave every shot advantage; Bolt of

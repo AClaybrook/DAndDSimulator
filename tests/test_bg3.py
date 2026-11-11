@@ -346,3 +346,26 @@ def test_dead_shot_gontr_mael_and_one_hags_hair():
     party = (Bg3Build.from_dict(doc["1. The Godblade"]), deadeye)
     assert any("Auntie Ethel's Hair" in c.message for c in party_conflicts(party, acts=("3",)))
     assert not any("Auntie Ethel's Hair" in c.message for c in party_conflicts(party[:1], acts=("3",)))
+
+def test_best_gear_keeps_armour_and_planned_items_unless_the_gain_is_real():
+    """ Searching for damage never lowers armour class, only offers weapons the build is proficient with, and replaces an item the build
+        already wears only for a gain of 3% or more; every change says what it adds """
+    from bg3 import doc_import
+    from bg3.character import Bg3Character, is_proficient, weapon_proficiencies
+    from bg3.defence import armour_class
+    from bg3.loadout import MIN_GAIN, best_gear
+    from bg3.optimize import weapon_candidates
+    doc = {e["build"]["name"]: e["build"] for e in doc_import.load()}
+    party = [Bg3Build.from_dict(doc[n]) for n in ("1. The Godblade", "5. Arcane Deadeye")]
+    for index, build in enumerate(party):
+        gear, changes = best_gear(party, index, ["2", "3"], "damage", Enemy(), 3, 1, 6, True, True)
+        for act, slots in gear.items():
+            after = replace(build, equipment={**build.equipment, act: {**build.equipment.get(act, {}), **slots}})
+            assert armour_class(after, act)[0] >= armour_class(build, act)[0]
+        assert all(c["gain"] > 0 for c in changes)
+        before = expected_damage_per_round(compile_build(build, "3"), Enemy(), 3)
+        assert all(c["gain"] >= MIN_GAIN * before * 0.9 for c in changes if c["before"] and c["act"] == "3")
+    wizard = Bg3Build.from_dict(doc["14. Death Cleric Necromancer"])
+    profs = weapon_proficiencies(Bg3Character.from_dict(wizard.character), 12)
+    _, pool = weapon_candidates(wizard, "3")
+    assert pool and all(is_proficient(i.weapon.get("base"), profs) for i in pool) and "bg3:infernal_rapier" not in {i.key for i in pool}

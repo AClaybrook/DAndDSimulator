@@ -48,7 +48,7 @@ export function distributionFigure(chart: DistributionChart, colors: string[], c
     shapes.push({ type: 'line', xref: 'x', yref: `${axis} domain`, x0: s.stats.mean, x1: s.stats.mean, y0: 0, y1: 0.69, line: { color, width: 1.5, dash: 'dot' } })
   })
   layout.xaxis = { title: { text: chart.xTitle }, anchor: n > 1 ? `y${n}` : 'y', rangemode: 'tozero', zeroline: false }
-  return { figure: { data, layout: { ...layout, annotations, shapes } }, height: Math.min(Math.max(n * 112 + 56, 240), 1400) }
+  return { figure: { data, layout: { ...layout, annotations, shapes } }, height: Math.min(Math.max(n * 160 + 56, 320), 1600) }
 }
 
 // Labels at the right end of each line when there are few enough to read; the legend stays for every chart with two or more series

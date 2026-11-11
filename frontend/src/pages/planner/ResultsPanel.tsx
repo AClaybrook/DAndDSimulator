@@ -64,17 +64,18 @@ export function ResultsPanel({ options, evaluation }: { options: PlannerOptions;
     <Tabs defaultValue="damage" keepMounted={false}>
       <Tabs.List mb="sm">
         <Tabs.Tab value="damage">Damage</Tabs.Tab>
+        <Tabs.Tab value="score">Score</Tabs.Tab>
         <Tabs.Tab value="conflicts" rightSection={conflicts.length ? <Badge size="xs" color="orange">{conflicts.length}</Badge> : null}>Conflicts</Tabs.Tab>
         <Tabs.Tab value="party">Party</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="damage">
         <Stack gap="sm">
-          <Plot figure={figure} height={lines.length > 4 ? 360 : 300} />
+          <Plot figure={figure} height={lines.length > 4 ? 520 : 460} />
           <MultiSelect size="xs" searchable clearable placeholder="Compare with example builds..." data={options.examples.map((e) => e.name)}
             value={compare} onChange={setCompare} maxValues={Math.max(MAX_LINES - party.length, 0)} rightSection={compared.isFetching ? <Text size="10px" c="dimmed">…</Text> : undefined} />
-          {member && <ScoreView member={member} options={options} />}
         </Stack>
       </Tabs.Panel>
+      <Tabs.Panel value="score">{member && <ScoreView member={member} options={options} />}</Tabs.Panel>
       <Tabs.Panel value="conflicts">
         {!conflicts.length ? <Text size="sm" c="dimmed">No equipment conflicts.</Text> : (
           <Stack gap="xs">
@@ -122,7 +123,7 @@ function Settle() {
     return (
       <Group gap="xs">
         <Button size="xs" variant="light" leftSection={<IconWand size={14} />} loading={busy} onClick={propose}>Settle shared items</Button>
-        <Text size="xs" c="dimmed">Proposes who keeps each contested item and what the others wear instead</Text>
+        
       </Group>
     )
   }
@@ -175,10 +176,11 @@ function ScoreView({ member, options }: { member: MemberResult; options: Planner
       annotations: acts.map((a) => ({ x: member.acts[a].score, y: `Act ${a}`, text: `<b>${member.acts[a].score.toFixed(0)}</b>`, showarrow: false, xanchor: 'left', xshift: 6 })) }),
   }
   return (
-    <Section padding="sm" title={<Text fw={600}>Overall score <Text span size="xs" c="dimmed" fw={400}>· {member.name.split(' (')[0]}, 0 to 100</Text></Text>}>
-      <Plot figure={figure} height={170} />
+    <Stack gap="xs">
+      <Text size="xs" c="dimmed">{member.name.split(' (')[0]}, 0 to 100</Text>
+      <Plot figure={figure} height={260} />
       <UnstyledButton onClick={() => setOpen((o) => !o)}>
-        <Group gap={4}>{open ? <IconChevronDown size={14} /> : <IconChevronRight size={14} />}<Text size="xs" c="dimmed">The numbers, armour class, spell saves and how each part is scored</Text></Group>
+        <Group gap={4}>{open ? <IconChevronDown size={14} /> : <IconChevronRight size={14} />}<Text size="xs" c="dimmed">Details</Text></Group>
       </UnstyledButton>
       <Collapse expanded={open}>
         <Table fz="xs" className="numeric">
@@ -216,7 +218,7 @@ function ScoreView({ member, options }: { member: MemberResult; options: Planner
           </Table.Tbody>
         </Table>
       </Collapse>
-    </Section>
+    </Stack>
   )
 }
 

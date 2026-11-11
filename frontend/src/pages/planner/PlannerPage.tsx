@@ -46,7 +46,7 @@ export function PlannerPage() {
 
   return (
     <>
-      <PageHeader title="Party planner" subtitle="Up to four characters, with gear and buffs for each act checkpoint"
+      <PageHeader title="Party planner" subtitle="Damage by act for up to four characters"
         actions={<>
           <Select size="xs" w={260} searchable value={null} data={simOptions.data?.enemies ?? []}
             placeholder={enemy ? `${enemy.name} · AC ${enemy.armor_class}` : 'Enemy...'} title="The enemy for damage and hit chances, shared with the Simulator"
@@ -69,12 +69,12 @@ export function PlannerPage() {
       <PartyStrip options={o} evaluation={evaluation.data} enemies={enemies} />
       {party.length > 0 && (
         <Grid mt="md" gap="md">
-          <Grid.Col span={{ base: 12, lg: 5 }}>
+          <Grid.Col span={{ base: 12, lg: 6 }}>
             <Paper p="md" withBorder style={{ position: 'sticky', top: 64 }}>
               <ResultsPanel options={o} evaluation={evaluation.data} />
             </Paper>
           </Grid.Col>
-          <Grid.Col span={{ base: 12, lg: 7 }}>
+          <Grid.Col span={{ base: 12, lg: 6 }}>
             <Paper p="md" withBorder>
               <Text className="section-label" mb={6}>{party[selected]?.name}</Text>
               <Tabs defaultValue="gear" keepMounted={false}>

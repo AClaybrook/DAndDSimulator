@@ -350,6 +350,7 @@ class GearChange(Model):
     slot: str
     before: str # Item names, '' for an empty slot
     after: str
+    gain: float = 0 # What the swap adds to the goal (damage per round, AC or score)
 
 class BestGear(Model):
     build: Build
