@@ -420,5 +420,5 @@ def test_estimates_party_synergies_and_items_the_damage_cannot_judge():
         base = expected_damage_per_round(compile_build(party[index], "3"), Enemy(), 3)
         assert all((names[c["before"]].effects or names[c["before"]].weapon) and c["gain"] >= 0.09 * base for c in changes if c["before"] and names[c["before"]].notes)
         assert all(names[k["item"]].notes and k["gain"] > 0 for k in kept)
-    _, changes, kept = best_gear(party, 1, ["3"], "damage", Enemy(), 3, 1, 6, True, True, keep_uncounted=False)
+    _, changes, kept = best_gear(party, 0, ["3"], "damage", Enemy(), 3, 1, 6, True, True, keep_uncounted=False)
     assert not kept and any(c["before"] and names[c["before"]].notes and not names[c["before"]].effects for c in changes)

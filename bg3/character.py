@@ -155,6 +155,9 @@ class Bg3Character:
     toggles: dict = field(default_factory=dict) # TOGGLES (all on by default), and "ancestry" for Draconic Bloodline (default fire)
     level_order: list[str] = field(default_factory=list) # The class taken at each level when it isn't "first class first", i.e. a 1 level dip first
     boons: dict[str, int] = field(default_factory=dict) # Permanent ability bonuses from the story: Auntie Ethel's Hair (+1), Mirror of Loss (+2)
+    # Character level: [[class, subclass, levels]] the character is respecced to at that level, when the levelling order doesn't give it
+    # (i.e. a pure Wizard until the multiclass comes together at 12)
+    respec: dict[str, list] = field(default_factory=dict)
 
     def to_dict(self):
         return asdict(self)
@@ -169,6 +172,9 @@ class Bg3Character:
 
 def class_order(character, level=MAX_LEVEL):
     """ The class of each character level, i.e. ['fighter', 'fighter', 'rogue', ...] up to level """
+    split = (character.respec or {}).get(str(level))
+    if split and sum(int(n) for _, _, n in split) == level:
+        return [cls for cls, _, n in split for _ in range(int(n))]
     order = [cls for cls, _, levels in character.classes for _ in range(int(levels))]
     if character.level_order and sorted(character.level_order) == sorted(order):
         order = list(character.level_order)
@@ -181,7 +187,7 @@ def class_levels(character, level=MAX_LEVEL):
     return counts
 
 def subclass_of(character, cls, class_level):
-    for c, sub, _ in character.classes:
+    for c, sub, _ in [*character.classes, *(row for split in (character.respec or {}).values() for row in split)]:
         if c == cls and class_level >= SUBCLASS_LEVEL.get(cls, 3):
             return sub
     return ""
@@ -639,6 +645,18 @@ def _quickened(c, quickens):
     if quickens - on_spell > 0.01:
         c.attacks += [quick(a, quickens - on_spell) for a in spells_cast if a.fallback_for]
 
+def _quickened_blade(c, quickens):
+    """ Quickened Booming Blade: the cantrip again with the bonus action for 3 sorcery points, a second main hand attack with its thunder
+        damage. The bonus action attack made every turn (the off hand) is made in the other turns """
+    blade = next((a for a in c.attacks if "booming_blade" in a.tags), None)
+    if blade is None or not quickens:
+        return
+    quick = blade.variant("Quickened Booming Blade", action="bonus", uses_per_fight=round(quickens, 2), tags=[*blade.tags, "quickened"])
+    usual = [a for a in c.attacks if (a.action == "bonus" or a.offhand) and a.is_weapon and not a.uses_per_fight and not a.fallback_for]
+    if usual:
+        usual[-1].fallback_for = quick.name
+    c.attacks.append(quick)
+
 def _finesse_or_ranged(attack):
     """ Shadow Blade is finesse; other weapons by their base weapon's properties """
     base = weapon_base(attack)
@@ -769,6 +787,8 @@ def _class_features(character, c, levels, subs, notes, main_finesse=None):
                 a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(max(c.charisma_ability_modifier, 0))]
     if sorcerer >= 3 and character.routine == "cantrip":
         _quickened(c, per_fight(per_long_rest=sorcerer // 3))
+    elif sorcerer >= 3:
+        _quickened_blade(c, per_fight(per_long_rest=sorcerer // 3))
     c.empowered_evocation = wizard >= 10 and subs.get("wizard") == "Evocation School"
     if cleric >= 8 and subs.get("cleric") in ("War Domain", "Tempest Domain", "Death Domain", "Life Domain", "Nature Domain", "Trickery Domain") and \
             (weapon or character.toggle("offhand_crossbow")):

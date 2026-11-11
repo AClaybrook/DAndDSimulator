@@ -132,6 +132,7 @@ export interface BuilderCharacter {
   toggles: Record<string, boolean | string>
   level_order: string[]
   boons: Record<string, number>
+  respec: Record<string, [string, string, number][]>
 }
 
 export interface BuilderOptions {

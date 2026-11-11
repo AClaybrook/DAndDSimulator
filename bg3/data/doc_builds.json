@@ -1,7 +1,7 @@
 [
  {
   "number": 1,
-  "title": "The \"Godblade\" (10 Bladesinger / 2 Crown Paladin)",
+  "title": "The Godblade",
   "source": "Nizar GG (Bladesinger Part 1 & GODBLADE Part 2) & Jay Dunna (Crown Paladin / Bladesinger)",
   "build": {
    "name": "1. The Godblade",
@@ -31,7 +31,23 @@
      "ranged_main": "bg3:hellrider_longbow"
     }
    },
-   "buffs": {},
+   "buffs": {
+    "1": [
+     "mage_armour",
+     "haste",
+     "elixir:elixir_of_battlemage_s_power"
+    ],
+    "2": [
+     "mage_armour",
+     "haste",
+     "elixir:elixir_of_battlemage_s_power"
+    ],
+    "3": [
+     "mage_armour",
+     "haste",
+     "elixir:elixir_of_bloodlust"
+    ]
+   },
    "conditions": [
     "bg3:diadem_of_arcane_synergy#0",
     "bg3:strange_conduit_ring#0"
@@ -39,7 +55,7 @@
    "levels": {},
    "character": {
     "name": "The Godblade",
-    "race": "Wood Elf",
+    "race": "Wood Half-Elf",
     "scores": {
      "strength": 8,
      "dexterity": 15,
@@ -54,53 +70,91 @@
     },
     "classes": [
      [
-      "wizard",
-      "Bladesinging",
-      10
-     ],
-     [
       "paladin",
       "Oath of the Crown",
       2
+     ],
+     [
+      "wizard",
+      "Bladesinging",
+      10
      ]
     ],
     "feats": [
      "dexterity+2",
      "Savage Attacker"
     ],
-    "fighting_styles": [],
+    "fighting_styles": [
+     "Two-Weapon Fighting"
+    ],
     "routine": "shadow_blade",
     "cantrip": "Eldritch Blast",
     "spell": "",
     "toggles": {
      "item_casting": "intelligence"
     },
-    "level_order": [],
+    "level_order": [
+     "wizard",
+     "wizard",
+     "wizard",
+     "wizard",
+     "wizard",
+     "wizard",
+     "wizard",
+     "wizard",
+     "wizard",
+     "wizard",
+     "paladin",
+     "paladin"
+    ],
     "boons": {
      "dexterity": 1
-    }
+    },
+    "respec": {}
    },
    "carried": [
     "Resonance Stone"
    ],
-   "roles": [],
+   "roles": [
+    "frontline",
+    "striker",
+    "control"
+   ],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [
    "Resonance Stone"
   ],
-  "roles": [],
+  "roles": [
+   "frontline",
+   "striker",
+   "control"
+  ],
   "unmatched": [],
   "notes": [],
-  "companion": "Custom (Wood Elf, Wood Half-Elf, Half-Orc, or Duergar) or Gale.",
-  "themes": [],
-  "provides": [],
-  "needs": [],
-  "path": "",
-  "permanent_buffs": "",
+  "companion": "Gale, Tav",
+  "themes": [
+   "psychic",
+   "thunder",
+   "arcane acuity",
+   "arcane synergy",
+   "crit"
+  ],
+  "provides": [
+   "paralysed",
+   "prone",
+   "grovel",
+   "healing"
+  ],
+  "needs": [
+   "haste"
+  ],
+  "path": "either",
+  "permanent_buffs": "Act 1 Auntie Ethel's Hair DEX; Act 1 Awakened; Act 3 Mirror of Loss DEX",
   "gear_estimated": false,
-  "caveats": ""
+  "caveats": "Respec at Level 12 to take Paladin at Levels 1-2 and Bladesinging Wizard at Levels 3-12 so Wizard is the last new class added, locking item, scroll, and Illithid Spell Save DC to Intelligence. Upcast Shadow Blade only on odd spell slot levels (Level 3 for 3d8, Level 5 for 4d8)."
  },
  {
   "number": 2,
@@ -175,14 +229,16 @@
     "level_order": [],
     "boons": {
      "charisma": 1
-    }
+    },
+    "respec": {}
    },
    "carried": [
     "Resonance Stone"
    ],
    "roles": [],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [
    "Resonance Stone"
@@ -273,12 +329,14 @@
     "spell": "",
     "toggles": {},
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [],
@@ -386,7 +444,8 @@
      "offhand_crossbow": true
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [],
@@ -443,7 +502,8 @@
      }
     }
    ],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [],
@@ -527,12 +587,14 @@
     "level_order": [],
     "boons": {
      "dexterity": 1
-    }
+    },
+    "respec": {}
    },
    "carried": [],
    "roles": [],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [],
@@ -615,12 +677,14 @@
     "spell": "Spirit Guardians",
     "toggles": {},
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [],
@@ -704,12 +768,14 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [],
@@ -795,12 +861,14 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [],
@@ -884,12 +952,14 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [],
@@ -960,12 +1030,14 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [],
@@ -1057,7 +1129,8 @@
     "level_order": [],
     "boons": {
      "charisma": 1
-    }
+    },
+    "respec": {}
    },
    "carried": [],
    "roles": [
@@ -1066,7 +1139,8 @@
     "summoner"
    ],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [
@@ -1154,12 +1228,14 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [],
@@ -1241,12 +1317,14 @@
     "spell": "",
     "toggles": {},
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [],
@@ -1333,7 +1411,8 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [
@@ -1359,7 +1438,8 @@
      ]
     }
    ],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [
@@ -1445,7 +1525,8 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [
@@ -1453,7 +1534,8 @@
     "control"
    ],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [
@@ -1545,14 +1627,16 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [
     "control"
    ],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [
@@ -1641,7 +1725,8 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [
@@ -1649,7 +1734,8 @@
     "face"
    ],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [
@@ -1739,7 +1825,8 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [
@@ -1747,7 +1834,8 @@
     "face"
    ],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [
@@ -1836,14 +1924,16 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [
     "control"
    ],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [
@@ -1930,14 +2020,16 @@
     "spell": "",
     "toggles": {},
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [
     "Resonance Stone"
    ],
    "roles": [],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [
    "Resonance Stone"
@@ -2013,12 +2105,14 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [],
@@ -2089,12 +2183,14 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [],
@@ -2171,12 +2267,14 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [],
@@ -2245,12 +2343,14 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [],
@@ -2362,7 +2462,10 @@
      "wizard",
      "wizard"
     ],
-    "boons": {}
+    "boons": {
+     "dexterity": 1
+    },
+    "respec": {}
    },
    "carried": [],
    "roles": [
@@ -2371,7 +2474,8 @@
     "healer"
    ],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [
@@ -2381,7 +2485,7 @@
   ],
   "unmatched": [],
   "notes": [
-   "Respec not modelled (uses the final split): Act 3 = Fighter 1 / Oath of the Crown Paladin 2 / Fighter 2 / Bladesinging Wizard 8"
+   "Respec not read: Act 3 = Fighter 1 / Oath of the Crown Paladin 2 / Fighter 2 / Bladesinging Wizard 8"
   ],
   "companion": "Lae'zel, Gale, Tav",
   "themes": [
@@ -2450,7 +2554,10 @@
     "spell": "",
     "toggles": {},
     "level_order": [],
-    "boons": {}
+    "boons": {
+     "charisma": 1
+    },
+    "respec": {}
    },
    "carried": [
     "Drakethroat Glaive"
@@ -2462,7 +2569,8 @@
     "summoner"
    ],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [
    "Drakethroat Glaive"
@@ -2561,7 +2669,8 @@
      "paladin",
      "paladin"
     ],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [
@@ -2571,7 +2680,8 @@
     "face"
    ],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [
@@ -2661,7 +2771,8 @@
     "spell": "",
     "toggles": {},
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [
@@ -2672,7 +2783,8 @@
     "skills"
    ],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [
@@ -2773,7 +2885,8 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [
@@ -2781,7 +2894,8 @@
     "support"
    ],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [
@@ -2858,7 +2972,8 @@
      "booming_blade": false
     },
     "level_order": [],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [
@@ -2866,7 +2981,8 @@
     "support"
    ],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [
@@ -2970,7 +3086,9 @@
     "routine": "cantrip",
     "cantrip": "Fire Bolt",
     "spell": "",
-    "toggles": {},
+    "toggles": {
+     "booming_blade": false
+    },
     "level_order": [
      "wizard",
      "wizard",
@@ -2985,7 +3103,8 @@
      "sorcerer",
      "sorcerer"
     ],
-    "boons": {}
+    "boons": {},
+    "respec": {}
    },
    "carried": [],
    "roles": [
@@ -2993,7 +3112,8 @@
     "skills"
    ],
    "variants": [],
-   "advantage": false
+   "advantage": false,
+   "assumptions": {}
   },
   "carried": [],
   "roles": [
@@ -3019,5 +3139,189 @@
   "permanent_buffs": "",
   "gear_estimated": true,
   "caveats": "Normally only 1 active Transmuter's Stone can exist at a time. Sending a stone to the camp chest exploit is patched in newer versions, where the buff disappears if the stone leaves the character's inventory or a new stone is created."
+ },
+ {
+  "number": 32,
+  "title": "Metamagic Godblade",
+  "source": "Custom Patch 8 Optimization (4 Sorcerer / 2 Paladin / 6 Bladesinger Shadow Blade Burst Variant)",
+  "build": {
+   "name": "32. Metamagic Godblade",
+   "preset": "fighter_gwm",
+   "equipment": {
+    "1": {
+     "melee_off": "bg3:knife_of_the_undermountain_king",
+     "helmet": "bg3:diadem_of_arcane_synergy",
+     "armour": "bg3:bloodguzzler_garb",
+     "gloves": "bg3:bracers_of_defence",
+     "boots": "bg3:disintegrating_night_walkers",
+     "amulet": "bg3:periapt_of_wound_closure",
+     "ring_1": "bg3:caustic_band",
+     "ring_2": "bg3:crusher_s_ring",
+     "ranged_main": "bg3:bow_of_awareness"
+    },
+    "2": {
+     "gloves": "bg3:gloves_of_battlemage_s_power",
+     "ring_2": "bg3:strange_conduit_ring",
+     "cloak": "bg3:cloak_of_protection"
+    },
+    "3": {
+     "melee_off": "bg3:rhapsody",
+     "armour": "bg3:robe_of_the_weave",
+     "amulet": "bg3:amulet_of_greater_health",
+     "ring_1": "bg3:band_of_the_mystic_scoundrel",
+     "ranged_main": "bg3:hellrider_longbow"
+    }
+   },
+   "buffs": {
+    "1": [
+     "mage_armour",
+     "haste",
+     "elixir:elixir_of_battlemage_s_power"
+    ],
+    "2": [
+     "mage_armour",
+     "haste",
+     "elixir:elixir_of_battlemage_s_power"
+    ],
+    "3": [
+     "haste",
+     "elixir:elixir_of_bloodlust"
+    ]
+   },
+   "conditions": [
+    "bg3:diadem_of_arcane_synergy#0",
+    "bg3:strange_conduit_ring#0"
+   ],
+   "levels": {},
+   "character": {
+    "name": "Metamagic Godblade",
+    "race": "Wood Half-Elf",
+    "scores": {
+     "strength": 8,
+     "dexterity": 15,
+     "constitution": 14,
+     "intelligence": 15,
+     "wisdom": 10,
+     "charisma": 8
+    },
+    "bonus": {
+     "dexterity": 2,
+     "intelligence": 1
+    },
+    "classes": [
+     [
+      "sorcerer",
+      "Draconic Bloodline",
+      4
+     ],
+     [
+      "paladin",
+      "Oath of the Crown",
+      2
+     ],
+     [
+      "wizard",
+      "Bladesinging",
+      6
+     ]
+    ],
+    "feats": [
+     "dexterity+2",
+     "Savage Attacker"
+    ],
+    "fighting_styles": [
+     "Two-Weapon Fighting"
+    ],
+    "routine": "shadow_blade",
+    "cantrip": "Fire Bolt",
+    "spell": "",
+    "toggles": {
+     "item_casting": "intelligence"
+    },
+    "level_order": [
+     "sorcerer",
+     "paladin",
+     "paladin",
+     "wizard",
+     "wizard",
+     "wizard",
+     "wizard",
+     "wizard",
+     "wizard",
+     "sorcerer",
+     "sorcerer",
+     "sorcerer"
+    ],
+    "boons": {
+     "dexterity": 1
+    },
+    "respec": {
+     "5": [
+      [
+       "wizard",
+       "Bladesinging",
+       5
+      ]
+     ],
+     "8": [
+      [
+       "wizard",
+       "Bladesinging",
+       6
+      ],
+      [
+       "paladin",
+       "Oath of the Crown",
+       2
+      ]
+     ]
+    }
+   },
+   "carried": [
+    "Resonance Stone"
+   ],
+   "roles": [
+    "frontline",
+    "striker",
+    "control",
+    "support"
+   ],
+   "variants": [],
+   "advantage": false,
+   "assumptions": {}
+  },
+  "carried": [
+   "Resonance Stone"
+  ],
+  "roles": [
+   "frontline",
+   "striker",
+   "control",
+   "support"
+  ],
+  "unmatched": [],
+  "notes": [],
+  "companion": "Gale, Tav, Minthara",
+  "themes": [
+   "psychic",
+   "thunder",
+   "cold",
+   "arcane acuity",
+   "arcane synergy",
+   "crit"
+  ],
+  "provides": [
+   "haste",
+   "paralysed",
+   "prone",
+   "grovel"
+  ],
+  "needs": [
+   "none"
+  ],
+  "path": "either",
+  "permanent_buffs": "Act 1 Auntie Ethel's Hair DEX; Act 1 Awakened; Act 3 Mirror of Loss DEX",
+  "gear_estimated": false,
+  "caveats": "Must respec in the exact sequence of 1 Sorcerer -> 2 Paladin -> 6 Wizard -> 3 Sorcerer so you keep Level 1 Sorcerer Constitution save proficiency while ensuring Wizard is the last new class added (locking item, scroll, and Illithid Spell Save DC to Intelligence)."
  }
 ]

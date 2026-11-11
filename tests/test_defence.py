@@ -1,4 +1,6 @@
 """ Armour class per character and act """
+from dataclasses import replace
+
 from bg3.build import Bg3Build
 from bg3.character import Bg3Character
 from bg3.defence import armour_class, armour_data, hit_chance
@@ -12,7 +14,7 @@ def test_armour_data_from_the_wiki():
     assert data["bg3:wondrous_gloves"]["bonus"] == 1
 
 def test_godblade_high_ac_stack():
-    godblade = examples()["1. The Godblade"] # DEX 20 (17, Auntie Ethel's Hair, +2 at level 4), Bracers of Defence, Bladesinger 5 in Act 1
+    godblade = replace(examples()["1. The Godblade"], buffs={}) # Without the buffs the doc plans. DEX 20 (17, Auntie Ethel's Hair, +2 at level 4), Bracers of Defence, Bladesinger 5 in Act 1
     assert armour_class(godblade, "1")[0] == 10 + 5 + 2 + 3
     buffed = variant_build(godblade, {"kit": "tank_unarmoured", "buffs": ["mage_armour", "shield_of_faith", "haste"]})
     assert armour_class(buffed, "1")[0] == 13 + 5 + 2 + 3 + 1 + 2 + 2

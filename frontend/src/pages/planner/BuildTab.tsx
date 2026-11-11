@@ -11,7 +11,8 @@ export function BuildTab({ options, result }: { options: PlannerOptions; result:
   if (!build) return null
   const set = (change: Partial<Build>) => update(selected, (b) => ({ ...b, ...change }))
   const character = build.character ?? null
-  const setChar = (change: Partial<Character>) => update(selected, (b) => (b.character ? { ...b, character: { ...b.character, ...change } } : b))
+  // A respec (the class split at an earlier act, from a build doc) belongs to the classes it was written for, so editing them drops it
+  const setChar = (change: Partial<Character>) => update(selected, (b) => (b.character ? { ...b, character: { ...b.character, ...change, ...('classes' in change ? { respec: {} } : {}) } } : b))
   const b = options.builder
   const summary = result?.builder
 

@@ -38,6 +38,13 @@
   what it adds.
 - **Bigger charts, fewer panels:** the planner's damage chart and the leaderboard's scatter are taller and get half the page, the
   simulator's distributions are taller, the overall score moved into its own tab, and several helper texts are shorter.
+- **Build doc re-import (32 builds):** the Metamagic Godblade (4 Draconic Sorcerer / 2 Crown Paladin / 6 Bladesinger) is new, and the
+  importer reads more of the structured format: a Respec line gives the class split at an act when levelling in order doesn't (a pure
+  Bladesinger until the multiclass comes together), Permanent buffs gives Auntie Ethel's Hair, "Twinned Haste" counts as Haste, the
+  item casting ability comes from the caveat's wording, and a build written twice is read from its last section.
+- **Quickened Booming Blade:** a melee Sorcerer (level 3) makes a second main hand Booming Blade attack with the bonus action, one
+  a long rest per 3 sorcerer levels; the off-hand attack is made in the other turns.
+- **Best in slot:** a swap that a later one makes pointless (a helmet for advantage, then a ring that gives it too) is put back.
 - **Great Weapon Master's bonus attack:** a crit or a kill with a melee weapon attack gives another one with the bonus action, now
   counted for every build with the feat: the chance one of the turn's melee attacks crits (crit range, advantage and Haste count)
   plus the kills a fight from the Estimates box (1.5, the same number Bloodlust uses; 0 for a boss fight). A bonus action attack

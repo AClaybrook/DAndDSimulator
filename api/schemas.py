@@ -177,6 +177,7 @@ class BuilderCharacter(Model):
     toggles: dict[str, bool | str] = {}
     level_order: list[str] = []
     boons: dict[str, int] = {} # Permanent ability bonuses: Auntie Ethel's Hair (+1), Mirror of Loss (+2)
+    respec: dict[str, list[tuple[str, str, int]]] = {} # Character level: the class split respecced to at that level
 
 class Build(Model):
     """ A planner build (bg3.build.Bg3Build) """

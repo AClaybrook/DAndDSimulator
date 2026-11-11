@@ -126,3 +126,35 @@ def test_hags_hair_respec_note_and_conditions_always_met():
     assert "1d4 psychic" in blade.extra_damage_list and blade.bonus_damage_die_mod_list[-1] == "3" # INT 16
     # 17 + 2 from the feat is 19: the write-up reaches 20, so the hair is assumed and noted
     assert deadeye["build"]["character"]["boons"] == {"dexterity": 1} and any("Auntie Ethel's Hair assumed" in n for n in deadeye["notes"])
+
+def test_respec_permanent_buffs_and_metamagic_from_the_structured_format():
+    """ A Respec line gives the class split at an act when levelling in order doesn't; Permanent buffs gives Auntie Ethel's Hair;
+        'Twinned Haste' is Haste; a build written twice is read from its last section; a melee Sorcerer quickens Booming Blade """
+    from bg3.build import Bg3Build, compile_build
+    from bg3.character import Bg3Character, class_levels
+    from bg3.doc_import import import_text
+    text = """Build 1: Old write-up (12 Fighter)
+Classes: 12 Champion Fighter
+Build 1: Metamagic Blade
+Classes: 4 Draconic Bloodline Sorcerer / 2 Oath of the Crown Paladin / 6 Bladesinging Wizard
+Level order: Sorcerer 1, Paladin 1-2, Wizard 1-6, Sorcerer 2-4
+Respec: Act 1 = 5 Bladesinging Wizard; Act 2 = 6 Bladesinging Wizard / 2 Oath of the Crown Paladin; Act 3 = 1 Draconic Bloodline Sorcerer / 2 Oath of the Crown Paladin / 6 Bladesinging Wizard / 3 Draconic Bloodline Sorcerer
+Abilities: STR 8, DEX 15, CON 14, INT 15, WIS 10, CHA 8 | +2 DEX, +1 INT
+Feats: +2 DEX, Savage Attacker
+Routine: shadow_blade
+Cantrip: Booming Blade
+Permanent buffs: Act 1 Auntie Ethel's Hair DEX; Act 3 Mirror of Loss DEX
+Act 3 Buffs: Twinned Haste, Elixir of Bloodlust
+Caveats: Wizard is the last new class added, locking item, scroll, and Illithid Spell Save DC to Intelligence.
+"""
+    entries = import_text(text)
+    assert len(entries) == 1 and entries[0]["build"]["name"].endswith("Metamagic Blade")
+    build = Bg3Build.from_dict(entries[0]["build"])
+    character = Bg3Character.from_dict(build.character)
+    assert [class_levels(character, lv) for lv in (5, 8, 12)] == [{"wizard": 5}, {"wizard": 6, "paladin": 2}, {"sorcerer": 4, "paladin": 2, "wizard": 6}]
+    assert character.boons == {"dexterity": 1} and character.toggles["item_casting"] == "intelligence"
+    assert build.buffs["3"] == ["haste", "elixir:elixir_of_bloodlust"]
+    attacks = compile_build(build, "3").attacks
+    quick = next(a for a in attacks if a.label == "Quickened Booming Blade")
+    assert quick.action == "bonus" and quick.uses_per_fight == 0.25 and next(a for a in attacks if a.offhand).fallback_for == quick.name
+    assert not [a for a in compile_build(build, "1").attacks if a.label == "Quickened Booming Blade"]

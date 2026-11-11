@@ -1,4 +1,6 @@
 """ The all round score """
+from dataclasses import replace
+
 from bg3.kits import variant_build
 from bg3.presets import PRESETS, examples
 from bg3.score import WEIGHTS, hit_points, score
@@ -13,7 +15,7 @@ def test_score_parts_and_range():
     assert sum(WEIGHTS.values()) == 100
 
 def test_high_ac_godblade_scores_higher_than_damage_only():
-    godblade = examples()["1. The Godblade"]
+    godblade = replace(examples()["1. The Godblade"], buffs={}) # Without the buffs the doc plans
     high_ac = variant_build(godblade, {"kit": "tank_unarmoured", "buffs": ["mage_armour"]})
     base, tank = score(godblade, "1", ENEMY), score(high_ac, "1", ENEMY)
     assert tank.parts["damage"] < base.parts["damage"] and tank.parts["defence"] > base.parts["defence"]

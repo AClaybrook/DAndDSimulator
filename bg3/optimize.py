@@ -174,6 +174,18 @@ def optimise(build, act, objective, items=None, exclude=(), weapons=False, min_g
                         continue
                     kept.pop(slot, None)
                 best, gear = value, trial
+    # One slot at a time can leave a swap that a later one made pointless (a helmet for advantage, then a ring that gives it too):
+    # put back any planned item whose replacement no longer earns its place next to the rest
+    settled = False
+    while not settled:
+        settled = True
+        for slot in slots:
+            if gear.get(slot) == planned.get(slot):
+                continue
+            back = {**gear, slot: planned[slot]}
+            value = objective(with_gear(build, act, back))
+            if best - value < max(abs(best) * min_gain if planned.get(slot) else 0, 1e-6):
+                best, gear, settled = value, back, False
     return {slot: key for slot, key in gear.items() if key or slot in equipment_at(build, act)}
 
 def variant(build, kind, objective_for_act):
