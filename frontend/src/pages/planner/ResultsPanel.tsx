@@ -1,4 +1,4 @@
-import { Badge, Button, Checkbox, Collapse, Group, MultiSelect, NumberInput, Select, Stack, Switch, Table, Tabs, Text, Tooltip, UnstyledButton } from '@mantine/core'
+import { Anchor, Badge, Button, Checkbox, Collapse, Group, MultiSelect, NumberInput, Select, Stack, Switch, Table, Tabs, Text, Tooltip, UnstyledButton } from '@mantine/core'
 import { useDebouncedValue, useMediaQuery } from '@mantine/hooks'
 import { IconChevronDown, IconChevronRight, IconWand } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
@@ -16,7 +16,7 @@ const MAX_LINES = 8 // One colour slot per line, so the party and the compared b
 // Results: the party's damage across the acts first, then conflicts and how the party works together.
 // The damage numbers themselves live on the party cards above; this panel is the picture and the detail behind them
 export function ResultsPanel({ options, evaluation }: { options: PlannerOptions; evaluation: Evaluation | undefined }) {
-  const { party, selected, enemies, attackBonus, together, setTogether } = useParty()
+  const { party, selected, enemies, attackBonus, together, setTogether, update } = useParty()
   const colors = useColors()
   // With the synergies the party sets up every fight, or each character on their own
   const synergies = evaluation?.synergies ?? {}
@@ -24,6 +24,30 @@ export function ResultsPanel({ options, evaluation }: { options: PlannerOptions;
   const dmg = (m: MemberResult, a: string) => (together ? m.acts[a].together ?? m.acts[a].damage : m.acts[a].damage)[enemies - 1]
   const conflicts = evaluation?.conflicts ?? []
   const member = evaluation?.members[selected]
+  // One click fixes: an item worn before the act it is found in moves to that act; Auntie Ethel's Hair stays on one character
+  const moveToItsAct = (c: (typeof conflicts)[number]) => {
+    const to = String(Object.values(options.items).flat().find((o) => o.value === c.item)?.act ?? '')
+    const index = party.findIndex((b) => b.name === c.members[0])
+    if (!to || index < 0) return
+    update(index, (b) => {
+      const from = { ...(b.equipment[c.act] ?? {}) }
+      const slot = Object.keys(from).find((s) => from[s] === c.item)
+      if (!slot) return b
+      delete from[slot]
+      return { ...b, equipment: { ...b.equipment, [c.act]: from, [to]: { ...(b.equipment[to] ?? {}), [slot]: b.equipment[to]?.[slot] ?? c.item } } }
+    })
+  }
+  const keepHairOn = (keeper: string, members: string[]) => party.forEach((b, i) => {
+    if (b.name === keeper || !members.includes(b.name) || !b.character) return
+    update(i, (x) => (x.character ? { ...x, character: { ...x.character, boons: Object.fromEntries(Object.entries(x.character.boons ?? {}).filter(([, v]) => v !== 1)) } } : x))
+  })
+  // The same problem in several acts (a story choice, an item two characters keep wearing) is listed once
+  const grouped: { c: (typeof conflicts)[number]; acts: string[] }[] = []
+  for (const c of conflicts) {
+    const same = grouped.find((g) => g.c.message === c.message)
+    if (same) same.acts.push(c.act)
+    else grouped.push({ c, acts: [c.act] })
+  }
   const { enemy, rounds } = useSharedEnemy()
   // Example builds drawn next to the party (dashed), each evaluated on its own against the same enemy
   const [compare, setCompare] = useState<string[]>([])
@@ -92,15 +116,19 @@ export function ResultsPanel({ options, evaluation }: { options: PlannerOptions;
         {!conflicts.length ? <Text size="sm" c="dimmed">No equipment conflicts.</Text> : (
           <Stack gap="xs">
             {conflicts.some((c) => c.kind === 'shared') && <Settle />}
-            {ACTS.map((a) => conflicts.filter((c) => c.act === a)).map((list, i) => list.length > 0 && (
-              <div key={i}>
-                <Text size="xs" fw={600} c="dimmed" tt="uppercase">Act {ACTS[i]}</Text>
-                {list.map((c, j) => (
-                  <Text key={j} size="sm" c={['shared', 'story'].includes(c.kind) ? 'orange' : undefined}>
-                    {c.message}{Object.keys(c.gains).length ? `. Adds ${Object.entries(c.gains).map(([n, g]) => `${n.split(' (')[0]} ${g >= 0 ? '+' : ''}${g.toFixed(1)}`).join(', ')}` : ''}
-                  </Text>
-                ))}
-              </div>
+            {grouped.map(({ c, acts }, j) => (
+              <Group key={j} gap="xs" wrap="nowrap" align="flex-start">
+                <Badge size="sm" variant="light" color={['shared', 'story'].includes(c.kind) ? 'orange' : 'gray'} style={{ flexShrink: 0 }} mt={2} w={72}>
+                  {acts.length > 1 ? `Act ${acts[0]}–${acts[acts.length - 1]}` : `Act ${acts[0]}`}
+                </Badge>
+                <Text size="sm">
+                  {c.message}{Object.keys(c.gains).length ? `. Adds ${Object.entries(c.gains).map(([n, g]) => `${n.split(' (')[0]} ${g >= 0 ? '+' : ''}${g.toFixed(1)}`).join(', ')}` : ''}
+                  {c.kind === 'too_early' && <> <Anchor size="sm" component="button" onClick={() => moveToItsAct(c)}>Move it there</Anchor></>}
+                  {c.kind === 'story' && c.message.startsWith('Auntie Ethel') && c.members.map((n) => (
+                    <span key={n}> <Anchor size="sm" component="button" onClick={() => keepHairOn(n, c.members)}>Only {n.split(' (')[0]}</Anchor></span>
+                  ))}
+                </Text>
+              </Group>
             ))}
           </Stack>
         )}

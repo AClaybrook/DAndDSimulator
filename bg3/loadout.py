@@ -9,7 +9,7 @@ from bg3.analysis import item_gain, slot_suggestions, with_slot
 from bg3.build import ACT_KEYS, compile_build, equipment_at
 from bg3.defence import armour_class
 from bg3.items import SLOT_LABELS, catalog
-from bg3.optimize import ac_objective, optimise
+from bg3.optimize import MIN_GAIN, ac_objective, optimise
 from bg3.party import party_conflicts
 from bg3.score import score
 from computations.analytic import expected_damage_vs_enemies
@@ -24,8 +24,6 @@ def _objective(goal, act, enemy, rounds, enemies, attack_bonus):
     if goal == "score":
         return lambda build: score(build, act, enemy, rounds, attack_bonus).total
     return damage
-
-MIN_GAIN = 0.03 # Share of the goal's value an item must add to replace one the build already wears
 
 def worn_by_others(builds, index, act):
     """ Unique items the rest of the party wears at an act """

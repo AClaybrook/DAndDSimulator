@@ -100,10 +100,18 @@ export function BuildTab({ options, result }: { options: PlannerOptions; result:
             </SimpleGrid>
             {summary && summary.toggles.length > 0 && (
               <Group gap="md">
-                {summary.toggles.map((t) => (
-                  <Checkbox key={t.value} size="xs" label={t.label} checked={Boolean(character.toggles?.[t.value] ?? t.on)}
-                    onChange={(e) => setChar({ toggles: { ...character.toggles, [t.value]: e.currentTarget.checked } })} />
-                ))}
+                {summary.toggles.map((t) => {
+                  // 'Honour Mode rules: Haste's ...' -> 'Honour Mode rules', the rest on hover
+                  const short = t.label.split(/: | \(/)[0]
+                  return (
+                    <Tooltip key={t.value} label={t.label} disabled={short === t.label} multiline w={320} openDelay={300}>
+                      <div>
+                        <Checkbox size="xs" label={short} checked={Boolean(character.toggles?.[t.value] ?? t.on)}
+                          onChange={(e) => setChar({ toggles: { ...character.toggles, [t.value]: e.currentTarget.checked } })} />
+                      </div>
+                    </Tooltip>
+                  )
+                })}
               </Group>
             )}
           </Section>

@@ -3,7 +3,7 @@
 from bg3.abilities import point_buy_cost, point_buy_problems
 from bg3.analysis import item_values, shared_item_gains, slot_suggestions
 from bg3.buffs import BUFFS
-from bg3.build import ACT_KEYS, ASSUMPTIONS, Bg3Build, compile_build, equipment_at
+from bg3.build import ACT_KEYS, ASSUMPTIONS, Bg3Build, compile_build, equipment_at, main_weapon_finesse
 from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_SPELLS, RACES, ROUTINES, SUBCLASSES, TOGGLE_DEFAULTS, TOGGLES, Bg3Character,
                            class_levels, class_order, compile_character, feat_opportunities, relevant_toggles)
 from bg3.checkpoints import ACTS, act_level
@@ -160,7 +160,9 @@ def _builder_summary(build):
         cost = point_buy_cost(character.scores)
     except ValueError:
         cost = None
-    _, notes = compile_character(character, max(levels))
+    items = catalog()
+    last = equipment_at(build, ACT_KEYS[-1])
+    _, notes = compile_character(character, max(levels), main_weapon_finesse(character, {s: items[k] for s, k in last.items() if k in items}))
     return {"pointBuy": cost, "featLevels": [lv for lv, _ in feat_opportunities(character)],
             "split": {a: class_levels(character, lv) for a, lv in zip(ACT_KEYS, levels)}, "problems": problems, "notes": notes,
             "toggles": [{"value": k, "label": TOGGLES[k], "on": TOGGLE_DEFAULTS.get(k, True)} for k in relevant_toggles(character.classes)]}

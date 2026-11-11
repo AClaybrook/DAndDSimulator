@@ -38,6 +38,22 @@
   what it adds.
 - **Bigger charts, fewer panels:** the planner's damage chart and the leaderboard's scatter are taller and get half the page, the
   simulator's distributions are taller, the overall score moved into its own tab, and several helper texts are shorter.
+- **Great Weapon Master's bonus attack:** a crit or a kill with a melee weapon attack gives another one with the bonus action, now
+  counted for every build with the feat: the chance one of the turn's melee attacks crits (crit range, advantage and Haste count)
+  plus the kills a fight from the Estimates box (1.5, the same number Bloodlust uses; 0 for a boss fight). A bonus action attack
+  the build makes every turn (off hand, Polearm Master's butt end, Flick o' the Wrist) is made in the other turns, so a build
+  whose bonus action already is a full weapon attack gains nothing.
+- **Weapon buffs:** Magic Weapon (+1 to hit and damage) and the Drakethroat Glaive's elemental weapon (+1 to hit and 1d4, on any one
+  weapon until a long rest, Shadow Blade included) are in the Buffs tab and stack with Haste, Bloodlust and the Resonance Stone.
+- **Conflicts you can fix in one click:** an item worn before the act it is found in has "Move it there", Auntie Ethel's Hair on two
+  characters has "Only <name>", and a problem that repeats in every act is listed once. A gear cell holding an item from a later act
+  now shows it in red instead of looking empty.
+- **Gear advice as a chart:** what each worn item adds is a bar chart, and the best items table gets the full width (its last columns
+  were cut off). Build tab toggles are short labels with the detail on hover, and its Sneak Attack note follows the worn weapon.
+- **Leaderboard gear variants** follow the planner's best in slot rules: a real gain to replace a worn item, items the damage can't
+  judge stay, and Max damage doesn't give up armour class. Run 16.
+- **Old page warning:** the built page isn't in git, so after pulling new code it can be stale; the app now says so (in the terminal
+  and at the top of the page) with the command to rebuild.
 - **Party synergies on the damage chart:** the planner's chart and the party cards now show damage with the synergies the party sets up
   every fight (a carried Resonance Stone doubling psychic damage, Reverberation lowering saves), with a "Party synergies" switch to see
   each character alone. Best in slot, gear advice and variants follow the switch, so psychic items are valued against the enemy the

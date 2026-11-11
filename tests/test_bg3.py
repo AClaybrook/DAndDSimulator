@@ -31,8 +31,23 @@ def fighter(**kwargs):
 def test_no_gear_is_the_preset_at_the_checkpoint_level():
     character = compile_build(fighter(), 1, ITEMS)
     preset = build_character("fighter_gwm", 5, "bg3")
+    # BG3 adds Great Weapon Master's bonus attack after a crit or a kill
+    bonus = [a for a in character.attacks if a.label == "Great Weapon Master"]
+    assert len(bonus) == 1 and bonus[0].action == "bonus" and 0 < bonus[0].uses_per_fight < 3
+    with_bonus = expected_damage_per_round(character, ENEMY, 3)
+    character.attacks = [a for a in character.attacks if a.label != "Great Weapon Master"]
     assert character.level == 5 and [a.damage for a in character.attacks] == [a.damage for a in preset.attacks]
     assert expected_damage_per_round(character, ENEMY) == pytest.approx(expected_damage_per_round(preset, ENEMY))
+    assert with_bonus > 1.1 * expected_damage_per_round(preset, ENEMY, 3)
+    # Without kills only crits give it; a bonus action attack made every turn (Polearm Master's butt end) is made in the other turns
+    from bg3.character import Bg3Character
+    no_kills = compile_build(fighter(assumptions={"bloodlust_kills": 0}), 1, ITEMS)
+    assert next(a for a in no_kills.attacks if a.label == "Great Weapon Master").uses_per_fight < bonus[0].uses_per_fight
+    polearm = compile_build(Bg3Build("P", "", character=Bg3Character(feats=["Great Weapon Master", "Polearm Master"], routine="polearm").to_dict()), 3)
+    assert next(a for a in polearm.attacks if a.name == "Polearm Butt End").fallback_for == "Glaive (Great Weapon Master)"
+    weapon = compile_build(Bg3Build("W", "fighter_gwm", buffs={"1": ["magic_weapon", "drakethroat"]}), 1)
+    plain = build_character("fighter_gwm", 5, "bg3")
+    assert weapon.attacks[0].bonus_attack_die_mod_list != plain.attacks[0].bonus_attack_die_mod_list and any("lightning" in str(x) for x in weapon.attacks[0].extra_damage_list)
     assert compile_build(fighter(levels={"2": 7}), 2, ITEMS).level == 7
 
 def test_weapon_and_ring_effects():

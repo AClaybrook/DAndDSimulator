@@ -35,8 +35,9 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
     const cache: Record<string, ItemOption[]> = {}
     return (group: string) => (cache[group] ??= group.split('+').flatMap((g) => options.items[g] ?? []))
   }, [options.items])
-  const dataFor = (group: string, act: string) =>
-    itemsFor(group).filter((o) => o.act == null || o.act <= Number(act)).map((o) => ({ value: o.value, label: o.label }))
+  // The worn item stays in its list even when it is found in a later act, so the cell shows it (flagged red) instead of looking empty
+  const dataFor = (group: string, act: string, worn: string | null) =>
+    itemsFor(group).filter((o) => o.act == null || o.act <= Number(act) || o.value === worn).map((o) => ({ value: o.value, label: o.label }))
   const titles = useMemo(() => Object.fromEntries(Object.values(options.items).flat().map((o) => [o.value, o.title])), [options.items])
 
   if (!build) return null
@@ -153,7 +154,7 @@ export function GearTab({ options, result }: { options: PlannerOptions; result: 
                     <Table.Td key={a}>
                       <Tooltip label={value ? titles[value] : ''} disabled={!value || !titles[value]} multiline w={320} openDelay={400}>
                         <Select size="xs" searchable clearable limit={60} value={value} onChange={(v) => setItem(a, slot.key, v)}
-                          placeholder={inherited ? `↳ ${inherited}` : '—'} data={dataFor(slot.group, a)}
+                          placeholder={inherited ? `↳ ${inherited}` : '—'} data={dataFor(slot.group, a, value)}
                           error={flagged ? true : undefined} nothingFoundMessage="No item" />
                       </Tooltip>
                     </Table.Td>

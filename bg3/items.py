@@ -33,6 +33,7 @@ SLOT_FITS = {key: fits for key, _, fits in SLOTS}
 APPLIES_TO = {
     "all": lambda a: True,
     "weapon": lambda a: a.is_weapon,
+    "main_weapon": lambda a: a.is_weapon and not a.offhand, # A spell cast on one weapon, i.e. Magic Weapon
     "melee_weapon": lambda a: a.type == "weapon (melee)",
     "ranged_weapon": lambda a: a.type in ("weapon (ranged)", "thrown"),
     "thrown": lambda a: a.type == "thrown",

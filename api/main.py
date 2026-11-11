@@ -25,6 +25,21 @@ app.add_middleware(GZipMiddleware, minimum_size=2000)
 ROOT = Path(__file__).parent.parent
 DIST = ROOT / "frontend" / "dist"
 
+def stale_front_end():
+    """ Whether the built front end (frontend/dist, not in git) is older than its source, i.e. after pulling new code without building """
+    built, source = DIST / "index.html", ROOT / "frontend" / "src"
+    if not built.exists() or not source.exists():
+        return False
+    return max((p.stat().st_mtime for p in source.rglob("*") if p.is_file()), default=0) > built.stat().st_mtime + 1
+
+STALE = stale_front_end()
+if STALE:
+    print("\n  The built front end is older than its source. Rebuild it:  cd frontend && npm install && npm run build\n")
+
+@app.get("/api/status")
+def status():
+    return {"staleFrontEnd": STALE}
+
 class Inputs(BaseModel):
     characters: list[dict]
     enemy: dict

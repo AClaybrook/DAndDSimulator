@@ -1,4 +1,4 @@
-import { ActionIcon, AppShell, Burger, Container, Drawer, Group, Kbd, Modal, NavLink, Stack, Table, Tabs, Text, Tooltip, useComputedColorScheme, useMantineColorScheme } from '@mantine/core'
+import { ActionIcon, Alert, AppShell, Burger, Code, Container, Drawer, Group, Kbd, Modal, NavLink, Stack, Table, Tabs, Text, Tooltip, useComputedColorScheme, useMantineColorScheme } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useShortcuts } from './hotkeys'
 import { IconChartHistogram, IconKeyboard, IconMap, IconMoon, IconSun, IconSwords, IconTrophy } from '@tabler/icons-react'
@@ -26,6 +26,12 @@ const currentPage = () => window.location.hash.replace('#/', '').split('?')[0] |
 export default function App() {
   const [menu, { toggle, close }] = useDisclosure()
   const [help, helpControls] = useDisclosure()
+  // The built page isn't in git, so after pulling new code it can be older than the server it talks to
+  const [stale, setStale] = useState(false)
+  useEffect(() => {
+    if (import.meta.env.DEV) return
+    fetch('/api/status').then((r) => r.json()).then((d) => setStale(Boolean(d.staleFrontEnd))).catch(() => {})
+  }, [])
   const { setColorScheme } = useMantineColorScheme()
   const scheme = useComputedColorScheme('dark')
   const toggleScheme = () => setColorScheme(scheme === 'dark' ? 'light' : 'dark')
@@ -93,6 +99,11 @@ export default function App() {
         </Stack>
       </Drawer>
       <AppShell.Main>
+        {stale && (
+          <Alert color="orange" py={6} radius={0} title="This page was built from older code">
+            Rebuild it to see the latest version: <Code>cd frontend && npm install && npm run build</Code>, then restart the app.
+          </Alert>
+        )}
         <Container size="100%" px="lg" py="lg" maw={1680}>
           <active.page />
         </Container>

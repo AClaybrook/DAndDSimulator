@@ -104,13 +104,13 @@ CANTRIPS = ["Eldritch Blast", "Fire Bolt", "Ray of Frost", "Sacred Flame", "Toll
             "Bursting Sinew"]
 # Options that need the build to set something up, all on by default
 TOGGLES = {
-    "rage": "Rage every fight", "reckless": "Reckless Attack (advantage)", "smite": "Smite with spell slots", "vow": "Oath: Vow of Enmity, "
-    "Sacred Weapon or Righteous Clarity", "curse": "Hexblade's Curse on the target", "surprise": "Enemies are surprised (Assassin)",
+    "rage": "Rage every fight", "reckless": "Reckless Attack (advantage)", "smite": "Smite with spell slots", "vow": "Oath buff (Vow of Enmity, "
+    "Sacred Weapon or Righteous Clarity)", "curse": "Hexblade's Curse on the target", "surprise": "Enemies are surprised (Assassin)",
     "manifestation": "Manifestation of Body (Open Hand)", "damaged_target": "Target is already damaged (Colossus Slayer)",
     "starry_form": "Starry Form: Archer (Circle of Stars)", "symbiotic": "Symbiotic Entity (Circle of Spores)",
     "storm_close": "Enemies within 6 m when casting (Heart of the Storm)",
     "booming_blade": "Booming Blade on the first melee attack each turn",
-    "offhand_crossbow": "Bonus action: a shot with an off-hand hand crossbow (casters with two hand crossbows in the ranged slots)",
+    "offhand_crossbow": "Off-hand hand crossbow shot (the bonus action of casters with two hand crossbows in the ranged slots)",
     "spirit_guardians": "Spirit Guardians first, then the build's own spell (Cleric 5; pick it as the levelled spell to cast nothing else)",
     "spiritual_weapon": "Spiritual Weapon every fight (Cleric 3: a summoned weapon with its own attack each round, for a level 2+ slot)",
     "bladesong": "Bladesong in fights (+2/+3/+4 AC without medium or heavy armour or a shield)",

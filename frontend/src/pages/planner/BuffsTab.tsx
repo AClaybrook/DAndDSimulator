@@ -19,7 +19,7 @@ export function BuffsTab({ options, result }: { options: PlannerOptions; result:
   // The guesses behind this build's numbers, only the ones it uses: kills with Bloodlust, reaction attacks from its feats
   const feats = build.character?.feats ?? []
   const uses: Record<string, boolean> = {
-    bloodlust_kills: ACTS.some((a) => (build.buffs[a] ?? []).includes('elixir:elixir_of_bloodlust')),
+    bloodlust_kills: ACTS.some((a) => (build.buffs[a] ?? []).includes('elixir:elixir_of_bloodlust')) || feats.includes('Great Weapon Master') || /gwm/i.test(build.preset),
     polearm_reactions: feats.includes('Polearm Master'), sentinel_reactions: feats.includes('Sentinel'),
   }
   const assumptions = options.assumptions.filter((a) => uses[a.key])

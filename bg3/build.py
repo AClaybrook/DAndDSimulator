@@ -4,7 +4,7 @@ from copy import deepcopy
 from dataclasses import asdict, dataclass, field, fields, replace
 
 from bg3.buffs import BUFFS
-from bg3.character import POLEARM_REACTIONS, SENTINEL_REACTIONS, Bg3Character, compile_character, is_proficient, weapon_proficiencies
+from bg3.character import POLEARM_REACTIONS, ROUNDS_PER_FIGHT, SENTINEL_REACTIONS, Bg3Character, compile_character, is_proficient, weapon_proficiencies
 from bg3.checkpoints import ACTS, act_level
 from bg3.items import (BLOODLUST_KILLS_PER_FIGHT, REACTION_ADVANTAGE, SLOT_LABELS, SLOTS, active_effects, apply_effect, apply_lightning_charges, apply_reverberation, catalog,
                        equip_weapon, extra_action)
@@ -41,7 +41,8 @@ class Bg3Build:
 
 # key: (label, default, what it means). How often things happen in a fight is a guess, so each build can set its own
 ASSUMPTIONS = {
-    "bloodlust_kills": ("Kills a fight (Bloodlust)", BLOODLUST_KILLS_PER_FIGHT, "Each kill on your turn gives one more action, once a turn"),
+    "bloodlust_kills": ("Kills a fight", BLOODLUST_KILLS_PER_FIGHT, "A kill on your turn gives the Elixir of Bloodlust's extra action and Great Weapon "
+                        "Master's bonus attack, once a turn each. 0 for a fight against one boss"),
     "polearm_reactions": ("Polearm Master reactions a fight", POLEARM_REACTIONS, "Attacks on enemies that walk into your reach"),
     "sentinel_reactions": ("Sentinel reactions a fight", SENTINEL_REACTIONS, "Attacks on enemies next to you that hit an ally"),
 }
@@ -49,6 +50,47 @@ ASSUMPTIONS = {
 def assumption(build, key):
     value = build.assumptions.get(key)
     return ASSUMPTIONS[key][1] if value is None else max(float(value), 0.0)
+
+def main_weapon_finesse(bg3_character, gear):
+    """ Whether the main weapon from gear ({slot: Item}) is finesse or ranged, None without one: it decides Sneak Attack and Flick o' the
+        Wrist (i.e. The Dancing Breeze, a finesse glaive) """
+    weapon = gear.get("ranged_main") if bg3_character.routine in ("ranged", "dual_hand_crossbows") else gear.get("melee_main")
+    weapon = weapon.weapon if weapon is not None and weapon.weapon else None
+    return None if weapon is None else weapon.get("kind") == "ranged" or "finesse" in (weapon.get("properties") or [])
+
+def crit_chance(character, attack):
+    """ The chance one attack roll is a crit, from its crit range and advantage (the enemy doesn't change it) """
+    once = (21 - min(attack.crit_on, character.crit_on)) / 20
+    twice = 1 - (1 - once) ** 2
+    if attack.advantage or character.advantage:
+        return twice
+    return once + attack.advantage_chance * (twice - once)
+
+def great_weapon_master_attack(character, kills):
+    """ Great Weapon Master: a crit or a kill with a melee weapon attack gives another one with the bonus action that turn (any melee
+        weapon, not only heavy ones). Added as a main hand attack made in the turns that happens: the chance any of the turn's melee
+        attacks crits, plus the kills a fight (an estimate, ASSUMPTIONS). A bonus action attack the build makes every turn (off hand,
+        Polearm Master's butt end, Flick o' the Wrist) is made in the other turns """
+    melee = [a for a in character.attacks if a.type == "weapon (melee)" and not a.offhand and a.action in ("action", "extra")]
+    if not character.GWM or not melee:
+        return
+    rounds = ROUNDS_PER_FIGHT
+    uses = {a.name: a.uses_per_fight for a in reversed(character.attacks)}
+    def share(a): # Of the turns the attack is made in
+        if a.fallback_for and a.fallback_for != a.name and uses.get(a.fallback_for):
+            return 1 - min(uses[a.fallback_for] / rounds, 1)
+        return min(a.uses_per_fight / rounds, 1) if a.uses_per_fight else 1
+    no_crit = 1.0
+    for a in melee:
+        no_crit *= (1 - crit_chance(character, a)) ** share(a)
+    triggers = round(rounds * (1 - no_crit * (1 - min(kills / rounds, 1))), 2)
+    every_turn = [a for a in melee if a.action == "action" and not a.uses_per_fight and not a.fallback_for]
+    main = (every_turn or melee)[-1] # The last one: riders like Booming Blade sit on the first
+    bonus = main.variant("Great Weapon Master", action="bonus", uses_per_fight=triggers, fallback_for="", tags=[t for t in main.tags if t != "after_cast"])
+    usual = [a for a in character.attacks if (a.action == "bonus" or a.offhand) and a.is_weapon and not a.uses_per_fight and not a.fallback_for]
+    if usual:
+        usual[-1].fallback_for = bonus.name
+    character.attacks.append(bonus)
 
 def equipment_at(build, act):
     """ Slot: item key at an act, items carry over from earlier acts until replaced. An empty string clears a slot """
@@ -78,12 +120,8 @@ def compile_build(build, act, items=None):
     level = act_level(act, build.levels)
     gear = {slot: items[key] for slot, key in equipment_at(build, act).items() if key in items and items[key].fits(slot)}
     if build.character:
-        # A finesse or ranged weapon from gear decides Sneak Attack and Flick o' the Wrist (i.e. The Dancing Breeze, a finesse glaive)
         bg3_character = Bg3Character.from_dict(build.character)
-        weapon = (gear.get("ranged_main") if bg3_character.routine in ("ranged", "dual_hand_crossbows") else gear.get("melee_main"))
-        weapon = weapon.weapon if weapon is not None and weapon.weapon else None
-        finesse = None if weapon is None else weapon.get("kind") == "ranged" or "finesse" in (weapon.get("properties") or [])
-        character, _ = compile_character(bg3_character, level, finesse)
+        character, _ = compile_character(bg3_character, level, main_weapon_finesse(bg3_character, gear))
         for key, label in (("polearm_reactions", "Polearm Master reaction"), ("sentinel_reactions", "Sentinel reaction")):
             uses = assumption(build, key)
             for attack in character.attacks:
@@ -155,6 +193,7 @@ def compile_build(build, act, items=None):
 
     if build.advantage:
         character.advantage = True
+    great_weapon_master_attack(character, assumption(build, "bloodlust_kills"))
     label = ACTS[int(act)][0]
     character.name = f"{build.name} ({label})" if build.name else label
     worn = ", ".join(f"{SLOT_LABELS[slot]}: {item.name}" for slot, item in gear.items())

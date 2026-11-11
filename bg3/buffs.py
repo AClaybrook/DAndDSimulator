@@ -55,6 +55,13 @@ BUFFS = {b.key: b for b in [
     Buff("hex", "Hex", 1, [Effect("extra_damage", "1d6 necrotic")], "Cast by the character, bonus action", concentration=True, self_cast=True),
     Buff("divine_favour", "Divine Favour", 1, [Effect("extra_damage", "1d4 radiant", applies_to="weapon")], "Paladin, bonus action",
          concentration=True, self_cast=True),
+    # Cast on one weapon, both last until a long rest. They stack with each other and with the weapon's own enchantment
+    Buff("magic_weapon", "Magic Weapon", 1, [Effect("attack_bonus", 1, applies_to="main_weapon"), Effect("damage_bonus", 1, applies_to="main_weapon")],
+         "+1 to hit and damage with one weapon (level 2 spell, +2 from a level 4 slot)", concentration=True),
+    Buff("drakethroat", "Drakethroat Glaive: elemental weapon", 2,
+         [Effect("attack_bonus", 1, applies_to="main_weapon"), Effect("extra_damage", "1d4 lightning", applies_to="main_weapon")],
+         "Draconic Elemental Weapon: +1 to hit and 1d4 acid, cold, fire, lightning, poison or thunder (counted as lightning) on one weapon until "
+         "a long rest, Shadow Blade included. Whoever holds the glaive casts it in camp, once a long rest, so one weapon in the party"),
     # Defensive spells: no damage effect, counted by the armour class (bg3.defence)
     Buff("shield_of_faith", "Shield of Faith", 1, [], "+2 AC (concentration). Counted in armour class, not damage", concentration=True),
     Buff("mage_armour", "Mage Armour", 1, [], "AC 13 + DEX without armour, until a long rest (camp cast)"),

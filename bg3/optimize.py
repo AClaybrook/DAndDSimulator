@@ -130,6 +130,7 @@ def weapon_candidates(build, act, items=None):
     return slot, [i for i in items.values() if i.weapon and i.fits(slot) and (i.act or 3) <= int(act) and fits(i.weapon)
                   and i.key not in COMPANION_ONLY and (profs is None or is_proficient(i.weapon.get("base"), profs))]
 
+MIN_GAIN = 0.03 # Share of the goal's value an item must add to replace one the build already wears
 PARTLY_COUNTED_GAIN = 0.10 # Share of the objective needed to replace a worn item only some of whose effects are counted
 
 def optimise(build, act, objective, items=None, exclude=(), weapons=False, min_gain=0.0, guard=None, kept=None):
@@ -182,7 +183,10 @@ def variant(build, kind, objective_for_act):
     if kind == "planned":
         return out
     for act in ACT_KEYS:
-        gear = optimise(out, act, objective_for_act(act))
+        # The planner's best in slot rules: a real gain to replace a worn item, effects the damage can't judge stay, and the search for
+        # damage doesn't give up armour class
+        guard = (lambda b, act=act: armour_class(b, act)[0]) if kind == "max_damage" else None
+        gear = optimise(out, act, objective_for_act(act), min_gain=MIN_GAIN, guard=guard, kept={})
         out.equipment[act] = {**out.equipment.get(act, {}), **gear}
     return out
 
