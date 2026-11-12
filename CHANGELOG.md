@@ -38,6 +38,10 @@
   what it adds.
 - **Bigger charts, fewer panels:** the planner's damage chart and the leaderboard's scatter are taller and get half the page, the
   simulator's distributions are taller, the overall score moved into its own tab, and several helper texts are shorter.
+- **A hold can fail:** "Enemy paralysed" in the Party tab now counts for the share of turns the hold lands (the target's Wisdom save
+  against the caster's spell save DC, recast when it breaks) instead of always; its line shows the chance against the chosen enemy.
+  The Resonance Stone gives enemies disadvantage on Intelligence, Wisdom and Charisma saves, for the hold and for every save spell
+  (Toll the Dead, Spirit Guardians).
 - **Belm and Rhapsody:** Belm in the off hand makes the bonus action attack with the main hand weapon (Perfectly Balanced Strike: its
   ability modifier and on-hit effects, once a turn), so a Shadow Blade build swings the blade a third time. Rhapsody's Scarlet
   Remittance (+1 to hit, damage and spell save DC a kill, up to +3) is a toggle, on for the doc builds that wear it; before, the

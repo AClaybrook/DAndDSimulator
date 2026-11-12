@@ -439,3 +439,29 @@ def test_belm_in_the_off_hand_and_rhapsody_stacks():
     cold, hot = (expected_damage_per_round(compile_build(build("bg3:rhapsody", c), "3"), Enemy(), 3) for c in ((), (options[0]["value"],)))
     assert cold < expected_damage_per_round(belm, Enemy(), 3) and hot > 1.15 * cold
     assert next(a for a in compile_build(build("bg3:rhapsody", (options[0]["value"],)), "3").attacks if not a.offhand).bonus_damage_die_mod_list[-1] == "3"
+
+def test_a_hold_can_fail_and_the_resonance_stone_weakens_mental_saves():
+    """ A held enemy counts for the share of turns it fails its Wisdom save against the caster's DC; the Resonance Stone gives enemies
+        disadvantage on Intelligence, Wisdom and Charisma saves, for the hold and for save spells """
+    from bg3 import synergy
+    from bg3.character import Bg3Character
+    wizard = Bg3Character(classes=[["wizard", "Bladesinging", 12]], routine="shadow_blade", scores={**Bg3Character().scores, "intelligence": 16}).to_dict()
+    blade = Bg3Build("Blade", "", character=wizard, carried=["Resonance Stone"])
+    tough = Enemy(wisdom_save=9)
+    lands, dc, caster = synergy.hold_chance([blade], "3", tough)
+    assert caster == "Blade" and lands == pytest.approx((dc - 1 - 9) / 20)
+    stoned, active = synergy.party_enemy([blade], "3", tough, ["resonance_stone"])
+    assert stoned.save_disadvantage == ["charisma", "intelligence", "wisdom"] and active == ["resonance_stone"]
+    assert synergy.hold_chance([blade], "3", stoned)[0] == pytest.approx(1 - (1 - lands) ** 2)
+    free = synergy.party_damage([blade], "3", tough, 3, ["resonance_stone"])[0][2]
+    mixed = synergy.party_damage([blade], "3", tough, 3, ["resonance_stone", "paralysed"])[0][2]
+    characters, foe = synergy.apply([blade], "3", tough, ["resonance_stone", "paralysed"])
+    always = expected_damage_per_round(characters[0], foe, 3)
+    share = synergy.hold_chance([blade], "3", stoned)[0]
+    assert free < mixed < always and mixed == pytest.approx(share * always + (1 - share) * free)
+    assert "lands" in synergy.describe([blade], "3", tough)["paralysed"]
+    fight = synergy.simulate_party_fight([blade], "3", tough, 3, ["resonance_stone", "paralysed"], num_fights=500)
+    assert 0 < fight["median_round"]
+    # A Wisdom save cantrip against the same enemy: disadvantage makes it fail more often
+    caster = compile_build(Bg3Build("Cleric", "", character=Bg3Character(classes=[["cleric", "Life Domain", 12]], routine="cantrip", cantrip="Toll the Dead").to_dict()), "3")
+    assert expected_damage_per_round(caster, stoned) > expected_damage_per_round(caster, tough)

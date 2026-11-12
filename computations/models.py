@@ -329,6 +329,7 @@ class Enemy(Creature):
     resistances: list[str] = field(default_factory=list)
     vulnerabilities: list[str] = field(default_factory=list)
     immunities: list[str] = field(default_factory=list)
+    save_disadvantage: list[str] = field(default_factory=list) # Abilities whose saving throws it rolls twice, keeping the lower
 
     @property
     def proficiency_bonus(self):
@@ -596,7 +597,7 @@ def calculate_attack_and_damage_context(character, enemy):
             attack_modifier = enemy.saving_throw_modifier(attack.saving_throw_stat) if isinstance(enemy, Enemy) else enemy.ability_modifier(attack.saving_throw_stat)
             attack_num_die, attack_die_sizes = [], []
             # The roll is the enemy's, so only its own disadvantage counts
-            advantage, disadvantage = False, bool(attack.save_disadvantage)
+            advantage, disadvantage = False, bool(attack.save_disadvantage) or attack.saving_throw_stat in getattr(enemy, "save_disadvantage", ())
             attack_reroll_on = 0
             save_success_multiplier = attack.saving_throw_success_multiplier
 
