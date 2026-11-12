@@ -38,6 +38,10 @@
   what it adds.
 - **Bigger charts, fewer panels:** the planner's damage chart and the leaderboard's scatter are taller and get half the page, the
   simulator's distributions are taller, the overall score moved into its own tab, and several helper texts are shorter.
+- **Belm and Rhapsody:** Belm in the off hand makes the bonus action attack with the main hand weapon (Perfectly Balanced Strike: its
+  ability modifier and on-hit effects, once a turn), so a Shadow Blade build swings the blade a third time. Rhapsody's Scarlet
+  Remittance (+1 to hit, damage and spell save DC a kill, up to +3) is a toggle, on for the doc builds that wear it; before, the
+  dagger only counted +1 to spell attacks. Effects of one item that share a condition are one toggle.
 - **Build doc re-import (32 builds):** the Metamagic Godblade (4 Draconic Sorcerer / 2 Crown Paladin / 6 Bladesinger) is new, and the
   importer reads more of the structured format: a Respec line gives the class split at an act when levelling in order doesn't (a pure
   Bladesinger until the multiclass comes together), Permanent buffs gives Auntie Ethel's Hair, "Twinned Haste" counts as Haste, the

@@ -50,7 +50,8 @@
    },
    "conditions": [
     "bg3:diadem_of_arcane_synergy#0",
-    "bg3:strange_conduit_ring#0"
+    "bg3:strange_conduit_ring#0",
+    "bg3:rhapsody#0"
    ],
    "levels": {},
    "character": {
@@ -1784,7 +1785,9 @@
     }
    },
    "buffs": {},
-   "conditions": [],
+   "conditions": [
+    "bg3:rhapsody#0"
+   ],
    "levels": {},
    "character": {
     "name": "The 11/1 Fire Sorlock",
@@ -3190,7 +3193,8 @@
    },
    "conditions": [
     "bg3:diadem_of_arcane_synergy#0",
-    "bg3:strange_conduit_ring#0"
+    "bg3:strange_conduit_ring#0",
+    "bg3:rhapsody#0"
    ],
    "levels": {},
    "character": {

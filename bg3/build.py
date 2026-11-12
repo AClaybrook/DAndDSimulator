@@ -154,6 +154,22 @@ def compile_build(build, act, items=None):
         else:
             attack = deepcopy(attack)
         attacks.append(attack)
+    # Belm in the off hand: Perfectly Balanced Strike, the bonus action attack made with the main hand weapon (its ability modifier and
+    # on-hit effects, bg3.wiki) instead of an off-hand swing
+    off = gear.get("melee_off")
+    if off is not None and any(e.kind == "main_hand_bonus_attack" for e in off.effects):
+        mains = [a for a in attacks if a.type == "weapon (melee)" and not a.offhand and a.action == "action" and not a.uses_per_fight and not a.fallback_for]
+        swings = own_attacks.get("melee_off", [])
+        if mains and (swings or not any(a.action == "bonus" and a.is_weapon and not a.uses_per_fight for a in attacks)):
+            strike = mains[-1].variant("Perfectly Balanced Strike", action="bonus", fallback_for=swings[0].fallback_for if swings else "")
+            if swings:
+                names[swings[0].name] = strike.name
+                attacks[next(ii for ii, a in enumerate(attacks) if a is swings[0])] = strike
+            else:
+                attacks.append(strike)
+            own_attacks["melee_off"] = swings[1:]
+            if _weapon_slot(mains[-1]) in own_attacks:
+                own_attacks[_weapon_slot(mains[-1])].append(strike)
     if any(item.key in REACTION_ADVANTAGE for item in gear.values()):
         for attack in attacks:
             if attack.action == "reaction":

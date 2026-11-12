@@ -10,85 +10,85 @@ No outside help. Self cast Hex and Divine Favour stay, Reckless Attack still giv
 
 | # | Build | Source | Act 1 | Act 2 | Act 3 | Overall |
 |---|---|---|---|---|---|---|
-| 1 | Throwing Berserker GWM (Berserker 12) | Reddit (approx.) | 59.2 (#1) | 65.2 (#2) | 81.6 (#11) | 91 |
-| 2 | 2. Nuclear Pure Hexblade Warlock | Build doc | 50.2 (#3) | 59.5 (#6) | 105.6 (#2) | 90 |
-| 3 | Karlach (Berserker) | Preset | 53.2 (#2) | 63.3 (#3) | 69.4 (#18) | 82 |
-| 4 | 3. Hexwing Phantom | Build doc | 48.4 (#6) | 51.1 (#15) | 95.4 (#4) | 82 |
-| 5 | 16. Karlach, God of Thunder | Build doc | 48.9 (#5) | 55.1 (#9) | 81.8 (#10) | 80 |
-| 6 | Throwzerker (Giant, Tavern Brawler) | Preset | 48.9 (#4) | 60.6 (#5) | 68.1 (#19) | 78 |
-| 7 | 32. Metamagic Godblade | Build doc | 32.7 (#17) | 67.3 (#1) | 83.9 (#7) | 77 |
-| 8 | 1. The Godblade | Build doc | 32.7 (#16) | 60.7 (#4) | 82.3 (#8) | 74 |
-| 9 | 5. Arcane Deadeye | Build doc | 43.4 (#8) | 41.2 (#25) | 93.3 (#5) | 73 |
-| 10 | Padlock: Shadow Blade + shield | Preset | 31.4 (#18) | 56.7 (#8) | 86.9 (#6) | 72 |
-| 11 | 11. Ultimate Dark Knight | Build doc | 29.2 (#24) | 44.6 (#19) | 109.1 (#1) | 72 |
-| 12 | Lae'zel (Champion, GWM) | Preset | 36.4 (#13) | 52.6 (#11) | 77.5 (#12) | 70 |
-| 13 | 22. Tavern Brawler Open Hand Monk | Build doc | 42.1 (#10) | 58.8 (#7) | 55.6 (#31) | 70 |
-| 14 | Path of Giants Barbarian (Patch 8) | Preset | 44.0 (#7) | 53.8 (#10) | 58.4 (#27) | 69 |
-| 15 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Preset | 18.6 (#52) | 52.6 (#12) | 97.7 (#3) | 66 |
-| 16 | Drunken Master Monk (Patch 8) | Preset | 42.1 (#9) | 52.0 (#13) | 53.1 (#37) | 66 |
-| 17 | Drunken Master Thief (Drunken Master 8 / Thief 4) | Reddit (approx.) | 42.1 (#11) | 52.0 (#14) | 49.3 (#40) | 65 |
-| 18 | 25. Action Surge Bladesinger Smiter | Build doc | 24.7 (#39) | 50.8 (#16) | 77.0 (#14) | 63 |
-| 19 | Paladin (Smite) | Preset | 35.0 (#15) | 43.6 (#21) | 60.2 (#25) | 60 |
-| 20 | Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Preset | 25.8 (#35) | 49.6 (#17) | 66.8 (#20) | 59 |
-| 21 | Padlock: Greatsword (GWF, GWM) | Preset | 21.0 (#47) | 44.8 (#18) | 77.0 (#13) | 58 |
-| 22 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Preset | 26.8 (#31) | 41.8 (#24) | 65.0 (#21) | 56 |
-| 23 | Sorcadin: Shadow Blade + shield | Preset | 26.0 (#32) | 44.3 (#20) | 62.1 (#23) | 56 |
-| 24 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 26.9 (#28) | 42.4 (#22) | 61.4 (#24) | 55 |
-| 25 | Arcane Archer Fighter (Patch 8) | Preset | 28.8 (#26) | 41.9 (#23) | 55.8 (#29) | 54 |
-| 26 | Fire Marshal (Oathbreaker 7 / Fiend 5) | Reddit (approx.) | 35.5 (#14) | 34.8 (#31) | 54.4 (#32) | 54 |
-| 27 | Padlock: Glaive (GWF, Polearm Master) | Preset | 18.6 (#51) | 40.6 (#26) | 71.8 (#17) | 53 |
-| 28 | 9. Hexblade Sorlock | Build doc | 21.7 (#44) | 30.9 (#38) | 76.3 (#15) | 51 |
-| 29 | Sorcadin: Greatsword (GWF, GWM) | Preset | 30.9 (#21) | 34.4 (#32) | 49.8 (#39) | 50 |
-| 30 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 31.4 (#19) | 29.8 (#43) | 53.5 (#34) | 49 |
-| 31 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Reddit (approx.) | 17.8 (#53) | 38.1 (#27) | 64.0 (#22) | 48 |
-| 32 | 20. Shadow Blade Eldritch Knight | Build doc | 20.4 (#48) | 22.8 (#56) | 82.3 (#9) | 48 |
-| 33 | 26. Pure Two-Handed GWM Hexblade | Build doc | 37.3 (#12) | 30.0 (#40) | 37.5 (#52) | 47 |
-| 34 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 21.8 (#43) | 35.2 (#30) | 55.8 (#30) | 47 |
-| 35 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 21.5 (#46) | 36.1 (#29) | 54.0 (#33) | 47 |
-| 36 | Gloom Stalker (Archer) | Preset | 28.6 (#27) | 36.8 (#28) | 38.2 (#50) | 46 |
-| 37 | Swashbuckler Rogue (Patch 8) | Preset | 30.6 (#22) | 31.1 (#37) | 43.7 (#43) | 46 |
-| 38 | Sorcadin: Glaive (GWF, Polearm Master) | Preset | 26.8 (#30) | 30.6 (#39) | 47.0 (#41) | 45 |
-| 39 | Astarion (Assassin, dual wield) | Preset | 26.9 (#29) | 34.1 (#33) | 40.3 (#47) | 44 |
-| 40 | 7. Patch 8 Hexadin / Lockadin | Build doc | 17.8 (#54) | 32.8 (#34) | 58.1 (#28) | 44 |
-| 41 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Reddit (approx.) | 31.1 (#20) | 26.9 (#48) | 35.6 (#55) | 42 |
-| 42 | The Waterdeep Brat (EK 11 / Hexblade 1) | Reddit (approx.) | 16.2 (#56) | 32.7 (#35) | 53.3 (#35) | 42 |
-| 43 | 15. Perfect Celestial Monk | Build doc | 10.6 (#71) | 25.5 (#51) | 75.0 (#16) | 41 |
-| 44 | Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Preset | 25.8 (#34) | 30.0 (#41) | 39.0 (#49) | 41 |
-| 45 | Hexblade Warlock (Patch 8) | Preset | 24.8 (#38) | 27.2 (#45) | 43.5 (#44) | 41 |
-| 46 | 4. Deathreaper | Build doc | 19.5 (#49) | 26.2 (#49) | 53.2 (#36) | 40 |
-| 47 | Monk (Open Hand) | Preset | 29.2 (#25) | 24.5 (#54) | 38.0 (#51) | 40 |
-| 48 | Tempest Monk (Open Hand 6 / Tempest Cleric 6) | Reddit (approx.) | 21.7 (#45) | 32.4 (#36) | 32.0 (#58) | 38 |
-| 49 | Thief Monoclass (Thief 12) | Reddit (approx.) | 25.1 (#37) | 24.6 (#53) | 36.4 (#54) | 37 |
-| 50 | 13. Jedi Consular | Build doc | 30.1 (#23) | 24.8 (#52) | 26.0 (#69) | 37 |
-| 51 | 8. Shadow Sorcadin | Build doc | 22.3 (#41) | 25.9 (#50) | 36.7 (#53) | 37 |
-| 52 | Filthy Harold Hunter (Hunter 11 / War Cleric 1) | Reddit (approx.) | 25.8 (#33) | 26.9 (#47) | 27.4 (#66) | 36 |
-| 53 | 21. 5/4/3 Gloom Stalker / Assassin / Arcane Archer | Build doc | 15.5 (#58) | 29.4 (#44) | 41.0 (#46) | 36 |
-| 54 | 18. The 11/1 Fire Sorlock | Build doc | 12.1 (#65) | 29.9 (#42) | 44.5 (#42) | 35 |
-| 55 | Swarmkeeper Ranger (Patch 8) | Preset | 22.8 (#40) | 27.1 (#46) | 29.0 (#62) | 35 |
-| 56 | 28. Darkness Dirty Trickster | Build doc | 22.1 (#42) | 16.6 (#66) | 42.7 (#45) | 34 |
-| 57 | Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Preset | 25.8 (#36) | 22.0 (#59) | 25.9 (#70) | 33 |
-| 58 | Death Cleric: Spirit Guardians + Spiritual Weapon | Preset | 17.8 (#55) | 22.7 (#58) | 29.9 (#60) | 30 |
-| 59 | Warlock (Eldritch Blast) | Preset | 19.1 (#50) | 19.1 (#62) | 32.9 (#56) | 30 |
-| 60 | 19. The 10/2 Smite Swords Bard — SSB | Build doc | 10.2 (#72) | 23.9 (#55) | 40.1 (#48) | 30 |
-| 61 | Light Cleric: Spirit Guardians + Spiritual Weapon | Preset | 15.2 (#59) | 22.7 (#57) | 29.8 (#61) | 29 |
-| 62 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Preset | 9.4 (#73) | 7.5 (#75) | 59.9 (#26) | 27 |
-| 63 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Build doc | 13.2 (#60) | 21.0 (#60) | 26.0 (#68) | 26 |
-| 64 | 12. Unstoppable Death Monk | Build doc | 12.3 (#64) | 20.3 (#61) | 26.9 (#67) | 25 |
-| 65 | Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Preset | 9.4 (#74) | 7.5 (#76) | 52.7 (#38) | 25 |
-| 66 | 17. Skald Dual-Wielding Bard | Build doc | 11.4 (#68) | 17.0 (#64) | 32.1 (#57) | 25 |
-| 67 | 6. Tempest Bladesinger | Build doc | 11.7 (#66) | 13.6 (#73) | 31.4 (#59) | 23 |
-| 68 | Circle of Stars Druid (Patch 8) | Preset | 15.7 (#57) | 15.6 (#68) | 20.5 (#73) | 23 |
-| 69 | Sorlock (Warlock 2 / Sorcerer) | Preset | 12.6 (#62) | 13.9 (#71) | 28.6 (#63) | 23 |
-| 70 | Gale (Evoker) | Preset | 11.2 (#69) | 14.7 (#69) | 27.7 (#64) | 22 |
-| 71 | Evocation Wizard (Fireball, then Fire Bolt) | Preset | 11.2 (#70) | 14.7 (#70) | 27.7 (#65) | 22 |
+| 1 | 2. Nuclear Pure Hexblade Warlock | Build doc | 50.2 (#3) | 59.5 (#6) | 126.2 (#1) | 91 |
+| 2 | Throwing Berserker GWM (Berserker 12) | Reddit (approx.) | 59.2 (#1) | 65.2 (#2) | 81.6 (#11) | 87 |
+| 3 | 32. Metamagic Godblade | Build doc | 32.7 (#17) | 67.3 (#1) | 106.2 (#3) | 80 |
+| 4 | Karlach (Berserker) | Preset | 53.2 (#2) | 63.3 (#3) | 69.4 (#18) | 80 |
+| 5 | 3. Hexwing Phantom | Build doc | 48.4 (#6) | 51.1 (#15) | 95.4 (#6) | 78 |
+| 6 | 16. Karlach, God of Thunder | Build doc | 48.9 (#5) | 55.1 (#9) | 81.8 (#10) | 76 |
+| 7 | 1. The Godblade | Build doc | 32.7 (#16) | 60.7 (#4) | 104.2 (#4) | 76 |
+| 8 | Throwzerker (Giant, Tavern Brawler) | Preset | 48.9 (#4) | 60.6 (#5) | 68.1 (#19) | 76 |
+| 9 | 5. Arcane Deadeye | Build doc | 43.4 (#8) | 41.2 (#25) | 93.3 (#7) | 69 |
+| 10 | Padlock: Shadow Blade + shield | Preset | 31.4 (#18) | 56.7 (#8) | 86.9 (#9) | 69 |
+| 11 | 22. Tavern Brawler Open Hand Monk | Build doc | 42.1 (#10) | 58.8 (#7) | 55.6 (#32) | 67 |
+| 12 | 11. Ultimate Dark Knight | Build doc | 29.2 (#24) | 44.6 (#19) | 109.1 (#2) | 67 |
+| 13 | Lae'zel (Champion, GWM) | Preset | 36.4 (#13) | 52.6 (#11) | 77.5 (#12) | 67 |
+| 14 | Path of Giants Barbarian (Patch 8) | Preset | 44.0 (#7) | 53.8 (#10) | 58.4 (#28) | 67 |
+| 15 | Drunken Master Monk (Patch 8) | Preset | 42.1 (#9) | 52.0 (#13) | 53.1 (#38) | 63 |
+| 16 | Drunken Master Thief (Drunken Master 8 / Thief 4) | Reddit (approx.) | 42.1 (#11) | 52.0 (#14) | 49.3 (#41) | 62 |
+| 17 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Preset | 18.6 (#52) | 52.6 (#12) | 97.7 (#5) | 62 |
+| 18 | 25. Action Surge Bladesinger Smiter | Build doc | 24.7 (#39) | 50.8 (#16) | 77.0 (#14) | 59 |
+| 19 | Paladin (Smite) | Preset | 35.0 (#15) | 43.6 (#21) | 60.2 (#25) | 57 |
+| 20 | Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Preset | 25.8 (#35) | 49.6 (#17) | 66.8 (#20) | 57 |
+| 21 | Padlock: Greatsword (GWF, GWM) | Preset | 21.0 (#47) | 44.8 (#18) | 77.0 (#13) | 54 |
+| 22 | Sorcadin: Shadow Blade + shield | Preset | 26.0 (#32) | 44.3 (#20) | 62.1 (#23) | 53 |
+| 23 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Preset | 26.8 (#31) | 41.8 (#24) | 65.0 (#21) | 53 |
+| 24 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 26.9 (#28) | 42.4 (#22) | 61.4 (#24) | 52 |
+| 25 | Arcane Archer Fighter (Patch 8) | Preset | 28.8 (#26) | 41.9 (#23) | 55.8 (#30) | 52 |
+| 26 | Fire Marshal (Oathbreaker 7 / Fiend 5) | Reddit (approx.) | 35.5 (#14) | 34.8 (#31) | 54.4 (#33) | 52 |
+| 27 | Padlock: Glaive (GWF, Polearm Master) | Preset | 18.6 (#51) | 40.6 (#26) | 71.8 (#17) | 50 |
+| 28 | 9. Hexblade Sorlock | Build doc | 21.7 (#44) | 30.9 (#38) | 76.3 (#15) | 48 |
+| 29 | Sorcadin: Greatsword (GWF, GWM) | Preset | 30.9 (#21) | 34.4 (#32) | 49.8 (#40) | 48 |
+| 30 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 31.4 (#19) | 29.8 (#43) | 53.5 (#35) | 47 |
+| 31 | 20. Shadow Blade Eldritch Knight | Build doc | 20.4 (#48) | 22.8 (#56) | 88.8 (#8) | 46 |
+| 32 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Reddit (approx.) | 17.8 (#53) | 38.1 (#27) | 64.0 (#22) | 46 |
+| 33 | 26. Pure Two-Handed GWM Hexblade | Build doc | 37.3 (#12) | 30.0 (#40) | 37.5 (#52) | 46 |
+| 34 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 21.8 (#43) | 35.2 (#30) | 55.8 (#31) | 44 |
+| 35 | Gloom Stalker (Archer) | Preset | 28.6 (#27) | 36.8 (#28) | 38.2 (#50) | 44 |
+| 36 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 21.5 (#46) | 36.1 (#29) | 54.0 (#34) | 44 |
+| 37 | Swashbuckler Rogue (Patch 8) | Preset | 30.6 (#22) | 31.1 (#37) | 43.7 (#43) | 44 |
+| 38 | Sorcadin: Glaive (GWF, Polearm Master) | Preset | 26.8 (#30) | 30.6 (#39) | 47.0 (#42) | 43 |
+| 39 | Astarion (Assassin, dual wield) | Preset | 26.9 (#29) | 34.1 (#33) | 40.3 (#47) | 43 |
+| 40 | 7. Patch 8 Hexadin / Lockadin | Build doc | 17.8 (#54) | 32.8 (#34) | 58.1 (#29) | 42 |
+| 41 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Reddit (approx.) | 31.1 (#20) | 26.9 (#48) | 35.6 (#55) | 40 |
+| 42 | Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Preset | 25.8 (#34) | 30.0 (#41) | 39.0 (#49) | 40 |
+| 43 | The Waterdeep Brat (EK 11 / Hexblade 1) | Reddit (approx.) | 16.2 (#56) | 32.7 (#35) | 53.3 (#36) | 39 |
+| 44 | Hexblade Warlock (Patch 8) | Preset | 24.8 (#38) | 27.2 (#45) | 43.5 (#44) | 39 |
+| 45 | Monk (Open Hand) | Preset | 29.2 (#25) | 24.5 (#54) | 38.0 (#51) | 39 |
+| 46 | 15. Perfect Celestial Monk | Build doc | 10.6 (#71) | 25.5 (#51) | 75.0 (#16) | 38 |
+| 47 | 4. Deathreaper | Build doc | 19.5 (#49) | 26.2 (#49) | 53.2 (#37) | 38 |
+| 48 | 18. The 11/1 Fire Sorlock | Build doc | 12.1 (#65) | 29.9 (#42) | 58.5 (#27) | 37 |
+| 49 | Tempest Monk (Open Hand 6 / Tempest Cleric 6) | Reddit (approx.) | 21.7 (#45) | 32.4 (#36) | 32.0 (#58) | 37 |
+| 50 | 13. Jedi Consular | Build doc | 30.1 (#23) | 24.8 (#52) | 26.0 (#69) | 36 |
+| 51 | Thief Monoclass (Thief 12) | Reddit (approx.) | 25.1 (#37) | 24.6 (#53) | 36.4 (#54) | 36 |
+| 52 | Filthy Harold Hunter (Hunter 11 / War Cleric 1) | Reddit (approx.) | 25.8 (#33) | 26.9 (#47) | 27.4 (#66) | 35 |
+| 53 | 8. Shadow Sorcadin | Build doc | 22.3 (#41) | 25.9 (#50) | 36.7 (#53) | 35 |
+| 54 | 21. 5/4/3 Gloom Stalker / Assassin / Arcane Archer | Build doc | 15.5 (#58) | 29.4 (#44) | 41.0 (#46) | 34 |
+| 55 | Swarmkeeper Ranger (Patch 8) | Preset | 22.8 (#40) | 27.1 (#46) | 29.0 (#62) | 34 |
+| 56 | Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Preset | 25.8 (#36) | 22.0 (#59) | 25.9 (#70) | 32 |
+| 57 | 28. Darkness Dirty Trickster | Build doc | 22.1 (#42) | 16.6 (#66) | 42.7 (#45) | 32 |
+| 58 | Death Cleric: Spirit Guardians + Spiritual Weapon | Preset | 17.8 (#55) | 22.7 (#58) | 29.9 (#60) | 29 |
+| 59 | Warlock (Eldritch Blast) | Preset | 19.1 (#50) | 19.1 (#62) | 32.9 (#56) | 29 |
+| 60 | 19. The 10/2 Smite Swords Bard — SSB | Build doc | 10.2 (#72) | 23.9 (#55) | 40.1 (#48) | 28 |
+| 61 | Light Cleric: Spirit Guardians + Spiritual Weapon | Preset | 15.2 (#59) | 22.7 (#57) | 29.8 (#61) | 28 |
+| 62 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Preset | 9.4 (#73) | 7.5 (#75) | 59.9 (#26) | 25 |
+| 63 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Build doc | 13.2 (#60) | 21.0 (#60) | 26.0 (#68) | 25 |
+| 64 | 12. Unstoppable Death Monk | Build doc | 12.3 (#64) | 20.3 (#61) | 26.9 (#67) | 24 |
+| 65 | 17. Skald Dual-Wielding Bard | Build doc | 11.4 (#68) | 17.0 (#64) | 32.1 (#57) | 23 |
+| 66 | Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Preset | 9.4 (#74) | 7.5 (#76) | 52.7 (#39) | 23 |
+| 67 | Circle of Stars Druid (Patch 8) | Preset | 15.7 (#57) | 15.6 (#68) | 20.5 (#73) | 22 |
+| 68 | 6. Tempest Bladesinger | Build doc | 11.7 (#66) | 13.6 (#73) | 31.4 (#59) | 22 |
+| 69 | Sorlock (Warlock 2 / Sorcerer) | Preset | 12.6 (#62) | 13.9 (#71) | 28.6 (#63) | 22 |
+| 70 | Gale (Evoker) | Preset | 11.2 (#69) | 14.7 (#69) | 27.7 (#64) | 21 |
+| 71 | Evocation Wizard (Fireball, then Fire Bolt) | Preset | 11.2 (#70) | 14.7 (#70) | 27.7 (#65) | 21 |
 | 72 | Storm Bard (Storm Sorcerer 6 / Swords Bard 6) | Reddit (approx.) | 12.9 (#61) | 16.5 (#67) | 19.6 (#74) | 21 |
-| 73 | 23. Eldritch Blast Sorlock | Build doc | 12.6 (#63) | 13.9 (#72) | 23.0 (#71) | 21 |
+| 73 | 23. Eldritch Blast Sorlock | Build doc | 12.6 (#63) | 13.9 (#72) | 23.0 (#71) | 20 |
 | 74 | Bladesinger Wizard (Patch 8) | Preset | 11.4 (#67) | 16.8 (#65) | 18.2 (#76) | 20 |
-| 75 | 24. Circle of the Stars / Light Cleric RadOrb Tank | Build doc | 9.1 (#75) | 17.2 (#63) | 21.6 (#72) | 20 |
-| 76 | 14. Death Cleric Necromancer | Build doc | 5.8 (#78) | 7.8 (#74) | 18.3 (#75) | 13 |
-| 77 | 31. Camp Transmutation Alchemist & Stone Buffer | Build doc | 8.1 (#76) | 7.5 (#77) | 12.2 (#77) | 12 |
+| 75 | 24. Circle of the Stars / Light Cleric RadOrb Tank | Build doc | 9.1 (#75) | 17.2 (#63) | 21.6 (#72) | 19 |
+| 76 | 14. Death Cleric Necromancer | Build doc | 5.8 (#78) | 7.8 (#74) | 18.3 (#75) | 12 |
+| 77 | 31. Camp Transmutation Alchemist & Stone Buffer | Build doc | 8.1 (#76) | 7.5 (#77) | 12.2 (#77) | 11 |
 | 78 | 30. Camp Land Druid Buffer | Build doc | 6.8 (#77) | 5.8 (#78) | 8.1 (#78) | 9 |
-| 79 | 29. Camp Cleric Party Buffer | Build doc | 5.4 (#79) | 5.0 (#79) | 7.4 (#79) | 8 |
+| 79 | 29. Camp Cleric Party Buffer | Build doc | 5.4 (#79) | 5.0 (#79) | 7.4 (#79) | 7 |
 
 ## Reliable buffs
 
@@ -96,80 +96,80 @@ Bless, the build's own planned buffs, and advantage only with a dependable sourc
 
 | # | Build | Source | Act 1 | Act 2 | Act 3 | Overall |
 |---|---|---|---|---|---|---|
-| 1 | 1. The Godblade | Build doc | 73.7 (#1) | 161.3 (#1) | 238.1 (#2) | 100 |
-| 2 | 32. Metamagic Godblade | Build doc | 73.7 (#2) | 153.3 (#2) | 240.7 (#1) | 98 |
-| 3 | 25. Action Surge Bladesinger Smiter | Build doc | 58.9 (#7) | 114.6 (#3) | 183.2 (#3) | 76 |
-| 4 | 2. Nuclear Pure Hexblade Warlock | Build doc | 64.8 (#4) | 85.4 (#5) | 161.5 (#4) | 69 |
-| 5 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 52.8 (#8) | 78.4 (#6) | 113.5 (#8) | 56 |
-| 6 | 26. Pure Two-Handed GWM Hexblade | Build doc | 69.9 (#3) | 59.4 (#16) | 78.7 (#26) | 55 |
-| 7 | Karlach (Berserker) | Preset | 61.9 (#5) | 73.7 (#7) | 80.5 (#24) | 54 |
-| 8 | Throwing Berserker GWM (Berserker 12) | Reddit (approx.) | 59.2 (#6) | 65.2 (#9) | 81.6 (#23) | 52 |
-| 9 | Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Preset | 38.1 (#25) | 86.3 (#4) | 118.5 (#6) | 51 |
-| 10 | 3. Hexwing Phantom | Build doc | 50.1 (#11) | 59.7 (#15) | 107.2 (#10) | 50 |
-| 11 | 5. Arcane Deadeye | Build doc | 52.2 (#9) | 50.4 (#25) | 106.5 (#11) | 49 |
-| 12 | Lae'zel (Champion, GWM) | Preset | 46.6 (#16) | 64.8 (#10) | 94.9 (#13) | 48 |
-| 13 | Path of Giants Barbarian (Patch 8) | Preset | 50.9 (#10) | 63.8 (#11) | 71.1 (#29) | 46 |
-| 14 | Padlock: Shadow Blade + shield | Preset | 44.8 (#17) | 60.3 (#14) | 92.7 (#14) | 46 |
-| 15 | 16. Karlach, God of Thunder | Build doc | 48.9 (#14) | 55.1 (#18) | 81.8 (#22) | 45 |
-| 16 | Fire Marshal (Oathbreaker 7 / Fiend 5) | Reddit (approx.) | 44.2 (#20) | 46.4 (#31) | 109.1 (#9) | 45 |
-| 17 | 22. Tavern Brawler Open Hand Monk | Build doc | 47.2 (#15) | 66.2 (#8) | 66.1 (#34) | 44 |
-| 18 | Throwzerker (Giant, Tavern Brawler) | Preset | 48.9 (#13) | 60.6 (#13) | 68.1 (#31) | 44 |
-| 19 | Gloom Stalker (Archer) | Preset | 49.2 (#12) | 56.9 (#17) | 59.0 (#43) | 42 |
-| 20 | Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Preset | 38.1 (#24) | 61.7 (#12) | 82.9 (#21) | 41 |
-| 21 | 11. Ultimate Dark Knight | Build doc | 32.2 (#34) | 47.0 (#30) | 120.0 (#5) | 41 |
-| 22 | Paladin (Smite) | Preset | 42.2 (#22) | 52.9 (#20) | 71.5 (#28) | 40 |
-| 23 | Drunken Master Monk (Patch 8) | Preset | 44.4 (#18) | 52.0 (#21) | 56.0 (#47) | 39 |
-| 24 | Drunken Master Thief (Drunken Master 8 / Thief 4) | Reddit (approx.) | 44.4 (#19) | 52.0 (#22) | 55.2 (#48) | 38 |
-| 25 | 20. Shadow Blade Eldritch Knight | Build doc | 30.2 (#39) | 37.5 (#40) | 116.2 (#7) | 37 |
-| 26 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Preset | 26.2 (#47) | 54.5 (#19) | 103.0 (#12) | 37 |
-| 27 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Reddit (approx.) | 43.9 (#21) | 42.0 (#35) | 58.5 (#44) | 37 |
-| 28 | Padlock: Greatsword (GWF, GWM) | Preset | 29.7 (#40) | 47.1 (#29) | 92.2 (#15) | 36 |
-| 29 | Arcane Archer Fighter (Patch 8) | Preset | 35.8 (#28) | 49.8 (#27) | 67.2 (#32) | 36 |
-| 30 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Reddit (approx.) | 25.4 (#48) | 51.2 (#24) | 85.8 (#18) | 34 |
-| 31 | Monk (Open Hand) | Preset | 41.0 (#23) | 34.2 (#48) | 59.2 (#42) | 34 |
-| 32 | Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Preset | 38.1 (#26) | 36.1 (#43) | 57.2 (#45) | 33 |
-| 33 | The Waterdeep Brat (EK 11 / Hexblade 1) | Reddit (approx.) | 23.0 (#53) | 51.4 (#23) | 83.7 (#19) | 33 |
-| 34 | Swashbuckler Rogue (Patch 8) | Preset | 36.6 (#27) | 38.6 (#39) | 54.5 (#49) | 32 |
-| 35 | Tempest Monk (Open Hand 6 / Tempest Cleric 6) | Reddit (approx.) | 30.4 (#38) | 50.2 (#26) | 52.2 (#51) | 31 |
-| 36 | Padlock: Glaive (GWF, Polearm Master) | Preset | 26.2 (#46) | 42.6 (#34) | 77.0 (#27) | 31 |
-| 37 | Sorcadin: Shadow Blade + shield | Preset | 27.1 (#44) | 47.5 (#28) | 66.4 (#33) | 31 |
-| 38 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Preset | 27.9 (#43) | 43.5 (#32) | 68.2 (#30) | 31 |
-| 39 | Hexblade Warlock (Patch 8) | Preset | 31.4 (#35) | 39.3 (#38) | 62.5 (#38) | 31 |
-| 40 | Sorcadin: Greatsword (GWF, GWM) | Preset | 32.2 (#33) | 36.5 (#41) | 60.3 (#41) | 30 |
-| 41 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 32.7 (#31) | 32.8 (#50) | 63.1 (#37) | 30 |
-| 42 | Thief Monoclass (Thief 12) | Reddit (approx.) | 33.2 (#30) | 36.3 (#42) | 54.4 (#50) | 30 |
+| 1 | 1. The Godblade | Build doc | 73.7 (#1) | 161.3 (#1) | 268.4 (#2) | 100 |
+| 2 | 32. Metamagic Godblade | Build doc | 73.7 (#2) | 153.3 (#2) | 271.2 (#1) | 98 |
+| 3 | 25. Action Surge Bladesinger Smiter | Build doc | 58.9 (#7) | 114.6 (#3) | 183.2 (#4) | 73 |
+| 4 | 2. Nuclear Pure Hexblade Warlock | Build doc | 64.8 (#4) | 85.4 (#5) | 189.9 (#3) | 70 |
+| 5 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 52.8 (#8) | 78.4 (#6) | 113.5 (#8) | 54 |
+| 6 | 26. Pure Two-Handed GWM Hexblade | Build doc | 69.9 (#3) | 59.4 (#16) | 78.7 (#26) | 54 |
+| 7 | Karlach (Berserker) | Preset | 61.9 (#5) | 73.7 (#7) | 80.5 (#24) | 53 |
+| 8 | Throwing Berserker GWM (Berserker 12) | Reddit (approx.) | 59.2 (#6) | 65.2 (#9) | 81.6 (#23) | 50 |
+| 9 | Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Preset | 38.1 (#25) | 86.3 (#4) | 118.5 (#7) | 50 |
+| 10 | 3. Hexwing Phantom | Build doc | 50.1 (#11) | 59.7 (#15) | 107.2 (#10) | 48 |
+| 11 | 5. Arcane Deadeye | Build doc | 52.2 (#9) | 50.4 (#25) | 106.5 (#11) | 47 |
+| 12 | Lae'zel (Champion, GWM) | Preset | 46.6 (#16) | 64.8 (#10) | 94.9 (#13) | 46 |
+| 13 | Path of Giants Barbarian (Patch 8) | Preset | 50.9 (#10) | 63.8 (#11) | 71.1 (#29) | 45 |
+| 14 | Padlock: Shadow Blade + shield | Preset | 44.8 (#17) | 60.3 (#14) | 92.7 (#14) | 44 |
+| 15 | 16. Karlach, God of Thunder | Build doc | 48.9 (#14) | 55.1 (#18) | 81.8 (#22) | 44 |
+| 16 | 22. Tavern Brawler Open Hand Monk | Build doc | 47.2 (#15) | 66.2 (#8) | 66.1 (#34) | 43 |
+| 17 | Throwzerker (Giant, Tavern Brawler) | Preset | 48.9 (#13) | 60.6 (#13) | 68.1 (#31) | 43 |
+| 18 | Fire Marshal (Oathbreaker 7 / Fiend 5) | Reddit (approx.) | 44.2 (#20) | 46.4 (#31) | 109.1 (#9) | 43 |
+| 19 | Gloom Stalker (Archer) | Preset | 49.2 (#12) | 56.9 (#17) | 59.0 (#44) | 41 |
+| 20 | Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Preset | 38.1 (#24) | 61.7 (#12) | 82.9 (#21) | 40 |
+| 21 | 11. Ultimate Dark Knight | Build doc | 32.2 (#34) | 47.0 (#30) | 120.0 (#6) | 39 |
+| 22 | Paladin (Smite) | Preset | 42.2 (#22) | 52.9 (#20) | 71.5 (#28) | 39 |
+| 23 | Drunken Master Monk (Patch 8) | Preset | 44.4 (#18) | 52.0 (#21) | 56.0 (#48) | 38 |
+| 24 | Drunken Master Thief (Drunken Master 8 / Thief 4) | Reddit (approx.) | 44.4 (#19) | 52.0 (#22) | 55.2 (#49) | 38 |
+| 25 | 20. Shadow Blade Eldritch Knight | Build doc | 30.2 (#39) | 37.5 (#40) | 125.4 (#5) | 37 |
+| 26 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Preset | 26.2 (#47) | 54.5 (#19) | 103.0 (#12) | 36 |
+| 27 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Reddit (approx.) | 43.9 (#21) | 42.0 (#35) | 58.5 (#45) | 36 |
+| 28 | Arcane Archer Fighter (Patch 8) | Preset | 35.8 (#28) | 49.8 (#27) | 67.2 (#32) | 35 |
+| 29 | Padlock: Greatsword (GWF, GWM) | Preset | 29.7 (#40) | 47.1 (#29) | 92.2 (#15) | 35 |
+| 30 | Monk (Open Hand) | Preset | 41.0 (#23) | 34.2 (#48) | 59.2 (#43) | 33 |
+| 31 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Reddit (approx.) | 25.4 (#48) | 51.2 (#24) | 85.8 (#18) | 33 |
+| 32 | Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Preset | 38.1 (#26) | 36.1 (#43) | 57.2 (#46) | 32 |
+| 33 | The Waterdeep Brat (EK 11 / Hexblade 1) | Reddit (approx.) | 23.0 (#53) | 51.4 (#23) | 83.7 (#19) | 31 |
+| 34 | Swashbuckler Rogue (Patch 8) | Preset | 36.6 (#27) | 38.6 (#39) | 54.5 (#50) | 31 |
+| 35 | Tempest Monk (Open Hand 6 / Tempest Cleric 6) | Reddit (approx.) | 30.4 (#38) | 50.2 (#26) | 52.2 (#52) | 31 |
+| 36 | Sorcadin: Shadow Blade + shield | Preset | 27.1 (#44) | 47.5 (#28) | 66.4 (#33) | 30 |
+| 37 | Padlock: Glaive (GWF, Polearm Master) | Preset | 26.2 (#46) | 42.6 (#34) | 77.0 (#27) | 30 |
+| 38 | Hexblade Warlock (Patch 8) | Preset | 31.4 (#35) | 39.3 (#38) | 62.5 (#39) | 30 |
+| 39 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Preset | 27.9 (#43) | 43.5 (#32) | 68.2 (#30) | 30 |
+| 40 | Sorcadin: Greatsword (GWF, GWM) | Preset | 32.2 (#33) | 36.5 (#41) | 60.3 (#42) | 30 |
+| 41 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 32.7 (#31) | 32.8 (#50) | 63.1 (#38) | 29 |
+| 42 | Thief Monoclass (Thief 12) | Reddit (approx.) | 33.2 (#30) | 36.3 (#42) | 54.4 (#51) | 29 |
 | 43 | Astarion (Assassin, dual wield) | Preset | 31.1 (#36) | 40.5 (#36) | 49.4 (#55) | 29 |
-| 44 | 9. Hexblade Sorlock | Build doc | 23.4 (#51) | 33.7 (#49) | 83.2 (#20) | 29 |
-| 45 | 28. Darkness Dirty Trickster | Build doc | 32.3 (#32) | 26.4 (#59) | 63.3 (#35) | 29 |
-| 46 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 24.2 (#49) | 43.2 (#33) | 63.3 (#36) | 29 |
-| 47 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 23.4 (#50) | 39.4 (#37) | 61.7 (#39) | 27 |
+| 44 | 28. Darkness Dirty Trickster | Build doc | 32.3 (#32) | 26.4 (#59) | 63.3 (#36) | 28 |
+| 45 | 9. Hexblade Sorlock | Build doc | 23.4 (#51) | 33.7 (#49) | 83.2 (#20) | 28 |
+| 46 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 24.2 (#49) | 43.2 (#33) | 63.3 (#37) | 28 |
+| 47 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 23.4 (#50) | 39.4 (#37) | 61.7 (#40) | 26 |
 | 48 | 13. Jedi Consular | Build doc | 35.2 (#29) | 29.3 (#54) | 31.0 (#69) | 26 |
-| 49 | Sorcadin: Glaive (GWF, Polearm Master) | Preset | 27.9 (#42) | 32.3 (#53) | 49.8 (#54) | 26 |
+| 49 | Sorcadin: Glaive (GWF, Polearm Master) | Preset | 27.9 (#42) | 32.3 (#53) | 49.8 (#54) | 25 |
 | 50 | Filthy Harold Hunter (Hunter 11 / War Cleric 1) | Reddit (approx.) | 31.1 (#37) | 32.5 (#52) | 33.6 (#66) | 25 |
 | 51 | Swarmkeeper Ranger (Patch 8) | Preset | 28.1 (#41) | 32.7 (#51) | 35.0 (#64) | 24 |
-| 52 | 21. 5/4/3 Gloom Stalker / Assassin / Arcane Archer | Build doc | 21.8 (#54) | 35.6 (#44) | 50.0 (#53) | 24 |
-| 53 | 7. Patch 8 Hexadin / Lockadin | Build doc | 18.8 (#57) | 34.7 (#46) | 60.9 (#40) | 24 |
-| 54 | Warlock (Eldritch Blast) | Preset | 26.9 (#45) | 28.2 (#57) | 43.9 (#57) | 24 |
-| 55 | 15. Perfect Celestial Monk | Build doc | 11.6 (#74) | 29.3 (#55) | 91.3 (#16) | 24 |
-| 56 | Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Preset | 17.1 (#63) | 15.4 (#75) | 90.7 (#17) | 23 |
-| 57 | 4. Deathreaper | Build doc | 20.8 (#55) | 28.4 (#56) | 56.2 (#46) | 23 |
-| 58 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Build doc | 19.5 (#56) | 34.5 (#47) | 45.5 (#56) | 22 |
-| 59 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Preset | 17.1 (#62) | 15.4 (#74) | 79.8 (#25) | 22 |
+| 52 | Warlock (Eldritch Blast) | Preset | 26.9 (#45) | 28.2 (#57) | 43.9 (#57) | 23 |
+| 53 | 21. 5/4/3 Gloom Stalker / Assassin / Arcane Archer | Build doc | 21.8 (#54) | 35.6 (#44) | 50.0 (#53) | 23 |
+| 54 | 7. Patch 8 Hexadin / Lockadin | Build doc | 18.8 (#57) | 34.7 (#46) | 60.9 (#41) | 23 |
+| 55 | 15. Perfect Celestial Monk | Build doc | 11.6 (#74) | 29.3 (#55) | 91.3 (#16) | 23 |
+| 56 | 4. Deathreaper | Build doc | 20.8 (#55) | 28.4 (#56) | 56.2 (#47) | 22 |
+| 57 | Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Preset | 17.1 (#63) | 15.4 (#75) | 90.7 (#17) | 22 |
+| 58 | 18. The 11/1 Fire Sorlock | Build doc | 14.1 (#66) | 35.5 (#45) | 64.4 (#35) | 22 |
+| 59 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Build doc | 19.5 (#56) | 34.5 (#47) | 45.5 (#56) | 22 |
 | 60 | 8. Shadow Sorcadin | Build doc | 23.3 (#52) | 27.3 (#58) | 38.4 (#61) | 21 |
-| 61 | 18. The 11/1 Fire Sorlock | Build doc | 14.1 (#66) | 35.5 (#45) | 51.7 (#52) | 21 |
+| 61 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Preset | 17.1 (#62) | 15.4 (#74) | 79.8 (#25) | 21 |
 | 62 | Sorlock (Warlock 2 / Sorcerer) | Preset | 18.6 (#59) | 21.7 (#64) | 40.1 (#60) | 18 |
-| 63 | 23. Eldritch Blast Sorlock | Build doc | 18.6 (#60) | 21.7 (#65) | 35.7 (#62) | 18 |
-| 64 | Death Cleric: Spirit Guardians + Spiritual Weapon | Preset | 18.7 (#58) | 23.9 (#62) | 31.4 (#67) | 18 |
-| 65 | 19. The 10/2 Smite Swords Bard — SSB | Build doc | 11.8 (#73) | 26.4 (#60) | 43.7 (#59) | 17 |
-| 66 | Light Cleric: Spirit Guardians + Spiritual Weapon | Preset | 16.1 (#64) | 23.9 (#61) | 31.3 (#68) | 17 |
+| 63 | 23. Eldritch Blast Sorlock | Build doc | 18.6 (#60) | 21.7 (#65) | 35.7 (#62) | 17 |
+| 64 | Death Cleric: Spirit Guardians + Spiritual Weapon | Preset | 18.7 (#58) | 23.9 (#62) | 31.4 (#67) | 17 |
+| 65 | 19. The 10/2 Smite Swords Bard — SSB | Build doc | 11.8 (#73) | 26.4 (#60) | 43.7 (#59) | 16 |
+| 66 | Light Cleric: Spirit Guardians + Spiritual Weapon | Preset | 16.1 (#64) | 23.9 (#61) | 31.3 (#68) | 16 |
 | 67 | 17. Skald Dual-Wielding Bard | Build doc | 13.4 (#70) | 20.1 (#67) | 43.7 (#58) | 16 |
-| 68 | 12. Unstoppable Death Monk | Build doc | 13.5 (#68) | 22.5 (#63) | 35.6 (#63) | 16 |
+| 68 | 12. Unstoppable Death Monk | Build doc | 13.5 (#68) | 22.5 (#63) | 35.6 (#63) | 15 |
 | 69 | Circle of Stars Druid (Patch 8) | Preset | 17.9 (#61) | 18.0 (#70) | 24.0 (#72) | 15 |
-| 70 | 6. Tempest Bladesinger | Build doc | 13.7 (#67) | 16.3 (#71) | 33.8 (#65) | 14 |
-| 71 | Storm Bard (Storm Sorcerer 6 / Swords Bard 6) | Reddit (approx.) | 15.1 (#65) | 19.8 (#68) | 23.8 (#73) | 14 |
+| 70 | Storm Bard (Storm Sorcerer 6 / Swords Bard 6) | Reddit (approx.) | 15.1 (#65) | 19.8 (#68) | 23.8 (#73) | 14 |
+| 71 | 6. Tempest Bladesinger | Build doc | 13.7 (#67) | 16.3 (#71) | 33.8 (#65) | 14 |
 | 72 | Bladesinger Wizard (Patch 8) | Preset | 13.4 (#69) | 20.1 (#66) | 22.1 (#75) | 13 |
-| 73 | Gale (Evoker) | Preset | 12.3 (#71) | 15.5 (#72) | 28.1 (#70) | 13 |
-| 74 | Evocation Wizard (Fireball, then Fire Bolt) | Preset | 12.3 (#72) | 15.5 (#73) | 28.1 (#71) | 13 |
+| 73 | Gale (Evoker) | Preset | 12.3 (#71) | 15.5 (#72) | 28.1 (#70) | 12 |
+| 74 | Evocation Wizard (Fireball, then Fire Bolt) | Preset | 12.3 (#72) | 15.5 (#73) | 28.1 (#71) | 12 |
 | 75 | 24. Circle of the Stars / Light Cleric RadOrb Tank | Build doc | 10.9 (#75) | 18.6 (#69) | 23.1 (#74) | 12 |
 | 76 | 31. Camp Transmutation Alchemist & Stone Buffer | Build doc | 9.5 (#76) | 8.9 (#76) | 14.6 (#77) | 8 |
 | 77 | 14. Death Cleric Necromancer | Build doc | 5.8 (#78) | 7.8 (#77) | 18.3 (#76) | 7 |
@@ -182,78 +182,78 @@ Round 1, everything: Bless, Haste, Phalar Aluve's Sing, advantage, the target he
 
 | # | Build | Source | Act 1 | Act 2 | Act 3 | Overall |
 |---|---|---|---|---|---|---|
-| 1 | Lae'zel (Champion, GWM) | Preset | 213.3 (#2) | 263.9 (#1) | 365.8 (#4) | 91 |
-| 2 | 2. Nuclear Pure Hexblade Warlock | Build doc | 175.5 (#4) | 243.0 (#3) | 415.1 (#3) | 86 |
-| 3 | Fire Marshal (Oathbreaker 7 / Fiend 5) | Reddit (approx.) | 214.8 (#1) | 231.8 (#4) | 341.8 (#5) | 86 |
-| 4 | 1. The Godblade | Build doc | 106.9 (#16) | 247.8 (#2) | 480.7 (#2) | 80 |
-| 5 | 32. Metamagic Godblade | Build doc | 106.9 (#17) | 231.1 (#5) | 495.8 (#1) | 79 |
-| 6 | Paladin (Smite) | Preset | 170.1 (#5) | 215.0 (#6) | 261.3 (#12) | 71 |
-| 7 | Path of Giants Barbarian (Patch 8) | Preset | 160.4 (#6) | 211.3 (#8) | 263.3 (#11) | 69 |
-| 8 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 131.8 (#10) | 202.7 (#9) | 308.2 (#7) | 67 |
-| 9 | Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Preset | 103.6 (#20) | 212.7 (#7) | 320.0 (#6) | 64 |
-| 10 | 26. Pure Two-Handed GWM Hexblade | Build doc | 188.0 (#3) | 155.1 (#13) | 213.4 (#24) | 63 |
-| 11 | Padlock: Shadow Blade + shield | Preset | 134.8 (#9) | 168.8 (#12) | 249.4 (#14) | 59 |
-| 12 | Karlach (Berserker) | Preset | 140.1 (#8) | 171.7 (#11) | 210.1 (#25) | 58 |
-| 13 | 25. Action Surge Bladesinger Smiter | Build doc | 91.9 (#28) | 180.8 (#10) | 298.9 (#8) | 57 |
-| 14 | 11. Ultimate Dark Knight | Build doc | 107.5 (#15) | 123.2 (#24) | 290.1 (#10) | 52 |
-| 15 | Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Preset | 103.6 (#19) | 152.9 (#14) | 225.7 (#19) | 51 |
+| 1 | Lae'zel (Champion, GWM) | Preset | 213.3 (#2) | 263.9 (#1) | 365.8 (#4) | 90 |
+| 2 | 2. Nuclear Pure Hexblade Warlock | Build doc | 175.5 (#4) | 243.0 (#3) | 457.3 (#3) | 87 |
+| 3 | Fire Marshal (Oathbreaker 7 / Fiend 5) | Reddit (approx.) | 214.8 (#1) | 231.8 (#4) | 341.8 (#5) | 84 |
+| 4 | 1. The Godblade | Build doc | 106.9 (#16) | 247.8 (#2) | 512.4 (#2) | 80 |
+| 5 | 32. Metamagic Godblade | Build doc | 106.9 (#17) | 231.1 (#5) | 528.0 (#1) | 79 |
+| 6 | Paladin (Smite) | Preset | 170.1 (#5) | 215.0 (#6) | 261.3 (#12) | 70 |
+| 7 | Path of Giants Barbarian (Patch 8) | Preset | 160.4 (#6) | 211.3 (#8) | 263.3 (#11) | 68 |
+| 8 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 131.8 (#10) | 202.7 (#9) | 308.2 (#7) | 66 |
+| 9 | Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Preset | 103.6 (#20) | 212.7 (#7) | 320.0 (#6) | 63 |
+| 10 | 26. Pure Two-Handed GWM Hexblade | Build doc | 188.0 (#3) | 155.1 (#13) | 213.4 (#24) | 62 |
+| 11 | Padlock: Shadow Blade + shield | Preset | 134.8 (#9) | 168.8 (#12) | 249.4 (#14) | 58 |
+| 12 | Karlach (Berserker) | Preset | 140.1 (#8) | 171.7 (#11) | 210.1 (#25) | 57 |
+| 13 | 25. Action Surge Bladesinger Smiter | Build doc | 91.9 (#28) | 180.8 (#10) | 298.9 (#9) | 56 |
+| 14 | 11. Ultimate Dark Knight | Build doc | 107.5 (#15) | 123.2 (#24) | 290.1 (#10) | 51 |
+| 15 | 20. Shadow Blade Eldritch Knight | Build doc | 94.4 (#27) | 125.9 (#21) | 306.3 (#8) | 50 |
 | 16 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Reddit (approx.) | 145.7 (#7) | 142.8 (#18) | 145.0 (#40) | 50 |
-| 17 | 20. Shadow Blade Eldritch Knight | Build doc | 94.4 (#27) | 125.9 (#21) | 292.4 (#9) | 50 |
-| 18 | 5. Arcane Deadeye | Build doc | 120.9 (#12) | 123.1 (#25) | 221.3 (#21) | 49 |
-| 19 | 3. Hexwing Phantom | Build doc | 100.6 (#22) | 123.8 (#23) | 234.3 (#16) | 47 |
-| 20 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Preset | 71.4 (#45) | 142.9 (#17) | 251.0 (#13) | 46 |
-| 21 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 109.5 (#14) | 109.4 (#34) | 226.1 (#18) | 46 |
-| 22 | Sorcadin: Shadow Blade + shield | Preset | 79.5 (#40) | 148.2 (#16) | 196.0 (#27) | 44 |
-| 23 | The Waterdeep Brat (EK 11 / Hexblade 1) | Reddit (approx.) | 57.5 (#52) | 149.1 (#15) | 243.0 (#15) | 44 |
-| 24 | Padlock: Greatsword (GWF, GWM) | Preset | 83.3 (#37) | 125.4 (#22) | 224.5 (#20) | 44 |
+| 17 | Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Preset | 103.6 (#19) | 152.9 (#14) | 225.7 (#19) | 50 |
+| 18 | 5. Arcane Deadeye | Build doc | 120.9 (#12) | 123.1 (#25) | 221.3 (#21) | 48 |
+| 19 | 3. Hexwing Phantom | Build doc | 100.6 (#22) | 123.8 (#23) | 234.3 (#16) | 46 |
+| 20 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 109.5 (#14) | 109.4 (#34) | 226.1 (#18) | 45 |
+| 21 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Preset | 71.4 (#45) | 142.9 (#17) | 251.0 (#13) | 45 |
+| 22 | Sorcadin: Shadow Blade + shield | Preset | 79.5 (#40) | 148.2 (#16) | 196.0 (#27) | 43 |
+| 23 | The Waterdeep Brat (EK 11 / Hexblade 1) | Reddit (approx.) | 57.5 (#52) | 149.1 (#15) | 243.0 (#15) | 43 |
+| 24 | Padlock: Greatsword (GWF, GWM) | Preset | 83.3 (#37) | 125.4 (#22) | 224.5 (#20) | 43 |
 | 25 | Gloom Stalker (Archer) | Preset | 115.6 (#13) | 129.6 (#20) | 134.5 (#44) | 43 |
-| 26 | 13. Jedi Consular | Build doc | 123.8 (#11) | 112.0 (#30) | 128.2 (#47) | 42 |
-| 27 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Preset | 88.8 (#35) | 121.5 (#26) | 173.2 (#31) | 41 |
-| 28 | 16. Karlach, God of Thunder | Build doc | 97.9 (#25) | 110.2 (#32) | 172.8 (#32) | 41 |
-| 29 | Sorcadin: Greatsword (GWF, GWM) | Preset | 104.9 (#18) | 104.3 (#38) | 155.8 (#34) | 40 |
-| 30 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 77.8 (#42) | 120.5 (#28) | 184.5 (#29) | 40 |
-| 31 | Throwzerker (Giant, Tavern Brawler) | Preset | 97.9 (#24) | 121.2 (#27) | 136.1 (#42) | 40 |
+| 26 | 13. Jedi Consular | Build doc | 123.8 (#11) | 112.0 (#30) | 128.2 (#47) | 41 |
+| 27 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Preset | 88.8 (#35) | 121.5 (#26) | 173.2 (#31) | 40 |
+| 28 | 16. Karlach, God of Thunder | Build doc | 97.9 (#25) | 110.2 (#32) | 172.8 (#32) | 40 |
+| 29 | Sorcadin: Greatsword (GWF, GWM) | Preset | 104.9 (#18) | 104.3 (#38) | 155.8 (#34) | 39 |
+| 30 | Throwzerker (Giant, Tavern Brawler) | Preset | 97.9 (#24) | 121.2 (#27) | 136.1 (#42) | 39 |
+| 31 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 77.8 (#42) | 120.5 (#28) | 184.5 (#29) | 39 |
 | 32 | 22. Tavern Brawler Open Hand Monk | Build doc | 89.8 (#31) | 131.7 (#19) | 131.7 (#45) | 39 |
-| 33 | Arcane Archer Fighter (Patch 8) | Preset | 90.9 (#29) | 108.7 (#35) | 168.4 (#33) | 39 |
-| 34 | Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Preset | 103.6 (#21) | 100.4 (#42) | 145.1 (#39) | 39 |
+| 33 | Arcane Archer Fighter (Patch 8) | Preset | 90.9 (#29) | 108.7 (#35) | 168.4 (#33) | 38 |
+| 34 | Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Preset | 103.6 (#21) | 100.4 (#42) | 145.1 (#39) | 38 |
 | 35 | Throwing Berserker GWM (Berserker 12) | Reddit (approx.) | 98.7 (#23) | 108.6 (#36) | 136.1 (#43) | 38 |
-| 36 | Padlock: Glaive (GWF, Polearm Master) | Preset | 71.4 (#44) | 109.6 (#33) | 183.4 (#30) | 37 |
-| 37 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 89.4 (#33) | 102.0 (#39) | 151.1 (#36) | 37 |
+| 36 | Padlock: Glaive (GWF, Polearm Master) | Preset | 71.4 (#44) | 109.6 (#33) | 183.4 (#30) | 36 |
+| 37 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 89.4 (#33) | 102.0 (#39) | 151.1 (#36) | 36 |
 | 38 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Build doc | 63.9 (#48) | 119.2 (#29) | 154.1 (#35) | 35 |
-| 39 | 9. Hexblade Sorlock | Build doc | 62.0 (#50) | 79.5 (#52) | 231.7 (#17) | 35 |
-| 40 | Hexblade Warlock (Patch 8) | Preset | 81.8 (#38) | 97.1 (#44) | 149.7 (#37) | 35 |
+| 39 | Hexblade Warlock (Patch 8) | Preset | 81.8 (#38) | 97.1 (#44) | 149.7 (#37) | 34 |
+| 40 | 9. Hexblade Sorlock | Build doc | 62.0 (#50) | 79.5 (#52) | 231.7 (#17) | 34 |
 | 41 | Drunken Master Monk (Patch 8) | Preset | 89.8 (#30) | 101.8 (#40) | 113.7 (#50) | 34 |
-| 42 | Drunken Master Thief (Drunken Master 8 / Thief 4) | Reddit (approx.) | 89.8 (#32) | 101.8 (#41) | 101.8 (#53) | 34 |
-| 43 | Monk (Open Hand) | Preset | 95.2 (#26) | 71.4 (#55) | 145.7 (#38) | 34 |
-| 44 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Reddit (approx.) | 45.6 (#60) | 108.0 (#37) | 188.5 (#28) | 33 |
-| 45 | Sorcadin: Glaive (GWF, Polearm Master) | Preset | 88.8 (#34) | 88.5 (#45) | 123.2 (#48) | 33 |
-| 46 | Swashbuckler Rogue (Patch 8) | Preset | 67.9 (#46) | 99.7 (#43) | 130.8 (#46) | 32 |
-| 47 | Tempest Monk (Open Hand 6 / Tempest Cleric 6) | Reddit (approx.) | 65.4 (#47) | 110.7 (#31) | 114.5 (#49) | 32 |
-| 48 | Filthy Harold Hunter (Hunter 11 / War Cleric 1) | Reddit (approx.) | 81.1 (#39) | 84.9 (#49) | 97.7 (#56) | 30 |
-| 49 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Preset | 56.7 (#53) | 52.3 (#62) | 215.2 (#22) | 30 |
-| 50 | Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Preset | 56.7 (#54) | 52.3 (#63) | 215.1 (#23) | 30 |
-| 51 | 7. Patch 8 Hexadin / Lockadin | Build doc | 62.7 (#49) | 81.2 (#51) | 140.1 (#41) | 29 |
-| 52 | Swarmkeeper Ranger (Patch 8) | Preset | 78.3 (#41) | 87.2 (#47) | 92.2 (#59) | 29 |
-| 53 | 28. Darkness Dirty Trickster | Build doc | 83.9 (#36) | 49.3 (#65) | 110.1 (#51) | 27 |
-| 54 | Bladesinger Wizard (Patch 8) | Preset | 53.5 (#57) | 87.4 (#46) | 103.0 (#52) | 26 |
-| 55 | 8. Shadow Sorcadin | Build doc | 71.5 (#43) | 71.5 (#54) | 84.4 (#63) | 26 |
-| 56 | Astarion (Assassin, dual wield) | Preset | 54.9 (#56) | 83.7 (#50) | 97.4 (#57) | 26 |
-| 57 | 21. 5/4/3 Gloom Stalker / Assassin / Arcane Archer | Build doc | 49.2 (#59) | 85.9 (#48) | 100.9 (#54) | 25 |
-| 58 | Thief Monoclass (Thief 12) | Reddit (approx.) | 59.6 (#51) | 66.2 (#57) | 99.5 (#55) | 24 |
-| 59 | 15. Perfect Celestial Monk | Build doc | 22.6 (#72) | 56.2 (#59) | 197.1 (#26) | 24 |
+| 42 | Drunken Master Thief (Drunken Master 8 / Thief 4) | Reddit (approx.) | 89.8 (#32) | 101.8 (#41) | 101.8 (#54) | 33 |
+| 43 | Monk (Open Hand) | Preset | 95.2 (#26) | 71.4 (#55) | 145.7 (#38) | 33 |
+| 44 | Sorcadin: Glaive (GWF, Polearm Master) | Preset | 88.8 (#34) | 88.5 (#45) | 123.2 (#48) | 33 |
+| 45 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Reddit (approx.) | 45.6 (#60) | 108.0 (#37) | 188.5 (#28) | 33 |
+| 46 | Swashbuckler Rogue (Patch 8) | Preset | 67.9 (#46) | 99.7 (#43) | 130.8 (#46) | 31 |
+| 47 | Tempest Monk (Open Hand 6 / Tempest Cleric 6) | Reddit (approx.) | 65.4 (#47) | 110.7 (#31) | 114.5 (#49) | 31 |
+| 48 | Filthy Harold Hunter (Hunter 11 / War Cleric 1) | Reddit (approx.) | 81.1 (#39) | 84.9 (#49) | 97.7 (#57) | 29 |
+| 49 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Preset | 56.7 (#53) | 52.3 (#62) | 215.2 (#22) | 29 |
+| 50 | Swarmkeeper Ranger (Patch 8) | Preset | 78.3 (#41) | 87.2 (#47) | 92.2 (#59) | 29 |
+| 51 | Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Preset | 56.7 (#54) | 52.3 (#63) | 215.1 (#23) | 29 |
+| 52 | 7. Patch 8 Hexadin / Lockadin | Build doc | 62.7 (#49) | 81.2 (#51) | 140.1 (#41) | 29 |
+| 53 | 28. Darkness Dirty Trickster | Build doc | 83.9 (#36) | 49.3 (#65) | 110.1 (#51) | 26 |
+| 54 | Bladesinger Wizard (Patch 8) | Preset | 53.5 (#57) | 87.4 (#46) | 103.0 (#53) | 26 |
+| 55 | 8. Shadow Sorcadin | Build doc | 71.5 (#43) | 71.5 (#54) | 84.4 (#63) | 25 |
+| 56 | Astarion (Assassin, dual wield) | Preset | 54.9 (#56) | 83.7 (#50) | 97.4 (#58) | 25 |
+| 57 | 21. 5/4/3 Gloom Stalker / Assassin / Arcane Archer | Build doc | 49.2 (#59) | 85.9 (#48) | 100.9 (#55) | 25 |
+| 58 | Thief Monoclass (Thief 12) | Reddit (approx.) | 59.6 (#51) | 66.2 (#57) | 99.5 (#56) | 24 |
+| 59 | 15. Perfect Celestial Monk | Build doc | 22.6 (#72) | 56.2 (#59) | 197.1 (#26) | 23 |
 | 60 | Warlock (Eldritch Blast) | Preset | 55.1 (#55) | 58.6 (#58) | 88.9 (#61) | 22 |
-| 61 | 6. Tempest Bladesinger | Build doc | 49.6 (#58) | 68.0 (#56) | 73.0 (#66) | 21 |
-| 62 | 18. The 11/1 Fire Sorlock | Build doc | 28.6 (#69) | 78.3 (#53) | 92.4 (#58) | 21 |
+| 61 | 18. The 11/1 Fire Sorlock | Build doc | 28.6 (#69) | 78.3 (#53) | 108.3 (#52) | 21 |
+| 62 | 6. Tempest Bladesinger | Build doc | 49.6 (#58) | 68.0 (#56) | 73.0 (#66) | 21 |
 | 63 | Sorlock (Warlock 2 / Sorcerer) | Preset | 40.0 (#61) | 48.8 (#66) | 90.3 (#60) | 18 |
-| 64 | 23. Eldritch Blast Sorlock | Build doc | 40.0 (#62) | 48.8 (#67) | 80.5 (#64) | 18 |
+| 64 | 23. Eldritch Blast Sorlock | Build doc | 40.0 (#62) | 48.8 (#67) | 80.5 (#64) | 17 |
 | 65 | Storm Bard (Storm Sorcerer 6 / Swords Bard 6) | Reddit (approx.) | 30.7 (#67) | 55.4 (#60) | 77.7 (#65) | 17 |
 | 66 | 19. The 10/2 Smite Swords Bard — SSB | Build doc | 21.9 (#74) | 53.9 (#61) | 85.8 (#62) | 16 |
 | 67 | 17. Skald Dual-Wielding Bard | Build doc | 26.8 (#70) | 51.1 (#64) | 72.5 (#67) | 15 |
-| 68 | 4. Deathreaper | Build doc | 36.4 (#63) | 36.0 (#68) | 66.6 (#68) | 15 |
+| 68 | 4. Deathreaper | Build doc | 36.4 (#63) | 36.0 (#68) | 66.6 (#68) | 14 |
 | 69 | Light Cleric: Spirit Guardians + Spiritual Weapon | Preset | 34.5 (#64) | 34.7 (#69) | 45.8 (#69) | 13 |
 | 70 | Circle of Stars Druid (Patch 8) | Preset | 31.8 (#66) | 33.7 (#70) | 44.8 (#70) | 12 |
 | 71 | Death Cleric: Spirit Guardians + Spiritual Weapon | Preset | 33.7 (#65) | 28.8 (#71) | 38.0 (#73) | 11 |
-| 72 | 24. Circle of the Stars / Light Cleric RadOrb Tank | Build doc | 30.2 (#68) | 23.4 (#75) | 28.5 (#77) | 10 |
+| 72 | 24. Circle of the Stars / Light Cleric RadOrb Tank | Build doc | 30.2 (#68) | 23.4 (#75) | 28.5 (#77) | 9 |
 | 73 | 31. Camp Transmutation Alchemist & Stone Buffer | Build doc | 24.1 (#71) | 23.9 (#74) | 40.2 (#72) | 9 |
 | 74 | Gale (Evoker) | Preset | 20.0 (#75) | 28.0 (#72) | 33.0 (#75) | 9 |
 | 75 | Evocation Wizard (Fireball, then Fire Bolt) | Preset | 20.0 (#76) | 28.0 (#73) | 33.0 (#76) | 9 |
@@ -268,83 +268,83 @@ Bless, the build's own planned buffs, and advantage only with a dependable sourc
 
 | # | Build | Source | Act 1 | Act 2 | Act 3 | Overall |
 |---|---|---|---|---|---|---|
-| 1 | 1. The Godblade | Build doc | 73.7 (#1) | 161.3 (#1) | 238.1 (#2) | 100 |
-| 2 | 32. Metamagic Godblade | Build doc | 73.7 (#2) | 153.3 (#2) | 240.7 (#1) | 98 |
-| 3 | 25. Action Surge Bladesinger Smiter | Build doc | 58.9 (#7) | 114.6 (#3) | 183.2 (#3) | 76 |
-| 4 | 2. Nuclear Pure Hexblade Warlock | Build doc | 64.8 (#4) | 85.4 (#5) | 161.5 (#4) | 69 |
-| 5 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 52.8 (#8) | 78.4 (#6) | 113.5 (#8) | 56 |
-| 6 | 26. Pure Two-Handed GWM Hexblade | Build doc | 69.9 (#3) | 59.4 (#16) | 78.7 (#29) | 55 |
-| 7 | Karlach (Berserker) | Preset | 61.9 (#5) | 73.7 (#7) | 80.5 (#27) | 54 |
-| 8 | Throwing Berserker GWM (Berserker 12) | Reddit (approx.) | 59.2 (#6) | 65.2 (#9) | 81.6 (#26) | 52 |
-| 9 | Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Preset | 38.1 (#27) | 86.3 (#4) | 118.5 (#6) | 51 |
-| 10 | 3. Hexwing Phantom | Build doc | 50.1 (#11) | 59.7 (#15) | 107.2 (#11) | 50 |
-| 11 | 5. Arcane Deadeye | Build doc | 52.2 (#9) | 50.4 (#28) | 106.5 (#12) | 49 |
-| 12 | Lae'zel (Champion, GWM) | Preset | 46.6 (#16) | 64.8 (#10) | 94.9 (#14) | 48 |
-| 13 | Path of Giants Barbarian (Patch 8) | Preset | 50.9 (#10) | 63.8 (#11) | 71.1 (#36) | 46 |
-| 14 | Padlock: Shadow Blade + shield | Preset | 44.8 (#17) | 60.3 (#14) | 92.7 (#15) | 46 |
-| 15 | 16. Karlach, God of Thunder | Build doc | 48.9 (#14) | 55.1 (#19) | 81.8 (#25) | 45 |
-| 16 | Fire Marshal (Oathbreaker 7 / Fiend 5) | Reddit (approx.) | 44.2 (#20) | 46.4 (#37) | 109.1 (#9) | 45 |
-| 17 | 22. Tavern Brawler Open Hand Monk | Build doc | 47.2 (#15) | 66.2 (#8) | 66.1 (#43) | 44 |
-| 18 | 4. Deathreaper | Build doc | 38.9 (#25) | 56.0 (#18) | 107.8 (#10) | 44 |
-| 19 | Throwzerker (Giant, Tavern Brawler) | Preset | 48.9 (#13) | 60.6 (#13) | 68.1 (#40) | 44 |
-| 20 | Gloom Stalker (Archer) | Preset | 49.2 (#12) | 56.9 (#17) | 59.0 (#54) | 42 |
-| 21 | Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Preset | 38.1 (#26) | 61.7 (#12) | 82.9 (#24) | 41 |
-| 22 | 11. Ultimate Dark Knight | Build doc | 32.2 (#39) | 47.0 (#36) | 120.0 (#5) | 41 |
-| 23 | Paladin (Smite) | Preset | 42.2 (#22) | 52.9 (#21) | 71.5 (#35) | 40 |
-| 24 | Drunken Master Monk (Patch 8) | Preset | 44.4 (#18) | 52.0 (#23) | 56.0 (#57) | 39 |
+| 1 | 1. The Godblade | Build doc | 73.7 (#1) | 161.3 (#1) | 268.4 (#2) | 100 |
+| 2 | 32. Metamagic Godblade | Build doc | 73.7 (#2) | 153.3 (#2) | 271.2 (#1) | 98 |
+| 3 | 25. Action Surge Bladesinger Smiter | Build doc | 58.9 (#7) | 114.6 (#3) | 183.2 (#4) | 73 |
+| 4 | 2. Nuclear Pure Hexblade Warlock | Build doc | 64.8 (#4) | 85.4 (#5) | 189.9 (#3) | 70 |
+| 5 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 52.8 (#8) | 78.4 (#6) | 113.5 (#8) | 54 |
+| 6 | 26. Pure Two-Handed GWM Hexblade | Build doc | 69.9 (#3) | 59.4 (#16) | 78.7 (#29) | 54 |
+| 7 | Karlach (Berserker) | Preset | 61.9 (#5) | 73.7 (#7) | 80.5 (#27) | 53 |
+| 8 | Throwing Berserker GWM (Berserker 12) | Reddit (approx.) | 59.2 (#6) | 65.2 (#9) | 81.6 (#26) | 50 |
+| 9 | Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Preset | 38.1 (#27) | 86.3 (#4) | 118.5 (#7) | 50 |
+| 10 | 3. Hexwing Phantom | Build doc | 50.1 (#11) | 59.7 (#15) | 107.2 (#11) | 48 |
+| 11 | 5. Arcane Deadeye | Build doc | 52.2 (#9) | 50.4 (#28) | 106.5 (#12) | 47 |
+| 12 | Lae'zel (Champion, GWM) | Preset | 46.6 (#16) | 64.8 (#10) | 94.9 (#15) | 46 |
+| 13 | Path of Giants Barbarian (Patch 8) | Preset | 50.9 (#10) | 63.8 (#11) | 71.1 (#36) | 45 |
+| 14 | Padlock: Shadow Blade + shield | Preset | 44.8 (#17) | 60.3 (#14) | 92.7 (#16) | 44 |
+| 15 | 16. Karlach, God of Thunder | Build doc | 48.9 (#14) | 55.1 (#19) | 81.8 (#25) | 44 |
+| 16 | 22. Tavern Brawler Open Hand Monk | Build doc | 47.2 (#15) | 66.2 (#8) | 66.1 (#43) | 43 |
+| 17 | Throwzerker (Giant, Tavern Brawler) | Preset | 48.9 (#13) | 60.6 (#13) | 68.1 (#40) | 43 |
+| 18 | Fire Marshal (Oathbreaker 7 / Fiend 5) | Reddit (approx.) | 44.2 (#20) | 46.4 (#37) | 109.1 (#9) | 43 |
+| 19 | 4. Deathreaper | Build doc | 38.9 (#25) | 56.0 (#18) | 107.8 (#10) | 42 |
+| 20 | Gloom Stalker (Archer) | Preset | 49.2 (#12) | 56.9 (#17) | 59.0 (#54) | 41 |
+| 21 | Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Preset | 38.1 (#26) | 61.7 (#12) | 82.9 (#24) | 40 |
+| 22 | 11. Ultimate Dark Knight | Build doc | 32.2 (#39) | 47.0 (#36) | 120.0 (#6) | 39 |
+| 23 | Paladin (Smite) | Preset | 42.2 (#22) | 52.9 (#21) | 71.5 (#35) | 39 |
+| 24 | Drunken Master Monk (Patch 8) | Preset | 44.4 (#18) | 52.0 (#23) | 56.0 (#57) | 38 |
 | 25 | Drunken Master Thief (Drunken Master 8 / Thief 4) | Reddit (approx.) | 44.4 (#19) | 52.0 (#25) | 55.2 (#60) | 38 |
-| 26 | 20. Shadow Blade Eldritch Knight | Build doc | 30.2 (#43) | 37.5 (#51) | 116.2 (#7) | 37 |
-| 27 | Death Cleric: Spirit Guardians + Spiritual Weapon | Preset | 36.8 (#29) | 52.7 (#22) | 71.6 (#34) | 37 |
-| 28 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Preset | 26.2 (#53) | 54.5 (#20) | 103.0 (#13) | 37 |
-| 29 | Sorlock (Warlock 2 / Sorcerer) | Preset | 32.8 (#34) | 50.2 (#30) | 83.3 (#22) | 37 |
-| 30 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Reddit (approx.) | 43.9 (#21) | 42.0 (#43) | 58.5 (#55) | 37 |
-| 31 | Padlock: Greatsword (GWF, GWM) | Preset | 29.7 (#44) | 47.1 (#35) | 92.2 (#16) | 36 |
-| 32 | Arcane Archer Fighter (Patch 8) | Preset | 35.8 (#31) | 49.8 (#32) | 67.2 (#41) | 36 |
-| 33 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Reddit (approx.) | 25.4 (#54) | 51.2 (#27) | 85.8 (#19) | 34 |
-| 34 | Monk (Open Hand) | Preset | 41.0 (#23) | 34.2 (#60) | 59.2 (#53) | 34 |
-| 35 | 23. Eldritch Blast Sorlock | Build doc | 32.8 (#35) | 50.2 (#31) | 61.0 (#50) | 34 |
-| 36 | Tempest Monk (Open Hand 6 / Tempest Cleric 6) | Reddit (approx.) | 30.4 (#42) | 50.2 (#29) | 68.5 (#38) | 34 |
-| 37 | Filthy Harold Hunter (Hunter 11 / War Cleric 1) | Reddit (approx.) | 40.2 (#24) | 42.2 (#42) | 42.4 (#72) | 33 |
-| 38 | Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Preset | 38.1 (#28) | 36.1 (#54) | 57.2 (#56) | 33 |
-| 39 | The Waterdeep Brat (EK 11 / Hexblade 1) | Reddit (approx.) | 23.0 (#61) | 51.4 (#26) | 83.7 (#21) | 33 |
-| 40 | 18. The 11/1 Fire Sorlock | Build doc | 22.1 (#62) | 52.0 (#24) | 84.7 (#20) | 32 |
-| 41 | Swashbuckler Rogue (Patch 8) | Preset | 36.6 (#30) | 38.6 (#49) | 54.5 (#62) | 32 |
-| 42 | Padlock: Glaive (GWF, Polearm Master) | Preset | 26.2 (#52) | 42.6 (#41) | 77.0 (#30) | 31 |
-| 43 | Sorcadin: Shadow Blade + shield | Preset | 27.1 (#49) | 47.5 (#34) | 66.4 (#42) | 31 |
-| 44 | Light Cleric: Spirit Guardians + Spiritual Weapon | Preset | 27.2 (#48) | 47.9 (#33) | 65.0 (#44) | 31 |
-| 45 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Preset | 27.9 (#47) | 43.5 (#38) | 68.2 (#39) | 31 |
-| 46 | Hexblade Warlock (Patch 8) | Preset | 31.4 (#40) | 39.3 (#48) | 62.5 (#48) | 31 |
+| 26 | 20. Shadow Blade Eldritch Knight | Build doc | 30.2 (#43) | 37.5 (#51) | 125.4 (#5) | 37 |
+| 27 | Death Cleric: Spirit Guardians + Spiritual Weapon | Preset | 36.8 (#29) | 52.7 (#22) | 71.6 (#34) | 36 |
+| 28 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Preset | 26.2 (#53) | 54.5 (#20) | 103.0 (#13) | 36 |
+| 29 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Reddit (approx.) | 43.9 (#21) | 42.0 (#43) | 58.5 (#55) | 36 |
+| 30 | Sorlock (Warlock 2 / Sorcerer) | Preset | 32.8 (#34) | 50.2 (#30) | 83.3 (#22) | 35 |
+| 31 | Arcane Archer Fighter (Patch 8) | Preset | 35.8 (#31) | 49.8 (#32) | 67.2 (#41) | 35 |
+| 32 | Padlock: Greatsword (GWF, GWM) | Preset | 29.7 (#44) | 47.1 (#35) | 92.2 (#17) | 35 |
+| 33 | 18. The 11/1 Fire Sorlock | Build doc | 22.1 (#62) | 52.0 (#24) | 99.6 (#14) | 33 |
+| 34 | Monk (Open Hand) | Preset | 41.0 (#23) | 34.2 (#60) | 59.2 (#53) | 33 |
+| 35 | 23. Eldritch Blast Sorlock | Build doc | 32.8 (#35) | 50.2 (#31) | 61.0 (#50) | 33 |
+| 36 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Reddit (approx.) | 25.4 (#54) | 51.2 (#27) | 85.8 (#20) | 33 |
+| 37 | Tempest Monk (Open Hand 6 / Tempest Cleric 6) | Reddit (approx.) | 30.4 (#42) | 50.2 (#29) | 68.5 (#38) | 33 |
+| 38 | Filthy Harold Hunter (Hunter 11 / War Cleric 1) | Reddit (approx.) | 40.2 (#24) | 42.2 (#42) | 42.4 (#72) | 32 |
+| 39 | Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Preset | 38.1 (#28) | 36.1 (#54) | 57.2 (#56) | 32 |
+| 40 | The Waterdeep Brat (EK 11 / Hexblade 1) | Reddit (approx.) | 23.0 (#61) | 51.4 (#26) | 83.7 (#21) | 31 |
+| 41 | Swashbuckler Rogue (Patch 8) | Preset | 36.6 (#30) | 38.6 (#49) | 54.5 (#62) | 31 |
+| 42 | Sorcadin: Shadow Blade + shield | Preset | 27.1 (#49) | 47.5 (#34) | 66.4 (#42) | 30 |
+| 43 | Light Cleric: Spirit Guardians + Spiritual Weapon | Preset | 27.2 (#48) | 47.9 (#33) | 65.0 (#44) | 30 |
+| 44 | Padlock: Glaive (GWF, Polearm Master) | Preset | 26.2 (#52) | 42.6 (#41) | 77.0 (#30) | 30 |
+| 45 | Hexblade Warlock (Patch 8) | Preset | 31.4 (#40) | 39.3 (#48) | 62.5 (#48) | 30 |
+| 46 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Preset | 27.9 (#47) | 43.5 (#38) | 68.2 (#39) | 30 |
 | 47 | Sorcadin: Greatsword (GWF, GWM) | Preset | 32.2 (#38) | 36.5 (#52) | 60.3 (#52) | 30 |
-| 48 | 14. Death Cleric Necromancer | Build doc | 24.4 (#56) | 43.0 (#40) | 75.0 (#31) | 30 |
-| 49 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 32.7 (#36) | 32.8 (#62) | 63.1 (#47) | 30 |
-| 50 | Thief Monoclass (Thief 12) | Reddit (approx.) | 33.2 (#33) | 36.3 (#53) | 54.4 (#63) | 30 |
+| 48 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 32.7 (#36) | 32.8 (#62) | 63.1 (#47) | 29 |
+| 49 | Thief Monoclass (Thief 12) | Reddit (approx.) | 33.2 (#33) | 36.3 (#53) | 54.4 (#63) | 29 |
+| 50 | 14. Death Cleric Necromancer | Build doc | 24.4 (#56) | 43.0 (#40) | 75.0 (#31) | 29 |
 | 51 | Astarion (Assassin, dual wield) | Preset | 31.1 (#41) | 40.5 (#45) | 49.4 (#67) | 29 |
-| 52 | 9. Hexblade Sorlock | Build doc | 23.4 (#59) | 33.7 (#61) | 83.2 (#23) | 29 |
-| 53 | 28. Darkness Dirty Trickster | Build doc | 32.3 (#37) | 26.4 (#71) | 63.3 (#45) | 29 |
-| 54 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 24.2 (#57) | 43.2 (#39) | 63.3 (#46) | 29 |
-| 55 | Evocation Wizard (Fireball, then Fire Bolt) | Preset | 22.0 (#63) | 35.4 (#57) | 73.9 (#33) | 28 |
-| 56 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 23.4 (#58) | 39.4 (#46) | 61.7 (#49) | 27 |
-| 57 | Gale (Evoker) | Preset | 20.0 (#67) | 35.4 (#56) | 73.9 (#32) | 27 |
-| 58 | 12. Unstoppable Death Monk | Build doc | 24.6 (#55) | 38.2 (#50) | 52.4 (#64) | 26 |
-| 59 | 13. Jedi Consular | Build doc | 35.2 (#32) | 29.3 (#66) | 31.0 (#76) | 26 |
-| 60 | Sorcadin: Glaive (GWF, Polearm Master) | Preset | 27.9 (#46) | 32.3 (#64) | 49.8 (#66) | 26 |
+| 52 | 28. Darkness Dirty Trickster | Build doc | 32.3 (#37) | 26.4 (#71) | 63.3 (#45) | 28 |
+| 53 | 9. Hexblade Sorlock | Build doc | 23.4 (#59) | 33.7 (#61) | 83.2 (#23) | 28 |
+| 54 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 24.2 (#57) | 43.2 (#39) | 63.3 (#46) | 28 |
+| 55 | Evocation Wizard (Fireball, then Fire Bolt) | Preset | 22.0 (#63) | 35.4 (#57) | 73.9 (#33) | 26 |
+| 56 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 23.4 (#58) | 39.4 (#46) | 61.7 (#49) | 26 |
+| 57 | 13. Jedi Consular | Build doc | 35.2 (#32) | 29.3 (#66) | 31.0 (#76) | 26 |
+| 58 | 12. Unstoppable Death Monk | Build doc | 24.6 (#55) | 38.2 (#50) | 52.4 (#64) | 25 |
+| 59 | Gale (Evoker) | Preset | 20.0 (#67) | 35.4 (#56) | 73.9 (#32) | 25 |
+| 60 | Sorcadin: Glaive (GWF, Polearm Master) | Preset | 27.9 (#46) | 32.3 (#64) | 49.8 (#66) | 25 |
 | 61 | 29. Camp Cleric Party Buffer | Build doc | 21.2 (#65) | 39.3 (#47) | 55.6 (#59) | 25 |
 | 62 | Swarmkeeper Ranger (Patch 8) | Preset | 28.1 (#45) | 32.7 (#63) | 35.0 (#74) | 24 |
-| 63 | 21. 5/4/3 Gloom Stalker / Assassin / Arcane Archer | Build doc | 21.8 (#64) | 35.6 (#55) | 50.0 (#65) | 24 |
-| 64 | 7. Patch 8 Hexadin / Lockadin | Build doc | 18.8 (#69) | 34.7 (#58) | 60.9 (#51) | 24 |
-| 65 | Warlock (Eldritch Blast) | Preset | 26.9 (#50) | 28.2 (#68) | 43.9 (#69) | 24 |
-| 66 | 15. Perfect Celestial Monk | Build doc | 11.6 (#78) | 29.3 (#67) | 91.3 (#17) | 24 |
-| 67 | Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Preset | 17.1 (#72) | 15.4 (#79) | 90.7 (#18) | 23 |
-| 68 | 31. Camp Transmutation Alchemist & Stone Buffer | Build doc | 20.7 (#66) | 27.7 (#69) | 54.9 (#61) | 23 |
-| 69 | Circle of Stars Druid (Patch 8) | Preset | 26.4 (#51) | 29.5 (#65) | 32.2 (#75) | 22 |
+| 63 | Warlock (Eldritch Blast) | Preset | 26.9 (#50) | 28.2 (#68) | 43.9 (#69) | 23 |
+| 64 | 21. 5/4/3 Gloom Stalker / Assassin / Arcane Archer | Build doc | 21.8 (#64) | 35.6 (#55) | 50.0 (#65) | 23 |
+| 65 | 7. Patch 8 Hexadin / Lockadin | Build doc | 18.8 (#69) | 34.7 (#58) | 60.9 (#51) | 23 |
+| 66 | 15. Perfect Celestial Monk | Build doc | 11.6 (#78) | 29.3 (#67) | 91.3 (#18) | 23 |
+| 67 | Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Preset | 17.1 (#72) | 15.4 (#79) | 90.7 (#19) | 22 |
+| 68 | Circle of Stars Druid (Patch 8) | Preset | 26.4 (#51) | 29.5 (#65) | 32.2 (#75) | 22 |
+| 69 | 31. Camp Transmutation Alchemist & Stone Buffer | Build doc | 20.7 (#66) | 27.7 (#69) | 54.9 (#61) | 22 |
 | 70 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Build doc | 19.5 (#68) | 34.5 (#59) | 45.5 (#68) | 22 |
-| 71 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Preset | 17.1 (#71) | 15.4 (#78) | 79.8 (#28) | 22 |
-| 72 | 8. Shadow Sorcadin | Build doc | 23.3 (#60) | 27.3 (#70) | 38.4 (#73) | 21 |
-| 73 | 24. Circle of the Stars / Light Cleric RadOrb Tank | Build doc | 10.9 (#79) | 41.8 (#44) | 55.7 (#58) | 21 |
-| 74 | 6. Tempest Bladesinger | Build doc | 13.7 (#74) | 16.3 (#77) | 68.7 (#37) | 19 |
-| 75 | 19. The 10/2 Smite Swords Bard — SSB | Build doc | 11.8 (#77) | 26.4 (#72) | 43.7 (#71) | 17 |
+| 71 | 8. Shadow Sorcadin | Build doc | 23.3 (#60) | 27.3 (#70) | 38.4 (#73) | 21 |
+| 72 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Preset | 17.1 (#71) | 15.4 (#78) | 79.8 (#28) | 21 |
+| 73 | 24. Circle of the Stars / Light Cleric RadOrb Tank | Build doc | 10.9 (#79) | 41.8 (#44) | 55.7 (#58) | 20 |
+| 74 | 6. Tempest Bladesinger | Build doc | 13.7 (#74) | 16.3 (#77) | 68.7 (#37) | 18 |
+| 75 | 19. The 10/2 Smite Swords Bard — SSB | Build doc | 11.8 (#77) | 26.4 (#72) | 43.7 (#71) | 16 |
 | 76 | 17. Skald Dual-Wielding Bard | Build doc | 13.4 (#76) | 20.1 (#74) | 43.7 (#70) | 16 |
-| 77 | 30. Camp Land Druid Buffer | Build doc | 17.7 (#70) | 19.6 (#76) | 18.9 (#79) | 15 |
+| 77 | 30. Camp Land Druid Buffer | Build doc | 17.7 (#70) | 19.6 (#76) | 18.9 (#79) | 14 |
 | 78 | Storm Bard (Storm Sorcerer 6 / Swords Bard 6) | Reddit (approx.) | 15.1 (#73) | 19.8 (#75) | 23.8 (#77) | 14 |
 | 79 | Bladesinger Wizard (Patch 8) | Preset | 13.4 (#75) | 20.1 (#73) | 22.1 (#78) | 13 |
 
@@ -354,10 +354,10 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 
 | Build | Gear | Damage 1 / 2 / 3 | AC 1 / 2 / 3 | Score 1 / 2 / 3 | Items that change |
 |---|---|---|---|---|---|
-| 1. The Godblade | Planned gear | 73.7 / 161.3 / 238.1 | 25 / 24 / 27 | 64 / 68 / 70 | - |
-| 1. The Godblade | Max damage gear | 77.2 / 170.1 / 238.1 | 25 / 24 / 27 | 66 / 68 / 70 | Act 1: Strange Conduit Ring; Act 2: Strange Conduit Ring |
-| 1. The Godblade | Max AC gear | 67.8 / 151.8 / 218.9 | 26 / 25 / 28 | 62 / 68 / 70 | Act 1: Ring of Protection; Act 2: Ring of Protection; Act 3: Ring of Protection |
-| 1. The Godblade | Best overall score gear | 73.7 / 161.3 / 238.1 | 25 / 24 / 27 | 64 / 68 / 70 | - |
+| 1. The Godblade | Planned gear | 73.7 / 161.3 / 268.4 | 25 / 24 / 27 | 64 / 68 / 70 | - |
+| 1. The Godblade | Max damage gear | 77.2 / 170.1 / 268.4 | 25 / 24 / 27 | 66 / 68 / 70 | Act 1: Strange Conduit Ring; Act 2: Strange Conduit Ring |
+| 1. The Godblade | Max AC gear | 67.8 / 151.8 / 248.2 | 26 / 25 / 28 | 62 / 68 / 70 | Act 1: Ring of Protection; Act 2: Ring of Protection; Act 3: Ring of Protection |
+| 1. The Godblade | Best overall score gear | 73.7 / 161.3 / 268.4 | 25 / 24 / 27 | 64 / 68 / 70 | - |
 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Planned gear | 19.5 / 34.5 / 45.5 | 16 / 16 / 17 | 24 / 25 / 28 | - |
 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Max damage gear | 25.1 / 46.8 / 63.4 | 17 / 18 / 19 | 28 / 32 / 34 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band, The Graceful Cloth; Act 3: Gloves of Dexterity, Caustic Band, The Graceful Cloth, Sarevok's Horned Helmet, Cloak of the Weave |
 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Max AC gear | 24.8 / 43.0 / 54.7 | 19 / 21 / 25 | 31 / 36 / 46 | Act 1: The Graceful Cloth, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: The Graceful Cloth, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Studded Leather Armour +2, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Sarevok's Horned Helmet |
@@ -390,22 +390,22 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 | 17. Skald Dual-Wielding Bard | Max damage gear | 18.5 / 30.8 / 49.5 | 16 / 16 / 24 | 32 / 35 / 49 | Act 1: Caustic Band, The Graceful Cloth; Act 2: Caustic Band, The Graceful Cloth, Risky Ring; Act 3: Caustic Band |
 | 17. Skald Dual-Wielding Bard | Max AC gear | 16.7 / 24.8 / 43.7 | 19 / 22 / 25 | 36 / 44 / 48 | Act 1: Ring of Protection, Padded Armour +2, Caustic Band; Act 2: Ring of Protection, Padded Armour +2, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Ring of Protection |
 | 17. Skald Dual-Wielding Bard | Best overall score gear | 16.7 / 24.8 / 49.5 | 19 / 22 / 24 | 36 / 44 / 49 | Act 1: Ring of Protection, Padded Armour +2, Caustic Band; Act 2: Ring of Protection, Padded Armour +2, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Caustic Band |
-| 18. The 11/1 Fire Sorlock | Planned gear | 14.1 / 35.5 / 51.7 | 15 / 16 / 16 | 25 / 32 / 31 | - |
-| 18. The 11/1 Fire Sorlock | Max damage gear | 14.9 / 44.9 / 59.0 | 15 / 16 / 16 | 26 / 36 / 34 | Act 1: Daredevil Gloves; Act 2: Daredevil Gloves, Risky Ring; Act 3: Risky Ring |
-| 18. The 11/1 Fire Sorlock | Max AC gear | 14.9 / 37.7 / 53.8 | 19 / 20 / 19 | 32 / 38 / 35 | Act 1: Infernal Robe, Gloves of Dexterity, Ring of Protection; Act 2: Gloves of Dexterity, Ring of Protection, Cloak of Protection; Act 3: Gloves of Dexterity, Ring of Protection |
-| 18. The 11/1 Fire Sorlock | Best overall score gear | 14.9 / 44.9 / 59.5 | 19 / 19 / 18 | 32 / 40 / 36 | Act 1: Infernal Robe, Gloves of Dexterity, Ring of Protection, The Whispering Promise; Act 2: Gloves of Dexterity, Risky Ring, Cloak of Protection; Act 3: Gloves of Dexterity, Risky Ring |
+| 18. The 11/1 Fire Sorlock | Planned gear | 14.1 / 35.5 / 64.4 | 15 / 16 / 16 | 25 / 32 / 34 | - |
+| 18. The 11/1 Fire Sorlock | Max damage gear | 14.9 / 44.9 / 69.5 | 15 / 16 / 16 | 26 / 36 / 37 | Act 1: Daredevil Gloves; Act 2: Daredevil Gloves, Risky Ring; Act 3: Risky Ring |
+| 18. The 11/1 Fire Sorlock | Max AC gear | 14.9 / 37.7 / 65.3 | 19 / 20 / 19 | 32 / 38 / 39 | Act 1: Infernal Robe, Gloves of Dexterity, Ring of Protection; Act 2: Gloves of Dexterity, Ring of Protection, Cloak of Protection; Act 3: Gloves of Dexterity, Ring of Protection |
+| 18. The 11/1 Fire Sorlock | Best overall score gear | 14.9 / 44.9 / 69.7 | 19 / 19 / 18 | 32 / 40 / 39 | Act 1: Infernal Robe, Gloves of Dexterity, Ring of Protection, The Whispering Promise; Act 2: Gloves of Dexterity, Risky Ring, Cloak of Protection; Act 3: Gloves of Dexterity, Risky Ring |
 | 19. The 10/2 Smite Swords Bard — SSB | Planned gear | 11.8 / 26.4 / 43.7 | 14 / 16 / 20 | 26 / 33 / 40 | - |
 | 19. The 10/2 Smite Swords Bard — SSB | Max damage gear | 15.1 / 34.1 / 52.4 | 15 / 16 / 20 | 29 / 36 / 43 | Act 1: The Graceful Cloth, Caustic Band; Act 2: Dark Justiciar Gauntlets (Rare), The Graceful Cloth, Caustic Band; Act 3: Dark Justiciar Gauntlets (Rare), Risky Ring |
 | 19. The 10/2 Smite Swords Bard — SSB | Max AC gear | 13.6 / 26.4 / 43.7 | 18 / 21 / 25 | 32 / 42 / 50 | Act 1: Padded Armour +2, Ring of Protection, Caustic Band; Act 2: Padded Armour +2, Ring of Protection, Evasive Shoes; Act 3: Ring of Protection, Shield (Hope) |
 | 19. The 10/2 Smite Swords Bard — SSB | Best overall score gear | 11.8 / 26.4 / 43.7 | 18 / 20 / 24 | 32 / 40 / 51 | Act 1: Padded Armour +2, Ring of Protection, The Whispering Promise; Act 2: Padded Armour +2, The Whispering Promise, Evasive Shoes; Act 3: The Whispering Promise, Shield (Hope) |
-| 2. Nuclear Pure Hexblade Warlock | Planned gear | 64.8 / 85.4 / 161.5 | 20 / 21 / 22 | 58 / 54 / 58 | - |
-| 2. Nuclear Pure Hexblade Warlock | Max damage gear | 73.7 / 94.1 / 161.5 | 20 / 21 / 22 | 63 / 56 / 58 | Act 1: Ring of Arcane Synergy; Act 2: Ring of Arcane Synergy |
-| 2. Nuclear Pure Hexblade Warlock | Max AC gear | 58.9 / 79.7 / 144.8 | 21 / 22 / 23 | 59 / 56 / 58 | Act 1: Ring of Protection; Act 2: Ring of Protection; Act 3: Ring of Protection |
-| 2. Nuclear Pure Hexblade Warlock | Best overall score gear | 73.7 / 79.7 / 144.8 | 20 / 21 / 22 | 63 / 60 / 65 | Act 1: Ring of Arcane Synergy; Act 2: Risky Ring; Act 3: Risky Ring |
-| 20. Shadow Blade Eldritch Knight | Planned gear | 30.2 / 37.5 / 116.2 | 13 / 13 / 20 | 25 / 22 / 42 | - |
-| 20. Shadow Blade Eldritch Knight | Max damage gear | 42.0 / 52.9 / 116.2 | 14 / 15 / 20 | 32 / 30 / 42 | Act 1: Gloves of Dexterity, Warped Headband of Intellect; Act 2: Gloves of Dexterity, Warped Headband of Intellect, The Graceful Cloth |
-| 20. Shadow Blade Eldritch Knight | Max AC gear | 30.9 / 38.1 / 104.6 | 22 / 23 / 21 | 41 / 38 / 42 | Act 1: Ring of Protection, Adamantine Scale Mail, Wondrous Gloves, Warped Headband of Intellect, Absolute's Warboard; Act 2: Ring of Protection, Adamantine Scale Mail, Wondrous Gloves, Warped Headband of Intellect, Absolute's Warboard, Cloak of Protection; Act 3: Ring of Protection |
-| 20. Shadow Blade Eldritch Knight | Best overall score gear | 38.7 / 38.1 / 104.6 | 21 / 22 / 20 | 44 / 42 / 46 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Warped Headband of Intellect, Absolute's Warboard; Act 2: Risky Ring, Adamantine Scale Mail, Wondrous Gloves, Warped Headband of Intellect, Absolute's Warboard, Cloak of Protection; Act 3: Risky Ring |
+| 2. Nuclear Pure Hexblade Warlock | Planned gear | 64.8 / 85.4 / 189.9 | 20 / 21 / 22 | 58 / 54 / 63 | - |
+| 2. Nuclear Pure Hexblade Warlock | Max damage gear | 73.7 / 94.1 / 189.9 | 20 / 21 / 22 | 63 / 56 / 63 | Act 1: Ring of Arcane Synergy; Act 2: Ring of Arcane Synergy |
+| 2. Nuclear Pure Hexblade Warlock | Max AC gear | 58.9 / 79.7 / 172.9 | 21 / 22 / 23 | 59 / 56 / 63 | Act 1: Ring of Protection; Act 2: Ring of Protection; Act 3: Ring of Protection |
+| 2. Nuclear Pure Hexblade Warlock | Best overall score gear | 73.7 / 79.7 / 161.4 | 20 / 21 / 23 | 63 / 60 / 70 | Act 1: Ring of Arcane Synergy; Act 2: Risky Ring; Act 3: Risky Ring, Ring of Protection |
+| 20. Shadow Blade Eldritch Knight | Planned gear | 30.2 / 37.5 / 125.4 | 13 / 13 / 20 | 25 / 22 / 43 | - |
+| 20. Shadow Blade Eldritch Knight | Max damage gear | 42.0 / 52.9 / 125.4 | 14 / 15 / 20 | 32 / 30 / 43 | Act 1: Gloves of Dexterity, Warped Headband of Intellect; Act 2: Gloves of Dexterity, Warped Headband of Intellect, The Graceful Cloth |
+| 20. Shadow Blade Eldritch Knight | Max AC gear | 30.9 / 38.1 / 113.9 | 22 / 23 / 21 | 41 / 38 / 44 | Act 1: Ring of Protection, Adamantine Scale Mail, Wondrous Gloves, Warped Headband of Intellect, Absolute's Warboard; Act 2: Ring of Protection, Adamantine Scale Mail, Wondrous Gloves, Warped Headband of Intellect, Absolute's Warboard, Cloak of Protection; Act 3: Ring of Protection |
+| 20. Shadow Blade Eldritch Knight | Best overall score gear | 38.7 / 38.1 / 113.9 | 21 / 22 / 20 | 44 / 42 / 48 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Warped Headband of Intellect, Absolute's Warboard; Act 2: Risky Ring, Adamantine Scale Mail, Wondrous Gloves, Warped Headband of Intellect, Absolute's Warboard, Cloak of Protection; Act 3: Risky Ring |
 | 21. 5/4/3 Gloom Stalker / Assassin / Arcane Archer | Planned gear | 21.8 / 35.6 / 50.0 | 14 / 14 / 15 | 22 / 26 / 25 | - |
 | 21. 5/4/3 Gloom Stalker / Assassin / Arcane Archer | Max damage gear | 33.5 / 48.1 / 69.1 | 15 / 15 / 15 | 29 / 32 / 29 | Act 1: The Graceful Cloth, Gloves of Archery, Caustic Band; Act 2: The Graceful Cloth, Gloves of Archery, Caustic Band, Marksmanship Hat; Act 3: The Graceful Cloth, Helldusk Gloves, Caustic Band, Marksmanship Hat |
 | 21. 5/4/3 Gloom Stalker / Assassin / Arcane Archer | Max AC gear | 26.3 / 40.7 / 55.9 | 20 / 22 / 22 | 37 / 43 / 40 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band, Marksmanship Hat, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band, Marksmanship Hat, Cloak of Protection, Evasive Shoes |
@@ -454,10 +454,10 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 | 31. Camp Transmutation Alchemist & Stone Buffer | Max damage gear | 10.1 / 11.7 / 21.2 | 14 / 16 / 18 | 17 / 25 / 28 | Act 1: Daredevil Gloves; Act 2: Risky Ring, Ketheric's Shield; Act 3: Risky Ring, Ketheric's Shield, Robe of the Weave, Sarevok's Horned Helmet, Cloak of the Weave |
 | 31. Camp Transmutation Alchemist & Stone Buffer | Max AC gear | 10.1 / 8.9 / 16.4 | 19 / 21 / 21 | 21 / 29 / 29 | Act 1: Infernal Robe, Gloves of Dexterity, Ring of Protection; Act 2: Infernal Robe, Ring of Protection, Cloak of Protection, Evasive Shoes, Iron-Banded Shield +1; Act 3: Infernal Robe, Ring of Protection, Cloak of Protection, Evasive Shoes, Iron-Banded Shield +1, Hood of the Weave |
 | 31. Camp Transmutation Alchemist & Stone Buffer | Best overall score gear | 10.1 / 8.9 / 16.4 | 19 / 21 / 21 | 21 / 29 / 29 | Act 1: Infernal Robe, Gloves of Dexterity, Ring of Protection; Act 2: Infernal Robe, Ring of Protection, Cloak of Protection, Evasive Shoes, Iron-Banded Shield +1; Act 3: Infernal Robe, Ring of Protection, Cloak of Protection, Evasive Shoes, Iron-Banded Shield +1, Hood of the Weave |
-| 32. Metamagic Godblade | Planned gear | 73.7 / 153.3 / 240.7 | 25 / 24 / 26 | 64 / 69 / 70 | - |
-| 32. Metamagic Godblade | Max damage gear | 77.2 / 158.7 / 240.7 | 25 / 24 / 26 | 66 / 69 / 70 | Act 1: Strange Conduit Ring; Act 2: Strange Conduit Ring |
-| 32. Metamagic Godblade | Max AC gear | 67.8 / 143.8 / 221.5 | 26 / 25 / 27 | 62 / 69 / 70 | Act 1: Ring of Protection; Act 2: Ring of Protection; Act 3: Ring of Protection |
-| 32. Metamagic Godblade | Best overall score gear | 73.7 / 153.3 / 240.7 | 25 / 24 / 26 | 64 / 69 / 70 | - |
+| 32. Metamagic Godblade | Planned gear | 73.7 / 153.3 / 271.2 | 25 / 24 / 26 | 64 / 69 / 70 | - |
+| 32. Metamagic Godblade | Max damage gear | 77.2 / 158.7 / 271.2 | 25 / 24 / 26 | 66 / 69 / 70 | Act 1: Strange Conduit Ring; Act 2: Strange Conduit Ring |
+| 32. Metamagic Godblade | Max AC gear | 67.8 / 143.8 / 250.9 | 26 / 25 / 27 | 62 / 69 / 70 | Act 1: Ring of Protection; Act 2: Ring of Protection; Act 3: Ring of Protection |
+| 32. Metamagic Godblade | Best overall score gear | 73.7 / 153.3 / 271.2 | 25 / 24 / 26 | 64 / 69 / 70 | - |
 | 4. Deathreaper | Planned gear | 20.8 / 28.4 / 56.2 | 17 / 19 / 21 | 45 / 44 / 52 | - |
 | 4. Deathreaper | Max damage gear | 22.2 / 32.8 / 60.0 | 17 / 19 / 21 | 45 / 46 / 53 | Act 1: Caustic Band; Act 2: Risky Ring; Act 3: Risky Ring |
 | 4. Deathreaper | Max AC gear | 20.8 / 28.4 / 56.2 | 19 / 20 / 22 | 49 / 46 / 55 | Act 1: Absolute's Warboard; Act 2: Ring of Protection; Act 3: Ring of Protection |
@@ -675,7 +675,7 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 
 | Build | Fingerprint | Spec |
 |---|---|---|
-| 1. The Godblade | `3e254cc8` | Paladin 2 (Oath of the Crown) / Wizard 10 (Bladesinging). Wood Half-Elf; routine shadow_blade. feats Savage Attacker, Two-Weapon Fighting. Act 1: Knife of the Undermountain King, Diadem of Arcane Synergy, Bloodguzzler Garb, Bracers of Defence, Disintegrating Night Walkers, Periapt of Wound Closure, Caustic Band, Crusher's Ring, Bow of Awareness. Act 2: Knife of the Undermountain King, Diadem of Arcane Synergy, Bloodguzzler Garb, Gloves of Battlemage's Power, Disintegrating Night Walkers, Periapt of Wound Closure, Caustic Band, Strange Conduit Ring, Bow of Awareness, Cloak of Protection. Act 3: Rhapsody, Diadem of Arcane Synergy, Robe of the Weave, Gloves of Battlemage's Power, Disintegrating Night Walkers, Amulet of Greater Health, Band of the Mystic Scoundrel, Strange Conduit Ring, Hellrider Longbow, Cloak of Protection |
+| 1. The Godblade | `70e541dc` | Paladin 2 (Oath of the Crown) / Wizard 10 (Bladesinging). Wood Half-Elf; routine shadow_blade. feats Savage Attacker, Two-Weapon Fighting. Act 1: Knife of the Undermountain King, Diadem of Arcane Synergy, Bloodguzzler Garb, Bracers of Defence, Disintegrating Night Walkers, Periapt of Wound Closure, Caustic Band, Crusher's Ring, Bow of Awareness. Act 2: Knife of the Undermountain King, Diadem of Arcane Synergy, Bloodguzzler Garb, Gloves of Battlemage's Power, Disintegrating Night Walkers, Periapt of Wound Closure, Caustic Band, Strange Conduit Ring, Bow of Awareness, Cloak of Protection. Act 3: Rhapsody, Diadem of Arcane Synergy, Robe of the Weave, Gloves of Battlemage's Power, Disintegrating Night Walkers, Amulet of Greater Health, Band of the Mystic Scoundrel, Strange Conduit Ring, Hellrider Longbow, Cloak of Protection |
 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | `a4e05786` | Wizard 10 (Bladesinging) / Druid 2 (Circle of Stars). Human; routine shadow_blade. feats Alert, War Caster, Savage Attacker |
 | 11. Ultimate Dark Knight | `74db85a2` | Paladin 5 (Oath of Vengeance) / Warlock 1 (The Hexblade) / Sorcerer 6 (Shadow Magic). Human; routine two_handed. feats Great Weapon Master. Act 1: Ring of Arcane Synergy. Act 2: Killer's Sweetheart, Reaper's Embrace. Act 3: Killer's Sweetheart, Armour of Persistence, Balduran's Giantslayer, Sarevok's Horned Helmet, Helldusk Gloves, Boots of Persistence, Amulet of Greater Health |
 | 12. Unstoppable Death Monk | `a7c555e6` | Cleric 6 (Death Domain) / Monk 6 (Way of Shadow). Human; routine one_handed, spell Spirit Guardians. feats Mobile. Act 1: Boots of Striding, Ring of Arcane Synergy. Act 2: Boots of Striding, Ring of Free Action, Shar's Spear of Evening, Dark Justiciar Helmet, Dark Justiciar Half-Plate (Rare), Dark Justiciar Gauntlets (Rare), Darkfire Shortbow. Act 3: Boots of Striding, Ring of Free Action, Shar's Spear of Evening, Dark Justiciar Helmet, Dark Justiciar Half-Plate (Rare), Dark Justiciar Gauntlets (Rare), Darkfire Shortbow, Viconia's Walking Fortress, Amulet of the Devout, Cloak of Displacement |
@@ -684,7 +684,7 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 | 15. Perfect Celestial Monk | `75a6cbb9` | Druid 6 (Circle of Stars) / Monk 6 (Way of the Open Hand). Human; routine unarmed. feats Tavern Brawler, Mobile. Act 2: Callous Glow Ring, Coruscation Ring. Act 3: Callous Glow Ring, Coruscation Ring, Mask of Soul Perception, Vest of Soul Rejuvenation, Gloves of Soul Catching, Boots of Uninhibited Kushigo, Khalid's Gift, Cloak of Displacement |
 | 16. Karlach, God of Thunder | `3140166a` | Barbarian 10 (Giant) / Fighter 2 (Arcane Archer). Human; routine thrown. feats Tavern Brawler. Act 1: Returning Pike, Gloves of Uninhibited Kushigo, Boots of Stormy Clamour, Ring of Flinging. Act 2: Returning Pike, Gloves of Uninhibited Kushigo, Boots of Stormy Clamour, Ring of Spiteful Thunder, Thunderskin Cloak, The Mighty Cloth. Act 3: Corpsegrinder, Gloves of Uninhibited Kushigo, Boots of Stormy Clamour, Ring of Spiteful Thunder, Thunderskin Cloak, Bonespike Garb, Nyrulna, Helldusk Helmet, Amulet of Greater Health, The Dead Shot |
 | 17. Skald Dual-Wielding Bard | `66756846` | Bard 8 (College of Swords) / Rogue 4 (Swashbuckler). Human; routine dual_wield. Act 1: Wondrous Gloves, Ring of Arcane Synergy. Act 2: Wondrous Gloves, Ring of Arcane Synergy, Surgeon's Subjugation Amulet. Act 3: Wondrous Gloves, Band of the Mystic Scoundrel, Surgeon's Subjugation Amulet, Bloodthirst, Crimson Mischief, Gibus of the Worshipful Servant, Cloak of Displacement, Armour of Agility, Helldusk Boots, The Dead Shot |
-| 18. The 11/1 Fire Sorlock | `d7091dbd` | Sorcerer 11 (Draconic Bloodline) / Warlock 1 (The Fiend). Human; routine cantrip, Fire Bolt, spell Scorching Ray. Act 1: Boots of Stormy Clamour. Act 2: Boots of Stormy Clamour, Hat of Fire Acuity, Potent Robe, Callous Glow Ring, Coruscation Ring. Act 3: Boots of Stormy Clamour, Hat of Fire Acuity, Potent Robe, Callous Glow Ring, Coruscation Ring, Markoheshkir, Rhapsody, Cloak of the Weave, Spellmight Gloves, Amulet of Greater Health, Hellrider Longbow |
+| 18. The 11/1 Fire Sorlock | `8d0df529` | Sorcerer 11 (Draconic Bloodline) / Warlock 1 (The Fiend). Human; routine cantrip, Fire Bolt, spell Scorching Ray. Act 1: Boots of Stormy Clamour. Act 2: Boots of Stormy Clamour, Hat of Fire Acuity, Potent Robe, Callous Glow Ring, Coruscation Ring. Act 3: Boots of Stormy Clamour, Hat of Fire Acuity, Potent Robe, Callous Glow Ring, Coruscation Ring, Markoheshkir, Rhapsody, Cloak of the Weave, Spellmight Gloves, Amulet of Greater Health, Hellrider Longbow |
 | 19. The 10/2 Smite Swords Bard — SSB | `a8134535` | Bard 10 (College of Swords) / Paladin 2 (Oath of Vengeance). Human; routine one_handed. Act 1: Gloves of Dexterity. Act 2: Gloves of Dexterity, Shar's Spear of Evening, Helmet of Arcane Acuity, Cloak of Protection, Killer's Sweetheart. Act 3: Gloves of Dexterity, Shar's Spear of Evening, Helmet of Arcane Acuity, Cloak of Protection, Band of the Mystic Scoundrel, Bhaalist Armour, Boots of Persistence, Amulet of Greater Health, Hellrider Longbow |
 | 2. Nuclear Pure Hexblade Warlock | `0e9e739b` | Warlock 12 (The Hexblade). Wood Half-Elf; routine shadow_blade. feats Savage Attacker, Alert. Act 1: Glowing Shield, Haste Helm, Adamantine Scale Mail, Gloves of Dexterity, Disintegrating Night Walkers, Broodmother's Revenge, Caustic Band, Crusher's Ring, Bow of Awareness. Act 2: Glowing Shield, Haste Helm, Adamantine Scale Mail, Gloves of Dexterity, Disintegrating Night Walkers, Broodmother's Revenge, Caustic Band, Strange Conduit Ring, Bow of Awareness, Cloak of Protection. Act 3: Belm, Birthright, Helldusk Armour, Helldusk Gloves, Disintegrating Night Walkers, Broodmother's Revenge, Ring of Arcane Synergy, Strange Conduit Ring, The Dead Shot, Cloak of Protection |
 | 20. Shadow Blade Eldritch Knight | `6497cb9b` | Fighter 11 (Eldritch Knight) / Warlock 1 (The Hexblade). Human; routine shadow_blade. Act 1: Disintegrating Night Walkers, Strange Conduit Ring, Ring of Arcane Synergy. Act 2: Disintegrating Night Walkers, Strange Conduit Ring, Ring of Arcane Synergy. Act 3: Disintegrating Night Walkers, Strange Conduit Ring, Ring of Arcane Synergy, Belm, Helmet of Grit, Cloak of Displacement, Armour of Agility, Legacy of the Masters, Amulet of Greater Health |
@@ -700,7 +700,7 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 | 3. Hexwing Phantom | `74344667` | Rogue 4 (Swashbuckler) / Warlock 5 (The Hexblade) / Ranger 3 (Swarmkeeper). Human; routine two_handed. feats Great Weapon Master, Defence. Act 1: Phalar Aluve, Yuan-Ti Scale Mail, Broodmother's Revenge, Risky Ring, Ring of Arcane Synergy, Boots of Stormy Clamour. Act 2: Phalar Aluve, Yuan-Ti Scale Mail, Broodmother's Revenge, Risky Ring, Ring of Arcane Synergy, Boots of Stormy Clamour. Act 3: The Dancing Breeze, Armour of Persistence, Broodmother's Revenge, Risky Ring, Ring of Arcane Synergy, Boots of Stormy Clamour, Birthright, Cloak of Displacement, Helldusk Gloves, The Dead Shot |
 | 30. Camp Land Druid Buffer | `32711f80` | Druid 12 (Circle of the Land). Wood Half-Elf; routine cantrip, Produce Flame. feats Alert. Act 1: Quarterstaff. Act 2: Quarterstaff. Act 3: Quarterstaff |
 | 31. Camp Transmutation Alchemist & Stone Buffer | `e78daac7` | Wizard 6 (Transmutation School) / Rogue 1 (Arcane Trickster) / Druid 1 (Circle of the Land) / Sorcerer 4 (Draconic Bloodline). Lightfoot Halfling; routine cantrip, Fire Bolt. Act 1: Shapeshifter's Boon Ring. Act 2: Shapeshifter's Boon Ring, Gloves of Power. Act 3: Shapeshifter's Boon Ring, Gloves of Power, Khalid's Gift |
-| 32. Metamagic Godblade | `c624b004` | Sorcerer 4 (Draconic Bloodline) / Paladin 2 (Oath of the Crown) / Wizard 6 (Bladesinging). Wood Half-Elf; routine shadow_blade. feats Savage Attacker, Two-Weapon Fighting. Act 1: Knife of the Undermountain King, Diadem of Arcane Synergy, Bloodguzzler Garb, Bracers of Defence, Disintegrating Night Walkers, Periapt of Wound Closure, Caustic Band, Crusher's Ring, Bow of Awareness. Act 2: Knife of the Undermountain King, Diadem of Arcane Synergy, Bloodguzzler Garb, Gloves of Battlemage's Power, Disintegrating Night Walkers, Periapt of Wound Closure, Caustic Band, Strange Conduit Ring, Bow of Awareness, Cloak of Protection. Act 3: Rhapsody, Diadem of Arcane Synergy, Robe of the Weave, Gloves of Battlemage's Power, Disintegrating Night Walkers, Amulet of Greater Health, Band of the Mystic Scoundrel, Strange Conduit Ring, Hellrider Longbow, Cloak of Protection |
+| 32. Metamagic Godblade | `b907d86c` | Sorcerer 4 (Draconic Bloodline) / Paladin 2 (Oath of the Crown) / Wizard 6 (Bladesinging). Wood Half-Elf; routine shadow_blade. feats Savage Attacker, Two-Weapon Fighting. Act 1: Knife of the Undermountain King, Diadem of Arcane Synergy, Bloodguzzler Garb, Bracers of Defence, Disintegrating Night Walkers, Periapt of Wound Closure, Caustic Band, Crusher's Ring, Bow of Awareness. Act 2: Knife of the Undermountain King, Diadem of Arcane Synergy, Bloodguzzler Garb, Gloves of Battlemage's Power, Disintegrating Night Walkers, Periapt of Wound Closure, Caustic Band, Strange Conduit Ring, Bow of Awareness, Cloak of Protection. Act 3: Rhapsody, Diadem of Arcane Synergy, Robe of the Weave, Gloves of Battlemage's Power, Disintegrating Night Walkers, Amulet of Greater Health, Band of the Mystic Scoundrel, Strange Conduit Ring, Hellrider Longbow, Cloak of Protection |
 | 4. Deathreaper | `31a7362f` | Cleric 8 (Death Domain) / Wizard 2 (Necromancy School) / Druid 2 (Circle of Spores). Wood Half-Elf; routine cantrip, Toll the Dead, spell Spirit Guardians. feats War Caster, Dual Wielder. Act 1: Melf's First Staff, Holy Lance Helm, Hide Armour +2, Hellrider's Pride, Boots of Striding, Amulet of Misty Step, The Whispering Promise, Ring of Protection. Act 2: The Blood of Lathander, Holy Lance Helm, Luminous Armour, Luminous Gloves, Boots of Striding, Amulet of Misty Step, Coruscation Ring, Callous Glow Ring, Sentinel Shield, Fleshmelter Cloak, Hand Crossbow +1, Hand Crossbow +1. Act 3: Staff of Cherished Necromancy, Hood of the Weave, Armour of Agility, Gloves of Dexterity, Helldusk Boots, Amulet of the Devout, Callous Glow Ring, Coruscation Ring, Markoheshkir, Cloak of the Weave, Ne'er Misser, Hellfire Hand Crossbow |
 | 5. Arcane Deadeye | `f2cceef9` | Fighter 11 (Arcane Archer) / Cleric 1 (War Domain). Human; routine ranged. feats Sharpshooter, Archery. Act 1: Titanstring Bow, Club of Hill Giant Strength, Gloves of Archery. Act 2: Titanstring Bow, Club of Hill Giant Strength, Gloves of Archery, Helmet of Arcane Acuity, Yuan-Ti Scale Mail. Act 3: Gontr Mael, Club of Hill Giant Strength, Legacy of the Masters, Helmet of Arcane Acuity, Armour of Agility |
 | 6. Tempest Bladesinger | `cb34df72` | Wizard 6 (Bladesinging) / Cleric 6 (Tempest Domain). Human; routine one_handed, spell Spirit Guardians. Act 1: Boots of Stormy Clamour, Ring of Elemental Infusion, Ring of Arcane Synergy. Act 2: Boots of Stormy Clamour, Ring of Elemental Infusion, Ring of Arcane Synergy, Vivacious Cloak, Gloves of Battlemage's Power. Act 3: Boots of Stormy Clamour, Ring of Elemental Infusion, Ring of Arcane Synergy, Vivacious Cloak, Gloves of Battlemage's Power, Dolor Amarus, Hood of the Weave, Robe of the Weave, Amulet of the Devout |

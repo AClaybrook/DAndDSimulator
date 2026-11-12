@@ -216,7 +216,9 @@ def met_conditions(character, equipment, items):
     for key in dict.fromkeys(k for gear in equipment.values() for k in gear.values() if k in items):
         for ii, effect in enumerate(items[key].effects):
             condition = effect.condition or ""
-            if (condition.startswith("When Concentrating") and character.routine == "shadow_blade") or (condition.startswith("Arcane Synergy") and booming):
+            if (condition.startswith("When Concentrating") and character.routine == "shadow_blade") or (condition.startswith("Arcane Synergy") and booming) or \
+                    (condition.startswith("Scarlet Remittance") and condition_id(key, ii) not in on and
+                     not any(e.condition == condition for e in items[key].effects[:ii])):
                 on.append(condition_id(key, ii))
     return on
 

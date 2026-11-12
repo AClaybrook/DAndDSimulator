@@ -422,3 +422,20 @@ def test_estimates_party_synergies_and_items_the_damage_cannot_judge():
         assert all(names[k["item"]].notes and k["gain"] > 0 for k in kept)
     _, changes, kept = best_gear(party, 0, ["3"], "damage", Enemy(), 3, 1, 6, True, True, keep_uncounted=False)
     assert not kept and any(c["before"] and names[c["before"]].notes and not names[c["before"]].effects for c in changes)
+
+def test_belm_in_the_off_hand_and_rhapsody_stacks():
+    """ Belm in the off hand turns the bonus action attack into a main hand one (Perfectly Balanced Strike); Rhapsody's Scarlet
+        Remittance is one toggle for its three effects (+3 to hit, damage and spell save DC) """
+    from api.planner import conditional_options
+    from bg3.character import Bg3Character
+    blade = Bg3Character(classes=[["wizard", "Bladesinging", 12]], routine="shadow_blade", scores={**Bg3Character().scores, "dexterity": 16}).to_dict()
+    def build(off, conditions=()):
+        return Bg3Build("Blade", "", character=blade, equipment={"3": {"melee_off": off}}, conditions=list(conditions))
+    belm = compile_build(build("bg3:belm"), "3")
+    strike = next(a for a in belm.attacks if a.label == "Perfectly Balanced Strike")
+    assert strike.action == "bonus" and not strike.offhand and strike.damage == "4d8" and not [a for a in belm.attacks if a.offhand]
+    options = conditional_options(build("bg3:rhapsody"))
+    assert len(options) == 1 and options[0]["label"].startswith("Rhapsody: Scarlet Remittance")
+    cold, hot = (expected_damage_per_round(compile_build(build("bg3:rhapsody", c), "3"), Enemy(), 3) for c in ((), (options[0]["value"],)))
+    assert cold < expected_damage_per_round(belm, Enemy(), 3) and hot > 1.15 * cold
+    assert next(a for a in compile_build(build("bg3:rhapsody", (options[0]["value"],)), "3").attacks if not a.offhand).bonus_damage_die_mod_list[-1] == "3"

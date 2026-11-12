@@ -32,6 +32,7 @@ def effect_text(effect):
             "crit_damage": f"+{effect.value} on a crit", "crit_range": f"crit range +{effect.value}", "advantage": "advantage",
             "advantage_chance": f"advantage on about {round(float(effect.value or 0) * 100)}% of attacks" if effect.kind == "advantage_chance" else "",
             "limited_haste": f"its own Haste: {effect.value} more actions a fight",
+            "main_hand_bonus_attack": "in the off hand, the bonus action attack is made with the main hand weapon",
             "spell_dc": f"+{effect.value} spell DC", "damage_reroll": f"reroll damage dice of {effect.value} or less",
             "miss_damage_ability": f"{effect.stat.title()} modifier damage on a miss", "once_per_turn_bonus": f"+{effect.value} Sneak Attack damage", "extra_action": "another action each turn", "save_disadvantage": "enemies have disadvantage on the save",
             "free_cast": f"{effect.value} more cast a fight", "channel_divinity": f"+{effect.value} Channel Divinity charge", "extra_action_on_kill": "another action after a kill", "flag": str(effect.value),
@@ -109,7 +110,11 @@ def conditional_options(build):
             if item is None or key in seen:
                 continue
             seen.add(key)
-            options += [{"label": f"{item.name}: {e.condition}", "value": condition_id(key, ii)} for ii, e in enumerate(item.effects) if e.condition]
+            first = {}
+            for ii, e in enumerate(item.effects):
+                if e.condition:
+                    first.setdefault(e.condition, ii) # Effects sharing a condition are one toggle
+            options += [{"label": f"{item.name}: {condition}", "value": condition_id(key, ii)} for condition, ii in first.items()]
     return options
 
 PART_LABELS = {"damage": "Damage", "aoe": "AoE", "defence": "Defence", "control": "Control", "support": "Support", "utility": "Utility"}

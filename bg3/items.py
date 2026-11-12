@@ -53,7 +53,8 @@ class Effect:
               flag (turns on a Character option, i.e. savage_attacker), save_disadvantage (enemies roll saves against these attacks twice
               and keep the lower), free_cast (value more casts a fight of the limited spell it applies to), channel_divinity (value more
               Channel Divinity charges per long rest), advantage_chance (advantage on that share of the attack rolls), limited_haste
-              (value more actions a fight from a Haste the item casts, unless Haste is already on). An attack_bonus of 'proficiency'
+              (value more actions a fight from a Haste the item casts, unless Haste is already on), main_hand_bonus_attack (in the off hand, the
+              bonus action attack is made with the main hand weapon: Belm). An attack_bonus of 'proficiency'
               adds the proficiency bonus again (The Dead Shot)
         applies_to: a key of APPLIES_TO, or 'self' for the attacks made with the item's own weapon
         condition: when set, the effect only counts while the condition is toggled on, i.e. 'while raging' """
@@ -125,7 +126,9 @@ def condition_id(owner_key, index):
 
 def active_effects(owner_key, effects, conditions):
     """ The effects that count: unconditional ones, and conditional ones that are toggled on """
-    return [e for ii, e in enumerate(effects) if not e.condition or condition_id(owner_key, ii) in conditions]
+    # Effects of one item that share a condition are one toggle (the id of the first)
+    on = {e.condition for ii, e in enumerate(effects) if e.condition and condition_id(owner_key, ii) in conditions}
+    return [e for e in effects if not e.condition or e.condition in on]
 
 def _attacks_for(character, effect, own_attacks):
     if effect.applies_to == "self":
@@ -180,6 +183,8 @@ def apply_effect(character, effect, own_attacks=(), honour_mode=False):
     elif kind == "extra_action_on_kill":
         # Another Attack action whenever a kill happens on your turn
         extra_action(character, "Bloodlust", honour_mode, uses=float(value))
+    elif kind == "main_hand_bonus_attack":
+        pass # Belm in the off hand: the bonus action attack is made with the main hand weapon (bg3.build.compile_build)
     elif kind == "channel_divinity":
         # One more charge a long rest for whatever spends them (Touch of Death)
         more = float(value) / FIGHTS_PER_LONG_REST

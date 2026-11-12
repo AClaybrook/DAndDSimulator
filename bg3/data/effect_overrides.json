@@ -228,6 +228,34 @@
                 }
             ],
             "notes": "Keen Attack: the proficiency bonus is added twice to ranged attack rolls with this bow (not with Disadvantage)"
+        },
+        "Belm": {
+            "effects": [
+                {
+                    "kind": "main_hand_bonus_attack"
+                }
+            ],
+            "notes": "Perfectly Balanced Strike: in the off hand its bonus action attack is made with the main hand weapon (ability modifier and on-hit effects included), once a turn. Whirlwind Attack once a short rest"
+        },
+        "Rhapsody": {
+            "effects": [
+                {
+                    "kind": "attack_bonus",
+                    "value": 3,
+                    "condition": "Scarlet Remittance at +3 (three kills since the last long rest)"
+                },
+                {
+                    "kind": "damage_bonus",
+                    "value": 3,
+                    "condition": "Scarlet Remittance at +3 (three kills since the last long rest)"
+                },
+                {
+                    "kind": "spell_dc",
+                    "value": 3,
+                    "condition": "Scarlet Remittance at +3 (three kills since the last long rest)"
+                }
+            ],
+            "notes": "Scarlet Remittance: +1 to attack rolls, damage and spell save DC for every foe slain, up to +3, on everything the wielder does. Possibly inflict Bleeding when hitting with this weapon while Hiding or Invisible"
         }
     }
 }
