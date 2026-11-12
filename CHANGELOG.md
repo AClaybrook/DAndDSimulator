@@ -2,6 +2,8 @@
 
 ## 3.0.0 (in progress)
 
+- **Eldritch Knight:** War Magic (Eldritch Knight 7) gives a main hand weapon attack with the bonus action on turns the action casts
+  Booming Blade, in place of the off-hand swing. Shadow Blade builds now get Action Surge, which they were missing.
 - **Best in slot gear:** the planner's Gear tab can fill a character's gear for an act (or every act) with the best of everything found
   by then, for the most damage, the highest armour class or the best overall score, the weapon included (one that fits the build's grip).
   It is searched for the build against the current enemy, not a fixed list, and can leave the rest of the party's items alone. "Compare

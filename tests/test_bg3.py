@@ -465,3 +465,13 @@ def test_a_hold_can_fail_and_the_resonance_stone_weakens_mental_saves():
     # A Wisdom save cantrip against the same enemy: disadvantage makes it fail more often
     caster = compile_build(Bg3Build("Cleric", "", character=Bg3Character(classes=[["cleric", "Life Domain", 12]], routine="cantrip", cantrip="Toll the Dead").to_dict()), "3")
     assert expected_damage_per_round(caster, stoned) > expected_damage_per_round(caster, tough)
+
+def test_eldritch_knight_shadow_blade_gets_war_magic_and_action_surge():
+    from bg3.character import Bg3Character, compile_character
+    knight = Bg3Character(name="Knight", race="Human", scores={"strength": 8, "dexterity": 17, "constitution": 14, "intelligence": 10, "wisdom": 12, "charisma": 10},
+                          bonus={"dexterity": 2, "constitution": 1}, classes=[["fighter", "Eldritch Knight", 11], ["warlock", "The Hexblade", 1]],
+                          feats=["dexterity+2", "constitution+2"], routine="shadow_blade")
+    c, _ = compile_character(knight, 12)
+    names = [a.name for a in c.attacks]
+    assert "Shadow Blade (War Magic)" in names and not any(a.offhand for a in c.attacks) # War Magic takes the off-hand swing's bonus action
+    assert names.count("Shadow Blade (Action Surge)") == 3

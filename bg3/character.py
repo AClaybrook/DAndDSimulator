@@ -277,6 +277,8 @@ def compile_character(character, level=MAX_LEVEL, main_finesse=None):
     c.attacks = attacks
     if character.toggle("booming_blade") and "booming_blade" in relevant_toggles(character.classes):
         _booming_blade(c, character)
+        if levels.get("fighter", 0) >= 7 and subs.get("fighter") == "Eldritch Knight":
+            _war_magic(c)
     _class_features(character, c, levels, subs, notes, main_finesse)
     _cleric_spells(character, c, levels, subs, notes)
     c.casting_stat = item_casting_stat(character, level)
@@ -450,7 +452,8 @@ def _attacks(character, c, levels, subs, feats, notes, main_finesse=None):
 
     if routine in ("shadow_blade", "shadow_blade_shield"):
         blades = _shadow_blade_attacks(c, levels, subs, count, stat_for, notes, shield=routine == "shadow_blade_shield")
-        return blades + _reaction_attacks(character, blades[0], weapon_base(blades[0]), feats, routine)
+        surge = action_surge(levels.get("fighter", 0), "bg3", replace(blades[0])) if not blades[0].offhand else []
+        return blades + _reaction_attacks(character, blades[0], weapon_base(blades[0]), feats, routine) + surge
     name = DEFAULT_WEAPONS[routine]
     weapon_stat = "dexterity" if routine in ("ranged", "dual_wield", "dual_hand_crossbows") else "strength"
     if routine == "one_handed" and c.dexterity > c.strength:
@@ -567,6 +570,22 @@ def _booming_blade(c, character):
     if first is not None:
         c.attacks[c.attacks.index(first)] = first.variant("Booming Blade", tags=[*first.tags, "booming_blade"],
                                                           extra_damage_list=[*first.extra_damage_list, f"{1 + (c.level >= 11)}d8 thunder"])
+
+def _war_magic(c):
+    """ War Magic (Eldritch Knight 7): after casting a cantrip with the action (Booming Blade every turn), a main hand weapon attack with
+        the bonus action. It takes the bonus action from the off-hand swing (bg3.wiki) """
+    mains = [a for a in c.attacks if a.type == "weapon (melee)" and not a.offhand and a.action == "action" and not a.uses_per_fight and not a.fallback_for]
+    plain = [a for a in mains if "booming_blade" not in a.tags]
+    if not mains or not any("booming_blade" in a.tags for a in mains):
+        return
+    strike = (plain or mains)[-1]
+    off = next((a for a in c.attacks if a.offhand and a.action == "bonus" and not a.uses_per_fight), None)
+    extra = strike.variant("War Magic", action="bonus", fallback_for=off.fallback_for if off else "",
+                           extra_damage_list=[d for d in strike.extra_damage_list if "thunder" not in d or "booming_blade" not in strike.tags])
+    if off is not None:
+        c.attacks[c.attacks.index(off)] = extra
+    else:
+        c.attacks.append(extra)
 
 def _limited_rider(c, label, uses, bonus=None, extra=None, main=None, tags=()):
     """ A limited use rider on one attack each round (manoeuvres, Arcane Shots, Blade Flourish, Touch of Death), until its uses per
