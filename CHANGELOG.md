@@ -2,6 +2,8 @@
 
 ## 3.0.0 (in progress)
 
+- **Haste and smites:** a Paladin multiclass that casts Haste on itself (Wizard or Sorcerer 5+) spends a slot on it every fight, one
+  Divine Smite a fight fewer.
 - **Advantage some of the time:** a "Share of attacks with advantage" assumption (Shadow Blade in dim light, Faerie Fire). **Rapture**
   (+1d6 to attack rolls until a long rest, from the Nymph's Grotto) is a buff. The saved party's Godblade is set up as played.
 - **Gear solver and Pareto frontier:** the planner's Frontier tab searches gear and elixir combinations for a member at an act (each slot's

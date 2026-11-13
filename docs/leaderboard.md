@@ -96,10 +96,10 @@ Bless, the build's own planned buffs, and advantage only with a dependable sourc
 
 | # | Build | Source | Act 1 | Act 2 | Act 3 | Overall |
 |---|---|---|---|---|---|---|
-| 1 | 1. The Godblade | Build doc | 73.7 (#2) | 161.3 (#1) | 298.8 (#2) | 99 |
-| 2 | 32. Metamagic Godblade | Build doc | 73.7 (#3) | 153.3 (#2) | 301.5 (#1) | 98 |
-| 3 | 25. Action Surge Bladesinger Smiter | Build doc | 58.9 (#7) | 114.6 (#3) | 190.8 (#3) | 71 |
-| 4 | 2. Nuclear Pure Hexblade Warlock | Build doc | 64.8 (#4) | 85.4 (#5) | 189.9 (#4) | 67 |
+| 1 | 1. The Godblade | Build doc | 73.7 (#2) | 161.3 (#1) | 296.9 (#2) | 99 |
+| 2 | 32. Metamagic Godblade | Build doc | 73.7 (#3) | 148.4 (#2) | 301.5 (#1) | 97 |
+| 3 | 25. Action Surge Bladesinger Smiter | Build doc | 58.9 (#7) | 109.7 (#3) | 185.0 (#4) | 69 |
+| 4 | 2. Nuclear Pure Hexblade Warlock | Build doc | 64.8 (#4) | 85.4 (#5) | 189.9 (#3) | 67 |
 | 5 | 26. Pure Two-Handed GWM Hexblade | Build doc | 75.2 (#1) | 63.9 (#13) | 84.2 (#20) | 56 |
 | 6 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 56.8 (#8) | 84.4 (#6) | 119.0 (#8) | 56 |
 | 7 | Karlach (Berserker) | Preset | 61.9 (#5) | 73.7 (#8) | 80.5 (#25) | 52 |
@@ -268,10 +268,10 @@ Bless, the build's own planned buffs, and advantage only with a dependable sourc
 
 | # | Build | Source | Act 1 | Act 2 | Act 3 | Overall |
 |---|---|---|---|---|---|---|
-| 1 | 1. The Godblade | Build doc | 73.7 (#2) | 161.3 (#1) | 298.8 (#2) | 99 |
-| 2 | 32. Metamagic Godblade | Build doc | 73.7 (#3) | 153.3 (#2) | 301.5 (#1) | 98 |
-| 3 | 25. Action Surge Bladesinger Smiter | Build doc | 58.9 (#7) | 114.6 (#3) | 190.8 (#3) | 71 |
-| 4 | 2. Nuclear Pure Hexblade Warlock | Build doc | 64.8 (#4) | 85.4 (#5) | 189.9 (#4) | 67 |
+| 1 | 1. The Godblade | Build doc | 73.7 (#2) | 161.3 (#1) | 296.9 (#2) | 99 |
+| 2 | 32. Metamagic Godblade | Build doc | 73.7 (#3) | 148.4 (#2) | 301.5 (#1) | 97 |
+| 3 | 25. Action Surge Bladesinger Smiter | Build doc | 58.9 (#7) | 109.7 (#3) | 185.0 (#4) | 69 |
+| 4 | 2. Nuclear Pure Hexblade Warlock | Build doc | 64.8 (#4) | 85.4 (#5) | 189.9 (#3) | 67 |
 | 5 | 26. Pure Two-Handed GWM Hexblade | Build doc | 75.2 (#1) | 63.9 (#13) | 84.2 (#22) | 56 |
 | 6 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 56.8 (#8) | 84.4 (#6) | 119.0 (#8) | 56 |
 | 7 | Karlach (Berserker) | Preset | 61.9 (#5) | 73.7 (#8) | 80.5 (#28) | 52 |
@@ -354,10 +354,10 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 
 | Build | Gear | Damage 1 / 2 / 3 | AC 1 / 2 / 3 | Score 1 / 2 / 3 | Items that change |
 |---|---|---|---|---|---|
-| 1. The Godblade | Planned gear | 73.7 / 161.3 / 298.8 | 25 / 24 / 27 | 64 / 68 / 70 | - |
-| 1. The Godblade | Max damage gear | 77.2 / 170.1 / 298.8 | 25 / 24 / 27 | 66 / 68 / 70 | Act 1: Strange Conduit Ring; Act 2: Strange Conduit Ring |
-| 1. The Godblade | Max AC gear | 67.8 / 151.8 / 276.3 | 26 / 25 / 28 | 62 / 68 / 70 | Act 1: Ring of Protection; Act 2: Ring of Protection; Act 3: Ring of Protection |
-| 1. The Godblade | Best overall score gear | 73.7 / 161.3 / 298.8 | 25 / 24 / 27 | 64 / 68 / 70 | - |
+| 1. The Godblade | Planned gear | 73.7 / 161.3 / 296.9 | 25 / 24 / 27 | 64 / 68 / 70 | - |
+| 1. The Godblade | Max damage gear | 77.2 / 170.1 / 296.9 | 25 / 24 / 27 | 66 / 68 / 70 | Act 1: Strange Conduit Ring; Act 2: Strange Conduit Ring |
+| 1. The Godblade | Max AC gear | 67.8 / 151.8 / 274.4 | 26 / 25 / 28 | 62 / 68 / 70 | Act 1: Ring of Protection; Act 2: Ring of Protection; Act 3: Ring of Protection |
+| 1. The Godblade | Best overall score gear | 73.7 / 161.3 / 296.9 | 25 / 24 / 27 | 64 / 68 / 70 | - |
 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Planned gear | 19.5 / 34.5 / 45.5 | 16 / 16 / 17 | 24 / 25 / 28 | - |
 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Max damage gear | 25.1 / 46.8 / 61.7 | 17 / 18 / 19 | 28 / 32 / 35 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band, The Graceful Cloth; Act 3: Gloves of Dexterity, Caustic Band, The Graceful Cloth, Mask of Soul Perception, Cloak of the Weave |
 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Max AC gear | 24.8 / 43.0 / 54.4 | 19 / 21 / 25 | 31 / 36 / 47 | Act 1: The Graceful Cloth, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: The Graceful Cloth, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Studded Leather Armour +2, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
@@ -422,10 +422,10 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 | 24. Circle of the Stars / Light Cleric RadOrb Tank | Max damage gear | 14.2 / 24.6 / 30.7 | 14 / 17 / 17 | 25 / 37 / 35 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Risky Ring, The Graceful Cloth, Fistbreaker Helm, Caustic Band, Ketheric's Shield; Act 3: Gloves of Dexterity, Risky Ring, The Graceful Cloth, Fistbreaker Helm, Caustic Band, Ketheric's Shield, Amulet of the Devout, Cloak of the Weave |
 | 24. Circle of the Stars / Light Cleric RadOrb Tank | Max AC gear | 12.2 / 19.7 / 25.4 | 22 / 24 / 24 | 39 / 48 / 48 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band, Absolute's Warboard; Act 2: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band, Absolute's Warboard, Fistbreaker Helm, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band, Absolute's Warboard, Fistbreaker Helm, Cloak of Protection, Evasive Shoes, Amulet of the Devout |
 | 24. Circle of the Stars / Light Cleric RadOrb Tank | Best overall score gear | 10.9 / 18.9 / 24.8 | 22 / 23 / 24 | 40 / 49 / 49 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, The Whispering Promise, Absolute's Warboard; Act 2: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, The Whispering Promise, Absolute's Warboard, Fistbreaker Helm, Cloak of Protection; Act 3: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, The Whispering Promise, Absolute's Warboard, Fistbreaker Helm, Cloak of Protection, Amulet of the Devout, Evasive Shoes |
-| 25. Action Surge Bladesinger Smiter | Planned gear | 58.9 / 114.6 / 190.8 | 26 / 23 / 23 | 58 / 66 / 64 | - |
-| 25. Action Surge Bladesinger Smiter | Max damage gear | 65.3 / 139.0 / 219.4 | 26 / 23 / 23 | 62 / 69 / 67 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Dark Justiciar Gauntlets (Rare), Caustic Band; Act 3: Dark Justiciar Gauntlets (Rare), Caustic Band |
-| 25. Action Surge Bladesinger Smiter | Max AC gear | 64.8 / 124.1 / 200.5 | 28 / 27 / 27 | 61 / 69 / 69 | Act 1: Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes |
-| 25. Action Surge Bladesinger Smiter | Best overall score gear | 65.3 / 116.3 / 194.4 | 26 / 23 / 24 | 63 / 68 / 70 | Act 1: Gloves of Dexterity, Caustic Band, The Whispering Promise; Act 2: Gloves of Dexterity, The Whispering Promise; Act 3: Gloves of Dexterity, Ring of Protection, The Whispering Promise |
+| 25. Action Surge Bladesinger Smiter | Planned gear | 58.9 / 109.7 / 185.0 | 26 / 23 / 23 | 58 / 64 / 62 | - |
+| 25. Action Surge Bladesinger Smiter | Max damage gear | 65.3 / 134.1 / 213.6 | 26 / 23 / 23 | 62 / 69 / 67 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Dark Justiciar Gauntlets (Rare), Caustic Band; Act 3: Dark Justiciar Gauntlets (Rare), Caustic Band |
+| 25. Action Surge Bladesinger Smiter | Max AC gear | 64.8 / 119.2 / 194.8 | 28 / 27 / 27 | 61 / 67 / 68 | Act 1: Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes |
+| 25. Action Surge Bladesinger Smiter | Best overall score gear | 65.3 / 111.4 / 188.7 | 26 / 23 / 23 | 63 / 70 / 68 | Act 1: Gloves of Dexterity, Caustic Band, The Whispering Promise; Act 2: Gloves of Dexterity, Risky Ring, The Whispering Promise; Act 3: Gloves of Dexterity, Risky Ring, The Whispering Promise |
 | 26. Pure Two-Handed GWM Hexblade | Planned gear | 75.2 / 63.9 / 84.2 | 12 / 12 / 12 | 41 / 30 / 28 | - |
 | 26. Pure Two-Handed GWM Hexblade | Max damage gear | 83.5 / 72.1 / 103.8 | 14 / 14 / 14 | 46 / 34 / 33 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band; Act 3: Gloves of Dexterity, Caustic Band, Birthright |
 | 26. Pure Two-Handed GWM Hexblade | Max AC gear | 83.5 / 72.1 / 103.8 | 18 / 20 / 20 | 52 / 43 / 40 | Act 1: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Birthright |
@@ -454,10 +454,10 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 | 31. Camp Transmutation Alchemist & Stone Buffer | Max damage gear | 10.1 / 11.7 / 19.7 | 14 / 16 / 18 | 17 / 25 / 28 | Act 1: Daredevil Gloves; Act 2: Risky Ring, Ketheric's Shield; Act 3: Risky Ring, Ketheric's Shield, Robe of the Weave, Hood of the Weave, Cloak of the Weave |
 | 31. Camp Transmutation Alchemist & Stone Buffer | Max AC gear | 10.1 / 8.9 / 16.4 | 19 / 21 / 21 | 21 / 29 / 29 | Act 1: Infernal Robe, Gloves of Dexterity, Ring of Protection; Act 2: Infernal Robe, Ring of Protection, Cloak of Protection, Evasive Shoes, Iron-Banded Shield +1; Act 3: Infernal Robe, Ring of Protection, Cloak of Protection, Evasive Shoes, Iron-Banded Shield +1, Hood of the Weave |
 | 31. Camp Transmutation Alchemist & Stone Buffer | Best overall score gear | 10.1 / 8.9 / 16.4 | 19 / 21 / 21 | 21 / 29 / 29 | Act 1: Infernal Robe, Gloves of Dexterity, Ring of Protection; Act 2: Infernal Robe, Ring of Protection, Cloak of Protection, Evasive Shoes, Iron-Banded Shield +1; Act 3: Infernal Robe, Ring of Protection, Cloak of Protection, Evasive Shoes, Iron-Banded Shield +1, Hood of the Weave |
-| 32. Metamagic Godblade | Planned gear | 73.7 / 153.3 / 301.5 | 25 / 24 / 26 | 64 / 69 / 70 | - |
-| 32. Metamagic Godblade | Max damage gear | 77.2 / 158.7 / 301.5 | 25 / 24 / 26 | 66 / 69 / 70 | Act 1: Strange Conduit Ring; Act 2: Strange Conduit Ring |
-| 32. Metamagic Godblade | Max AC gear | 67.8 / 143.8 / 279.0 | 26 / 25 / 27 | 62 / 69 / 70 | Act 1: Ring of Protection; Act 2: Ring of Protection; Act 3: Ring of Protection |
-| 32. Metamagic Godblade | Best overall score gear | 73.7 / 153.3 / 301.5 | 25 / 24 / 26 | 64 / 69 / 70 | - |
+| 32. Metamagic Godblade | Planned gear | 73.7 / 148.4 / 301.5 | 25 / 24 / 26 | 64 / 69 / 70 | - |
+| 32. Metamagic Godblade | Max damage gear | 77.2 / 153.7 / 301.5 | 25 / 24 / 26 | 66 / 69 / 70 | Act 1: Strange Conduit Ring; Act 2: Strange Conduit Ring |
+| 32. Metamagic Godblade | Max AC gear | 67.8 / 138.8 / 279.0 | 26 / 25 / 27 | 62 / 69 / 70 | Act 1: Ring of Protection; Act 2: Ring of Protection; Act 3: Ring of Protection |
+| 32. Metamagic Godblade | Best overall score gear | 73.7 / 148.4 / 301.5 | 25 / 24 / 26 | 64 / 69 / 70 | - |
 | 4. Deathreaper | Planned gear | 20.8 / 28.4 / 56.2 | 17 / 19 / 21 | 45 / 44 / 52 | - |
 | 4. Deathreaper | Max damage gear | 22.2 / 32.8 / 60.0 | 17 / 19 / 21 | 45 / 46 / 53 | Act 1: Caustic Band; Act 2: Risky Ring; Act 3: Risky Ring |
 | 4. Deathreaper | Max AC gear | 20.8 / 28.4 / 56.2 | 19 / 20 / 22 | 49 / 46 / 55 | Act 1: Absolute's Warboard; Act 2: Ring of Protection; Act 3: Ring of Protection |

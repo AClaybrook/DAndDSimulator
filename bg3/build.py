@@ -121,6 +121,20 @@ def _finesse(attack):
     """ Whether the attack's weapon is finesse (Shadow Blade is) """
     return attack.base == SHADOW_BLADE or "finesse" in (weapons().get(attack.base, {}).get("properties") or [])
 
+def _haste_slot(build, act, character):
+    """ A build that casts Haste on itself (Wizard or Sorcerer 5+) spends a level 3 slot on it every fight: one smite a fight fewer """
+    if not build.character:
+        return
+    from bg3.character import class_levels # pylint: disable=import-outside-toplevel
+    levels = class_levels(Bg3Character.from_dict(build.character), act_level(act, build.levels))
+    if max(levels.get("wizard", 0), levels.get("sorcerer", 0)) < 5:
+        return
+    if character.once_per_turn_uses_per_fight and character.once_per_turn_damage_type == "radiant": # Divine Smite
+        character.once_per_turn_uses_per_fight = max(round(character.once_per_turn_uses_per_fight - 1, 2), 0.01)
+    for extra in getattr(character, "once_per_turn_extra", []) or []:
+        if extra.get("name") == "Divine Smite" and extra.get("uses_per_fight"):
+            extra["uses_per_fight"] = max(round(extra["uses_per_fight"] - 1, 2), 0.01)
+
 def compile_build(build, act, items=None):
     """ The build's Character at an act checkpoint, with gear, buffs and toggled conditions applied """
     items = items or catalog()
@@ -219,6 +233,7 @@ def compile_build(build, act, items=None):
     # Haste: one more action each round (the Hastened condition doesn't stack, so one at most)
     if extra_actions:
         extra_action(character, "Haste", honour_mode)
+        _haste_slot(build, act, character)
     elif limited_haste:
         # A Haste the gear casts on some days (Gontr Mael's Celestial Haste): that many more actions in a typical fight
         extra_action(character, "Celestial Haste", honour_mode, uses=limited_haste)

@@ -571,3 +571,11 @@ def test_advantage_share_and_rapture():
     assert all(a.advantage_chance == 0.5 for a in weapons) and all("1d6" in a.bonus_attack_die_mod_list for a in weapons)
     plain = compile_build(replace(godblade, assumptions={}), "3")
     assert all(a.advantage_chance == 0 for a in plain.attacks if a.is_weapon)
+
+def test_self_cast_haste_takes_a_smite_slot():
+    from bg3.parties import saved_parties
+    godblade = saved_parties()[0]["builds"][0]
+    hasted = compile_build(godblade, "3")
+    slow = compile_build(replace(godblade, buffs={**godblade.buffs, "3": [b for b in godblade.buffs["3"] if b != "haste"]}), "3")
+    assert hasted.once_per_turn_damage_type == "radiant"
+    assert round(slow.once_per_turn_uses_per_fight - hasted.once_per_turn_uses_per_fight, 2) == 1
