@@ -2,6 +2,8 @@
 
 ## 3.0.0 (in progress)
 
+- **Medium armour accessories:** gloves, helmets and boots that need Medium or Heavy Armour proficiency (Legacy of the Masters) end Mage
+  Armour, Unarmoured Defence, Bracers of Defence and Bladesong, as body armour does (seen in game).
 - **Saved parties:** the planner's "Saved parties" loads a party of build doc builds with gear changes, the trade-offs worked out for
   them as variants (Variants tab) and the takeaways as notes (bg3/data/parties.json). A variant's elixir now replaces the build's.
 - **Elixir of Bloodlust:** assumes its extra action on 2.5 of a fight's 3 turns (was 1.5), for a player who aims kills to trigger it.

@@ -4,7 +4,7 @@
   {
    "name": "My Tactician party (Godblade, Hexwing Phantom, Deathreaper, Arcane Deadeye)",
    "notes": [
-    "Godblade gloves: Legacy of the Masters (+34 a round) > Spellmight (+23, +35 with the Resonance Stone) > Helldusk (+22) > Dark Justiciar (+15). Legacy and Helldusk are worn by the Arcane Deadeye and the Hexwing Phantom",
+    "Godblade gloves: Spellmight (+23 a round, +35 with the Resonance Stone) > Helldusk (+22) > Dark Justiciar (+15). Legacy of the Masters (+34) and the +1 to hit gauntlets (Blackguard's, Warmaster, Unwanted Masterwork) need Medium Armour proficiency: they end Mage Armour and Bladesong, AC 27 -> 20",
     "Spellmight Gloves only add to Booming Blade: +1d8 thunder and +1d8 weapon damage, and no -5 (it rolls a weapon attack, not a spell attack)",
     "Gauntlets of Hill Giant Strength do nothing at Dexterity 22. Gloves of Battlemage's Power only raise spell attacks and DC, no weapon damage",
     "Necklace of Elemental Augmentation doesn't trigger on Booming Blade",
@@ -18,31 +18,107 @@
    "members": [
     {
      "doc": 1,
-     "equipment": {"3": {"gloves": "bg3:spellmight_gloves"}},
+     "equipment": {
+      "3": {
+       "gloves": "bg3:spellmight_gloves"
+      }
+     },
      "variants": [
-      {"name": "Gloves: Legacy of the Masters (the Deadeye's)", "gear": {"3": {"gloves": "bg3:legacy_of_the_masters"}}},
-      {"name": "Gloves: Helldusk (the Hexwing's)", "gear": {"3": {"gloves": "bg3:helldusk_gloves"}}},
-      {"name": "Gloves: Gauntlets of Hill Giant Strength", "gear": {"3": {"gloves": "bg3:gauntlets_of_hill_giant_strength"}}},
-      {"name": "Off hand: Belm instead of Rhapsody", "gear": {"3": {"melee_off": "bg3:belm"}}},
-      {"name": "Broodmother's Revenge + Ring of Regeneration", "gear": {"3": {"amulet": "bg3:broodmother_s_revenge", "ring_1": "bg3:ring_of_regeneration"}}},
-      {"name": "Cloak: Wavemother's Cloak", "gear": {"3": {"cloak": "bg3:wavemother_s_cloak"}}},
-      {"name": "Elixir: Cloud Giant Strength (single boss)", "buffs": ["elixir:elixir_of_cloud_giant_strength"]}
+      {
+       "name": "Gloves: Legacy of the Masters (the Deadeye's; ends Mage Armour and Bladesong)",
+       "gear": {
+        "3": {
+         "gloves": "bg3:legacy_of_the_masters"
+        }
+       }
+      },
+      {
+       "name": "Gloves: Helldusk (the Hexwing's)",
+       "gear": {
+        "3": {
+         "gloves": "bg3:helldusk_gloves"
+        }
+       }
+      },
+      {
+       "name": "Gloves: Gauntlets of Hill Giant Strength",
+       "gear": {
+        "3": {
+         "gloves": "bg3:gauntlets_of_hill_giant_strength"
+        }
+       }
+      },
+      {
+       "name": "Off hand: Belm instead of Rhapsody",
+       "gear": {
+        "3": {
+         "melee_off": "bg3:belm"
+        }
+       }
+      },
+      {
+       "name": "Broodmother's Revenge + Ring of Regeneration",
+       "gear": {
+        "3": {
+         "amulet": "bg3:broodmother_s_revenge",
+         "ring_1": "bg3:ring_of_regeneration"
+        }
+       }
+      },
+      {
+       "name": "Cloak: Wavemother's Cloak",
+       "gear": {
+        "3": {
+         "cloak": "bg3:wavemother_s_cloak"
+        }
+       }
+      },
+      {
+       "name": "Elixir: Cloud Giant Strength (single boss)",
+       "buffs": [
+        "elixir:elixir_of_cloud_giant_strength"
+       ]
+      }
      ]
     },
     {
      "doc": 3,
-     "variants": [{"name": "Elixir: Bloodlust", "buffs": ["elixir:elixir_of_bloodlust"]}]
+     "variants": [
+      {
+       "name": "Elixir: Bloodlust",
+       "buffs": [
+        "elixir:elixir_of_bloodlust"
+       ]
+      }
+     ]
     },
     {
      "doc": 4,
      "variants": [
-      {"name": "Elixir: Battlemage's Power (Hold Person DC 24)", "buffs": ["elixir:elixir_of_battlemage_s_power"]},
-      {"name": "Elixir: Bloodlust", "buffs": ["elixir:elixir_of_bloodlust"]}
+      {
+       "name": "Elixir: Battlemage's Power (Hold Person DC 24)",
+       "buffs": [
+        "elixir:elixir_of_battlemage_s_power"
+       ]
+      },
+      {
+       "name": "Elixir: Bloodlust",
+       "buffs": [
+        "elixir:elixir_of_bloodlust"
+       ]
+      }
      ]
     },
     {
      "doc": 5,
-     "variants": [{"name": "Elixir: Bloodlust", "buffs": ["elixir:elixir_of_bloodlust"]}]
+     "variants": [
+      {
+       "name": "Elixir: Bloodlust",
+       "buffs": [
+        "elixir:elixir_of_bloodlust"
+       ]
+      }
+     ]
     }
    ]
   }

@@ -532,3 +532,13 @@ def test_saved_party_variants_compile():
         compile_build(build, "3")
         if name.startswith("Elixir: Cloud Giant"):
             assert [b for b in build.buffs["3"] if b.startswith("elixir:")] == ["elixir:elixir_of_cloud_giant_strength"]
+
+def test_medium_armour_gloves_end_mage_armour_and_bladesong():
+    from bg3.defence import armour_class
+    from bg3.parties import saved_parties
+    godblade = saved_parties()[0]["builds"][0]
+    ac, parts = armour_class(godblade, "3")
+    gloved = replace(godblade, equipment={**godblade.equipment, "3": {**godblade.equipment["3"], "gloves": "bg3:legacy_of_the_masters"}})
+    ac2, parts2 = armour_class(gloved, "3")
+    assert any(s.startswith("Bladesong") for s, _ in parts) and not any(s.startswith(("Bladesong", "Mage Armour")) for s, _ in parts2)
+    assert ac2 < ac
