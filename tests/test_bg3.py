@@ -475,3 +475,15 @@ def test_eldritch_knight_shadow_blade_gets_war_magic_and_action_surge():
     names = [a.name for a in c.attacks]
     assert "Shadow Blade (War Magic)" in names and not any(a.offhand for a in c.attacks) # War Magic takes the off-hand swing's bonus action
     assert names.count("Shadow Blade (Action Surge)") == 3
+
+def test_strength_gear_sets_the_finesse_stat():
+    from bg3.character import Bg3Character
+    """ Gauntlets of Hill Giant Strength (23) beat Dexterity 20 for Shadow Blade and finesse daggers """
+    character = Bg3Character(scores={"strength": 8, "dexterity": 17, "constitution": 14, "intelligence": 16, "wisdom": 10, "charisma": 8},
+                             classes=[["paladin", "Oath of the Crown", 2], ["wizard", "Bladesinging", 10]], feats=["dexterity+2"],
+                             fighting_styles=["Two-Weapon Fighting"], routine="shadow_blade").to_dict()
+    bare = compile_build(Bg3Build("Godblade", "", character=character), "3")
+    gloved = compile_build(Bg3Build("Godblade", "", character=character, equipment={"3": {"gloves": "bg3:gauntlets_of_hill_giant_strength"}}), "3")
+    assert {a.ability_stat for a in bare.attacks if a.is_weapon} == {"dexterity"}
+    assert {a.ability_stat for a in gloved.attacks if a.is_weapon} == {"strength"}
+    assert expected_damage_per_round(gloved, Enemy(armor_class=18)) > expected_damage_per_round(bare, Enemy(armor_class=18))

@@ -2,6 +2,8 @@
 
 ## 3.0.0 (in progress)
 
+- **Strength gear and finesse weapons:** Gauntlets of Hill Giant Strength and the giant strength elixirs now count for Shadow Blade
+  and finesse weapons when they beat the character's Dexterity (they were ignored).
 - **Eldritch Knight:** War Magic (Eldritch Knight 7) gives a main hand weapon attack with the bonus action on turns the action casts
   Booming Blade, in place of the off-hand swing. Shadow Blade builds now get Action Surge, which they were missing.
 - **Best in slot gear:** the planner's Gear tab can fill a character's gear for an act (or every act) with the best of everything found

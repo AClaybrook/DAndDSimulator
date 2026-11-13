@@ -4,10 +4,11 @@ from copy import deepcopy
 from dataclasses import asdict, dataclass, field, fields, replace
 
 from bg3.buffs import BUFFS
-from bg3.character import POLEARM_REACTIONS, ROUNDS_PER_FIGHT, SENTINEL_REACTIONS, Bg3Character, compile_character, is_proficient, weapon_proficiencies
+from bg3.character import POLEARM_REACTIONS, ROUNDS_PER_FIGHT, SENTINEL_REACTIONS, SHADOW_BLADE, Bg3Character, compile_character, is_proficient, weapon_proficiencies
 from bg3.checkpoints import ACTS, act_level
 from bg3.items import (BLOODLUST_KILLS_PER_FIGHT, REACTION_ADVANTAGE, SLOT_LABELS, SLOTS, active_effects, apply_effect, apply_lightning_charges, apply_reverberation, catalog,
                        equip_weapon, extra_action)
+from game_data import weapons
 from game_data.classes import BUILDS, build_character
 
 ACT_KEYS = [str(a) for a in ACTS]
@@ -114,6 +115,10 @@ def _weapon_slot(attack):
         return "ranged_off" if attack.offhand else "ranged_main"
     return None
 
+def _finesse(attack):
+    """ Whether the attack's weapon is finesse (Shadow Blade is) """
+    return attack.base == SHADOW_BLADE or "finesse" in (weapons().get(attack.base, {}).get("properties") or [])
+
 def compile_build(build, act, items=None):
     """ The build's Character at an act checkpoint, with gear, buffs and toggled conditions applied """
     items = items or catalog()
@@ -196,6 +201,10 @@ def compile_build(build, act, items=None):
                 apply_effect(character, replace(effect, value=assumption(build, "bloodlust_kills")), own, honour_mode)
         elif effect.kind != "lightning_charges":
             apply_effect(character, effect, own, honour_mode)
+    # Gear and elixirs that set Strength or Dexterity (Gauntlets of Hill Giant Strength): finesse weapons hit with the higher one
+    for attack in character.attacks:
+        if attack.ability_stat in ("strength", "dexterity") and _finesse(attack):
+            attack.ability_stat = "dexterity" if character.dexterity > character.strength else "strength"
     # Charges from several items don't stack their bonuses
     apply_lightning_charges(character, [(e, own) for e, own in effects if e.kind == "lightning_charges"])
     apply_reverberation(character, {item.key for item in gear.values()})
