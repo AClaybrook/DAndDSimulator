@@ -14,68 +14,68 @@ No outside help. Self cast Hex and Divine Favour stay, Reckless Attack still giv
 | 2 | Throwing Berserker GWM (Berserker 12) | Reddit (approx.) | 59.2 (#1) | 65.2 (#2) | 81.6 (#12) | 87 |
 | 3 | 32. Metamagic Godblade | Build doc | 32.7 (#17) | 67.3 (#1) | 106.2 (#3) | 80 |
 | 4 | Karlach (Berserker) | Preset | 53.2 (#2) | 63.3 (#3) | 69.4 (#19) | 80 |
-| 5 | 3. Hexwing Phantom | Build doc | 48.4 (#6) | 51.1 (#15) | 95.4 (#7) | 78 |
-| 6 | 16. Karlach, God of Thunder | Build doc | 48.9 (#5) | 55.1 (#9) | 81.8 (#11) | 76 |
+| 5 | 3. Hexwing Phantom | Build doc | 48.4 (#7) | 52.1 (#13) | 95.4 (#7) | 78 |
+| 6 | 16. Karlach, God of Thunder | Build doc | 48.9 (#5) | 55.1 (#11) | 81.8 (#11) | 76 |
 | 7 | 1. The Godblade | Build doc | 32.7 (#16) | 60.7 (#4) | 104.2 (#4) | 76 |
 | 8 | Throwzerker (Giant, Tavern Brawler) | Preset | 48.9 (#4) | 60.6 (#5) | 68.1 (#20) | 76 |
-| 9 | 5. Arcane Deadeye | Build doc | 43.4 (#8) | 41.2 (#26) | 93.3 (#8) | 69 |
-| 10 | Padlock: Shadow Blade + shield | Preset | 31.4 (#18) | 56.7 (#8) | 86.9 (#9) | 69 |
-| 11 | 22. Tavern Brawler Open Hand Monk | Build doc | 42.1 (#10) | 58.8 (#7) | 55.6 (#33) | 67 |
-| 12 | 11. Ultimate Dark Knight | Build doc | 29.2 (#24) | 44.6 (#20) | 109.1 (#2) | 67 |
-| 13 | Lae'zel (Champion, GWM) | Preset | 36.4 (#13) | 52.6 (#11) | 77.5 (#13) | 67 |
-| 14 | Path of Giants Barbarian (Patch 8) | Preset | 44.0 (#7) | 53.8 (#10) | 58.4 (#29) | 67 |
-| 15 | Drunken Master Monk (Patch 8) | Preset | 42.1 (#9) | 52.0 (#13) | 53.1 (#38) | 63 |
-| 16 | Drunken Master Thief (Drunken Master 8 / Thief 4) | Reddit (approx.) | 42.1 (#11) | 52.0 (#14) | 49.3 (#41) | 62 |
-| 17 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Preset | 18.6 (#52) | 52.6 (#12) | 97.7 (#6) | 62 |
-| 18 | 25. Action Surge Bladesinger Smiter | Build doc | 24.7 (#39) | 50.8 (#16) | 82.0 (#10) | 61 |
-| 19 | Paladin (Smite) | Preset | 35.0 (#15) | 43.6 (#22) | 60.2 (#26) | 57 |
-| 20 | 20. Shadow Blade Eldritch Knight | Build doc | 23.8 (#40) | 32.6 (#37) | 104.1 (#5) | 57 |
-| 21 | Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Preset | 25.8 (#35) | 49.6 (#17) | 66.8 (#21) | 57 |
-| 22 | Padlock: Greatsword (GWF, GWM) | Preset | 21.0 (#48) | 44.8 (#19) | 77.0 (#14) | 54 |
-| 23 | Sorcadin: Shadow Blade + shield | Preset | 26.0 (#32) | 44.3 (#21) | 62.1 (#24) | 53 |
-| 24 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Preset | 26.8 (#31) | 41.8 (#25) | 65.0 (#22) | 53 |
-| 25 | The Waterdeep Brat (EK 11 / Hexblade 1) | Reddit (approx.) | 18.3 (#53) | 47.2 (#18) | 72.4 (#17) | 53 |
-| 26 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 26.9 (#28) | 42.4 (#23) | 61.4 (#25) | 52 |
-| 27 | Arcane Archer Fighter (Patch 8) | Preset | 28.8 (#26) | 41.9 (#24) | 55.8 (#31) | 52 |
-| 28 | Fire Marshal (Oathbreaker 7 / Fiend 5) | Reddit (approx.) | 35.5 (#14) | 34.8 (#32) | 54.4 (#34) | 52 |
-| 29 | Padlock: Glaive (GWF, Polearm Master) | Preset | 18.6 (#51) | 40.6 (#27) | 71.8 (#18) | 50 |
-| 30 | 9. Hexblade Sorlock | Build doc | 21.7 (#45) | 30.9 (#40) | 76.3 (#15) | 48 |
-| 31 | Sorcadin: Greatsword (GWF, GWM) | Preset | 30.9 (#21) | 34.4 (#33) | 49.8 (#40) | 48 |
-| 32 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 31.4 (#19) | 29.8 (#45) | 53.5 (#36) | 47 |
-| 33 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Reddit (approx.) | 17.8 (#54) | 38.1 (#28) | 64.0 (#23) | 46 |
-| 34 | 26. Pure Two-Handed GWM Hexblade | Build doc | 37.3 (#12) | 30.0 (#42) | 37.5 (#53) | 46 |
-| 35 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 21.8 (#44) | 35.2 (#31) | 55.8 (#32) | 44 |
-| 36 | Gloom Stalker (Archer) | Preset | 28.6 (#27) | 36.8 (#29) | 38.2 (#51) | 44 |
-| 37 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 21.5 (#47) | 36.1 (#30) | 54.0 (#35) | 44 |
-| 38 | Swashbuckler Rogue (Patch 8) | Preset | 30.6 (#22) | 31.1 (#39) | 43.7 (#43) | 44 |
-| 39 | Sorcadin: Glaive (GWF, Polearm Master) | Preset | 26.8 (#30) | 30.6 (#41) | 47.0 (#42) | 43 |
-| 40 | Astarion (Assassin, dual wield) | Preset | 26.9 (#29) | 34.1 (#34) | 40.3 (#47) | 43 |
+| 9 | Path of Giants Barbarian (Patch 8) | Preset | 48.6 (#6) | 59.4 (#7) | 64.5 (#25) | 74 |
+| 10 | Lae'zel (Champion, GWM) | Preset | 39.4 (#13) | 56.9 (#9) | 80.6 (#13) | 72 |
+| 11 | 5. Arcane Deadeye | Build doc | 43.4 (#8) | 41.2 (#26) | 93.3 (#8) | 69 |
+| 12 | Padlock: Shadow Blade + shield | Preset | 31.4 (#18) | 56.7 (#10) | 86.9 (#9) | 69 |
+| 13 | 11. Ultimate Dark Knight | Build doc | 29.2 (#25) | 44.6 (#22) | 114.0 (#2) | 69 |
+| 14 | 22. Tavern Brawler Open Hand Monk | Build doc | 42.1 (#10) | 58.8 (#8) | 55.6 (#35) | 67 |
+| 15 | Drunken Master Monk (Patch 8) | Preset | 42.1 (#9) | 52.0 (#14) | 53.1 (#40) | 63 |
+| 16 | Paladin (Smite) | Preset | 38.3 (#15) | 47.8 (#18) | 65.8 (#22) | 63 |
+| 17 | Drunken Master Thief (Drunken Master 8 / Thief 4) | Reddit (approx.) | 42.1 (#11) | 52.0 (#15) | 49.3 (#41) | 62 |
+| 18 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Preset | 18.6 (#52) | 52.6 (#12) | 97.7 (#6) | 62 |
+| 19 | 25. Action Surge Bladesinger Smiter | Build doc | 24.7 (#39) | 50.8 (#16) | 82.0 (#10) | 61 |
+| 20 | 20. Shadow Blade Eldritch Knight | Build doc | 23.8 (#40) | 32.6 (#38) | 104.1 (#5) | 57 |
+| 21 | Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Preset | 25.8 (#35) | 50.0 (#17) | 67.2 (#21) | 57 |
+| 22 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 29.3 (#24) | 46.1 (#20) | 65.0 (#23) | 57 |
+| 23 | Fire Marshal (Oathbreaker 7 / Fiend 5) | Reddit (approx.) | 38.8 (#14) | 38.3 (#28) | 57.9 (#32) | 56 |
+| 24 | Padlock: Greatsword (GWF, GWM) | Preset | 21.0 (#48) | 44.8 (#21) | 79.9 (#14) | 55 |
+| 25 | Sorcadin: Shadow Blade + shield | Preset | 26.0 (#32) | 44.3 (#23) | 62.1 (#27) | 53 |
+| 26 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Preset | 26.8 (#31) | 41.8 (#25) | 65.0 (#24) | 53 |
+| 27 | The Waterdeep Brat (EK 11 / Hexblade 1) | Reddit (approx.) | 18.3 (#53) | 47.2 (#19) | 72.4 (#17) | 53 |
+| 28 | Arcane Archer Fighter (Patch 8) | Preset | 28.8 (#27) | 41.9 (#24) | 55.8 (#33) | 52 |
+| 29 | 26. Pure Two-Handed GWM Hexblade | Build doc | 40.9 (#12) | 32.9 (#36) | 40.8 (#47) | 50 |
+| 30 | Padlock: Glaive (GWF, Polearm Master) | Preset | 18.6 (#51) | 40.6 (#27) | 71.8 (#18) | 50 |
+| 31 | Sorcadin: Greatsword (GWF, GWM) | Preset | 30.9 (#21) | 34.4 (#33) | 53.8 (#37) | 49 |
+| 32 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 31.4 (#19) | 29.8 (#45) | 58.7 (#29) | 48 |
+| 33 | 9. Hexblade Sorlock | Build doc | 21.7 (#45) | 30.9 (#41) | 76.3 (#15) | 48 |
+| 34 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Reddit (approx.) | 17.8 (#54) | 38.1 (#29) | 64.0 (#26) | 46 |
+| 35 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 21.8 (#44) | 35.2 (#32) | 55.8 (#34) | 44 |
+| 36 | Gloom Stalker (Archer) | Preset | 28.6 (#28) | 36.8 (#30) | 38.2 (#52) | 44 |
+| 37 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 21.5 (#47) | 36.1 (#31) | 54.0 (#36) | 44 |
+| 38 | Swashbuckler Rogue (Patch 8) | Preset | 30.6 (#22) | 31.1 (#40) | 43.7 (#44) | 44 |
+| 39 | Sorcadin: Glaive (GWF, Polearm Master) | Preset | 26.8 (#30) | 30.6 (#42) | 47.0 (#43) | 43 |
+| 40 | Astarion (Assassin, dual wield) | Preset | 26.9 (#29) | 34.1 (#34) | 40.3 (#48) | 43 |
 | 41 | 13. Jedi Consular | Build doc | 30.1 (#23) | 33.2 (#35) | 33.7 (#56) | 42 |
-| 42 | 7. Patch 8 Hexadin / Lockadin | Build doc | 17.8 (#55) | 32.8 (#36) | 58.1 (#30) | 42 |
-| 43 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Reddit (approx.) | 31.1 (#20) | 26.9 (#50) | 38.9 (#50) | 41 |
-| 44 | Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Preset | 25.8 (#34) | 30.0 (#43) | 39.0 (#49) | 40 |
-| 45 | Hexblade Warlock (Patch 8) | Preset | 24.8 (#38) | 27.2 (#47) | 43.5 (#44) | 39 |
-| 46 | Monk (Open Hand) | Preset | 29.2 (#25) | 24.5 (#55) | 38.0 (#52) | 39 |
+| 42 | 7. Patch 8 Hexadin / Lockadin | Build doc | 17.8 (#55) | 32.8 (#37) | 58.1 (#31) | 42 |
+| 43 | Hexblade Warlock (Patch 8) | Preset | 24.8 (#38) | 29.7 (#46) | 47.3 (#42) | 41 |
+| 44 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Reddit (approx.) | 31.1 (#20) | 26.9 (#50) | 38.9 (#51) | 41 |
+| 45 | Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Preset | 25.8 (#34) | 30.4 (#43) | 39.3 (#50) | 40 |
+| 46 | Monk (Open Hand) | Preset | 29.2 (#26) | 24.5 (#55) | 38.0 (#53) | 39 |
 | 47 | 15. Perfect Celestial Monk | Build doc | 10.6 (#71) | 25.5 (#53) | 75.0 (#16) | 38 |
-| 48 | 4. Deathreaper | Build doc | 19.5 (#49) | 26.2 (#51) | 53.2 (#37) | 38 |
-| 49 | 18. The 11/1 Fire Sorlock | Build doc | 12.1 (#65) | 29.9 (#44) | 58.5 (#28) | 37 |
-| 50 | Tempest Monk (Open Hand 6 / Tempest Cleric 6) | Reddit (approx.) | 21.7 (#46) | 32.4 (#38) | 32.0 (#59) | 37 |
+| 48 | 4. Deathreaper | Build doc | 19.5 (#49) | 26.2 (#51) | 53.2 (#38) | 38 |
+| 49 | 18. The 11/1 Fire Sorlock | Build doc | 12.1 (#65) | 29.9 (#44) | 58.5 (#30) | 37 |
+| 50 | Tempest Monk (Open Hand 6 / Tempest Cleric 6) | Reddit (approx.) | 21.7 (#46) | 32.4 (#39) | 32.0 (#59) | 37 |
 | 51 | Thief Monoclass (Thief 12) | Reddit (approx.) | 25.1 (#37) | 24.6 (#54) | 36.4 (#55) | 36 |
 | 52 | Filthy Harold Hunter (Hunter 11 / War Cleric 1) | Reddit (approx.) | 25.8 (#33) | 26.9 (#49) | 27.4 (#67) | 35 |
 | 53 | 8. Shadow Sorcadin | Build doc | 22.3 (#42) | 25.9 (#52) | 36.7 (#54) | 35 |
-| 54 | 21. 5/4/3 Gloom Stalker / Assassin / Arcane Archer | Build doc | 15.5 (#58) | 29.4 (#46) | 41.0 (#46) | 34 |
+| 54 | 21. 5/4/3 Gloom Stalker / Assassin / Arcane Archer | Build doc | 15.5 (#58) | 29.4 (#47) | 41.0 (#46) | 34 |
 | 55 | Swarmkeeper Ranger (Patch 8) | Preset | 22.8 (#41) | 27.1 (#48) | 29.0 (#63) | 34 |
-| 56 | Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Preset | 25.8 (#36) | 22.0 (#59) | 25.9 (#70) | 32 |
+| 56 | Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Preset | 25.8 (#36) | 22.0 (#59) | 26.2 (#69) | 32 |
 | 57 | 28. Darkness Dirty Trickster | Build doc | 22.1 (#43) | 16.6 (#66) | 42.7 (#45) | 32 |
 | 58 | Death Cleric: Spirit Guardians + Spiritual Weapon | Preset | 17.8 (#56) | 22.7 (#58) | 29.9 (#61) | 29 |
 | 59 | Warlock (Eldritch Blast) | Preset | 19.1 (#50) | 19.1 (#62) | 32.9 (#57) | 29 |
-| 60 | 19. The 10/2 Smite Swords Bard — SSB | Build doc | 10.2 (#72) | 23.9 (#56) | 40.1 (#48) | 28 |
+| 60 | 19. The 10/2 Smite Swords Bard — SSB | Build doc | 10.2 (#72) | 23.9 (#56) | 40.1 (#49) | 28 |
 | 61 | Light Cleric: Spirit Guardians + Spiritual Weapon | Preset | 15.2 (#59) | 22.7 (#57) | 29.8 (#62) | 28 |
-| 62 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Preset | 9.4 (#73) | 7.5 (#75) | 59.9 (#27) | 25 |
-| 63 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Build doc | 13.2 (#60) | 21.0 (#60) | 26.0 (#69) | 25 |
+| 62 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Preset | 9.4 (#73) | 7.5 (#75) | 59.9 (#28) | 25 |
+| 63 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Build doc | 13.2 (#60) | 21.0 (#60) | 26.0 (#70) | 25 |
 | 64 | 12. Unstoppable Death Monk | Build doc | 12.3 (#64) | 20.3 (#61) | 26.9 (#68) | 24 |
 | 65 | 17. Skald Dual-Wielding Bard | Build doc | 11.4 (#68) | 17.0 (#64) | 32.1 (#58) | 23 |
-| 66 | Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Preset | 9.4 (#74) | 7.5 (#76) | 52.7 (#39) | 23 |
+| 66 | Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Preset | 9.4 (#74) | 7.5 (#76) | 53.2 (#39) | 23 |
 | 67 | Circle of Stars Druid (Patch 8) | Preset | 15.7 (#57) | 15.6 (#68) | 20.5 (#73) | 22 |
 | 68 | 6. Tempest Bladesinger | Build doc | 11.7 (#66) | 13.6 (#73) | 31.4 (#60) | 22 |
 | 69 | Sorlock (Warlock 2 / Sorcerer) | Preset | 12.6 (#62) | 13.9 (#71) | 28.6 (#64) | 22 |
@@ -96,83 +96,83 @@ Bless, the build's own planned buffs, and advantage only with a dependable sourc
 
 | # | Build | Source | Act 1 | Act 2 | Act 3 | Overall |
 |---|---|---|---|---|---|---|
-| 1 | 1. The Godblade | Build doc | 73.7 (#1) | 161.3 (#1) | 268.4 (#2) | 100 |
-| 2 | 32. Metamagic Godblade | Build doc | 73.7 (#2) | 153.3 (#2) | 271.2 (#1) | 98 |
-| 3 | 25. Action Surge Bladesinger Smiter | Build doc | 58.9 (#7) | 114.6 (#3) | 190.8 (#3) | 74 |
-| 4 | 2. Nuclear Pure Hexblade Warlock | Build doc | 64.8 (#4) | 85.4 (#5) | 189.9 (#4) | 70 |
-| 5 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 52.8 (#8) | 78.4 (#6) | 113.5 (#9) | 54 |
-| 6 | 26. Pure Two-Handed GWM Hexblade | Build doc | 69.9 (#3) | 59.4 (#17) | 78.7 (#26) | 54 |
-| 7 | Karlach (Berserker) | Preset | 61.9 (#5) | 73.7 (#8) | 80.5 (#24) | 53 |
-| 8 | Throwing Berserker GWM (Berserker 12) | Reddit (approx.) | 59.2 (#6) | 65.2 (#10) | 81.6 (#23) | 50 |
-| 9 | Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Preset | 38.1 (#25) | 86.3 (#4) | 118.5 (#7) | 50 |
-| 10 | 3. Hexwing Phantom | Build doc | 50.1 (#11) | 59.7 (#16) | 107.2 (#11) | 48 |
-| 11 | 5. Arcane Deadeye | Build doc | 52.2 (#9) | 50.4 (#26) | 106.5 (#12) | 47 |
-| 12 | Lae'zel (Champion, GWM) | Preset | 46.6 (#16) | 64.8 (#11) | 94.9 (#14) | 46 |
-| 13 | 20. Shadow Blade Eldritch Knight | Build doc | 35.3 (#29) | 53.6 (#21) | 147.0 (#5) | 45 |
-| 14 | Path of Giants Barbarian (Patch 8) | Preset | 50.9 (#10) | 63.8 (#12) | 71.1 (#29) | 45 |
-| 15 | Padlock: Shadow Blade + shield | Preset | 44.8 (#17) | 60.3 (#15) | 92.7 (#15) | 44 |
-| 16 | 16. Karlach, God of Thunder | Build doc | 48.9 (#14) | 55.1 (#19) | 81.8 (#22) | 44 |
-| 17 | 22. Tavern Brawler Open Hand Monk | Build doc | 47.2 (#15) | 66.2 (#9) | 66.1 (#34) | 43 |
-| 18 | Throwzerker (Giant, Tavern Brawler) | Preset | 48.9 (#13) | 60.6 (#14) | 68.1 (#31) | 43 |
-| 19 | Fire Marshal (Oathbreaker 7 / Fiend 5) | Reddit (approx.) | 44.2 (#20) | 46.4 (#32) | 109.1 (#10) | 43 |
-| 20 | Gloom Stalker (Archer) | Preset | 49.2 (#12) | 56.9 (#18) | 59.0 (#45) | 41 |
-| 21 | The Waterdeep Brat (EK 11 / Hexblade 1) | Reddit (approx.) | 25.9 (#48) | 74.2 (#7) | 113.7 (#8) | 41 |
-| 22 | Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Preset | 38.1 (#24) | 61.7 (#13) | 82.9 (#21) | 40 |
-| 23 | 11. Ultimate Dark Knight | Build doc | 32.2 (#35) | 47.0 (#31) | 120.0 (#6) | 39 |
-| 24 | Paladin (Smite) | Preset | 42.2 (#22) | 52.9 (#22) | 71.5 (#28) | 39 |
-| 25 | Drunken Master Monk (Patch 8) | Preset | 44.4 (#18) | 52.0 (#23) | 56.0 (#48) | 38 |
-| 26 | Drunken Master Thief (Drunken Master 8 / Thief 4) | Reddit (approx.) | 44.4 (#19) | 52.0 (#24) | 55.2 (#49) | 38 |
-| 27 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Reddit (approx.) | 43.9 (#21) | 42.0 (#36) | 63.9 (#36) | 36 |
-| 28 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Preset | 26.2 (#47) | 54.5 (#20) | 103.0 (#13) | 36 |
-| 29 | Arcane Archer Fighter (Patch 8) | Preset | 35.8 (#28) | 49.8 (#28) | 67.2 (#32) | 35 |
-| 30 | Padlock: Greatsword (GWF, GWM) | Preset | 29.7 (#40) | 47.1 (#30) | 92.2 (#16) | 35 |
-| 31 | Monk (Open Hand) | Preset | 41.0 (#23) | 34.2 (#49) | 59.2 (#44) | 33 |
-| 32 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Reddit (approx.) | 25.4 (#49) | 51.2 (#25) | 85.8 (#19) | 33 |
-| 33 | Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Preset | 38.1 (#26) | 36.1 (#44) | 57.2 (#46) | 32 |
-| 34 | Swashbuckler Rogue (Patch 8) | Preset | 36.6 (#27) | 38.6 (#41) | 54.5 (#50) | 31 |
-| 35 | Tempest Monk (Open Hand 6 / Tempest Cleric 6) | Reddit (approx.) | 30.4 (#39) | 50.2 (#27) | 52.2 (#52) | 31 |
-| 36 | Sorcadin: Shadow Blade + shield | Preset | 27.1 (#44) | 47.5 (#29) | 66.4 (#33) | 30 |
-| 37 | Padlock: Glaive (GWF, Polearm Master) | Preset | 26.2 (#46) | 42.6 (#35) | 77.0 (#27) | 30 |
-| 38 | Hexblade Warlock (Patch 8) | Preset | 31.4 (#36) | 39.3 (#39) | 62.5 (#40) | 30 |
-| 39 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Preset | 27.9 (#43) | 43.5 (#33) | 68.2 (#30) | 30 |
-| 40 | Sorcadin: Greatsword (GWF, GWM) | Preset | 32.2 (#34) | 36.5 (#42) | 60.3 (#43) | 30 |
-| 41 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 32.7 (#32) | 32.8 (#51) | 63.1 (#39) | 29 |
-| 42 | Thief Monoclass (Thief 12) | Reddit (approx.) | 33.2 (#31) | 36.3 (#43) | 54.4 (#51) | 29 |
-| 43 | 13. Jedi Consular | Build doc | 35.2 (#30) | 39.2 (#40) | 40.3 (#60) | 29 |
-| 44 | Astarion (Assassin, dual wield) | Preset | 31.1 (#37) | 40.5 (#37) | 49.4 (#55) | 29 |
-| 45 | 28. Darkness Dirty Trickster | Build doc | 32.3 (#33) | 26.4 (#59) | 63.3 (#37) | 28 |
-| 46 | 9. Hexblade Sorlock | Build doc | 23.4 (#52) | 33.7 (#50) | 83.2 (#20) | 28 |
-| 47 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 24.2 (#50) | 43.2 (#34) | 63.3 (#38) | 28 |
-| 48 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 23.4 (#51) | 39.4 (#38) | 61.7 (#41) | 26 |
+| 1 | 1. The Godblade | Build doc | 73.7 (#2) | 161.3 (#1) | 298.8 (#2) | 99 |
+| 2 | 32. Metamagic Godblade | Build doc | 73.7 (#3) | 153.3 (#2) | 301.5 (#1) | 98 |
+| 3 | 25. Action Surge Bladesinger Smiter | Build doc | 58.9 (#7) | 114.6 (#3) | 190.8 (#3) | 71 |
+| 4 | 2. Nuclear Pure Hexblade Warlock | Build doc | 64.8 (#4) | 85.4 (#5) | 189.9 (#4) | 67 |
+| 5 | 26. Pure Two-Handed GWM Hexblade | Build doc | 75.2 (#1) | 63.9 (#13) | 84.2 (#20) | 56 |
+| 6 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 56.8 (#8) | 84.4 (#6) | 119.0 (#8) | 56 |
+| 7 | Karlach (Berserker) | Preset | 61.9 (#5) | 73.7 (#8) | 80.5 (#25) | 52 |
+| 8 | Throwing Berserker GWM (Berserker 12) | Reddit (approx.) | 59.2 (#6) | 65.2 (#12) | 81.6 (#24) | 49 |
+| 9 | Path of Giants Barbarian (Patch 8) | Preset | 56.2 (#9) | 70.5 (#9) | 78.5 (#27) | 48 |
+| 10 | Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Preset | 38.1 (#25) | 87.0 (#4) | 119.2 (#7) | 48 |
+| 11 | Lae'zel (Champion, GWM) | Preset | 50.5 (#11) | 70.1 (#10) | 98.8 (#14) | 48 |
+| 12 | 3. Hexwing Phantom | Build doc | 50.1 (#12) | 60.8 (#15) | 107.2 (#11) | 47 |
+| 13 | 5. Arcane Deadeye | Build doc | 52.2 (#10) | 50.4 (#27) | 106.5 (#12) | 45 |
+| 14 | Fire Marshal (Oathbreaker 7 / Fiend 5) | Reddit (approx.) | 48.3 (#16) | 50.9 (#26) | 114.7 (#9) | 45 |
+| 15 | 20. Shadow Blade Eldritch Knight | Build doc | 35.3 (#29) | 53.6 (#22) | 147.0 (#5) | 43 |
+| 16 | Padlock: Shadow Blade + shield | Preset | 44.8 (#19) | 60.3 (#17) | 92.7 (#16) | 43 |
+| 17 | 16. Karlach, God of Thunder | Build doc | 48.9 (#15) | 55.1 (#20) | 81.8 (#23) | 42 |
+| 18 | 22. Tavern Brawler Open Hand Monk | Build doc | 47.2 (#17) | 66.2 (#11) | 66.1 (#36) | 42 |
+| 19 | Throwzerker (Giant, Tavern Brawler) | Preset | 48.9 (#14) | 60.6 (#16) | 68.1 (#32) | 42 |
+| 20 | Paladin (Smite) | Preset | 46.3 (#18) | 58.0 (#18) | 78.2 (#28) | 41 |
+| 21 | Gloom Stalker (Archer) | Preset | 49.2 (#13) | 56.9 (#19) | 59.0 (#45) | 40 |
+| 22 | The Waterdeep Brat (EK 11 / Hexblade 1) | Reddit (approx.) | 25.9 (#48) | 74.2 (#7) | 113.7 (#10) | 39 |
+| 23 | Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Preset | 38.1 (#24) | 62.4 (#14) | 83.5 (#21) | 39 |
+| 24 | 11. Ultimate Dark Knight | Build doc | 32.2 (#35) | 47.0 (#32) | 125.4 (#6) | 38 |
+| 25 | Drunken Master Monk (Patch 8) | Preset | 44.4 (#20) | 52.0 (#23) | 56.0 (#48) | 37 |
+| 26 | Drunken Master Thief (Drunken Master 8 / Thief 4) | Reddit (approx.) | 44.4 (#21) | 52.0 (#24) | 55.2 (#49) | 37 |
+| 27 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Reddit (approx.) | 43.9 (#22) | 42.0 (#37) | 63.9 (#39) | 35 |
+| 28 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Preset | 26.2 (#47) | 54.5 (#21) | 103.0 (#13) | 34 |
+| 29 | Arcane Archer Fighter (Patch 8) | Preset | 35.8 (#28) | 49.8 (#29) | 67.2 (#33) | 34 |
+| 30 | Padlock: Greatsword (GWF, GWM) | Preset | 29.7 (#40) | 47.1 (#31) | 95.7 (#15) | 33 |
+| 31 | Monk (Open Hand) | Preset | 41.0 (#23) | 34.2 (#49) | 59.2 (#44) | 32 |
+| 32 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Reddit (approx.) | 25.4 (#49) | 51.2 (#25) | 85.8 (#19) | 31 |
+| 33 | Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Preset | 38.1 (#26) | 36.1 (#44) | 57.9 (#46) | 31 |
+| 34 | Swashbuckler Rogue (Patch 8) | Preset | 36.6 (#27) | 38.6 (#41) | 54.5 (#50) | 30 |
+| 35 | Hexblade Warlock (Patch 8) | Preset | 31.4 (#36) | 42.0 (#36) | 66.8 (#34) | 30 |
+| 36 | Tempest Monk (Open Hand 6 / Tempest Cleric 6) | Reddit (approx.) | 30.4 (#39) | 50.2 (#28) | 52.2 (#52) | 30 |
+| 37 | Sorcadin: Shadow Blade + shield | Preset | 27.1 (#44) | 47.5 (#30) | 66.4 (#35) | 29 |
+| 38 | Sorcadin: Greatsword (GWF, GWM) | Preset | 32.2 (#34) | 36.5 (#42) | 65.0 (#37) | 29 |
+| 39 | Padlock: Glaive (GWF, Polearm Master) | Preset | 26.2 (#46) | 42.6 (#35) | 77.0 (#29) | 29 |
+| 40 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 32.7 (#32) | 32.8 (#51) | 69.3 (#30) | 29 |
+| 41 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Preset | 27.9 (#43) | 43.5 (#33) | 68.2 (#31) | 29 |
+| 42 | Thief Monoclass (Thief 12) | Reddit (approx.) | 33.2 (#31) | 36.3 (#43) | 54.4 (#51) | 28 |
+| 43 | 13. Jedi Consular | Build doc | 35.2 (#30) | 39.2 (#40) | 40.3 (#60) | 28 |
+| 44 | Astarion (Assassin, dual wield) | Preset | 31.1 (#37) | 40.5 (#38) | 49.4 (#55) | 28 |
+| 45 | 28. Darkness Dirty Trickster | Build doc | 32.3 (#33) | 26.4 (#59) | 63.3 (#40) | 27 |
+| 46 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 24.2 (#50) | 43.2 (#34) | 63.3 (#41) | 27 |
+| 47 | 9. Hexblade Sorlock | Build doc | 23.4 (#52) | 33.7 (#50) | 83.2 (#22) | 27 |
+| 48 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 23.4 (#51) | 39.4 (#39) | 61.7 (#42) | 25 |
 | 49 | Sorcadin: Glaive (GWF, Polearm Master) | Preset | 27.9 (#42) | 32.3 (#54) | 49.8 (#54) | 25 |
-| 50 | Filthy Harold Hunter (Hunter 11 / War Cleric 1) | Reddit (approx.) | 31.1 (#38) | 32.5 (#53) | 33.6 (#67) | 25 |
-| 51 | Swarmkeeper Ranger (Patch 8) | Preset | 28.1 (#41) | 32.7 (#52) | 35.0 (#65) | 24 |
+| 50 | Filthy Harold Hunter (Hunter 11 / War Cleric 1) | Reddit (approx.) | 31.1 (#38) | 32.5 (#53) | 33.6 (#67) | 24 |
+| 51 | Swarmkeeper Ranger (Patch 8) | Preset | 28.1 (#41) | 32.7 (#52) | 35.0 (#65) | 23 |
 | 52 | Warlock (Eldritch Blast) | Preset | 26.9 (#45) | 28.2 (#57) | 43.9 (#57) | 23 |
 | 53 | 21. 5/4/3 Gloom Stalker / Assassin / Arcane Archer | Build doc | 21.8 (#54) | 35.6 (#45) | 50.0 (#53) | 23 |
-| 54 | 7. Patch 8 Hexadin / Lockadin | Build doc | 18.8 (#57) | 34.7 (#47) | 60.9 (#42) | 23 |
-| 55 | 15. Perfect Celestial Monk | Build doc | 11.6 (#74) | 29.3 (#55) | 91.3 (#17) | 23 |
-| 56 | 4. Deathreaper | Build doc | 20.8 (#55) | 28.4 (#56) | 56.2 (#47) | 22 |
-| 57 | Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Preset | 17.1 (#63) | 15.4 (#75) | 90.7 (#18) | 22 |
-| 58 | 18. The 11/1 Fire Sorlock | Build doc | 14.1 (#66) | 35.5 (#46) | 64.4 (#35) | 22 |
-| 59 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Build doc | 19.5 (#56) | 34.5 (#48) | 45.5 (#56) | 22 |
-| 60 | 8. Shadow Sorcadin | Build doc | 23.3 (#53) | 27.3 (#58) | 38.4 (#62) | 21 |
-| 61 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Preset | 17.1 (#62) | 15.4 (#74) | 79.8 (#25) | 21 |
-| 62 | Sorlock (Warlock 2 / Sorcerer) | Preset | 18.6 (#59) | 21.7 (#64) | 40.1 (#61) | 18 |
-| 63 | 23. Eldritch Blast Sorlock | Build doc | 18.6 (#60) | 21.7 (#65) | 35.7 (#63) | 17 |
-| 64 | Death Cleric: Spirit Guardians + Spiritual Weapon | Preset | 18.7 (#58) | 23.9 (#62) | 31.4 (#68) | 17 |
-| 65 | 19. The 10/2 Smite Swords Bard — SSB | Build doc | 11.8 (#73) | 26.4 (#60) | 43.7 (#59) | 16 |
-| 66 | Light Cleric: Spirit Guardians + Spiritual Weapon | Preset | 16.1 (#64) | 23.9 (#61) | 31.3 (#69) | 16 |
-| 67 | 17. Skald Dual-Wielding Bard | Build doc | 13.4 (#70) | 20.1 (#67) | 43.7 (#58) | 16 |
+| 54 | 7. Patch 8 Hexadin / Lockadin | Build doc | 18.8 (#57) | 34.7 (#47) | 60.9 (#43) | 22 |
+| 55 | 4. Deathreaper | Build doc | 20.8 (#55) | 28.4 (#56) | 56.2 (#47) | 21 |
+| 56 | 15. Perfect Celestial Monk | Build doc | 11.6 (#74) | 29.3 (#55) | 91.3 (#18) | 21 |
+| 57 | Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Preset | 17.1 (#63) | 15.4 (#75) | 91.5 (#17) | 21 |
+| 58 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Build doc | 19.5 (#56) | 34.5 (#48) | 45.5 (#56) | 21 |
+| 59 | 18. The 11/1 Fire Sorlock | Build doc | 14.1 (#66) | 35.5 (#46) | 64.4 (#38) | 21 |
+| 60 | 8. Shadow Sorcadin | Build doc | 23.3 (#53) | 27.3 (#58) | 38.4 (#62) | 20 |
+| 61 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Preset | 17.1 (#62) | 15.4 (#74) | 79.8 (#26) | 20 |
+| 62 | Sorlock (Warlock 2 / Sorcerer) | Preset | 18.6 (#59) | 21.7 (#64) | 40.1 (#61) | 17 |
+| 63 | Death Cleric: Spirit Guardians + Spiritual Weapon | Preset | 18.7 (#58) | 23.9 (#62) | 31.4 (#68) | 17 |
+| 64 | 23. Eldritch Blast Sorlock | Build doc | 18.6 (#60) | 21.7 (#65) | 35.7 (#63) | 17 |
+| 65 | Light Cleric: Spirit Guardians + Spiritual Weapon | Preset | 16.1 (#64) | 23.9 (#61) | 31.3 (#69) | 16 |
+| 66 | 19. The 10/2 Smite Swords Bard — SSB | Build doc | 11.8 (#73) | 26.4 (#60) | 43.7 (#59) | 16 |
+| 67 | 17. Skald Dual-Wielding Bard | Build doc | 13.4 (#70) | 20.1 (#67) | 43.7 (#58) | 15 |
 | 68 | 12. Unstoppable Death Monk | Build doc | 13.5 (#68) | 22.5 (#63) | 35.6 (#64) | 15 |
-| 69 | Circle of Stars Druid (Patch 8) | Preset | 17.9 (#61) | 18.0 (#70) | 24.0 (#72) | 15 |
-| 70 | Storm Bard (Storm Sorcerer 6 / Swords Bard 6) | Reddit (approx.) | 15.1 (#65) | 19.8 (#68) | 23.8 (#73) | 14 |
-| 71 | 6. Tempest Bladesinger | Build doc | 13.7 (#67) | 16.3 (#71) | 33.8 (#66) | 14 |
+| 69 | Circle of Stars Druid (Patch 8) | Preset | 17.9 (#61) | 18.0 (#70) | 24.0 (#72) | 14 |
+| 70 | Storm Bard (Storm Sorcerer 6 / Swords Bard 6) | Reddit (approx.) | 15.1 (#65) | 19.8 (#68) | 23.8 (#73) | 13 |
+| 71 | 6. Tempest Bladesinger | Build doc | 13.7 (#67) | 16.3 (#71) | 33.8 (#66) | 13 |
 | 72 | Bladesinger Wizard (Patch 8) | Preset | 13.4 (#69) | 20.1 (#66) | 22.1 (#75) | 13 |
 | 73 | Gale (Evoker) | Preset | 12.3 (#71) | 15.5 (#72) | 28.1 (#70) | 12 |
 | 74 | Evocation Wizard (Fireball, then Fire Bolt) | Preset | 12.3 (#72) | 15.5 (#73) | 28.1 (#71) | 12 |
-| 75 | 24. Circle of the Stars / Light Cleric RadOrb Tank | Build doc | 10.9 (#75) | 18.6 (#69) | 23.1 (#74) | 12 |
+| 75 | 24. Circle of the Stars / Light Cleric RadOrb Tank | Build doc | 10.9 (#75) | 18.6 (#69) | 23.1 (#74) | 11 |
 | 76 | 31. Camp Transmutation Alchemist & Stone Buffer | Build doc | 9.5 (#76) | 8.9 (#76) | 14.6 (#77) | 8 |
-| 77 | 14. Death Cleric Necromancer | Build doc | 5.8 (#78) | 7.8 (#77) | 18.3 (#76) | 7 |
+| 77 | 14. Death Cleric Necromancer | Build doc | 5.8 (#78) | 7.8 (#77) | 18.3 (#76) | 6 |
 | 78 | 30. Camp Land Druid Buffer | Build doc | 7.9 (#77) | 7.0 (#78) | 9.8 (#78) | 6 |
 | 79 | 29. Camp Cleric Party Buffer | Build doc | 5.4 (#79) | 5.0 (#79) | 7.4 (#79) | 4 |
 
@@ -268,84 +268,84 @@ Bless, the build's own planned buffs, and advantage only with a dependable sourc
 
 | # | Build | Source | Act 1 | Act 2 | Act 3 | Overall |
 |---|---|---|---|---|---|---|
-| 1 | 1. The Godblade | Build doc | 73.7 (#1) | 161.3 (#1) | 268.4 (#2) | 100 |
-| 2 | 32. Metamagic Godblade | Build doc | 73.7 (#2) | 153.3 (#2) | 271.2 (#1) | 98 |
-| 3 | 25. Action Surge Bladesinger Smiter | Build doc | 58.9 (#7) | 114.6 (#3) | 190.8 (#3) | 74 |
-| 4 | 2. Nuclear Pure Hexblade Warlock | Build doc | 64.8 (#4) | 85.4 (#5) | 189.9 (#4) | 70 |
-| 5 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 52.8 (#8) | 78.4 (#6) | 113.5 (#9) | 54 |
-| 6 | 26. Pure Two-Handed GWM Hexblade | Build doc | 69.9 (#3) | 59.4 (#17) | 78.7 (#29) | 54 |
-| 7 | Karlach (Berserker) | Preset | 61.9 (#5) | 73.7 (#8) | 80.5 (#27) | 53 |
-| 8 | Throwing Berserker GWM (Berserker 12) | Reddit (approx.) | 59.2 (#6) | 65.2 (#10) | 81.6 (#26) | 50 |
-| 9 | Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Preset | 38.1 (#27) | 86.3 (#4) | 118.5 (#7) | 50 |
-| 10 | 3. Hexwing Phantom | Build doc | 50.1 (#11) | 59.7 (#16) | 107.2 (#12) | 48 |
-| 11 | 5. Arcane Deadeye | Build doc | 52.2 (#9) | 50.4 (#29) | 106.5 (#13) | 47 |
-| 12 | Lae'zel (Champion, GWM) | Preset | 46.6 (#16) | 64.8 (#11) | 94.9 (#16) | 46 |
-| 13 | 20. Shadow Blade Eldritch Knight | Build doc | 35.3 (#32) | 53.6 (#22) | 147.0 (#5) | 45 |
-| 14 | Path of Giants Barbarian (Patch 8) | Preset | 50.9 (#10) | 63.8 (#12) | 71.1 (#36) | 45 |
-| 15 | Padlock: Shadow Blade + shield | Preset | 44.8 (#17) | 60.3 (#15) | 92.7 (#17) | 44 |
-| 16 | 16. Karlach, God of Thunder | Build doc | 48.9 (#14) | 55.1 (#20) | 81.8 (#25) | 44 |
-| 17 | 22. Tavern Brawler Open Hand Monk | Build doc | 47.2 (#15) | 66.2 (#9) | 66.1 (#43) | 43 |
-| 18 | Throwzerker (Giant, Tavern Brawler) | Preset | 48.9 (#13) | 60.6 (#14) | 68.1 (#40) | 43 |
-| 19 | Fire Marshal (Oathbreaker 7 / Fiend 5) | Reddit (approx.) | 44.2 (#20) | 46.4 (#38) | 109.1 (#10) | 43 |
-| 20 | 4. Deathreaper | Build doc | 38.9 (#25) | 56.0 (#19) | 107.8 (#11) | 42 |
-| 21 | Gloom Stalker (Archer) | Preset | 49.2 (#12) | 56.9 (#18) | 59.0 (#55) | 41 |
-| 22 | The Waterdeep Brat (EK 11 / Hexblade 1) | Reddit (approx.) | 25.9 (#54) | 74.2 (#7) | 113.7 (#8) | 41 |
-| 23 | Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Preset | 38.1 (#26) | 61.7 (#13) | 82.9 (#24) | 40 |
-| 24 | 11. Ultimate Dark Knight | Build doc | 32.2 (#40) | 47.0 (#37) | 120.0 (#6) | 39 |
-| 25 | Paladin (Smite) | Preset | 42.2 (#22) | 52.9 (#23) | 71.5 (#35) | 39 |
-| 26 | Drunken Master Monk (Patch 8) | Preset | 44.4 (#18) | 52.0 (#25) | 56.0 (#57) | 38 |
-| 27 | Drunken Master Thief (Drunken Master 8 / Thief 4) | Reddit (approx.) | 44.4 (#19) | 52.0 (#27) | 55.2 (#60) | 38 |
-| 28 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Reddit (approx.) | 43.9 (#21) | 42.0 (#44) | 63.9 (#45) | 36 |
-| 29 | Death Cleric: Spirit Guardians + Spiritual Weapon | Preset | 36.8 (#29) | 52.7 (#24) | 71.6 (#34) | 36 |
-| 30 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Preset | 26.2 (#53) | 54.5 (#21) | 103.0 (#14) | 36 |
-| 31 | Sorlock (Warlock 2 / Sorcerer) | Preset | 32.8 (#35) | 50.2 (#31) | 83.3 (#22) | 35 |
-| 32 | Arcane Archer Fighter (Patch 8) | Preset | 35.8 (#31) | 49.8 (#33) | 67.2 (#41) | 35 |
-| 33 | Padlock: Greatsword (GWF, GWM) | Preset | 29.7 (#44) | 47.1 (#36) | 92.2 (#18) | 35 |
-| 34 | 18. The 11/1 Fire Sorlock | Build doc | 22.1 (#62) | 52.0 (#26) | 99.6 (#15) | 33 |
-| 35 | Monk (Open Hand) | Preset | 41.0 (#23) | 34.2 (#61) | 59.2 (#54) | 33 |
-| 36 | 23. Eldritch Blast Sorlock | Build doc | 32.8 (#36) | 50.2 (#32) | 61.0 (#51) | 33 |
-| 37 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Reddit (approx.) | 25.4 (#55) | 51.2 (#28) | 85.8 (#21) | 33 |
-| 38 | Tempest Monk (Open Hand 6 / Tempest Cleric 6) | Reddit (approx.) | 30.4 (#43) | 50.2 (#30) | 68.5 (#38) | 33 |
-| 39 | Filthy Harold Hunter (Hunter 11 / War Cleric 1) | Reddit (approx.) | 40.2 (#24) | 42.2 (#43) | 42.4 (#72) | 32 |
-| 40 | Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Preset | 38.1 (#28) | 36.1 (#55) | 57.2 (#56) | 32 |
-| 41 | Swashbuckler Rogue (Patch 8) | Preset | 36.6 (#30) | 38.6 (#51) | 54.5 (#62) | 31 |
-| 42 | Sorcadin: Shadow Blade + shield | Preset | 27.1 (#49) | 47.5 (#35) | 66.4 (#42) | 30 |
-| 43 | Light Cleric: Spirit Guardians + Spiritual Weapon | Preset | 27.2 (#48) | 47.9 (#34) | 65.0 (#44) | 30 |
-| 44 | Padlock: Glaive (GWF, Polearm Master) | Preset | 26.2 (#52) | 42.6 (#42) | 77.0 (#30) | 30 |
-| 45 | Hexblade Warlock (Patch 8) | Preset | 31.4 (#41) | 39.3 (#49) | 62.5 (#49) | 30 |
-| 46 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Preset | 27.9 (#47) | 43.5 (#39) | 68.2 (#39) | 30 |
-| 47 | Sorcadin: Greatsword (GWF, GWM) | Preset | 32.2 (#39) | 36.5 (#53) | 60.3 (#53) | 30 |
-| 48 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 32.7 (#37) | 32.8 (#63) | 63.1 (#48) | 29 |
-| 49 | Thief Monoclass (Thief 12) | Reddit (approx.) | 33.2 (#34) | 36.3 (#54) | 54.4 (#63) | 29 |
-| 50 | 14. Death Cleric Necromancer | Build doc | 24.4 (#57) | 43.0 (#41) | 75.0 (#31) | 29 |
-| 51 | 13. Jedi Consular | Build doc | 35.2 (#33) | 39.2 (#50) | 40.3 (#73) | 29 |
-| 52 | Astarion (Assassin, dual wield) | Preset | 31.1 (#42) | 40.5 (#46) | 49.4 (#67) | 29 |
-| 53 | 28. Darkness Dirty Trickster | Build doc | 32.3 (#38) | 26.4 (#71) | 63.3 (#46) | 28 |
-| 54 | 9. Hexblade Sorlock | Build doc | 23.4 (#60) | 33.7 (#62) | 83.2 (#23) | 28 |
-| 55 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 24.2 (#58) | 43.2 (#40) | 63.3 (#47) | 28 |
-| 56 | Evocation Wizard (Fireball, then Fire Bolt) | Preset | 22.0 (#63) | 35.4 (#58) | 73.9 (#33) | 26 |
-| 57 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 23.4 (#59) | 39.4 (#47) | 61.7 (#50) | 26 |
+| 1 | 1. The Godblade | Build doc | 73.7 (#2) | 161.3 (#1) | 298.8 (#2) | 99 |
+| 2 | 32. Metamagic Godblade | Build doc | 73.7 (#3) | 153.3 (#2) | 301.5 (#1) | 98 |
+| 3 | 25. Action Surge Bladesinger Smiter | Build doc | 58.9 (#7) | 114.6 (#3) | 190.8 (#3) | 71 |
+| 4 | 2. Nuclear Pure Hexblade Warlock | Build doc | 64.8 (#4) | 85.4 (#5) | 189.9 (#4) | 67 |
+| 5 | 26. Pure Two-Handed GWM Hexblade | Build doc | 75.2 (#1) | 63.9 (#13) | 84.2 (#22) | 56 |
+| 6 | Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Preset | 56.8 (#8) | 84.4 (#6) | 119.0 (#8) | 56 |
+| 7 | Karlach (Berserker) | Preset | 61.9 (#5) | 73.7 (#8) | 80.5 (#28) | 52 |
+| 8 | Throwing Berserker GWM (Berserker 12) | Reddit (approx.) | 59.2 (#6) | 65.2 (#12) | 81.6 (#27) | 49 |
+| 9 | Path of Giants Barbarian (Patch 8) | Preset | 56.2 (#9) | 70.5 (#9) | 78.5 (#30) | 48 |
+| 10 | Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Preset | 38.1 (#27) | 87.0 (#4) | 119.2 (#7) | 48 |
+| 11 | Lae'zel (Champion, GWM) | Preset | 50.5 (#11) | 70.1 (#10) | 98.8 (#16) | 48 |
+| 12 | 3. Hexwing Phantom | Build doc | 50.1 (#12) | 60.8 (#15) | 107.2 (#12) | 47 |
+| 13 | 5. Arcane Deadeye | Build doc | 52.2 (#10) | 50.4 (#30) | 106.5 (#13) | 45 |
+| 14 | Fire Marshal (Oathbreaker 7 / Fiend 5) | Reddit (approx.) | 48.3 (#16) | 50.9 (#29) | 114.7 (#9) | 45 |
+| 15 | 20. Shadow Blade Eldritch Knight | Build doc | 35.3 (#32) | 53.6 (#23) | 147.0 (#5) | 43 |
+| 16 | Padlock: Shadow Blade + shield | Preset | 44.8 (#19) | 60.3 (#17) | 92.7 (#18) | 43 |
+| 17 | 16. Karlach, God of Thunder | Build doc | 48.9 (#15) | 55.1 (#21) | 81.8 (#26) | 42 |
+| 18 | 22. Tavern Brawler Open Hand Monk | Build doc | 47.2 (#17) | 66.2 (#11) | 66.1 (#45) | 42 |
+| 19 | Throwzerker (Giant, Tavern Brawler) | Preset | 48.9 (#14) | 60.6 (#16) | 68.1 (#41) | 42 |
+| 20 | Paladin (Smite) | Preset | 46.3 (#18) | 58.0 (#18) | 78.2 (#31) | 41 |
+| 21 | 4. Deathreaper | Build doc | 38.9 (#25) | 56.0 (#20) | 107.8 (#11) | 41 |
+| 22 | Gloom Stalker (Archer) | Preset | 49.2 (#13) | 56.9 (#19) | 59.0 (#55) | 40 |
+| 23 | The Waterdeep Brat (EK 11 / Hexblade 1) | Reddit (approx.) | 25.9 (#54) | 74.2 (#7) | 113.7 (#10) | 39 |
+| 24 | Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Preset | 38.1 (#26) | 62.4 (#14) | 83.5 (#23) | 39 |
+| 25 | 11. Ultimate Dark Knight | Build doc | 32.2 (#40) | 47.0 (#38) | 125.4 (#6) | 38 |
+| 26 | Drunken Master Monk (Patch 8) | Preset | 44.4 (#20) | 52.0 (#25) | 56.0 (#57) | 37 |
+| 27 | Drunken Master Thief (Drunken Master 8 / Thief 4) | Reddit (approx.) | 44.4 (#21) | 52.0 (#27) | 55.2 (#60) | 37 |
+| 28 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Reddit (approx.) | 43.9 (#22) | 42.0 (#45) | 63.9 (#48) | 35 |
+| 29 | Death Cleric: Spirit Guardians + Spiritual Weapon | Preset | 36.8 (#29) | 52.7 (#24) | 71.6 (#36) | 35 |
+| 30 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Preset | 26.2 (#53) | 54.5 (#22) | 103.0 (#14) | 34 |
+| 31 | Sorlock (Warlock 2 / Sorcerer) | Preset | 32.8 (#35) | 50.2 (#32) | 83.3 (#24) | 34 |
+| 32 | Arcane Archer Fighter (Patch 8) | Preset | 35.8 (#31) | 49.8 (#34) | 67.2 (#42) | 34 |
+| 33 | Padlock: Greatsword (GWF, GWM) | Preset | 29.7 (#44) | 47.1 (#37) | 95.7 (#17) | 33 |
+| 34 | Monk (Open Hand) | Preset | 41.0 (#23) | 34.2 (#61) | 59.2 (#54) | 32 |
+| 35 | 23. Eldritch Blast Sorlock | Build doc | 32.8 (#36) | 50.2 (#33) | 61.0 (#52) | 32 |
+| 36 | 18. The 11/1 Fire Sorlock | Build doc | 22.1 (#62) | 52.0 (#26) | 99.6 (#15) | 32 |
+| 37 | Tempest Monk (Open Hand 6 / Tempest Cleric 6) | Reddit (approx.) | 30.4 (#43) | 50.2 (#31) | 68.5 (#39) | 31 |
+| 38 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Reddit (approx.) | 25.4 (#55) | 51.2 (#28) | 85.8 (#21) | 31 |
+| 39 | Filthy Harold Hunter (Hunter 11 / War Cleric 1) | Reddit (approx.) | 40.2 (#24) | 42.2 (#43) | 42.4 (#72) | 31 |
+| 40 | Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Preset | 38.1 (#28) | 36.1 (#55) | 57.9 (#56) | 31 |
+| 41 | Swashbuckler Rogue (Patch 8) | Preset | 36.6 (#30) | 38.6 (#51) | 54.5 (#62) | 30 |
+| 42 | Hexblade Warlock (Patch 8) | Preset | 31.4 (#41) | 42.0 (#44) | 66.8 (#43) | 30 |
+| 43 | Sorcadin: Shadow Blade + shield | Preset | 27.1 (#49) | 47.5 (#36) | 66.4 (#44) | 29 |
+| 44 | Light Cleric: Spirit Guardians + Spiritual Weapon | Preset | 27.2 (#48) | 47.9 (#35) | 65.0 (#46) | 29 |
+| 45 | Sorcadin: Greatsword (GWF, GWM) | Preset | 32.2 (#39) | 36.5 (#53) | 65.0 (#47) | 29 |
+| 46 | Padlock: Glaive (GWF, Polearm Master) | Preset | 26.2 (#52) | 42.6 (#42) | 77.0 (#32) | 29 |
+| 47 | Radiant Protector (Crown Paladin 12) | Reddit (approx.) | 32.7 (#37) | 32.8 (#63) | 69.3 (#37) | 29 |
+| 48 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Preset | 27.9 (#47) | 43.5 (#39) | 68.2 (#40) | 29 |
+| 49 | Thief Monoclass (Thief 12) | Reddit (approx.) | 33.2 (#34) | 36.3 (#54) | 54.4 (#63) | 28 |
+| 50 | 13. Jedi Consular | Build doc | 35.2 (#33) | 39.2 (#50) | 40.3 (#73) | 28 |
+| 51 | 14. Death Cleric Necromancer | Build doc | 24.4 (#57) | 43.0 (#41) | 75.0 (#33) | 28 |
+| 52 | Astarion (Assassin, dual wield) | Preset | 31.1 (#42) | 40.5 (#47) | 49.4 (#67) | 28 |
+| 53 | 28. Darkness Dirty Trickster | Build doc | 32.3 (#38) | 26.4 (#71) | 63.3 (#49) | 27 |
+| 54 | Booming Smite Assassin (Oathbreaker 5 / Assassin 3 / Sorcerer 4) | Reddit (approx.) | 24.2 (#58) | 43.2 (#40) | 63.3 (#50) | 27 |
+| 55 | 9. Hexblade Sorlock | Build doc | 23.4 (#60) | 33.7 (#62) | 83.2 (#25) | 27 |
+| 56 | 27. Improved Divine Smite Hex-Crown Paladin | Build doc | 23.4 (#59) | 39.4 (#48) | 61.7 (#51) | 25 |
+| 57 | Evocation Wizard (Fireball, then Fire Bolt) | Preset | 22.0 (#63) | 35.4 (#58) | 73.9 (#35) | 25 |
 | 58 | 12. Unstoppable Death Monk | Build doc | 24.6 (#56) | 38.2 (#52) | 52.4 (#64) | 25 |
-| 59 | Gale (Evoker) | Preset | 20.0 (#67) | 35.4 (#57) | 73.9 (#32) | 25 |
-| 60 | Sorcadin: Glaive (GWF, Polearm Master) | Preset | 27.9 (#46) | 32.3 (#65) | 49.8 (#66) | 25 |
-| 61 | 29. Camp Cleric Party Buffer | Build doc | 21.2 (#65) | 39.3 (#48) | 55.6 (#59) | 25 |
-| 62 | Swarmkeeper Ranger (Patch 8) | Preset | 28.1 (#45) | 32.7 (#64) | 35.0 (#75) | 24 |
+| 59 | Sorcadin: Glaive (GWF, Polearm Master) | Preset | 27.9 (#46) | 32.3 (#65) | 49.8 (#66) | 25 |
+| 60 | Gale (Evoker) | Preset | 20.0 (#67) | 35.4 (#57) | 73.9 (#34) | 24 |
+| 61 | 29. Camp Cleric Party Buffer | Build doc | 21.2 (#65) | 39.3 (#49) | 55.6 (#59) | 24 |
+| 62 | Swarmkeeper Ranger (Patch 8) | Preset | 28.1 (#45) | 32.7 (#64) | 35.0 (#75) | 23 |
 | 63 | Warlock (Eldritch Blast) | Preset | 26.9 (#50) | 28.2 (#68) | 43.9 (#69) | 23 |
 | 64 | 21. 5/4/3 Gloom Stalker / Assassin / Arcane Archer | Build doc | 21.8 (#64) | 35.6 (#56) | 50.0 (#65) | 23 |
-| 65 | 7. Patch 8 Hexadin / Lockadin | Build doc | 18.8 (#69) | 34.7 (#59) | 60.9 (#52) | 23 |
-| 66 | 15. Perfect Celestial Monk | Build doc | 11.6 (#78) | 29.3 (#67) | 91.3 (#19) | 23 |
-| 67 | Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Preset | 17.1 (#72) | 15.4 (#79) | 90.7 (#20) | 22 |
-| 68 | Circle of Stars Druid (Patch 8) | Preset | 26.4 (#51) | 29.5 (#66) | 32.2 (#76) | 22 |
-| 69 | 31. Camp Transmutation Alchemist & Stone Buffer | Build doc | 20.7 (#66) | 27.7 (#69) | 54.9 (#61) | 22 |
-| 70 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Build doc | 19.5 (#68) | 34.5 (#60) | 45.5 (#68) | 22 |
-| 71 | 8. Shadow Sorcadin | Build doc | 23.3 (#61) | 27.3 (#70) | 38.4 (#74) | 21 |
-| 72 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Preset | 17.1 (#71) | 15.4 (#78) | 79.8 (#28) | 21 |
-| 73 | 24. Circle of the Stars / Light Cleric RadOrb Tank | Build doc | 10.9 (#79) | 41.8 (#45) | 55.7 (#58) | 20 |
-| 74 | 6. Tempest Bladesinger | Build doc | 13.7 (#74) | 16.3 (#77) | 68.7 (#37) | 18 |
+| 65 | 7. Patch 8 Hexadin / Lockadin | Build doc | 18.8 (#69) | 34.7 (#59) | 60.9 (#53) | 22 |
+| 66 | Circle of Stars Druid (Patch 8) | Preset | 26.4 (#51) | 29.5 (#66) | 32.2 (#76) | 21 |
+| 67 | 15. Perfect Celestial Monk | Build doc | 11.6 (#78) | 29.3 (#67) | 91.3 (#20) | 21 |
+| 68 | 31. Camp Transmutation Alchemist & Stone Buffer | Build doc | 20.7 (#66) | 27.7 (#69) | 54.9 (#61) | 21 |
+| 69 | Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Preset | 17.1 (#72) | 15.4 (#79) | 91.5 (#19) | 21 |
+| 70 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Build doc | 19.5 (#68) | 34.5 (#60) | 45.5 (#68) | 21 |
+| 71 | 8. Shadow Sorcadin | Build doc | 23.3 (#61) | 27.3 (#70) | 38.4 (#74) | 20 |
+| 72 | 24. Circle of the Stars / Light Cleric RadOrb Tank | Build doc | 10.9 (#79) | 41.8 (#46) | 55.7 (#58) | 20 |
+| 73 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Preset | 17.1 (#71) | 15.4 (#78) | 79.8 (#29) | 20 |
+| 74 | 6. Tempest Bladesinger | Build doc | 13.7 (#74) | 16.3 (#77) | 68.7 (#38) | 17 |
 | 75 | 19. The 10/2 Smite Swords Bard — SSB | Build doc | 11.8 (#77) | 26.4 (#72) | 43.7 (#71) | 16 |
-| 76 | 17. Skald Dual-Wielding Bard | Build doc | 13.4 (#76) | 20.1 (#74) | 43.7 (#70) | 16 |
+| 76 | 17. Skald Dual-Wielding Bard | Build doc | 13.4 (#76) | 20.1 (#74) | 43.7 (#70) | 15 |
 | 77 | 30. Camp Land Druid Buffer | Build doc | 17.7 (#70) | 19.6 (#76) | 18.9 (#79) | 14 |
-| 78 | Storm Bard (Storm Sorcerer 6 / Swords Bard 6) | Reddit (approx.) | 15.1 (#73) | 19.8 (#75) | 23.8 (#77) | 14 |
+| 78 | Storm Bard (Storm Sorcerer 6 / Swords Bard 6) | Reddit (approx.) | 15.1 (#73) | 19.8 (#75) | 23.8 (#77) | 13 |
 | 79 | Bladesinger Wizard (Patch 8) | Preset | 13.4 (#75) | 20.1 (#73) | 22.1 (#78) | 13 |
 
 ## Gear variants
@@ -354,18 +354,18 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 
 | Build | Gear | Damage 1 / 2 / 3 | AC 1 / 2 / 3 | Score 1 / 2 / 3 | Items that change |
 |---|---|---|---|---|---|
-| 1. The Godblade | Planned gear | 73.7 / 161.3 / 268.4 | 25 / 24 / 27 | 64 / 68 / 70 | - |
-| 1. The Godblade | Max damage gear | 77.2 / 170.1 / 268.4 | 25 / 24 / 27 | 66 / 68 / 70 | Act 1: Strange Conduit Ring; Act 2: Strange Conduit Ring |
-| 1. The Godblade | Max AC gear | 67.8 / 151.8 / 248.2 | 26 / 25 / 28 | 62 / 68 / 70 | Act 1: Ring of Protection; Act 2: Ring of Protection; Act 3: Ring of Protection |
-| 1. The Godblade | Best overall score gear | 73.7 / 161.3 / 268.4 | 25 / 24 / 27 | 64 / 68 / 70 | - |
+| 1. The Godblade | Planned gear | 73.7 / 161.3 / 298.8 | 25 / 24 / 27 | 64 / 68 / 70 | - |
+| 1. The Godblade | Max damage gear | 77.2 / 170.1 / 298.8 | 25 / 24 / 27 | 66 / 68 / 70 | Act 1: Strange Conduit Ring; Act 2: Strange Conduit Ring |
+| 1. The Godblade | Max AC gear | 67.8 / 151.8 / 276.3 | 26 / 25 / 28 | 62 / 68 / 70 | Act 1: Ring of Protection; Act 2: Ring of Protection; Act 3: Ring of Protection |
+| 1. The Godblade | Best overall score gear | 73.7 / 161.3 / 298.8 | 25 / 24 / 27 | 64 / 68 / 70 | - |
 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Planned gear | 19.5 / 34.5 / 45.5 | 16 / 16 / 17 | 24 / 25 / 28 | - |
 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Max damage gear | 25.1 / 46.8 / 63.4 | 17 / 18 / 19 | 28 / 32 / 34 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band, The Graceful Cloth; Act 3: Gloves of Dexterity, Caustic Band, The Graceful Cloth, Sarevok's Horned Helmet, Cloak of the Weave |
 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Max AC gear | 24.8 / 43.0 / 54.7 | 19 / 21 / 25 | 31 / 36 / 46 | Act 1: The Graceful Cloth, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: The Graceful Cloth, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Studded Leather Armour +2, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Sarevok's Horned Helmet |
 | 10. Pure 12 Bladesinging Wizard & 10 Bladesinger / 2 Stars Druid | Best overall score gear | 24.8 / 37.4 / 48.9 | 19 / 21 / 24 | 31 / 38 / 49 | Act 1: The Graceful Cloth, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: The Graceful Cloth, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
-| 11. Ultimate Dark Knight | Planned gear | 32.2 / 47.0 / 120.0 | 12 / 19 / 20 | 32 / 43 / 55 | - |
-| 11. Ultimate Dark Knight | Max damage gear | 36.8 / 57.3 / 132.4 | 14 / 19 / 20 | 36 / 47 / 58 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Ring of Arcane Synergy; Act 3: Ring of Arcane Synergy |
-| 11. Ultimate Dark Knight | Max AC gear | 32.2 / 47.0 / 120.0 | 20 / 23 / 22 | 46 / 51 / 61 | Act 1: Ring of Protection, Adamantine Scale Mail, Wondrous Gloves, Ring of Arcane Synergy; Act 2: Wondrous Gloves, Ring of Protection, Cloak of Protection, Evasive Shoes; Act 3: Ring of Protection, Cloak of Protection |
-| 11. Ultimate Dark Knight | Best overall score gear | 32.2 / 47.0 / 120.0 | 20 / 22 / 22 | 46 / 51 / 61 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection; Act 2: Wondrous Gloves, Ring of Protection, Cloak of Protection; Act 3: Ring of Protection, Cloak of Protection |
+| 11. Ultimate Dark Knight | Planned gear | 32.2 / 47.0 / 125.4 | 12 / 19 / 20 | 32 / 43 / 56 | - |
+| 11. Ultimate Dark Knight | Max damage gear | 36.8 / 57.3 / 138.6 | 14 / 19 / 20 | 36 / 47 / 59 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Ring of Arcane Synergy; Act 3: Ring of Arcane Synergy |
+| 11. Ultimate Dark Knight | Max AC gear | 32.2 / 47.0 / 125.4 | 20 / 23 / 22 | 46 / 51 / 62 | Act 1: Ring of Protection, Adamantine Scale Mail, Wondrous Gloves, Ring of Arcane Synergy; Act 2: Wondrous Gloves, Ring of Protection, Cloak of Protection, Evasive Shoes; Act 3: Ring of Protection, Cloak of Protection |
+| 11. Ultimate Dark Knight | Best overall score gear | 32.2 / 47.0 / 125.4 | 20 / 22 / 22 | 46 / 51 / 62 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection; Act 2: Wondrous Gloves, Ring of Protection, Cloak of Protection; Act 3: Ring of Protection, Cloak of Protection |
 | 12. Unstoppable Death Monk | Planned gear | 13.5 / 22.5 / 35.6 | 13 / 18 / 21 | 29 / 35 / 39 | - |
 | 12. Unstoppable Death Monk | Max damage gear | 16.7 / 25.4 / 38.5 | 14 / 20 / 21 | 31 / 40 / 39 | Act 1: Caustic Band, Gloves of Dexterity; Act 2: Risky Ring, Ketheric's Shield; Act 3: Caustic Band |
 | 12. Unstoppable Death Monk | Max AC gear | 14.8 / 22.5 / 35.6 | 22 / 22 / 22 | 46 / 45 / 42 | Act 1: Ring of Protection, Adamantine Scale Mail, Wondrous Gloves, Caustic Band, Absolute's Warboard; Act 2: Ring of Protection, Absolute's Warboard, Cloak of Protection; Act 3: Ring of Protection |
@@ -426,10 +426,10 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 | 25. Action Surge Bladesinger Smiter | Max damage gear | 65.3 / 139.0 / 219.4 | 26 / 23 / 23 | 62 / 69 / 67 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Dark Justiciar Gauntlets (Rare), Caustic Band; Act 3: Dark Justiciar Gauntlets (Rare), Caustic Band |
 | 25. Action Surge Bladesinger Smiter | Max AC gear | 64.8 / 124.1 / 200.5 | 28 / 27 / 27 | 61 / 69 / 69 | Act 1: Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes |
 | 25. Action Surge Bladesinger Smiter | Best overall score gear | 65.3 / 116.3 / 194.4 | 26 / 23 / 24 | 63 / 68 / 70 | Act 1: Gloves of Dexterity, Caustic Band, The Whispering Promise; Act 2: Gloves of Dexterity, The Whispering Promise; Act 3: Gloves of Dexterity, Ring of Protection, The Whispering Promise |
-| 26. Pure Two-Handed GWM Hexblade | Planned gear | 69.9 / 59.4 / 78.7 | 12 / 12 / 12 | 39 / 29 / 27 | - |
-| 26. Pure Two-Handed GWM Hexblade | Max damage gear | 77.6 / 67.0 / 96.9 | 14 / 14 / 14 | 44 / 33 / 32 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band; Act 3: Gloves of Dexterity, Caustic Band, Birthright |
-| 26. Pure Two-Handed GWM Hexblade | Max AC gear | 77.6 / 67.0 / 96.9 | 18 / 20 / 20 | 49 / 42 / 39 | Act 1: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Birthright |
-| 26. Pure Two-Handed GWM Hexblade | Best overall score gear | 77.6 / 62.6 / 92.1 | 18 / 20 / 20 | 49 / 49 / 46 | Act 1: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| 26. Pure Two-Handed GWM Hexblade | Planned gear | 75.2 / 63.9 / 84.2 | 12 / 12 / 12 | 41 / 30 / 28 | - |
+| 26. Pure Two-Handed GWM Hexblade | Max damage gear | 83.5 / 72.1 / 103.8 | 14 / 14 / 14 | 46 / 34 / 33 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band; Act 3: Gloves of Dexterity, Caustic Band, Birthright |
+| 26. Pure Two-Handed GWM Hexblade | Max AC gear | 83.5 / 72.1 / 103.8 | 18 / 20 / 20 | 52 / 43 / 40 | Act 1: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Birthright |
+| 26. Pure Two-Handed GWM Hexblade | Best overall score gear | 83.5 / 67.3 / 98.6 | 18 / 20 / 20 | 52 / 50 / 48 | Act 1: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
 | 27. Improved Divine Smite Hex-Crown Paladin | Planned gear | 23.4 / 39.4 / 61.7 | 14 / 12 / 12 | 31 / 32 / 32 | - |
 | 27. Improved Divine Smite Hex-Crown Paladin | Max damage gear | 25.6 / 49.4 / 77.2 | 16 / 14 / 14 | 35 / 39 / 39 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band, Risky Ring; Act 3: Gloves of Dexterity, Caustic Band, Risky Ring, Sarevok's Horned Helmet |
 | 27. Improved Divine Smite Hex-Crown Paladin | Max AC gear | 25.3 / 42.9 / 68.6 | 22 / 22 / 22 | 46 / 49 / 50 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Birthright |
@@ -442,10 +442,10 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 | 29. Camp Cleric Party Buffer | Max damage gear | 5.4 / 5.4 / 10.1 | 19 / 21 / 21 | 30 / 38 / 38 | Act 2: Fistbreaker Helm; Act 3: Fistbreaker Helm, Gauntlet of the Tyrant, Ring of Feywild Sparks, Cloak of the Weave |
 | 29. Camp Cleric Party Buffer | Max AC gear | 5.4 / 5.4 / 8.8 | 23 / 25 / 25 | 37 / 38 / 40 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection; Act 2: Wondrous Gloves, Ring of Protection, Fistbreaker Helm, Cloak of Protection, Evasive Shoes; Act 3: Wondrous Gloves, Ring of Protection, Fistbreaker Helm, Cloak of Protection, Evasive Shoes, Ring of Feywild Sparks |
 | 29. Camp Cleric Party Buffer | Best overall score gear | 5.4 / 5.4 / 9.4 | 22 / 22 / 22 | 38 / 39 / 41 | Act 1: Adamantine Scale Mail, Wondrous Gloves, The Whispering Promise; Act 2: Wondrous Gloves, The Whispering Promise, Fistbreaker Helm; Act 3: Wondrous Gloves, The Whispering Promise, Fistbreaker Helm, Ring of Feywild Sparks, Cloak of the Weave |
-| 3. Hexwing Phantom | Planned gear | 50.1 / 59.7 / 107.2 | 19 / 19 / 21 | 54 / 47 / 54 | - |
-| 3. Hexwing Phantom | Max damage gear | 54.4 / 65.8 / 112.1 | 20 / 20 / 21 | 54 / 44 / 47 | Act 1: Caustic Band, Gloves of Dexterity; Act 2: Caustic Band, Gloves of Dexterity; Act 3: Caustic Band |
-| 3. Hexwing Phantom | Max AC gear | 50.4 / 62.5 / 107.2 | 21 / 22 / 22 | 56 / 50 / 49 | Act 1: Ring of Protection, Gloves of Dexterity; Act 2: Ring of Protection, Gloves of Dexterity, Cloak of Protection; Act 3: Ring of Protection |
-| 3. Hexwing Phantom | Best overall score gear | 50.4 / 62.5 / 104.8 | 20 / 21 / 22 | 57 / 54 / 56 | Act 1: Gloves of Dexterity; Act 2: Gloves of Dexterity, Cloak of Protection; Act 3: Ring of Protection |
+| 3. Hexwing Phantom | Planned gear | 50.1 / 60.8 / 107.2 | 19 / 19 / 21 | 54 / 48 / 54 | - |
+| 3. Hexwing Phantom | Max damage gear | 54.4 / 67.0 / 112.1 | 20 / 20 / 21 | 54 / 44 / 47 | Act 1: Caustic Band, Gloves of Dexterity; Act 2: Caustic Band, Gloves of Dexterity; Act 3: Caustic Band |
+| 3. Hexwing Phantom | Max AC gear | 50.4 / 63.8 / 107.2 | 21 / 22 / 22 | 56 / 50 / 49 | Act 1: Ring of Protection, Gloves of Dexterity; Act 2: Ring of Protection, Gloves of Dexterity, Cloak of Protection; Act 3: Ring of Protection |
+| 3. Hexwing Phantom | Best overall score gear | 50.4 / 63.8 / 104.8 | 20 / 21 / 22 | 57 / 54 / 56 | Act 1: Gloves of Dexterity; Act 2: Gloves of Dexterity, Cloak of Protection; Act 3: Ring of Protection |
 | 30. Camp Land Druid Buffer | Planned gear | 7.9 / 7.0 / 9.8 | 12 / 12 / 12 | 21 / 22 / 23 | - |
 | 30. Camp Land Druid Buffer | Max damage gear | 8.3 / 9.6 / 15.9 | 12 / 14 / 16 | 22 / 25 / 28 | Act 1: Daredevil Gloves; Act 2: Daredevil Gloves, Risky Ring, Ketheric's Shield; Act 3: Daredevil Gloves, Risky Ring, Ketheric's Shield, Robe of the Weave, Sarevok's Horned Helmet, Khalid's Gift, Cloak of the Weave |
 | 30. Camp Land Druid Buffer | Max AC gear | 7.9 / 9.2 / 15.0 | 22 / 24 / 24 | 37 / 39 / 41 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Absolute's Warboard; Act 2: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Absolute's Warboard, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Absolute's Warboard, Risky Ring, Cloak of Protection, Evasive Shoes, Sarevok's Horned Helmet, Khalid's Gift |
@@ -454,10 +454,10 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 | 31. Camp Transmutation Alchemist & Stone Buffer | Max damage gear | 10.1 / 11.7 / 21.2 | 14 / 16 / 18 | 17 / 25 / 28 | Act 1: Daredevil Gloves; Act 2: Risky Ring, Ketheric's Shield; Act 3: Risky Ring, Ketheric's Shield, Robe of the Weave, Sarevok's Horned Helmet, Cloak of the Weave |
 | 31. Camp Transmutation Alchemist & Stone Buffer | Max AC gear | 10.1 / 8.9 / 16.4 | 19 / 21 / 21 | 21 / 29 / 29 | Act 1: Infernal Robe, Gloves of Dexterity, Ring of Protection; Act 2: Infernal Robe, Ring of Protection, Cloak of Protection, Evasive Shoes, Iron-Banded Shield +1; Act 3: Infernal Robe, Ring of Protection, Cloak of Protection, Evasive Shoes, Iron-Banded Shield +1, Hood of the Weave |
 | 31. Camp Transmutation Alchemist & Stone Buffer | Best overall score gear | 10.1 / 8.9 / 16.4 | 19 / 21 / 21 | 21 / 29 / 29 | Act 1: Infernal Robe, Gloves of Dexterity, Ring of Protection; Act 2: Infernal Robe, Ring of Protection, Cloak of Protection, Evasive Shoes, Iron-Banded Shield +1; Act 3: Infernal Robe, Ring of Protection, Cloak of Protection, Evasive Shoes, Iron-Banded Shield +1, Hood of the Weave |
-| 32. Metamagic Godblade | Planned gear | 73.7 / 153.3 / 271.2 | 25 / 24 / 26 | 64 / 69 / 70 | - |
-| 32. Metamagic Godblade | Max damage gear | 77.2 / 158.7 / 271.2 | 25 / 24 / 26 | 66 / 69 / 70 | Act 1: Strange Conduit Ring; Act 2: Strange Conduit Ring |
-| 32. Metamagic Godblade | Max AC gear | 67.8 / 143.8 / 250.9 | 26 / 25 / 27 | 62 / 69 / 70 | Act 1: Ring of Protection; Act 2: Ring of Protection; Act 3: Ring of Protection |
-| 32. Metamagic Godblade | Best overall score gear | 73.7 / 153.3 / 271.2 | 25 / 24 / 26 | 64 / 69 / 70 | - |
+| 32. Metamagic Godblade | Planned gear | 73.7 / 153.3 / 301.5 | 25 / 24 / 26 | 64 / 69 / 70 | - |
+| 32. Metamagic Godblade | Max damage gear | 77.2 / 158.7 / 301.5 | 25 / 24 / 26 | 66 / 69 / 70 | Act 1: Strange Conduit Ring; Act 2: Strange Conduit Ring |
+| 32. Metamagic Godblade | Max AC gear | 67.8 / 143.8 / 279.0 | 26 / 25 / 27 | 62 / 69 / 70 | Act 1: Ring of Protection; Act 2: Ring of Protection; Act 3: Ring of Protection |
+| 32. Metamagic Godblade | Best overall score gear | 73.7 / 153.3 / 301.5 | 25 / 24 / 26 | 64 / 69 / 70 | - |
 | 4. Deathreaper | Planned gear | 20.8 / 28.4 / 56.2 | 17 / 19 / 21 | 45 / 44 / 52 | - |
 | 4. Deathreaper | Max damage gear | 22.2 / 32.8 / 60.0 | 17 / 19 / 21 | 45 / 46 / 53 | Act 1: Caustic Band; Act 2: Risky Ring; Act 3: Risky Ring |
 | 4. Deathreaper | Max AC gear | 20.8 / 28.4 / 56.2 | 19 / 20 / 22 | 49 / 46 / 55 | Act 1: Absolute's Warboard; Act 2: Ring of Protection; Act 3: Ring of Protection |
@@ -490,18 +490,18 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 | Astarion (Assassin, dual wield) | Max damage gear | 36.4 / 51.2 / 59.9 | 15 / 19 / 19 | 33 / 34 / 30 | Act 1: The Graceful Cloth, Gloves of Dexterity, Caustic Band; Act 2: Dark Justiciar Gauntlets (Rare), Caustic Band; Act 3: Dark Justiciar Gauntlets (Rare), Caustic Band |
 | Astarion (Assassin, dual wield) | Max AC gear | 35.1 / 44.4 / 53.2 | 19 / 23 / 23 | 38 / 43 / 39 | Act 1: Padded Armour +2, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes |
 | Astarion (Assassin, dual wield) | Best overall score gear | 35.1 / 44.4 / 53.2 | 19 / 23 / 23 | 38 / 43 / 39 | Act 1: Padded Armour +2, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes |
-| Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Planned gear | 38.1 / 61.7 / 82.9 | 11 / 11 / 11 | 27 / 23 / 20 | - |
-| Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Max damage gear | 46.3 / 78.9 / 119.8 | 14 / 14 / 14 | 34 / 30 / 30 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band, The Mighty Cloth; Act 3: Gloves of Dexterity, Caustic Band, The Mighty Cloth, Mask of Soul Perception |
-| Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Max AC gear | 45.4 / 67.3 / 104.0 | 20 / 22 / 22 | 45 / 40 / 41 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
-| Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Best overall score gear | 45.4 / 61.7 / 95.3 | 20 / 22 / 22 | 45 / 47 / 47 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
-| Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Planned gear | 52.8 / 78.4 / 113.5 | 11 / 11 / 11 | 28 / 28 / 26 | - |
-| Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Max damage gear | 60.8 / 93.6 / 135.5 | 14 / 14 / 14 | 34 / 35 / 34 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band, The Mighty Cloth; Act 3: Gloves of Dexterity, Caustic Band, The Mighty Cloth, Mask of Soul Perception |
-| Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Max AC gear | 57.6 / 83.5 / 131.3 | 20 / 22 / 22 | 44 / 45 / 47 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
-| Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Best overall score gear | 57.6 / 78.4 / 123.4 | 20 / 22 / 22 | 44 / 54 / 55 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
-| Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Planned gear | 38.1 / 86.3 / 118.5 | 11 / 11 / 11 | 27 / 31 / 27 | - |
-| Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Max damage gear | 46.3 / 104.1 / 155.9 | 14 / 14 / 14 | 34 / 39 / 39 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band, The Mighty Cloth; Act 3: Gloves of Dexterity, Caustic Band, The Mighty Cloth, Mask of Soul Perception |
-| Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Max AC gear | 45.4 / 92.5 / 140.5 | 20 / 22 / 22 | 45 / 48 / 49 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
-| Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Best overall score gear | 45.4 / 86.3 / 130.9 | 20 / 22 / 22 | 45 / 56 / 56 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Planned gear | 38.1 / 62.4 / 83.5 | 11 / 11 / 11 | 27 / 23 / 20 | - |
+| Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Max damage gear | 46.3 / 79.7 / 120.5 | 14 / 14 / 14 | 34 / 30 / 30 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band, The Mighty Cloth; Act 3: Gloves of Dexterity, Caustic Band, The Mighty Cloth, Mask of Soul Perception |
+| Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Max AC gear | 45.4 / 68.0 / 104.6 | 20 / 22 / 22 | 45 / 40 / 41 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Battle Master: Glaive (Polearm Master, GWM, Sentinel) | Best overall score gear | 45.4 / 62.4 / 96.0 | 20 / 22 / 22 | 45 / 47 / 47 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Planned gear | 56.8 / 84.4 / 119.0 | 11 / 11 / 11 | 29 / 29 / 27 | - |
+| Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Max damage gear | 65.5 / 100.8 / 142.1 | 14 / 14 / 14 | 35 / 37 / 35 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band, The Mighty Cloth; Act 3: Gloves of Dexterity, Caustic Band, The Mighty Cloth, Mask of Soul Perception |
+| Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Max AC gear | 62.0 / 89.9 / 137.6 | 20 / 22 / 22 | 46 / 47 / 48 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Battle Master: Halberd of Vigilance (GWM, Savage Attacker, no reaction feats) | Best overall score gear | 62.0 / 84.4 / 129.4 | 20 / 22 / 22 | 46 / 56 / 56 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Planned gear | 38.1 / 87.0 / 119.2 | 11 / 11 / 11 | 27 / 31 / 27 | - |
+| Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Max damage gear | 46.3 / 104.9 / 156.7 | 14 / 14 / 14 | 34 / 39 / 39 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band, The Mighty Cloth; Act 3: Gloves of Dexterity, Caustic Band, The Mighty Cloth, Mask of Soul Perception |
+| Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Max AC gear | 45.4 / 93.3 / 141.2 | 20 / 22 / 22 | 45 / 48 / 49 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Battle Master: Halberd of Vigilance (Polearm Master, GWM, Sentinel) | Best overall score gear | 45.4 / 87.0 / 131.7 | 20 / 22 / 22 | 45 / 57 / 56 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Planned gear | 25.4 / 51.2 / 85.8 | 12 / 12 / 16 | 26 / 30 / 34 | - |
 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Max damage gear | 28.2 / 56.6 / 98.2 | 14 / 14 / 18 | 29 / 34 / 41 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band; Act 3: Gloves of Dexterity, Caustic Band, Birthright |
 | Bhaalist Hexblade Battle Master (BM 11 / Hexblade 1) | Max AC gear | 27.8 / 56.1 / 97.7 | 22 / 24 / 22 | 42 / 48 / 50 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band, Absolute's Warboard; Act 2: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band, Absolute's Warboard, Cloak of Protection, Evasive Shoes; Act 3: Wondrous Gloves, Ring of Protection, Caustic Band, Absolute's Warboard, Cloak of Protection, Evasive Shoes, Birthright |
@@ -538,22 +538,22 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Max damage gear | 22.2 / 28.6 / 107.7 | 14 / 14 / 14 | 22 / 23 / 36 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Dark Justiciar Gauntlets (Rare), Caustic Band, The Mighty Cloth; Act 3: Dark Justiciar Gauntlets (Rare), Caustic Band, The Mighty Cloth, Sarevok's Horned Helmet |
 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Max AC gear | 21.2 / 19.0 / 92.9 | 20 / 22 / 22 | 34 / 36 / 48 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Sarevok's Horned Helmet |
 | Fighter 6 / Swashbuckler 6: The Dancing Breeze (Dexterity, Polearm Master, Sentinel) | Best overall score gear | 21.2 / 15.4 / 84.7 | 20 / 22 / 22 | 34 / 37 / 50 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes, Sarevok's Horned Helmet |
-| Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Planned gear | 17.1 / 15.4 / 90.7 | 14 / 14 / 15 | 20 / 20 / 30 | - |
-| Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Max damage gear | 22.2 / 28.6 / 116.1 | 14 / 14 / 15 | 22 / 23 / 36 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Dark Justiciar Gauntlets (Rare), Caustic Band, The Mighty Cloth; Act 3: Dark Justiciar Gauntlets (Rare), Caustic Band, The Mighty Cloth, Mask of Soul Perception |
-| Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Max AC gear | 21.2 / 19.0 / 104.7 | 20 / 22 / 22 | 34 / 36 / 47 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
-| Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Best overall score gear | 21.2 / 15.4 / 97.9 | 20 / 22 / 22 | 34 / 37 / 53 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
-| Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Planned gear | 38.1 / 36.1 / 57.2 | 11 / 11 / 11 | 27 / 24 / 21 | - |
-| Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Max damage gear | 46.3 / 49.0 / 82.6 | 14 / 14 / 14 | 34 / 30 / 29 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band, The Mighty Cloth; Act 3: Gloves of Dexterity, Caustic Band, The Mighty Cloth, Mask of Soul Perception |
-| Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Max AC gear | 45.4 / 42.9 / 71.7 | 20 / 22 / 22 | 45 / 42 / 40 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
-| Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Best overall score gear | 45.4 / 36.1 / 65.8 | 20 / 22 / 22 | 45 / 45 / 45 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Planned gear | 17.1 / 15.4 / 91.5 | 14 / 14 / 15 | 20 / 20 / 31 | - |
+| Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Max damage gear | 22.2 / 28.6 / 116.9 | 14 / 14 / 15 | 22 / 23 / 36 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Dark Justiciar Gauntlets (Rare), Caustic Band, The Mighty Cloth; Act 3: Dark Justiciar Gauntlets (Rare), Caustic Band, The Mighty Cloth, Mask of Soul Perception |
+| Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Max AC gear | 21.2 / 19.0 / 105.5 | 20 / 22 / 22 | 34 / 36 / 48 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Fighter 8 / Swashbuckler 4: The Dancing Breeze (Dexterity, Polearm Master) | Best overall score gear | 21.2 / 15.4 / 98.7 | 20 / 22 / 22 | 34 / 37 / 53 | Act 1: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Planned gear | 38.1 / 36.1 / 57.9 | 11 / 11 / 11 | 27 / 24 / 22 | - |
+| Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Max damage gear | 46.3 / 49.0 / 83.4 | 14 / 14 / 14 | 34 / 30 / 29 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band, The Mighty Cloth; Act 3: Gloves of Dexterity, Caustic Band, The Mighty Cloth, Mask of Soul Perception |
+| Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Max AC gear | 45.4 / 42.9 / 72.5 | 20 / 22 / 22 | 45 / 42 / 40 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Fighter 9 / Swashbuckler 3: Glaive (Polearm Master, GWM) | Best overall score gear | 45.4 / 36.1 / 66.6 | 20 / 22 / 22 | 45 / 45 / 45 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
 | Filthy Harold Hunter (Hunter 11 / War Cleric 1) | Planned gear | 31.1 / 32.5 / 33.6 | 13 / 14 / 14 | 28 / 26 / 26 | - |
 | Filthy Harold Hunter (Hunter 11 / War Cleric 1) | Max damage gear | 37.5 / 49.1 / 63.1 | 14 / 15 / 15 | 32 / 34 / 34 | Act 1: The Graceful Cloth, Caustic Band; Act 2: The Graceful Cloth, Risky Ring, Caustic Band; Act 3: Gauntlets of Hill Giant Strength, The Graceful Cloth, Risky Ring, Caustic Band |
 | Filthy Harold Hunter (Hunter 11 / War Cleric 1) | Max AC gear | 33.8 / 35.1 / 36.4 | 19 / 21 / 21 | 39 / 40 / 37 | Act 1: Adamantine Scale Mail, Ring of Protection, Caustic Band; Act 2: Adamantine Scale Mail, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes |
 | Filthy Harold Hunter (Hunter 11 / War Cleric 1) | Best overall score gear | 33.8 / 42.4 / 45.4 | 19 / 21 / 21 | 39 / 44 / 39 | Act 1: Adamantine Scale Mail, Ring of Protection, Caustic Band; Act 2: Adamantine Scale Mail, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes |
-| Fire Marshal (Oathbreaker 7 / Fiend 5) | Planned gear | 44.2 / 46.4 / 109.1 | 9 / 9 / 9 | 33 / 29 / 32 | - |
-| Fire Marshal (Oathbreaker 7 / Fiend 5) | Max damage gear | 50.5 / 81.8 / 136.6 | 14 / 9 / 9 | 39 / 42 / 48 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Risky Ring, The Mighty Cloth, Caustic Band; Act 3: Risky Ring, The Mighty Cloth, Caustic Band, Mask of Soul Perception |
-| Fire Marshal (Oathbreaker 7 / Fiend 5) | Max AC gear | 46.8 / 48.5 / 127.7 | 20 / 21 / 21 | 49 / 44 / 47 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
-| Fire Marshal (Oathbreaker 7 / Fiend 5) | Best overall score gear | 46.8 / 75.0 / 127.7 | 20 / 20 / 20 | 49 / 51 / 54 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Risky Ring, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Risky Ring, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Fire Marshal (Oathbreaker 7 / Fiend 5) | Planned gear | 48.3 / 50.9 / 114.7 | 9 / 9 / 9 | 34 / 31 / 32 | - |
+| Fire Marshal (Oathbreaker 7 / Fiend 5) | Max damage gear | 55.3 / 88.9 / 143.8 | 14 / 9 / 9 | 42 / 45 / 49 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Risky Ring, The Mighty Cloth, Caustic Band; Act 3: Risky Ring, The Mighty Cloth, Caustic Band, Mask of Soul Perception |
+| Fire Marshal (Oathbreaker 7 / Fiend 5) | Max AC gear | 51.3 / 53.3 / 134.4 | 20 / 21 / 21 | 51 / 46 / 48 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Fire Marshal (Oathbreaker 7 / Fiend 5) | Best overall score gear | 51.3 / 81.4 / 134.4 | 20 / 20 / 20 | 51 / 53 / 56 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Risky Ring, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Risky Ring, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
 | Gale (Evoker) | Planned gear | 12.3 / 15.5 / 28.1 | 10 / 10 / 12 | 22 / 24 / 29 | - |
 | Gale (Evoker) | Max damage gear | 12.8 / 17.1 / 29.3 | 10 / 10 / 12 | 23 / 25 / 30 | Act 1: The Protecty Sparkswall, Daredevil Gloves; Act 2: Daredevil Gloves, Fistbreaker Helm, Risky Ring; Act 3: Daredevil Gloves, Risky Ring, Ring of Feywild Sparks |
 | Gale (Evoker) | Max AC gear | 12.7 / 16.8 / 28.7 | 16 / 18 / 18 | 26 / 30 / 34 | Act 1: Infernal Robe, Gloves of Dexterity, Ring of Protection; Act 2: Infernal Robe, Gloves of Dexterity, Ring of Protection, Fistbreaker Helm, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Gloves of Dexterity, Ring of Protection, Risky Ring, Evasive Shoes |
@@ -562,18 +562,18 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 | Gloom Stalker (Archer) | Max damage gear | 57.4 / 65.0 / 63.3 | 14 / 15 / 15 | 30 / 30 / 23 | Act 1: The Graceful Cloth, Caustic Band; Act 2: The Graceful Cloth, Caustic Band; Act 3: The Graceful Cloth, Caustic Band |
 | Gloom Stalker (Archer) | Max AC gear | 53.2 / 61.2 / 63.3 | 19 / 21 / 21 | 34 / 36 / 30 | Act 1: Adamantine Scale Mail, Ring of Protection, Caustic Band; Act 2: Adamantine Scale Mail, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes |
 | Gloom Stalker (Archer) | Best overall score gear | 53.2 / 56.9 / 59.0 | 19 / 21 / 21 | 34 / 41 / 33 | Act 1: Adamantine Scale Mail, Ring of Protection, Caustic Band; Act 2: Adamantine Scale Mail, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes |
-| Hexblade Warlock (Patch 8) | Planned gear | 31.4 / 39.3 / 62.5 | 12 / 12 / 12 | 31 / 28 / 29 | - |
-| Hexblade Warlock (Patch 8) | Max damage gear | 35.5 / 45.1 / 74.6 | 14 / 14 / 14 | 36 / 32 / 34 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band; Act 3: Gloves of Dexterity, Caustic Band, Birthright |
-| Hexblade Warlock (Patch 8) | Max AC gear | 35.5 / 45.1 / 74.6 | 18 / 20 / 20 | 41 / 41 / 41 | Act 1: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Birthright |
-| Hexblade Warlock (Patch 8) | Best overall score gear | 35.5 / 39.8 / 69.3 | 18 / 20 / 20 | 41 / 43 / 43 | Act 1: Padded Armour +2, Gloves of Dexterity, Caustic Band, Ring of Protection; Act 2: Padded Armour +2, Gloves of Dexterity, Risky Ring, Ring of Protection, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Gloves of Dexterity, Risky Ring, Ring of Protection, Cloak of Protection, Evasive Shoes, Birthright |
+| Hexblade Warlock (Patch 8) | Planned gear | 31.4 / 42.0 / 66.8 | 12 / 12 / 12 | 31 / 29 / 30 | - |
+| Hexblade Warlock (Patch 8) | Max damage gear | 35.5 / 48.3 / 79.8 | 14 / 14 / 14 | 36 / 33 / 35 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band; Act 3: Gloves of Dexterity, Caustic Band, Birthright |
+| Hexblade Warlock (Patch 8) | Max AC gear | 35.5 / 48.3 / 79.8 | 18 / 20 / 20 | 41 / 42 / 42 | Act 1: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Birthright |
+| Hexblade Warlock (Patch 8) | Best overall score gear | 35.5 / 42.6 / 74.1 | 18 / 20 / 20 | 41 / 44 / 44 | Act 1: Padded Armour +2, Gloves of Dexterity, Caustic Band, Ring of Protection; Act 2: Padded Armour +2, Gloves of Dexterity, Risky Ring, Ring of Protection, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Gloves of Dexterity, Risky Ring, Ring of Protection, Cloak of Protection, Evasive Shoes, Birthright |
 | Karlach (Berserker) | Planned gear | 61.9 / 73.7 / 80.5 | 13 / 13 / 13 | 44 / 36 / 28 | - |
 | Karlach (Berserker) | Max damage gear | 64.8 / 79.7 / 80.5 | 17 / 13 / 13 | 52 / 39 / 28 | Act 1: Gloves of Dexterity; Act 2: The Mighty Cloth; Act 3: The Mighty Cloth |
 | Karlach (Berserker) | Max AC gear | 64.8 / 70.0 / 77.0 | 19 / 21 / 21 | 57 / 49 / 40 | Act 1: Ring of Protection, Adamantine Scale Mail, Gloves of Dexterity, Caustic Band; Act 2: Ring of Protection, Adamantine Scale Mail, Gloves of Dexterity, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Ring of Protection, Adamantine Scale Mail, Gloves of Dexterity, Caustic Band, Cloak of Protection, Evasive Shoes |
 | Karlach (Berserker) | Best overall score gear | 64.8 / 73.7 / 77.0 | 19 / 19 / 21 | 57 / 46 / 40 | Act 1: Adamantine Scale Mail, Gloves of Dexterity, Ring of Protection; Act 2: Adamantine Scale Mail, Ring of Protection, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Gloves of Dexterity, Ring of Protection, Cloak of Protection, Evasive Shoes |
-| Lae'zel (Champion, GWM) | Planned gear | 46.6 / 64.8 / 94.9 | 15 / 18 / 21 | 33 / 35 / 38 | - |
-| Lae'zel (Champion, GWM) | Max damage gear | 50.7 / 93.3 / 152.9 | 17 / 18 / 21 | 38 / 47 / 52 | Act 1: Gloves of Dexterity; Act 2: Risky Ring, Caustic Band; Act 3: Risky Ring, Helldusk Gloves, Caustic Band |
-| Lae'zel (Champion, GWM) | Max AC gear | 46.6 / 60.9 / 89.3 | 20 / 21 / 24 | 44 / 42 / 43 | Act 1: Ring of Protection, Adamantine Splint Armour, Wondrous Gloves, Caustic Band; Act 2: Ring of Protection, Cloak of Protection, Evasive Shoes; Act 3: Ring of Protection, Cloak of Protection, Evasive Shoes |
-| Lae'zel (Champion, GWM) | Best overall score gear | 46.6 / 87.8 / 129.6 | 20 / 21 / 24 | 44 / 52 / 53 | Act 1: Ring of Protection, Adamantine Splint Armour, Wondrous Gloves, Caustic Band; Act 2: Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes |
+| Lae'zel (Champion, GWM) | Planned gear | 50.5 / 70.1 / 98.8 | 15 / 18 / 21 | 35 / 37 / 39 | - |
+| Lae'zel (Champion, GWM) | Max damage gear | 54.9 / 99.1 / 156.1 | 17 / 18 / 21 | 40 / 49 / 53 | Act 1: Gloves of Dexterity; Act 2: Risky Ring, Caustic Band; Act 3: Risky Ring, Helldusk Gloves, Caustic Band |
+| Lae'zel (Champion, GWM) | Max AC gear | 50.5 / 65.9 / 93.0 | 20 / 21 / 24 | 46 / 43 / 44 | Act 1: Ring of Protection, Adamantine Splint Armour, Wondrous Gloves, Caustic Band; Act 2: Ring of Protection, Cloak of Protection, Evasive Shoes; Act 3: Ring of Protection, Cloak of Protection, Evasive Shoes |
+| Lae'zel (Champion, GWM) | Best overall score gear | 50.5 / 93.2 / 132.3 | 20 / 21 / 24 | 46 / 54 / 54 | Act 1: Ring of Protection, Adamantine Splint Armour, Wondrous Gloves, Caustic Band; Act 2: Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Ring of Protection, Risky Ring, Cloak of Protection, Evasive Shoes |
 | Light Cleric: Spirit Guardians + Spiritual Weapon | Planned gear | 16.1 / 23.9 / 31.3 | 17 / 18 / 18 | 36 / 39 / 37 | - |
 | Light Cleric: Spirit Guardians + Spiritual Weapon | Max damage gear | 16.5 / 28.0 / 39.4 | 17 / 20 / 20 | 36 / 46 / 43 | Act 1: Daredevil Gloves; Act 2: Daredevil Gloves, Fistbreaker Helm, Risky Ring, Ketheric's Shield; Act 3: Daredevil Gloves, Fistbreaker Helm, Risky Ring, Ketheric's Shield, Ring of Feywild Sparks, Cloak of the Weave |
 | Light Cleric: Spirit Guardians + Spiritual Weapon | Max AC gear | 16.1 / 26.8 / 35.1 | 21 / 24 / 24 | 47 / 52 / 50 | Act 1: Wondrous Gloves, Ring of Protection, Absolute's Warboard; Act 2: Wondrous Gloves, Ring of Protection, Absolute's Warboard, Fistbreaker Helm, Risky Ring, Cloak of Protection, Evasive Shoes; Act 3: Wondrous Gloves, Ring of Protection, Absolute's Warboard, Fistbreaker Helm, Risky Ring, Cloak of Protection, Evasive Shoes |
@@ -586,10 +586,10 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 | Padlock: Glaive (GWF, Polearm Master) | Max damage gear | 30.6 / 47.0 / 92.3 | 14 / 14 / 14 | 30 / 36 / 42 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band; Act 3: Gloves of Dexterity, Caustic Band, Birthright |
 | Padlock: Glaive (GWF, Polearm Master) | Max AC gear | 30.6 / 47.0 / 92.3 | 18 / 20 / 20 | 35 / 44 / 49 | Act 1: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Birthright |
 | Padlock: Glaive (GWF, Polearm Master) | Best overall score gear | 30.6 / 47.0 / 92.3 | 18 / 20 / 20 | 35 / 44 / 49 | Act 1: Padded Armour +2, Gloves of Dexterity, Caustic Band, Ring of Protection; Act 2: Padded Armour +2, Gloves of Dexterity, Caustic Band, Ring of Protection, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Gloves of Dexterity, Caustic Band, Ring of Protection, Cloak of Protection, Evasive Shoes, Birthright |
-| Padlock: Greatsword (GWF, GWM) | Planned gear | 29.7 / 47.1 / 92.2 | 10 / 10 / 10 | 27 / 34 / 37 | - |
-| Padlock: Greatsword (GWF, GWM) | Max damage gear | 34.1 / 51.6 / 112.6 | 14 / 14 / 14 | 32 / 38 / 45 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band; Act 3: Gloves of Dexterity, Caustic Band, Mask of Soul Perception |
-| Padlock: Greatsword (GWF, GWM) | Max AC gear | 34.1 / 51.6 / 112.6 | 18 / 20 / 20 | 37 / 46 / 52 | Act 1: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
-| Padlock: Greatsword (GWF, GWM) | Best overall score gear | 34.1 / 51.6 / 112.6 | 18 / 20 / 20 | 37 / 46 / 52 | Act 1: Padded Armour +2, Gloves of Dexterity, Caustic Band, Ring of Protection; Act 2: Padded Armour +2, Gloves of Dexterity, Caustic Band, Ring of Protection, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Gloves of Dexterity, Caustic Band, Ring of Protection, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Padlock: Greatsword (GWF, GWM) | Planned gear | 29.7 / 47.1 / 95.7 | 10 / 10 / 10 | 27 / 34 / 38 | - |
+| Padlock: Greatsword (GWF, GWM) | Max damage gear | 34.1 / 51.6 / 117.0 | 14 / 14 / 14 | 32 / 38 / 46 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band; Act 3: Gloves of Dexterity, Caustic Band, Mask of Soul Perception |
+| Padlock: Greatsword (GWF, GWM) | Max AC gear | 34.1 / 51.6 / 117.0 | 18 / 20 / 20 | 37 / 46 / 53 | Act 1: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Padlock: Greatsword (GWF, GWM) | Best overall score gear | 34.1 / 51.6 / 117.0 | 18 / 20 / 20 | 37 / 46 / 53 | Act 1: Padded Armour +2, Gloves of Dexterity, Caustic Band, Ring of Protection; Act 2: Padded Armour +2, Gloves of Dexterity, Caustic Band, Ring of Protection, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Gloves of Dexterity, Caustic Band, Ring of Protection, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Planned gear | 26.2 / 54.5 / 103.0 | 10 / 10 / 10 | 26 / 37 / 42 | - |
 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Max damage gear | 30.6 / 59.0 / 118.4 | 14 / 14 / 14 | 30 / 41 / 49 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band; Act 3: Gloves of Dexterity, Caustic Band, Birthright |
 | Padlock: Halberd of Vigilance (GWF, Polearm Master) | Max AC gear | 30.6 / 59.0 / 118.4 | 18 / 20 / 20 | 35 / 49 / 55 | Act 1: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Birthright |
@@ -598,18 +598,18 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 | Padlock: Shadow Blade + shield | Max damage gear | 49.3 / 65.1 / 104.9 | 16 / 16 / 16 | 40 / 44 / 46 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band; Act 3: Gloves of Dexterity, Caustic Band, Sarevok's Horned Helmet |
 | Padlock: Shadow Blade + shield | Max AC gear | 49.3 / 65.1 / 104.9 | 20 / 23 / 23 | 48 / 58 / 61 | Act 1: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Iron-Banded Shield +1; Act 3: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Iron-Banded Shield +1, Sarevok's Horned Helmet |
 | Padlock: Shadow Blade + shield | Best overall score gear | 49.3 / 65.1 / 104.6 | 20 / 23 / 23 | 48 / 58 / 61 | Act 1: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Iron-Banded Shield +1; Act 3: Padded Armour +2, Gloves of Dexterity, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Iron-Banded Shield +1, Birthright |
-| Paladin (Smite) | Planned gear | 42.2 / 52.9 / 71.5 | 10 / 10 / 10 | 31 / 32 / 30 | - |
-| Paladin (Smite) | Max damage gear | 48.3 / 82.8 / 107.8 | 14 / 10 / 10 | 36 / 43 / 39 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Risky Ring, The Mighty Cloth, Caustic Band; Act 3: Risky Ring, The Mighty Cloth, Caustic Band, Sarevok's Horned Helmet |
-| Paladin (Smite) | Max AC gear | 45.2 / 55.8 / 83.9 | 22 / 23 / 23 | 51 / 51 / 48 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Absolute's Warboard; Act 2: Adamantine Splint Armour, Ring of Protection, Caustic Band, Absolute's Warboard, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Ring of Protection, Caustic Band, Absolute's Warboard, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
-| Paladin (Smite) | Best overall score gear | 45.2 / 73.3 / 103.2 | 22 / 23 / 23 | 51 / 59 / 53 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Absolute's Warboard; Act 2: Adamantine Splint Armour, Ring of Protection, Risky Ring, Absolute's Warboard, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Ring of Protection, Risky Ring, Absolute's Warboard, Cloak of Protection, Evasive Shoes, Sarevok's Horned Helmet |
-| Path of Giants Barbarian (Patch 8) | Planned gear | 50.9 / 63.8 / 71.1 | 14 / 14 / 14 | 40 / 34 / 26 | - |
-| Path of Giants Barbarian (Patch 8) | Max damage gear | 57.7 / 73.6 / 91.2 | 17 / 14 / 14 | 48 / 38 / 31 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Caustic Band, The Mighty Cloth; Act 3: Caustic Band, The Mighty Cloth, Sarevok's Horned Helmet |
-| Path of Giants Barbarian (Patch 8) | Max AC gear | 57.7 / 67.8 / 84.3 | 19 / 20 / 20 | 54 / 46 / 38 | Act 1: Adamantine Scale Mail, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Adamantine Scale Mail, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Sarevok's Horned Helmet |
-| Path of Giants Barbarian (Patch 8) | Best overall score gear | 57.7 / 67.8 / 83.7 | 19 / 20 / 20 | 54 / 46 / 39 | Act 1: Adamantine Scale Mail, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Adamantine Scale Mail, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
-| Radiant Protector (Crown Paladin 12) | Planned gear | 32.7 / 32.8 / 63.1 | 9 / 9 / 9 | 30 / 28 / 30 | - |
-| Radiant Protector (Crown Paladin 12) | Max damage gear | 36.5 / 48.6 / 102.5 | 9 / 9 / 9 | 32 / 34 / 40 | Act 1: Caustic Band; Act 2: Caustic Band, The Mighty Cloth, Dark Justiciar Gauntlets (Rare), Risky Ring; Act 3: The Mighty Cloth, Dark Justiciar Gauntlets (Rare), Risky Ring, Sarevok's Horned Helmet |
-| Radiant Protector (Crown Paladin 12) | Max AC gear | 36.5 / 36.4 / 70.6 | 20 / 22 / 22 | 47 / 47 / 47 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
-| Radiant Protector (Crown Paladin 12) | Best overall score gear | 36.5 / 36.4 / 86.5 | 20 / 22 / 21 | 47 / 47 / 49 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Paladin (Smite) | Planned gear | 46.3 / 58.0 / 78.2 | 10 / 10 / 10 | 33 / 33 / 31 | - |
+| Paladin (Smite) | Max damage gear | 53.0 / 90.4 / 114.8 | 14 / 10 / 10 | 38 / 46 / 41 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Risky Ring, The Mighty Cloth, Caustic Band; Act 3: Risky Ring, The Mighty Cloth, Caustic Band, Sarevok's Horned Helmet |
+| Paladin (Smite) | Max AC gear | 49.5 / 61.3 / 91.8 | 22 / 23 / 23 | 53 / 53 / 49 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Absolute's Warboard; Act 2: Adamantine Splint Armour, Ring of Protection, Caustic Band, Absolute's Warboard, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Ring of Protection, Caustic Band, Absolute's Warboard, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Paladin (Smite) | Best overall score gear | 49.5 / 79.9 / 109.3 | 22 / 23 / 23 | 53 / 61 / 55 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Absolute's Warboard; Act 2: Adamantine Splint Armour, Ring of Protection, Risky Ring, Absolute's Warboard, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Ring of Protection, Risky Ring, Absolute's Warboard, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Path of Giants Barbarian (Patch 8) | Planned gear | 56.2 / 70.5 / 78.5 | 14 / 14 / 14 | 42 / 36 / 28 | - |
+| Path of Giants Barbarian (Patch 8) | Max damage gear | 63.7 / 81.3 / 99.0 | 17 / 14 / 14 | 51 / 40 / 34 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Caustic Band, The Mighty Cloth; Act 3: Caustic Band, The Mighty Cloth, Mask of Soul Perception |
+| Path of Giants Barbarian (Patch 8) | Max AC gear | 63.7 / 74.9 / 92.5 | 19 / 20 / 20 | 57 / 48 / 40 | Act 1: Adamantine Scale Mail, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Adamantine Scale Mail, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Path of Giants Barbarian (Patch 8) | Best overall score gear | 63.7 / 74.9 / 92.5 | 19 / 20 / 20 | 57 / 48 / 40 | Act 1: Adamantine Scale Mail, Gloves of Dexterity, Ring of Protection, Caustic Band; Act 2: Adamantine Scale Mail, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Scale Mail, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Radiant Protector (Crown Paladin 12) | Planned gear | 32.7 / 32.8 / 69.3 | 9 / 9 / 9 | 30 / 28 / 31 | - |
+| Radiant Protector (Crown Paladin 12) | Max damage gear | 36.5 / 48.6 / 109.7 | 9 / 9 / 9 | 32 / 34 / 42 | Act 1: Caustic Band; Act 2: Caustic Band, The Mighty Cloth, Dark Justiciar Gauntlets (Rare), Risky Ring; Act 3: The Mighty Cloth, Dark Justiciar Gauntlets (Rare), Risky Ring, Sarevok's Horned Helmet |
+| Radiant Protector (Crown Paladin 12) | Max AC gear | 36.5 / 36.4 / 77.6 | 20 / 22 / 22 | 47 / 47 / 49 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Radiant Protector (Crown Paladin 12) | Best overall score gear | 36.5 / 36.4 / 94.2 | 20 / 22 / 21 | 47 / 47 / 51 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Risky Ring, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Planned gear | 43.9 / 42.0 / 63.9 | 14 / 14 / 14 | 35 / 28 / 30 | - |
 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Max damage gear | 52.9 / 58.5 / 88.2 | 15 / 15 / 15 | 42 / 34 / 34 | Act 1: The Graceful Cloth, Gloves of Dexterity, Caustic Band; Act 2: The Graceful Cloth, Dark Justiciar Gauntlets (Rare), Caustic Band; Act 3: The Graceful Cloth, Dark Justiciar Gauntlets (Rare), Caustic Band, Sarevok's Horned Helmet |
 | Shadow Blade Fiend Warlock (Warlock 9 / BM 3) | Max AC gear | 49.7 / 47.5 / 74.9 | 19 / 21 / 25 | 45 / 41 / 48 | Act 1: Padded Armour +2, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Padded Armour +2, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Padded Armour +2, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Sarevok's Horned Helmet, Shield (Hope) |
@@ -618,10 +618,10 @@ Each build with gear found by search for every act (weapons stay as planned): ma
 | Sorcadin: Glaive (GWF, Polearm Master) | Max damage gear | 32.1 / 39.1 / 64.1 | 14 / 17 / 17 | 33 / 36 / 38 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band, The Mighty Cloth; Act 3: Gloves of Dexterity, Caustic Band, The Mighty Cloth, Sarevok's Horned Helmet |
 | Sorcadin: Glaive (GWF, Polearm Master) | Max AC gear | 31.8 / 36.0 / 59.0 | 20 / 22 / 22 | 44 / 48 / 46 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Sarevok's Horned Helmet |
 | Sorcadin: Glaive (GWF, Polearm Master) | Best overall score gear | 31.8 / 36.0 / 59.0 | 20 / 22 / 22 | 44 / 48 / 46 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Sarevok's Horned Helmet |
-| Sorcadin: Greatsword (GWF, GWM) | Planned gear | 32.2 / 36.5 / 60.3 | 10 / 13 / 13 | 30 / 31 / 32 | - |
-| Sorcadin: Greatsword (GWF, GWM) | Max damage gear | 36.5 / 43.4 / 78.7 | 14 / 17 / 17 | 36 / 38 / 41 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band, The Mighty Cloth; Act 3: Gloves of Dexterity, Caustic Band, The Mighty Cloth, Mask of Soul Perception |
-| Sorcadin: Greatsword (GWF, GWM) | Max AC gear | 36.1 / 40.2 / 70.9 | 20 / 22 / 22 | 47 / 49 / 48 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
-| Sorcadin: Greatsword (GWF, GWM) | Best overall score gear | 36.1 / 40.2 / 70.9 | 20 / 22 / 22 | 47 / 49 / 48 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Sorcadin: Greatsword (GWF, GWM) | Planned gear | 32.2 / 36.5 / 65.0 | 10 / 13 / 13 | 30 / 31 / 34 | - |
+| Sorcadin: Greatsword (GWF, GWM) | Max damage gear | 36.5 / 43.4 / 84.9 | 14 / 17 / 17 | 36 / 38 / 42 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band, The Mighty Cloth; Act 3: Gloves of Dexterity, Caustic Band, The Mighty Cloth, Mask of Soul Perception |
+| Sorcadin: Greatsword (GWF, GWM) | Max AC gear | 36.1 / 40.2 / 76.4 | 20 / 22 / 22 | 47 / 49 / 49 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
+| Sorcadin: Greatsword (GWF, GWM) | Best overall score gear | 36.1 / 40.2 / 76.4 | 20 / 22 / 22 | 47 / 49 / 49 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Mask of Soul Perception |
 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Planned gear | 27.9 / 43.5 / 68.2 | 10 / 13 / 13 | 28 / 34 / 36 | - |
 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Max damage gear | 32.1 / 50.2 / 83.7 | 14 / 17 / 17 | 33 / 41 / 43 | Act 1: Gloves of Dexterity, Caustic Band; Act 2: Gloves of Dexterity, Caustic Band, The Mighty Cloth; Act 3: Gloves of Dexterity, Caustic Band, The Mighty Cloth, Sarevok's Horned Helmet |
 | Sorcadin: Halberd of Vigilance (GWF, Polearm Master) | Max AC gear | 31.8 / 47.4 / 78.6 | 20 / 22 / 22 | 44 / 52 / 51 | Act 1: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band; Act 2: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes; Act 3: Adamantine Splint Armour, Wondrous Gloves, Ring of Protection, Caustic Band, Cloak of Protection, Evasive Shoes, Sarevok's Horned Helmet |

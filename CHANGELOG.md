@@ -2,6 +2,7 @@
 
 ## 3.0.0 (in progress)
 
+- **Elixir of Bloodlust:** assumes its extra action on 2.5 of a fight's 3 turns (was 1.5), for a player who aims kills to trigger it.
 - **Act 3 item map:** the map page has Act 3, its items placed by their bg3.wiki minimap coordinates on a plain grid per region (Rivington,
   Wyrm's Crossing & Wyrm's Rock, Lower City, Undercity, Upper City, elsewhere). 208 of the 216 items on the wiki's Act 3 list are placed.
 - **Broodmother's Revenge:** its poison coats weapon attacks (not spells), and a Ring of Regeneration keeps it up every turn.

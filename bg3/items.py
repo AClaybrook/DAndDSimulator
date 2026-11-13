@@ -145,9 +145,9 @@ def _attacks_for(character, effect, own_attacks):
     # Elemental cantrip effects (Necklace of Elemental Augmentation) don't count Booming Blade: its weapon attack isn't a spell (seen in game)
     return attacks
 
-# Elixir of Bloodlust: once per turn, a kill gives an extra action. Against a group that is about every other turn of a 3 round fight
-# (an estimate; against one enemy the kill ends the fight, so it adds nothing)
-BLOODLUST_KILLS_PER_FIGHT = 1.5
+# Elixir of Bloodlust: once per turn, a kill gives an extra action. Played for it against groups (2-4 kills a fight, aiming the kills to
+# trigger it), it goes off on most of a 3 round fight's turns (against one enemy the kill ends the fight, so it adds nothing)
+BLOODLUST_KILLS_PER_FIGHT = 2.5
 
 def _action_attacks(character):
     """ The attacks of one Attack action (or cantrip cast): not bonus action, reaction, off hand or limited use attacks """
