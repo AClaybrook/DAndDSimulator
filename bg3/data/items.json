@@ -11704,11 +11704,22 @@
      "value": "1d8",
      "applies_to": "spell",
      "condition": "When casting a spell that requires an Attack Roll, you can take a -5 penalty to the roll to deal an additional 1d8 damage"
+    },
+    {
+     "kind": "damage_bonus",
+     "value": "1d8",
+     "applies_to": "booming_blade"
+    },
+    {
+     "kind": "extra_damage",
+     "value": "1d8 thunder",
+     "applies_to": "booming_blade"
     }
    ],
-   "notes": "",
+   "notes": "Booming Blade rolls a weapon attack, so it takes no -5 penalty but gets +1d8 on its weapon damage and +1d8 on its thunder (seen in game, Patch 8)",
    "location": "Circus of the Last Days",
-   "source": "https://bg3.wiki/wiki/Spellmight_Gloves"
+   "source": "https://bg3.wiki/wiki/Spellmight_Gloves",
+   "reviewed": true
   },
   {
    "key": "bg3:spellseeking_gloves",

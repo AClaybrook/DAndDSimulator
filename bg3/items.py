@@ -39,6 +39,7 @@ APPLIES_TO = {
     "thrown": lambda a: a.type == "thrown",
     "unarmed": lambda a: a.type == "unarmed",
     "spell": lambda a: a.type == "spell",
+    "booming_blade": lambda a: "booming_blade" in a.tags, # The weapon attack Booming Blade makes
     "necromancy": lambda a: a.type == "spell" and "necromancy" in a.tags,
 }
 

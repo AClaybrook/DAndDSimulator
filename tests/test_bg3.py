@@ -487,3 +487,12 @@ def test_strength_gear_sets_the_finesse_stat():
     assert {a.ability_stat for a in bare.attacks if a.is_weapon} == {"dexterity"}
     assert {a.ability_stat for a in gloved.attacks if a.is_weapon} == {"strength"}
     assert expected_damage_per_round(gloved, Enemy(armor_class=18)) > expected_damage_per_round(bare, Enemy(armor_class=18))
+
+def test_spellmight_gloves_add_to_booming_blade_without_the_penalty():
+    from bg3.character import Bg3Character
+    character = Bg3Character(classes=[["wizard", "Bladesinging", 12]], routine="shadow_blade").to_dict()
+    gloved = compile_build(Bg3Build("Blade", "", character=character, equipment={"3": {"gloves": "bg3:spellmight_gloves"}}), "3")
+    booming = [a for a in gloved.attacks if "booming_blade" in a.tags]
+    assert booming and all("1d8 thunder" in a.extra_damage_list and "1d8" in a.bonus_damage_die_mod_list for a in booming)
+    assert all("-5" not in a.bonus_attack_die_mod_list for a in booming)
+    assert not any("1d8 thunder" in a.extra_damage_list for a in gloved.attacks if "booming_blade" not in a.tags)

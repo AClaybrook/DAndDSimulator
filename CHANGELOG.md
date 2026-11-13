@@ -2,6 +2,7 @@
 
 ## 3.0.0 (in progress)
 
+- **Spellmight Gloves:** Booming Blade gets +1d8 on its weapon damage and +1d8 on its thunder, with no -5 penalty (seen in game).
 - **Strength gear and finesse weapons:** Gauntlets of Hill Giant Strength and the giant strength elixirs now count for Shadow Blade
   and finesse weapons when they beat the character's Dexterity (they were ignored).
 - **Eldritch Knight:** War Magic (Eldritch Knight 7) gives a main hand weapon attack with the bonus action on turns the action casts
