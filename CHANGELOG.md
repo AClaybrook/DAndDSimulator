@@ -2,6 +2,8 @@
 
 ## 3.0.0 (in progress)
 
+- **Saved parties:** the planner's "Saved parties" loads a party of build doc builds with gear changes, the trade-offs worked out for
+  them as variants (Variants tab) and the takeaways as notes (bg3/data/parties.json). A variant's elixir now replaces the build's.
 - **Elixir of Bloodlust:** assumes its extra action on 2.5 of a fight's 3 turns (was 1.5), for a player who aims kills to trigger it.
 - **Act 3 item map:** the map page has Act 3, its items placed by their bg3.wiki minimap coordinates on a plain grid per region (Rivington,
   Wyrm's Crossing & Wyrm's Rock, Lower City, Undercity, Upper City, elsewhere). 208 of the 216 items on the wiki's Act 3 list are placed.

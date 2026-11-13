@@ -11,6 +11,7 @@ from bg3.defence import armour_class, attack_bonus_for, hit_chance
 from bg3.items import SLOT_LABELS, SLOTS, catalog, condition_id
 from bg3.kits import QUICK_VARIANTS, apply_kit, kits, taken_by_others, variant_build, variant_builds
 from bg3.party import MAX_PARTY_SIZE, party_conflicts
+from bg3.parties import saved_parties
 from bg3.presets import DEFAULT_PARTY, PRESETS, examples
 from bg3.roles import CORE_ROLES, ROLE_LABELS, party_roles
 from bg3.score import WEIGHTS, score
@@ -146,6 +147,7 @@ def options():
         "roleLabels": ROLE_LABELS,
         "coreRoles": list(CORE_ROLES),
         "defaultParty": [PRESETS[name].to_dict() for name in DEFAULT_PARTY],
+        "savedParties": [{"name": p["name"], "notes": p["notes"], "builds": [b.to_dict() for b in p["builds"]]} for p in saved_parties()],
     }
 
 def _enemy(enemy_dict):

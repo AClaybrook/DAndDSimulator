@@ -268,6 +268,11 @@ class BuilderOptions(Model):
     toggles: list[Toggle]
     defaultCharacter: BuilderCharacter
 
+class SavedParty(Model):
+    name: str
+    notes: list[str] # Takeaways from the comparisons its variants capture
+    builds: list[Build]
+
 class PlannerOptions(Model):
     maxPartySize: int
     acts: list[Act]
@@ -285,6 +290,7 @@ class PlannerOptions(Model):
     roleLabels: dict[str, str]
     coreRoles: list[str]
     defaultParty: list[Build]
+    savedParties: list[SavedParty]
     readOnly: bool # A shared copy: no doc import, no saved leaderboard runs
 
 class AcPart(Model):

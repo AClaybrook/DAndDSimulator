@@ -96,7 +96,11 @@ def variant_build(build, variant):
         out.character = {**out.character, **variant["character"]}
     extra = list(variant.get("buffs") or [])
     if extra:
-        out.buffs = {act: list(dict.fromkeys([*out.buffs.get(act, []), *extra])) for act in ACT_KEYS}
+        from bg3.buffs import BUFFS # pylint: disable=import-outside-toplevel
+        # A variant's elixir replaces the build's (only one elixir is active at a time)
+        swap = any(BUFFS[b].exclusive for b in extra if b in BUFFS)
+        kept = {act: [b for b in out.buffs.get(act, []) if not (swap and b in BUFFS and BUFFS[b].exclusive)] for act in ACT_KEYS}
+        out.buffs = {act: list(dict.fromkeys([*kept[act], *extra])) for act in ACT_KEYS}
     if variant.get("toggles"):
         if out.character:
             out.character = {**out.character, "toggles": {**out.character.get("toggles", {}), **variant["toggles"]}}

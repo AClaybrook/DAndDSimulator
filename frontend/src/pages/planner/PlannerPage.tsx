@@ -12,6 +12,7 @@ import { BuildTab } from './BuildTab'
 import { GearTab } from './GearTab'
 import { PartyStrip } from './PartyStrip'
 import { ResultsPanel } from './ResultsPanel'
+import { SavedParties } from './SavedParties'
 import { useEvaluation, usePlannerOptions } from './usePlanner'
 import { VariantsTab } from './VariantsTab'
 
@@ -48,6 +49,7 @@ export function PlannerPage() {
     <>
       <PageHeader title="Party planner" subtitle="Damage by act for up to four characters"
         actions={<>
+          <SavedParties options={o} />
           <Select size="xs" w={260} searchable value={null} data={simOptions.data?.enemies ?? []}
             placeholder={enemy ? `${enemy.name} · AC ${enemy.armor_class}` : 'Enemy...'} title="The enemy for damage and hit chances, shared with the Simulator"
             onChange={async (v) => v && setEnemy(await api.enemy(v))} leftSection={<Text size="10px" c="dimmed">vs</Text>} />

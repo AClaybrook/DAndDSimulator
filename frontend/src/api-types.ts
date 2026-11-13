@@ -523,6 +523,7 @@ export interface PlannerOptions {
   roleLabels: Record<string, string>
   coreRoles: string[]
   defaultParty: Build[]
+  savedParties: SavedParty[]
   readOnly: boolean
 }
 
@@ -572,6 +573,12 @@ export interface SaveRequest {
 export interface Saved {
   id: number
   rows: number
+}
+
+export interface SavedParty {
+  name: string
+  notes: string[]
+  builds: Build[]
 }
 
 export interface SavingThrow {

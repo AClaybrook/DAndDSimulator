@@ -1,0 +1,50 @@
+{
+ "_note": "Saved parties: build doc builds (by number) with their gear changes, and variants for the trade-offs worked out for them. Notes are the takeaways",
+ "parties": [
+  {
+   "name": "My Tactician party (Godblade, Hexwing Phantom, Deathreaper, Arcane Deadeye)",
+   "notes": [
+    "Godblade gloves: Legacy of the Masters (+34 a round) > Spellmight (+23, +35 with the Resonance Stone) > Helldusk (+22) > Dark Justiciar (+15). Legacy and Helldusk are worn by the Arcane Deadeye and the Hexwing Phantom",
+    "Spellmight Gloves only add to Booming Blade: +1d8 thunder and +1d8 weapon damage, and no -5 (it rolls a weapon attack, not a spell attack)",
+    "Gauntlets of Hill Giant Strength do nothing at Dexterity 22. Gloves of Battlemage's Power only raise spell attacks and DC, no weapon damage",
+    "Necklace of Elemental Augmentation doesn't trigger on Booming Blade",
+    "Rhapsody at +3 (after 3 kills a long rest) beats Belm by about 40 a round and adds +3 spell DC. Belm is ahead only before the third kill",
+    "Elixirs: Bloodlust when you aim kills to trigger it (about +64 for the Godblade); Cloud Giant Strength against a single boss (+46), and on any Strength build (doubled with Balduran's Giantslayer); the Deathreaper takes Battlemage's Power when it casts Hold Person",
+    "Hold Person / Hold Monster: a held target lifts the party from 449 to 704 a round (611 to 1,025 with the stone); each +1 DC is worth about 13 party damage a round. The Deathreaper (DC 21) should cast it: the Godblade casting it ends its own Haste (Lethargic)",
+    "Broodmother's Revenge + Ring of Regeneration: the ring heals every turn, even at full HP, so the poison coating stays up: +22 a round in place of the Band of the Mystic Scoundrel",
+    "Wavemother's Cloak: +2 AC and saves each turn until damaged. The Godblade is already only hit on a 20, so the saves are the gain",
+    "An Eldritch Knight Shadow Blade build ties the Godblade's damage (ahead with the stone) but has AC 20 and needs someone else's Haste"
+   ],
+   "members": [
+    {
+     "doc": 1,
+     "equipment": {"3": {"gloves": "bg3:spellmight_gloves"}},
+     "variants": [
+      {"name": "Gloves: Legacy of the Masters (the Deadeye's)", "gear": {"3": {"gloves": "bg3:legacy_of_the_masters"}}},
+      {"name": "Gloves: Helldusk (the Hexwing's)", "gear": {"3": {"gloves": "bg3:helldusk_gloves"}}},
+      {"name": "Gloves: Gauntlets of Hill Giant Strength", "gear": {"3": {"gloves": "bg3:gauntlets_of_hill_giant_strength"}}},
+      {"name": "Off hand: Belm instead of Rhapsody", "gear": {"3": {"melee_off": "bg3:belm"}}},
+      {"name": "Broodmother's Revenge + Ring of Regeneration", "gear": {"3": {"amulet": "bg3:broodmother_s_revenge", "ring_1": "bg3:ring_of_regeneration"}}},
+      {"name": "Cloak: Wavemother's Cloak", "gear": {"3": {"cloak": "bg3:wavemother_s_cloak"}}},
+      {"name": "Elixir: Cloud Giant Strength (single boss)", "buffs": ["elixir:elixir_of_cloud_giant_strength"]}
+     ]
+    },
+    {
+     "doc": 3,
+     "variants": [{"name": "Elixir: Bloodlust", "buffs": ["elixir:elixir_of_bloodlust"]}]
+    },
+    {
+     "doc": 4,
+     "variants": [
+      {"name": "Elixir: Battlemage's Power (Hold Person DC 24)", "buffs": ["elixir:elixir_of_battlemage_s_power"]},
+      {"name": "Elixir: Bloodlust", "buffs": ["elixir:elixir_of_bloodlust"]}
+     ]
+    },
+    {
+     "doc": 5,
+     "variants": [{"name": "Elixir: Bloodlust", "buffs": ["elixir:elixir_of_bloodlust"]}]
+    }
+   ]
+  }
+ ]
+}

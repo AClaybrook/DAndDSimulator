@@ -520,3 +520,15 @@ def test_wavemothers_cloak_adds_armour_class():
     character = Bg3Character(classes=[["fighter", "Battle Master", 12]], routine="dual_wield").to_dict()
     bare = armour_class(Bg3Build("F", "", character=character), "3")[0]
     assert armour_class(Bg3Build("F", "", character=character, equipment={"3": {"cloak": "bg3:wavemother_s_cloak"}}), "3")[0] == bare + 2
+
+def test_saved_party_variants_compile():
+    from bg3.kits import variant_builds
+    from bg3.parties import saved_parties
+    party = saved_parties()[0]
+    assert len(party["builds"]) == 4 and party["notes"]
+    godblade = party["builds"][0]
+    assert equipment_at(godblade, "3")["gloves"] == "bg3:spellmight_gloves"
+    for name, _, build in variant_builds(godblade):
+        compile_build(build, "3")
+        if name.startswith("Elixir: Cloud Giant"):
+            assert [b for b in build.buffs["3"] if b.startswith("elixir:")] == ["elixir:elixir_of_cloud_giant_strength"]
