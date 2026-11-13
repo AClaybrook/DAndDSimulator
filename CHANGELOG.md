@@ -2,6 +2,7 @@
 
 ## 3.0.0 (in progress)
 
+- **Necklace of Elemental Augmentation:** no longer adds to Booming Blade, which doesn't trigger it in game.
 - **Spellmight Gloves:** Booming Blade gets +1d8 on its weapon damage and +1d8 on its thunder, with no -5 penalty (seen in game).
 - **Strength gear and finesse weapons:** Gauntlets of Hill Giant Strength and the giant strength elixirs now count for Shadow Blade
   and finesse weapons when they beat the character's Dexterity (they were ignored).

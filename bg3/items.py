@@ -142,9 +142,7 @@ def _attacks_for(character, effect, own_attacks):
         after = next((ii for ii, a in enumerate(weapons) if "booming_blade" in a.tags), None)
         pick = weapons[after + 1:after + 2] if after is not None else weapons[:1]
         return pick
-    if "cantrip" in (effect.condition or "").lower() and "thunder" in (effect.condition or "").lower():
-        # Elemental cantrip effects (Necklace of Elemental Augmentation) also count Booming Blade, a cantrip on a weapon attack
-        attacks += [a for a in character.attacks if "booming_blade" in a.tags and a not in attacks]
+    # Elemental cantrip effects (Necklace of Elemental Augmentation) don't count Booming Blade: its weapon attack isn't a spell (seen in game)
     return attacks
 
 # Elixir of Bloodlust: once per turn, a kill gives an extra action. Against a group that is about every other turn of a 3 round fight

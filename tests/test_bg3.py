@@ -496,3 +496,11 @@ def test_spellmight_gloves_add_to_booming_blade_without_the_penalty():
     assert booming and all("1d8 thunder" in a.extra_damage_list and "1d8" in a.bonus_damage_die_mod_list for a in booming)
     assert all("-5" not in a.bonus_attack_die_mod_list for a in booming)
     assert not any("1d8 thunder" in a.extra_damage_list for a in gloved.attacks if "booming_blade" not in a.tags)
+
+def test_necklace_of_elemental_augmentation_skips_booming_blade():
+    from bg3.character import Bg3Character
+    character = Bg3Character(classes=[["wizard", "Bladesinging", 12]], routine="shadow_blade").to_dict()
+    bare = compile_build(Bg3Build("Blade", "", character=character), "3")
+    worn = Bg3Build("Blade", "", character=character, equipment={"3": {"amulet": "bg3:necklace_of_elemental_augmentation"}},
+                    conditions=["bg3:necklace_of_elemental_augmentation#0"])
+    assert expected_damage_per_round(compile_build(worn, "3"), Enemy(armor_class=18)) == expected_damage_per_round(bare, Enemy(armor_class=18))
