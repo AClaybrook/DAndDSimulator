@@ -46,6 +46,8 @@ ASSUMPTIONS = {
                         "Master's bonus attack, once a turn each. 0 for a fight against one boss"),
     "polearm_reactions": ("Polearm Master reactions a fight", POLEARM_REACTIONS, "Attacks on enemies that walk into your reach"),
     "sentinel_reactions": ("Sentinel reactions a fight", SENTINEL_REACTIONS, "Attacks on enemies next to you that hit an ally"),
+    "advantage_share": ("Share of attacks with advantage", 0.0, "Advantage some of the time: Shadow Blade in dim light or darkness, Faerie "
+                        "Fire, hiding. 0.5 is half the attacks, 1 every attack (the advantage toggle)"),
 }
 
 def assumption(build, key):
@@ -223,6 +225,11 @@ def compile_build(build, act, items=None):
 
     if build.advantage:
         character.advantage = True
+    share = min(assumption(build, "advantage_share"), 1.0)
+    if share:
+        for attack in character.attacks:
+            if not attack.saving_throw:
+                attack.advantage_chance = max(attack.advantage_chance, share)
     great_weapon_master_attack(character, assumption(build, "bloodlust_kills"))
     label = ACTS[int(act)][0]
     character.name = f"{build.name} ({label})" if build.name else label

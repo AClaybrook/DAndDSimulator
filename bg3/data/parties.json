@@ -13,14 +13,17 @@
     "Hold Person / Hold Monster: a held target lifts the party from 449 to 704 a round (611 to 1,025 with the stone); each +1 DC is worth about 13 party damage a round. The Deathreaper (DC 21) should cast it: the Godblade casting it ends its own Haste (Lethargic)",
     "Broodmother's Revenge + Ring of Regeneration: the ring heals every turn, even at full HP, so the poison coating stays up: +22 a round in place of the Band of the Mystic Scoundrel",
     "Wavemother's Cloak: +2 AC and saves each turn until damaged. The Godblade is already only hit on a 20, so the saves are the gain",
-    "An Eldritch Knight Shadow Blade build ties the Godblade's damage (ahead with the stone) but has AC 20 and needs someone else's Haste"
+    "An Eldritch Knight Shadow Blade build ties the Godblade's damage (ahead with the stone) but has AC 20 and needs someone else's Haste",
+    "As played: Dexterity 22, Bless from an ally, the Drakethroat Glaive's elemental weapon and Rapture (about +18 to hit), Shadow Blade with advantage in dim light about half the time",
+    "Amulet of Greater Health (Constitution 23) is worth more than its HP: Constitution saves keep Haste up. Broodmother's Revenge + Ring of Regeneration costs it and the Caustic Band"
    ],
    "members": [
     {
      "doc": 1,
      "equipment": {
       "3": {
-       "gloves": "bg3:spellmight_gloves"
+       "gloves": "bg3:spellmight_gloves",
+       "ring_1": "bg3:caustic_band"
       }
      },
      "variants": [
@@ -79,7 +82,23 @@
         "elixir:elixir_of_cloud_giant_strength"
        ]
       }
-     ]
+     ],
+     "buffs": {
+      "3": [
+       "mage_armour",
+       "haste",
+       "elixir:elixir_of_bloodlust",
+       "bless",
+       "drakethroat",
+       "rapture"
+      ]
+     },
+     "boons": {
+      "dexterity": 3
+     },
+     "assumptions": {
+      "advantage_share": 0.5
+     }
     },
     {
      "doc": 3,

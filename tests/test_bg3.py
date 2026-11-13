@@ -410,7 +410,7 @@ def test_estimates_party_synergies_and_items_the_damage_cannot_judge():
     acts = result["members"][0]["acts"]
     assert "Resonance Stone" in result["synergies"]["3"] and "Resonance Stone" not in result["synergies"]["1"]
     assert acts["3"]["together"][0] > 1.3 * acts["3"]["damage"][0] and acts["1"]["together"] == acts["1"]["damage"]
-    assert {o["key"] for o in planner.options()["assumptions"]} == {"bloodlust_kills", "polearm_reactions", "sentinel_reactions"}
+    assert {o["key"] for o in planner.options()["assumptions"]} == {"bloodlust_kills", "polearm_reactions", "sentinel_reactions", "advantage_share"}
 
     items = catalog()
     names = {i.name: i for i in items.values()}
@@ -550,7 +550,7 @@ def test_frontier_is_non_dominated_and_starts_from_the_planned_gear():
     godblade = saved_parties()[0]["builds"][0]
     result = solve(godblade, "3", reference_enemy(3), 3)
     current, frontier = result["current"], result["frontier"]
-    assert current["changes"] == [] and current["ac"] == 27
+    assert current["changes"] == [] and current["ac"] == 28
     assert frontier and all(not (q["ac"] >= p["ac"] and q["damage"] > p["damage"]) for p in frontier for q in result["points"])
     assert max(p["damage"] for p in frontier) >= current["damage"]
     # Items that only pay off together are tried as a pair
@@ -562,3 +562,12 @@ def test_party_variants_are_leaderboard_rows():
     rows = _party_entries([build])
     saved = [r for r in rows if r["variant"] == "saved"]
     assert [r["name"] for r in saved] == ["Blade: Bless"] and saved[0]["base"] == rows[0]["fingerprint"]
+
+def test_advantage_share_and_rapture():
+    from bg3.parties import saved_parties
+    godblade = saved_parties()[0]["builds"][0]
+    character = compile_build(godblade, "3")
+    weapons = [a for a in character.attacks if a.is_weapon]
+    assert all(a.advantage_chance == 0.5 for a in weapons) and all("1d6" in a.bonus_attack_die_mod_list for a in weapons)
+    plain = compile_build(replace(godblade, assumptions={}), "3")
+    assert all(a.advantage_chance == 0 for a in plain.attacks if a.is_weapon)

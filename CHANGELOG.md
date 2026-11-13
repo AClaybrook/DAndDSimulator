@@ -2,6 +2,8 @@
 
 ## 3.0.0 (in progress)
 
+- **Advantage some of the time:** a "Share of attacks with advantage" assumption (Shadow Blade in dim light, Faerie Fire). **Rapture**
+  (+1d6 to attack rolls until a long rest, from the Nymph's Grotto) is a buff. The saved party's Godblade is set up as played.
 - **Gear solver and Pareto frontier:** the planner's Frontier tab searches gear and elixir combinations for a member at an act (each slot's
   options, then a beam search and a polish pass; item pairs like Broodmother's Revenge + Ring of Regeneration tried together) and plots
   damage against AC with the frontier marked. Use a point, or keep the frontier as variants. Costs the numbers miss are flagged (the Risky

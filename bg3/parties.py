@@ -21,6 +21,10 @@ def saved_parties():
             build = deepcopy(docs[member["doc"]])
             for act, gear in (member.get("equipment") or {}).items():
                 build["equipment"][act] = {**build["equipment"].get(act, {}), **gear}
+            build["buffs"] = {**build.get("buffs", {}), **(member.get("buffs") or {})}
+            build["assumptions"] = {**build.get("assumptions", {}), **(member.get("assumptions") or {})}
+            if member.get("boons") and build.get("character"):
+                build["character"] = {**build["character"], "boons": member["boons"]}
             build["variants"] = [*build.get("variants", []), *member.get("variants", [])]
             builds.append(Bg3Build.from_dict(build))
         out.append({"name": party["name"], "notes": party.get("notes", []), "builds": builds})

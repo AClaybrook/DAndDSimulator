@@ -88,6 +88,8 @@ def solve(build, act, enemy, rounds_per_fight, enemies=1, exclude=(), elixirs=Tr
                            if not (i.unique and i.key in exclude)]
         tried = [{slot: k} for k in dict.fromkeys([base[slot], *keys])]
         tried += [dict(pair) for pair in COMBOS if pair[0][0] == slot and all(k not in exclude for _, k in pair)]
+        other = {"ring_1": "ring_2", "ring_2": "ring_1"}.get(slot)
+        tried = [t for t in tried if not (other and t.get(slot) and t[slot] == base.get(other))] # A ring isn't worn twice
         points = [(t, evaluate({**base, **t})) for t in tried]
         kept = {id(p) for p in _pareto([p for _, p in points])}
         kept |= {id(p) for _, p in sorted(points, key=lambda tp: -tp[1]["damage"])[:TOP_DAMAGE]}
