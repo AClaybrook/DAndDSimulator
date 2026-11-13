@@ -215,7 +215,7 @@ def test_elixirs():
     giant, vicious = BUFFS["elixir:elixir_of_hill_giant_strength"], BUFFS["elixir:elixir_of_viciousness"]
     # Every elixir replaces the one before (Heroism's attack bonus too, bg3.wiki); Viciousness is in trader stock from level 6 (Act 2)
     assert giant.exclusive and vicious.exclusive and BUFFS["elixir:elixir_of_heroism"].exclusive
-    assert (giant.act, vicious.act, BUFFS["elixir:elixir_of_cloud_giant_strength"].act) == (1, 2, 2)
+    assert (giant.act, vicious.act, BUFFS["elixir:elixir_of_cloud_giant_strength"].act) == (1, 2, 3)
     character = compile_build(fighter(buffs={"1": [giant.key]}), 1, ITEMS)
     assert character.strength == 21
     assert all(a.crit_on == 18 for a in compile_build(fighter(buffs={"1": [vicious.key]}), 1, ITEMS).attacks) # Champion 19, then one lower
