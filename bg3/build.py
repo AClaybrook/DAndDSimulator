@@ -7,7 +7,7 @@ from bg3.buffs import BUFFS
 from bg3.character import POLEARM_REACTIONS, ROUNDS_PER_FIGHT, SENTINEL_REACTIONS, SHADOW_BLADE, Bg3Character, compile_character, is_proficient, weapon_proficiencies
 from bg3.checkpoints import ACTS, act_level
 from bg3.items import (BLOODLUST_KILLS_PER_FIGHT, REACTION_ADVANTAGE, SLOT_LABELS, SLOTS, active_effects, apply_effect, apply_lightning_charges, apply_reverberation, catalog,
-                       equip_weapon, extra_action)
+                       condition_id, equip_weapon, extra_action)
 from game_data import weapons
 from game_data.classes import BUILDS, build_character
 
@@ -187,7 +187,12 @@ def compile_build(build, act, items=None):
     # Ability scores first, so later effects see the final stats
     sources = [(item.key, item.effects, own_attacks.get(slot, [])) for slot, item in gear.items()]
     sources += [(f"buff:{b.key}", b.effects, []) for b in buffs_at(build, act)]
-    effects = [(e, own) for key, effects_, own in sources for e in active_effects(key, effects_, build.conditions)]
+    conditions = list(build.conditions)
+    keys = {item.key for item in gear.values()}
+    if "bg3:broodmother_s_revenge" in keys and "bg3:ring_of_regeneration" in keys:
+        # The ring heals at the start of every turn, even at full hit points, which keeps Broodmother's Revenge's poison coating up
+        conditions.append(condition_id("bg3:broodmother_s_revenge", 0))
+    effects = [(e, own) for key, effects_, own in sources for e in active_effects(key, effects_, conditions)]
     effects.sort(key=lambda pair: not pair[0].kind.startswith("ability"))
     honour_mode = bool(build.character) and Bg3Character.from_dict(build.character).toggle("honour_mode")
     extra_actions, limited_haste = 0, 0.0

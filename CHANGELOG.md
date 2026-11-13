@@ -2,6 +2,10 @@
 
 ## 3.0.0 (in progress)
 
+- **Act 3 item map:** the map page has Act 3, its items placed by their bg3.wiki minimap coordinates on a plain grid per region (Rivington,
+  Wyrm's Crossing & Wyrm's Rock, Lower City, Undercity, Upper City, elsewhere). 208 of the 216 items on the wiki's Act 3 list are placed.
+- **Broodmother's Revenge:** its poison coats weapon attacks (not spells), and a Ring of Regeneration keeps it up every turn.
+- **Wavemother's Cloak:** +2 armour class from Water Layer Protection.
 - **Necklace of Elemental Augmentation:** no longer adds to Booming Blade, which doesn't trigger it in game.
 - **Spellmight Gloves:** Booming Blade gets +1d8 on its weapon damage and +1d8 on its thunder, with no -5 penalty (seen in game).
 - **Strength gear and finesse weapons:** Gauntlets of Hill Giant Strength and the giant strength elixirs now count for Shadow Blade

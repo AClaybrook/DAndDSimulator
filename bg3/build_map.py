@@ -1,6 +1,6 @@
-""" Builds the Act 1 and Act 2 item maps: where notable items are found, placed on the game's minimap images.
+""" Builds the Act 1, 2 and 3 item maps: where notable items are found, placed on the game's minimap images.
 
-    python -m bg3.build_map    -> assets/maps/*.webp (map images), bg3/data/map_act1.json and bg3/data/map_act2.json
+    python -m bg3.build_map    -> assets/maps/*.webp (map images), bg3/data/map_act1.json, map_act2.json and map_act3.json
 
     Item locations are the "where to find" x/y from bg3.wiki item pages (in-game minimap coordinates), read from bg3/data/raw/parsed.json
     (python -m bg3.scrape_wiki fetch && python -m bg3.scrape_wiki parse). Location pages are fetched for their region and entrance coordinates.
@@ -38,7 +38,16 @@ ACT2_MAPS = {
     "shadowfell": {"label": "Shadowfell & Cloister", "image": None},
     "colony": {"label": "Mind Flayer Colony", "image": None},
 }
-MAPS = {**ACT1_MAPS, **ACT2_MAPS}
+# No minimap images yet: each region is plotted on a plain grid of its minimap coordinates
+ACT3_MAPS = {
+    "rivington": {"label": "Rivington", "image": None},
+    "wyrms_crossing": {"label": "Wyrm's Crossing & Wyrm's Rock", "image": None},
+    "lower_city": {"label": "Lower City", "image": None},
+    "undercity": {"label": "Undercity", "image": None},
+    "upper_city": {"label": "Upper City", "image": None},
+    "act3_other": {"label": "Camp, Astral Plane & elsewhere", "image": None},
+}
+MAPS = {**ACT1_MAPS, **ACT2_MAPS, **ACT3_MAPS}
 # Location page region -> map, following each location's "region" up to one of these
 ACT1_REGIONS = {"Wilderness": "wilderness", "Emerald Grove": "wilderness", "Forest": "wilderness", "Sunlit Wetlands": "wilderness",
               "Blighted Village": "wilderness", "Goblin Camp": "wilderness", "Shattered Sanctum": "wilderness", "Waukeen's Rest": "wilderness",
@@ -62,12 +71,18 @@ ACT2_WAYPOINTS = {"Last Light Inn": ("shadowcursed", -10, 166), "Grand Mausoleum
                   "Sharran Sanctuary": ("shadowcursed", -152, -30), "Reithwin Tollhouse": ("shadowcursed", -107, -100),
                   "Ruined Battlefield": ("shadowcursed", 68, 36), "Mason's Guild": ("shadowcursed", -127, 26),
                   "House of Healing": ("shadowcursed", -199, 67), "Moonrise Towers": ("shadowcursed", -179, -198)}
+ACT3_REGIONS = {"Rivington": "rivington", "Wyrm's Crossing": "wyrms_crossing", "Wyrm's Rock Fortress": "wyrms_crossing", "Lower City": "lower_city",
+                "Undercity": "undercity", "Upper City": "upper_city", "Campsite": "act3_other", "Campsite (Act Three)": "act3_other",
+                "Astral Plane": "act3_other", "Jungle": "act3_other", "Avernus": "act3_other", "High Hall": "act3_other",
+                "Mapping of the Heart": "act3_other", "Alarm Machine": "act3_other"}
 WAYPOINTS = {**ACT1_WAYPOINTS, **ACT2_WAYPOINTS}
 ACTS = {
     1: {"maps": ACT1_MAPS, "regions": ACT1_REGIONS, "entrances": ACT1_ENTRANCES, "waypoints": ACT1_WAYPOINTS, "cache": "locations.json",
         "categories": ["Category:Act One Locations", "Category:Prologue Locations"], "checklist": True},
     2: {"maps": ACT2_MAPS, "regions": ACT2_REGIONS, "entrances": ACT2_ENTRANCES, "waypoints": ACT2_WAYPOINTS, "cache": "locations_act2.json",
         "categories": ["Category:Act Two Locations"], "checklist": False},
+    3: {"maps": ACT3_MAPS, "regions": ACT3_REGIONS, "entrances": {}, "waypoints": {}, "cache": "locations_act3.json",
+        "categories": ["Category:Act Three Locations"], "checklist": False},
 }
 RARITY_ORDER = ["Common", "Uncommon", "Rare", "Very Rare", "Legendary", "Story"]
 # Community "BG3 Every Item Run (ACT 1)" checklist (published Google Sheet): location text with minimap coordinates and playthrough notes

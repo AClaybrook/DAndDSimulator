@@ -277,6 +277,17 @@
                 }
             ],
             "notes": "Booming Blade rolls a weapon attack, so it takes no -5 penalty but gets +1d8 on its weapon damage and +1d8 on its thunder (seen in game, Patch 8)"
+        },
+        "Broodmother's Revenge": {
+            "effects": [
+                {
+                    "kind": "extra_damage",
+                    "value": "1d6 poison",
+                    "applies_to": "weapon",
+                    "condition": "Whenever the wearer is healed, their weapon becomes coated in magic and deals an additional 1d6 Poison  damage"
+                }
+            ],
+            "notes": "A poison coating for 3 turns whenever the wearer is healed (even at full hit points), so a Ring of Regeneration keeps it up every turn. Not on thrown weapons"
         }
     }
 }

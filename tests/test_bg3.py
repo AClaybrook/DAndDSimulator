@@ -504,3 +504,19 @@ def test_necklace_of_elemental_augmentation_skips_booming_blade():
     worn = Bg3Build("Blade", "", character=character, equipment={"3": {"amulet": "bg3:necklace_of_elemental_augmentation"}},
                     conditions=["bg3:necklace_of_elemental_augmentation#0"])
     assert expected_damage_per_round(compile_build(worn, "3"), Enemy(armor_class=18)) == expected_damage_per_round(bare, Enemy(armor_class=18))
+
+def test_ring_of_regeneration_keeps_broodmothers_revenge_up():
+    from bg3.character import Bg3Character
+    character = Bg3Character(classes=[["fighter", "Battle Master", 12]], routine="dual_wield").to_dict()
+    amulet = {"amulet": "bg3:broodmother_s_revenge"}
+    alone = compile_build(Bg3Build("F", "", character=character, equipment={"3": amulet}), "3")
+    healed = compile_build(Bg3Build("F", "", character=character, equipment={"3": {**amulet, "ring_1": "bg3:ring_of_regeneration"}}), "3")
+    assert not any("1d6 poison" in a.extra_damage_list for a in alone.attacks)
+    assert all("1d6 poison" in a.extra_damage_list for a in healed.attacks if a.is_weapon)
+
+def test_wavemothers_cloak_adds_armour_class():
+    from bg3.character import Bg3Character
+    from bg3.defence import armour_class
+    character = Bg3Character(classes=[["fighter", "Battle Master", 12]], routine="dual_wield").to_dict()
+    bare = armour_class(Bg3Build("F", "", character=character), "3")[0]
+    assert armour_class(Bg3Build("F", "", character=character, equipment={"3": {"cloak": "bg3:wavemother_s_cloak"}}), "3")[0] == bare + 2

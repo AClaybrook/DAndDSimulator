@@ -107,6 +107,9 @@ def armour_class(build, act):
             parts.append((items[key].name, entry["bonus"]))
     if gear.get("gloves") == "bg3:bracers_of_defence" and kind == "clothing" and not shield:
         parts.append(("Bracers of Defence (no armour or shield)", 2))
+    if gear.get("cloak") == "bg3:wavemother_s_cloak":
+        # Water Layer Protection: +2 AC (and saves) each turn until the wearer takes damage, so against the first attacks of a round
+        parts.append(("Wavemother's Cloak (Water Layer Protection, until damaged)", 2))
     wizard = levels.get("wizard", 0)
     if bladesong and subs.get("wizard") == "Bladesinging" and wizard >= 2 and kind not in ("medium", "heavy") and not shield:
         parts.append(("Bladesong", 2 + (wizard >= 5) + (wizard >= 9)))

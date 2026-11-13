@@ -145,13 +145,14 @@
     {
      "kind": "extra_damage",
      "value": "1d6 poison",
-     "applies_to": "all",
+     "applies_to": "weapon",
      "condition": "Whenever the wearer is healed, their weapon becomes coated in magic and deals an additional 1d6 Poison  damage"
     }
    ],
-   "notes": "",
+   "notes": "A poison coating for 3 turns whenever the wearer is healed (even at full hit points), so a Ring of Regeneration keeps it up every turn. Not on thrown weapons",
    "location": "Inner Sanctum",
-   "source": "https://bg3.wiki/wiki/Broodmother%27s_Revenge"
+   "source": "https://bg3.wiki/wiki/Broodmother%27s_Revenge",
+   "reviewed": true
   },
   {
    "key": "bg3:burnished_necklace",
