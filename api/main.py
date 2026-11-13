@@ -183,6 +183,11 @@ class VariantsRequest(BaseModel):
     enemies: int = 1
     attack_bonus: int = 6
 
+class FrontierRequest(VariantsRequest):
+    selected: int = 0 # The build's place in the party: items the others wear are left out when skip_taken
+    act: str = "3"
+    skip_taken: bool = True
+
 class UseVariantRequest(BaseModel):
     build: schemas.Build
     index: int
@@ -216,6 +221,11 @@ def planner_evaluate(request: PlannerRequest):
 def planner_variants(request: VariantsRequest):
     return planner.variants(request.build.model_dump(mode="json"), request.enemy, request.rounds_per_fight, request.enemies, request.attack_bonus,
                             [b.model_dump(mode="json") for b in request.party], request.synergies)
+
+@app.post("/api/planner/frontier", response_model=schemas.Frontier)
+def planner_frontier(request: FrontierRequest):
+    return planner.frontier(request.build.model_dump(mode="json"), request.act, request.enemy, request.rounds_per_fight, request.enemies,
+                            [b.model_dump(mode="json") for b in request.party], request.selected, request.skip_taken, request.synergies)
 
 @app.post("/api/planner/use-variant", response_model=schemas.Build)
 def planner_use_variant(request: UseVariantRequest):

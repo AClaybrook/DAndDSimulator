@@ -9,6 +9,7 @@ import { MAX_CHARACTERS, useSimulator } from '../../store'
 import { AdviceTab } from './AdviceTab'
 import { BuffsTab } from './BuffsTab'
 import { BuildTab } from './BuildTab'
+import { FrontierTab } from './FrontierTab'
 import { GearTab } from './GearTab'
 import { PartyStrip } from './PartyStrip'
 import { ResultsPanel } from './ResultsPanel'
@@ -86,12 +87,14 @@ export function PlannerPage() {
                   <Tabs.Tab value="buffs">Buffs</Tabs.Tab>
                   <Tabs.Tab value="variants">Variants</Tabs.Tab>
                   <Tabs.Tab value="advice">Gear advice</Tabs.Tab>
+                  <Tabs.Tab value="frontier">Frontier</Tabs.Tab>
                 </Tabs.List>
                 <Tabs.Panel value="gear"><GearTab options={o} result={member} /></Tabs.Panel>
                 <Tabs.Panel value="build"><BuildTab options={o} result={member} /></Tabs.Panel>
                 <Tabs.Panel value="buffs"><BuffsTab options={o} result={member} /></Tabs.Panel>
                 <Tabs.Panel value="variants"><VariantsTab options={o} attackBonus={evaluation.data?.attackBonus ?? 6} /></Tabs.Panel>
                 <Tabs.Panel value="advice"><AdviceTab options={o} /></Tabs.Panel>
+                <Tabs.Panel value="frontier"><FrontierTab /></Tabs.Panel>
               </Tabs>
             </Paper>
           </Grid.Col>

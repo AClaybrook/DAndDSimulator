@@ -253,6 +253,25 @@ def variants(build_dict, enemy_dict=None, rounds=3, enemies=1, attack_bonus=6, p
                      "ac": [armour_class(built, a)[0] for a in ACT_KEYS], "score": [score(built, a, enemy, rounds, attack_bonus).total for a in ACT_KEYS]})
     return rows
 
+def frontier(build_dict, act="3", enemy_dict=None, rounds=3, enemies=1, party_dicts=(), selected=0, skip_taken=True, synergies=False):
+    """ Gear and elixir combinations for the build at an act, damage against AC, and which are on the Pareto frontier (bg3.frontier) """
+    from bg3.buffs import BUFFS # pylint: disable=import-outside-toplevel
+    from bg3.frontier import solve # pylint: disable=import-outside-toplevel
+    build = Bg3Build.from_dict(build_dict)
+    party = [Bg3Build.from_dict(b) for b in party_dicts]
+    act = str(act)
+    at = _party_enemies(party, _enemy(enemy_dict), synergies and bool(party))
+    exclude = taken_by_others(party, selected, act) if skip_taken and party else ()
+    result = solve(build, act, at[act][0], rounds, max(int(enemies), 1), exclude)
+    items = catalog()
+    on = {id(p) for p in result["frontier"]}
+    def name(key):
+        return items[key].name if key in items else BUFFS[key].name if key in BUFFS else "Nothing"
+    def point(p):
+        return {"damage": round(p["damage"], 2), "ac": p["ac"], "drawbacks": p["drawbacks"], "frontier": id(p) in on,
+                "changes": [{"slot": s, "key": k, "name": name(k)} for s, k in p["changes"]]}
+    return {"current": point(result["current"]), "points": [point(p) for p in result["points"]]}
+
 def use_variant(build_dict, index):
     """ The build with variant index copied into its gear, buffs and toggles (the variant is removed from the list) """
     build = Bg3Build.from_dict(build_dict)

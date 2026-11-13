@@ -22,9 +22,9 @@ const OWN = 'Your party'
 const sourceColors = (scheme: Scheme): Record<string, string> => ({
   ...Object.fromEntries(Object.entries(SOURCE_SLOT).map(([s, i]) => [s, SERIES[scheme][i]])), [OWN]: CHART_TOKENS[scheme].text,
 })
-const VARIANT_SHORT: Record<string, string> = { planned: 'Planned', max_damage: 'Max damage', max_ac: 'Max AC', best_score: 'Best score' }
+const VARIANT_SHORT: Record<string, string> = { planned: 'Planned', max_damage: 'Max damage', max_ac: 'Max AC', best_score: 'Best score', saved: 'Saved variant' }
 
-const PLANNED = ['planned']
+const PLANNED = ['planned', 'saved']
 const ALL_SOURCES = ['Your party', 'Preset', 'Build doc', 'Reddit (approx.)']
 
 type Row = LeaderboardEntry & { overall: number; d: Record<string, number | null>; rank: Record<string, number> }

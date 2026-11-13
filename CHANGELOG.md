@@ -2,6 +2,11 @@
 
 ## 3.0.0 (in progress)
 
+- **Gear solver and Pareto frontier:** the planner's Frontier tab searches gear and elixir combinations for a member at an act (each slot's
+  options, then a beam search and a polish pass; item pairs like Broodmother's Revenge + Ring of Regeneration tried together) and plots
+  damage against AC with the frontier marked. Use a point, or keep the frontier as variants. Costs the numbers miss are flagged (the Risky
+  Ring's disadvantage on saves).
+- **Leaderboard: saved variants.** Your party's what-ifs (Variants tab, kept frontier points) are ranked as rows of their own.
 - **Medium armour accessories:** gloves, helmets and boots that need Medium or Heavy Armour proficiency (Legacy of the Masters) end Mage
   Armour, Unarmoured Defence, Bracers of Defence and Bladesong, as body armour does (seen in game).
 - **Saved parties:** the planner's "Saved parties" loads a party of build doc builds with gear changes, the trade-offs worked out for

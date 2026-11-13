@@ -57,10 +57,10 @@ def armour_data():
 def _mod(score):
     return (int(score) - 10) // 2
 
-def armour_class(build, act):
-    """ (AC, [(source, value)]) for a build at an act """
+def armour_class(build, act, character=None):
+    """ (AC, [(source, value)]) for a build at an act. character: the build already compiled at the act, to skip compiling it again """
     act = str(act)
-    character = compile_build(build, act)
+    character = character or compile_build(build, act)
     gear = equipment_at(build, act)
     data = armour_data()
     items = catalog()

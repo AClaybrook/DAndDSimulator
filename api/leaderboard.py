@@ -2,6 +2,7 @@
     saved runs to compare against, and saving the party """
 from bg3 import db
 from bg3.build import Bg3Build
+from bg3.kits import describe_variant, variant_build
 from bg3.leaderboard import (ENEMY_COUNTS, REFERENCE_ENEMIES, ROUNDS_PER_FIGHT, SCENARIO_NOTES, SCENARIOS, cached_entry, entries_for,
                              example_entries, fingerprint, key)
 from bg3.optimize import VARIANTS
@@ -13,7 +14,7 @@ def options():
     return {
         "scenarios": [{"key": k, "label": label, "note": SCENARIO_NOTES[k]} for k, label in SCENARIOS.items()],
         "enemyCounts": list(ENEMY_COUNTS),
-        "variants": [{"key": k, "label": label} for k, label in VARIANTS.items()],
+        "variants": [{"key": k, "label": label} for k, label in {**VARIANTS, "saved": "Saved variants (your party's what-ifs)"}.items()],
         "sources": SOURCES,
         "referenceEnemies": {act: e["name"] for act, e in REFERENCE_ENEMIES.items()},
         "roundsPerFight": ROUNDS_PER_FIGHT,
@@ -32,6 +33,11 @@ def _party_entries(party):
         own = {**cached_entry(build.name, build, "Your party"), "base": fingerprint(build)}
         rows.append(own)
         rows += [{**e, "name": build.name} for (base, _), e in saved.items() if base == own["fingerprint"]]
+        # The member's own what-ifs (Variants tab, the frontier's kept points), each ranked as a build of its own
+        for variant in build.variants:
+            built = variant_build(build, variant)
+            label = f"{build.name}: {variant.get('name') or 'variant'}"
+            rows.append({**cached_entry(label, built, "Your party"), "variant": "saved", "base": own["fingerprint"], "gear_changes": describe_variant(variant)})
     return rows
 
 def entries(party_dicts):

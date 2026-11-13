@@ -74,6 +74,8 @@ export const bg3 = {
     call<T.Evaluation>('/planner/evaluate', { party: strip(party), enemy, rounds_per_fight: rounds, attack_bonus: attackBonus }),
   variants: (build: Build, enemy: Enemy | null, rounds: number, enemies: number, attackBonus: number, party: Build[] = [], synergies = false) =>
     call<T.VariantRow[]>('/planner/variants', { build: strip([build])[0], enemy, rounds_per_fight: rounds, enemies, attack_bonus: attackBonus, party: strip(party), synergies }),
+  frontier: (build: Build, act: string, enemy: Enemy | null, rounds: number, enemies: number, party: Build[], selected: number, skipTaken: boolean, synergies: boolean) =>
+    call<T.Frontier>('/planner/frontier', { build: strip([build])[0], act, enemy, rounds_per_fight: rounds, enemies, party: strip(party), selected, skip_taken: skipTaken, synergies }),
   useVariant: (build: Build, index: number) => call<Build>('/planner/use-variant', { build: strip([build])[0], index }),
   kit: (party: Build[], selected: number, kit: string, act: string, skipTaken: boolean, onlyEmpty: boolean) =>
     call<T.KitResult>('/planner/kit', { party: strip(party), selected, kit, act, skip_taken: skipTaken, only_empty: onlyEmpty }),

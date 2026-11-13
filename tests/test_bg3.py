@@ -542,3 +542,23 @@ def test_medium_armour_gloves_end_mage_armour_and_bladesong():
     ac2, parts2 = armour_class(gloved, "3")
     assert any(s.startswith("Bladesong") for s, _ in parts) and not any(s.startswith(("Bladesong", "Mage Armour")) for s, _ in parts2)
     assert ac2 < ac
+
+def test_frontier_is_non_dominated_and_starts_from_the_planned_gear():
+    from bg3.frontier import solve
+    from bg3.leaderboard import reference_enemy
+    from bg3.parties import saved_parties
+    godblade = saved_parties()[0]["builds"][0]
+    result = solve(godblade, "3", reference_enemy(3), 3)
+    current, frontier = result["current"], result["frontier"]
+    assert current["changes"] == [] and current["ac"] == 27
+    assert frontier and all(not (q["ac"] >= p["ac"] and q["damage"] > p["damage"]) for p in frontier for q in result["points"])
+    assert max(p["damage"] for p in frontier) >= current["damage"]
+    # Items that only pay off together are tried as a pair
+    assert any({("amulet", "bg3:broodmother_s_revenge"), ("ring_1", "bg3:ring_of_regeneration")} <= set(p["changes"]) for p in result["points"])
+
+def test_party_variants_are_leaderboard_rows():
+    from api.leaderboard import _party_entries
+    build = Bg3Build("Blade", "fighter_gwm", variants=[{"name": "Bless", "buffs": ["bless"]}])
+    rows = _party_entries([build])
+    saved = [r for r in rows if r["variant"] == "saved"]
+    assert [r["name"] for r in saved] == ["Blade: Bless"] and saved[0]["base"] == rows[0]["fingerprint"]

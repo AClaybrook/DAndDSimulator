@@ -357,6 +357,22 @@ class VariantRow(Model):
     ac: list[int]
     score: list[float]
 
+class FrontierChange(Model):
+    slot: str # A gear slot, or "elixir"
+    key: str # Item or buff key, "" for nothing
+    name: str
+
+class FrontierPoint(Model):
+    damage: float
+    ac: int
+    changes: list[FrontierChange] # From the build's own gear at the act
+    drawbacks: list[str] # Costs the damage and AC don't show
+    frontier: bool # No other point has both more damage and at least the AC, or more AC and at least the damage
+
+class Frontier(Model):
+    current: FrontierPoint
+    points: list[FrontierPoint]
+
 class KitResult(Model):
     build: Build
     placed: list[str]

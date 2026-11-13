@@ -269,6 +269,38 @@ export interface Fight {
   hit_points: number
 }
 
+export interface Frontier {
+  current: FrontierPoint
+  points: FrontierPoint[]
+}
+
+export interface FrontierChange {
+  slot: string
+  key: string
+  name: string
+}
+
+export interface FrontierPoint {
+  damage: number
+  ac: number
+  changes: FrontierChange[]
+  drawbacks: string[]
+  frontier: boolean
+}
+
+export interface FrontierRequest {
+  build: Build
+  party: Build[]
+  synergies: boolean
+  enemy?: Record<string, unknown> | null
+  rounds_per_fight: number
+  enemies: number
+  attack_bonus: number
+  selected: number
+  act: string
+  skip_taken: boolean
+}
+
 export interface GearChange {
   act: string
   slot: string
