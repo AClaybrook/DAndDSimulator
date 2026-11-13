@@ -18,7 +18,7 @@ class Buff:
     source: str = ""
 
 # When each elixir can first be had (bg3.wiki "where to find"), by the act checkpoints (End of Act 1 is level 5, Act 2 level 8, Act 3 level 12)
-ELIXIR_ACT = {"elixir:elixir_of_viciousness": 2, "elixir:elixir_of_battlemage_s_power": 2}
+ELIXIR_ACT = {"elixir:elixir_of_viciousness": 2, "elixir:elixir_of_battlemage_s_power": 2, "elixir:elixir_of_cloud_giant_strength": 3}
 OBTAIN = {
     "elixir:elixir_of_hill_giant_strength": "Act 1: Auntie Ethel sells 3 a long rest (Grove, then the Riverside Teahouse), Derryth in the Myconid Colony; craftable",
     "elixir:elixir_of_bloodlust": "Act 1: Cyrel (Risen Road), Derryth (Myconid Colony), Kith (Grymforge); craftable from Worg Fangs",
@@ -26,8 +26,8 @@ OBTAIN = {
     "elixir:elixir_of_the_colossus": "Act 1: craftable only, from Chasm Creepers (glowing purple plants along the Underdark paths), so a handful",
     "elixir:elixir_of_viciousness": "Trader stock from level 6 (Act 2), craftable from Shadowroot Sacs",
     "elixir:elixir_of_battlemage_s_power": "Trader stock from level 6 (Act 2), craftable from Gauth Eyestalks",
-    "elixir:elixir_of_cloud_giant_strength": "Trader stock from level 9 (Act 3). Craftable earlier from Cloud Giant Fingers, which Blurg and Derryth "
-                                             "(Myconid Colony) stock from level 6, so a few in Act 2",
+    "elixir:elixir_of_cloud_giant_strength": "Act 3: trader stock from level 9. Cloud Giant Fingers to craft it are rare before then, so Hill "
+                                             "Giant Strength until Act 3",
 }
 
 def elixirs():

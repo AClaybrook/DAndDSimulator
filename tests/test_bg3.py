@@ -579,3 +579,9 @@ def test_self_cast_haste_takes_a_smite_slot():
     slow = compile_build(replace(godblade, buffs={**godblade.buffs, "3": [b for b in godblade.buffs["3"] if b != "haste"]}), "3")
     assert hasted.once_per_turn_damage_type == "radiant"
     assert round(slow.once_per_turn_uses_per_fight - hasted.once_per_turn_uses_per_fight, 2) == 1
+
+def test_variant_buffs_wait_for_their_act():
+    from bg3.kits import variant_build
+    build = Bg3Build("F", "fighter_gwm", buffs={a: ["elixir:elixir_of_bloodlust"] for a in ("1", "2", "3")})
+    out = variant_build(build, {"name": "Cloud Giant", "buffs": ["elixir:elixir_of_cloud_giant_strength"]})
+    assert out.buffs["2"] == ["elixir:elixir_of_bloodlust"] and out.buffs["3"] == ["elixir:elixir_of_cloud_giant_strength"]

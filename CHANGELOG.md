@@ -2,6 +2,8 @@
 
 ## 3.0.0 (in progress)
 
+- **Elixir of Cloud Giant Strength** counts from Act 3 (Hill Giant Strength before), and a variant's buffs only apply from the act they
+  can be had.
 - **Haste and smites:** a Paladin multiclass that casts Haste on itself (Wizard or Sorcerer 5+) spends a slot on it every fight, one
   Divine Smite a fight fewer.
 - **Advantage some of the time:** a "Share of attacks with advantage" assumption (Shadow Blade in dim light, Faerie Fire). **Rapture**
