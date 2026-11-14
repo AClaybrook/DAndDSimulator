@@ -12,6 +12,7 @@ interface PartyState {
   enemies: number // Damage summed over this many enemies (area spells, auras)
   attackBonus: number | null // The enemy's attack bonus for hit chances, null: from its challenge rating
   collected: string[] // Map: party items already picked up
+  together: boolean // Damage with the synergies the party sets up every fight (a Resonance Stone, Reverberation)
   setParty: (party: Build[]) => void
   select: (index: number) => void
   add: (build: Build) => void
@@ -20,6 +21,7 @@ interface PartyState {
   update: (index: number, change: (build: Build) => Build) => void
   setEnemies: (n: number) => void
   setAttackBonus: (bonus: number | null) => void
+  setTogether: (on: boolean) => void
   toggleCollected: (key: string) => void
 }
 
@@ -33,6 +35,7 @@ export const useParty = create<PartyState>()(
       enemies: 1,
       attackBonus: null,
       collected: [],
+      together: true,
       setParty: (party) => set({ party: party.map(withId), selected: 0 }),
       select: (index) => set({ selected: index }),
       add: (build) => set((s) => ({
@@ -44,6 +47,7 @@ export const useParty = create<PartyState>()(
       update: (index, change) => set((s) => ({ party: s.party.map((b, i) => (i === index ? change(b) : b)) })),
       setEnemies: (enemies) => set({ enemies }),
       setAttackBonus: (attackBonus) => set({ attackBonus }),
+      setTogether: (together) => set({ together }),
       toggleCollected: (key) => set((s) => ({ collected: s.collected.includes(key) ? s.collected.filter((k) => k !== key) : [...s.collected, key] })),
     }),
     { name: 'bg3-party', version: 1 },

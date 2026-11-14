@@ -48,4 +48,4 @@ def test_act2_spots():
     assert inn["map"] == moonrise["map"] == "shadowcursed"
     assert inn["py"] < 500 < 1100 < moonrise["py"]
     assert spots["Boots of Brilliance"][0]["map"] == "gauntlet" and spots["Infernal Rapier"][0]["map"] == "colony"
-    assert {m["act"] for m in data()["maps"]} == {1, 2}
+    assert {m["act"] for m in data()["maps"]} == {1, 2, 3}

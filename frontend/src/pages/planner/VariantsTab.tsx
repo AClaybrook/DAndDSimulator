@@ -15,7 +15,7 @@ const MAX_LINES = 8 // One colour slot per line
 // What ifs: another way to play the character (a different cantrip or spell), a kit, buffs or advantage on top of its own gear, compared
 // side by side. They never change the character until "Use"
 export function VariantsTab({ options, attackBonus }: { options: PlannerOptions; attackBonus: number }) {
-  const { party, selected, update, replace, enemies } = useParty()
+  const { party, selected, update, replace, enemies, together } = useParty()
   const build = party[selected]
   const { enemy, rounds } = useSharedEnemy()
   const [name, setName] = useState('')
@@ -26,8 +26,8 @@ export function VariantsTab({ options, attackBonus }: { options: PlannerOptions;
   const [mode, setMode] = useState<{ routine: string | null; cantrip: string | null; spell: string | null; guardians: boolean }>({ routine: null, cantrip: null, spell: null, guardians: false })
   const colors = useColors()
   const rows = useQuery({
-    queryKey: ['variants', build, enemy, rounds, enemies, attackBonus],
-    queryFn: () => bg3.variants(build, enemy, rounds, enemies, attackBonus),
+    queryKey: ['variants', build, enemy, rounds, enemies, attackBonus, together && party],
+    queryFn: () => bg3.variants(build, enemy, rounds, enemies, attackBonus, party, together),
     enabled: Boolean(build && enemy), placeholderData: (p) => p,
   })
   if (!build) return null

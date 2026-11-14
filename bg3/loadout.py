@@ -7,8 +7,9 @@ from copy import deepcopy
 
 from bg3.analysis import item_gain, slot_suggestions, with_slot
 from bg3.build import ACT_KEYS, compile_build, equipment_at
+from bg3.defence import armour_class
 from bg3.items import SLOT_LABELS, catalog
-from bg3.optimize import ac_objective, optimise
+from bg3.optimize import MIN_GAIN, ac_objective, optimise
 from bg3.party import party_conflicts
 from bg3.score import score
 from computations.analytic import expected_damage_vs_enemies
@@ -29,24 +30,42 @@ def worn_by_others(builds, index, act):
     items = catalog()
     return {key for ii, other in enumerate(builds) if ii != index for key in equipment_at(other, act).values() if key in items and items[key].unique}
 
-def best_gear(builds, index, acts, goal, enemy, rounds=3, enemies=1, attack_bonus=6, weapons=True, skip_taken=True):
-    """ (gear by act, changes) for one party member: the gear that does best by the goal in each of the acts, each act building on the
-        one before. gear: {act: {slot: item key}}, only the slots that change. changes: [{act, slot, before, after}] with item names """
+def best_gear(builds, index, acts, goal, enemy, rounds=3, enemies=1, attack_bonus=6, weapons=True, skip_taken=True, enemy_at=None,
+              keep_uncounted=True):
+    """ (gear by act, changes, kept) for one party member: the gear that does best by the goal in each of the acts, each act building on
+        the one before. gear: {act: {slot: item key}}, only the slots that change. changes: [{act, slot, before, after, gain}] with item
+        names. keep_uncounted: a worn item with effects the damage doesn't count is harder to swap out (bg3.optimize.optimise), since
+        the numbers undersell it; kept: [{act, slot, item, preferred, gain}] for the ones the numbers alone would have replaced.
+        enemy_at(act): the enemy at an act when it differs (party synergies) """
     items = catalog()
     build = deepcopy(builds[index])
-    gear_by_act, changes = {}, []
+    gear_by_act, changes, kept = {}, [], []
     for act in [a for a in ACT_KEYS if a in acts]:
         party = [build if ii == index else b for ii, b in enumerate(builds)]
         exclude = worn_by_others(party, index, act) if skip_taken else set()
         before = equipment_at(build, act)
-        found = optimise(build, act, _objective(goal, act, enemy, rounds, enemies, attack_bonus), items, exclude=exclude, weapons=weapons)
+        # For damage, a swap may not cost armour class (no trading armour for clothes with a small bonus), and an item the build
+        # already wears is only replaced for a real gain
+        guard = (lambda b, act=act: armour_class(b, act)[0]) if goal == "damage" else None
+        objective = _objective(goal, act, enemy_at(act) if enemy_at else enemy, rounds, enemies, attack_bonus)
+        held = {} if keep_uncounted else None
+        found = optimise(build, act, objective, items, exclude=exclude, weapons=weapons,
+                         min_gain=MIN_GAIN, guard=guard, kept=held)
+        kept += [{"act": act, "slot": SLOT_LABELS.get(slot, slot), "item": items[key].name, "preferred": items[other].name, "gain": round(gain_, 1)}
+                 for slot, (key, other, gain_) in (held or {}).items()]
         changed = {slot: key for slot, key in found.items() if key != before.get(slot, "")}
         if changed:
             gear_by_act[act] = changed
             build.equipment[act] = {**build.equipment.get(act, {}), **changed}
+        # What each swap adds: the goal's value with everything, less the value with that one slot put back
+        total = objective(build) if changed else 0
+        def gain(slot, act=act, before=before, total=total, objective=objective):
+            back = deepcopy(build)
+            back.equipment[act] = {**back.equipment[act], slot: before.get(slot, "")}
+            return round(total - objective(back), 1)
         changes += [{"act": act, "slot": SLOT_LABELS.get(slot, slot), "before": items[before[slot]].name if before.get(slot) in items else "",
-                     "after": items[key].name if key in items else ""} for slot, key in changed.items()]
-    return gear_by_act, changes
+                     "after": items[key].name if key in items else "", "gain": gain(slot)} for slot, key in changed.items()]
+    return gear_by_act, changes, kept
 
 def resolve_conflicts(builds, enemy, rounds=3):
     """ (party without shared item conflicts, steps). For every unique item two or more characters wear at an act, the one who gains

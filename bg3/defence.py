@@ -36,6 +36,11 @@ def build_armour_data():
                 entry["bonus"] = int((params.get("armour class bonus") or "+2").strip("+") or 2)
             elif params.get("armour class", "").isdigit():
                 entry["ac"] = int(params["armour class"])
+        # Handwear, helmets and boots that need Medium or Heavy Armour proficiency count as wearing that armour: no Mage Armour,
+        # Unarmoured Defence or Bladesong (seen in game with Legacy of the Masters)
+        worn = {"Medium Armour": "medium", "Heavy Armour": "heavy"}.get(params.get("proficiency", ""))
+        if item["slot"] not in ("armour", "shield") and worn:
+            entry["proficiency"] = worn
         if bonus and not (params.get("armour class bonus") and kind == "shield"):
             entry["bonus"] = entry.get("bonus", 0) + int(bonus.group(1))
         if entry:
@@ -52,10 +57,10 @@ def armour_data():
 def _mod(score):
     return (int(score) - 10) // 2
 
-def armour_class(build, act):
-    """ (AC, [(source, value)]) for a build at an act """
+def armour_class(build, act, character=None):
+    """ (AC, [(source, value)]) for a build at an act. character: the build already compiled at the act, to skip compiling it again """
     act = str(act)
-    character = compile_build(build, act)
+    character = character or compile_build(build, act)
     gear = equipment_at(build, act)
     data = armour_data()
     items = catalog()
@@ -77,6 +82,9 @@ def armour_class(build, act):
     if shield_routine and not shield:
         shield = {"type": "shield", "bonus": 2}
     buffs = {b.key for b in buffs_at(build, act)}
+    # A medium or heavy armour piece in another slot (Legacy of the Masters) ends unarmoured AC and Bladesong like body armour does
+    armoured = next((items[k].name for k in gear.values() if data.get(k, {}).get("proficiency") and k in items), None)
+    unarmoured = kind == "clothing" and not armoured
     parts = []
     if kind == "light":
         parts.append((f"{items[gear['armour']].name} (light)", armour.get("ac", 11) + dex))
@@ -86,6 +94,8 @@ def armour_class(build, act):
         parts.append((f"{items[gear['armour']].name} (medium)", armour.get("ac", 13) + (dex if full else min(dex, 3 if "Medium Armour Master" in feats else 2))))
     elif kind == "heavy":
         parts.append((f"{items[gear['armour']].name} (heavy)", armour.get("ac", 16)))
+    elif armoured:
+        parts.append((f"No armour (10 + DEX; {armoured} counts as medium armour)", 10 + dex))
     else:
         options = [("No armour (10 + DEX)", 10 + dex)]
         if "mage_armour" in buffs:
@@ -105,10 +115,13 @@ def armour_class(build, act):
         entry = data.get(key, {})
         if entry.get("bonus") and entry.get("type") != "shield" and key in items:
             parts.append((items[key].name, entry["bonus"]))
-    if gear.get("gloves") == "bg3:bracers_of_defence" and kind == "clothing" and not shield:
+    if gear.get("gloves") == "bg3:bracers_of_defence" and unarmoured and not shield:
         parts.append(("Bracers of Defence (no armour or shield)", 2))
+    if gear.get("cloak") == "bg3:wavemother_s_cloak":
+        # Water Layer Protection: +2 AC (and saves) each turn until the wearer takes damage, so against the first attacks of a round
+        parts.append(("Wavemother's Cloak (Water Layer Protection, until damaged)", 2))
     wizard = levels.get("wizard", 0)
-    if bladesong and subs.get("wizard") == "Bladesinging" and wizard >= 2 and kind not in ("medium", "heavy") and not shield:
+    if bladesong and subs.get("wizard") == "Bladesinging" and wizard >= 2 and kind not in ("medium", "heavy") and not armoured and not shield:
         parts.append(("Bladesong", 2 + (wizard >= 5) + (wizard >= 9)))
     for key, value in AC_BUFFS.items():
         if key in buffs:

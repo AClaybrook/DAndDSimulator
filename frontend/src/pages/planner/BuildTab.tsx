@@ -11,7 +11,8 @@ export function BuildTab({ options, result }: { options: PlannerOptions; result:
   if (!build) return null
   const set = (change: Partial<Build>) => update(selected, (b) => ({ ...b, ...change }))
   const character = build.character ?? null
-  const setChar = (change: Partial<Character>) => update(selected, (b) => (b.character ? { ...b, character: { ...b.character, ...change } } : b))
+  // A respec (the class split at an earlier act, from a build doc) belongs to the classes it was written for, so editing them drops it
+  const setChar = (change: Partial<Character>) => update(selected, (b) => (b.character ? { ...b, character: { ...b.character, ...change, ...('classes' in change ? { respec: {} } : {}) } } : b))
   const b = options.builder
   const summary = result?.builder
 
@@ -100,10 +101,18 @@ export function BuildTab({ options, result }: { options: PlannerOptions; result:
             </SimpleGrid>
             {summary && summary.toggles.length > 0 && (
               <Group gap="md">
-                {summary.toggles.map((t) => (
-                  <Checkbox key={t.value} size="xs" label={t.label} checked={Boolean(character.toggles?.[t.value] ?? t.on)}
-                    onChange={(e) => setChar({ toggles: { ...character.toggles, [t.value]: e.currentTarget.checked } })} />
-                ))}
+                {summary.toggles.map((t) => {
+                  // 'Honour Mode rules: Haste's ...' -> 'Honour Mode rules', the rest on hover
+                  const short = t.label.split(/: | \(/)[0]
+                  return (
+                    <Tooltip key={t.value} label={t.label} disabled={short === t.label} multiline w={320} openDelay={300}>
+                      <div>
+                        <Checkbox size="xs" label={short} checked={Boolean(character.toggles?.[t.value] ?? t.on)}
+                          onChange={(e) => setChar({ toggles: { ...character.toggles, [t.value]: e.currentTarget.checked } })} />
+                      </div>
+                    </Tooltip>
+                  )
+                })}
               </Group>
             )}
           </Section>

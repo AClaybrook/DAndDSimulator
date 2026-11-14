@@ -177,6 +177,7 @@ class BuilderCharacter(Model):
     toggles: dict[str, bool | str] = {}
     level_order: list[str] = []
     boons: dict[str, int] = {} # Permanent ability bonuses: Auntie Ethel's Hair (+1), Mirror of Loss (+2)
+    respec: dict[str, list[tuple[str, str, int]]] = {} # Character level: the class split respecced to at that level
 
 class Build(Model):
     """ A planner build (bg3.build.Bg3Build) """
@@ -191,6 +192,7 @@ class Build(Model):
     roles: list[str] = []
     variants: list[dict[str, Any]] = []
     advantage: bool = False
+    assumptions: dict[str, float] = {} # bg3.build.ASSUMPTIONS, only the ones the player changed
 
 # ---------- Planner
 
@@ -209,6 +211,12 @@ class Example(Model):
     name: str
     source: str
 
+class Assumption(Model):
+    key: str
+    label: str
+    default: float
+    help: str
+
 class Slot(Model):
     key: str
     label: str
@@ -220,6 +228,9 @@ class Buff(Model):
     act: int
     notes: str
     modelled: bool
+    timing: str # "fight" (before each fight), "long_rest" (in camp), "combat" (during the fight)
+    cost: str # The action type it takes in round 1 when not put up before the fight
+    group: str # Only one of a group at a time ("coating"); elixirs are one at a time too
 
 class Kit(Model):
     key: str
@@ -260,6 +271,11 @@ class BuilderOptions(Model):
     toggles: list[Toggle]
     defaultCharacter: BuilderCharacter
 
+class SavedParty(Model):
+    name: str
+    notes: list[str] # Takeaways from the comparisons its variants capture
+    builds: list[Build]
+
 class PlannerOptions(Model):
     maxPartySize: int
     acts: list[Act]
@@ -271,11 +287,13 @@ class PlannerOptions(Model):
     kits: list[Kit]
     quickVariants: list[QuickVariant]
     builder: BuilderOptions
+    assumptions: list[Assumption]
     scoreWeights: dict[str, float]
     partLabels: dict[str, str]
     roleLabels: dict[str, str]
     coreRoles: list[str]
     defaultParty: list[Build]
+    savedParties: list[SavedParty]
     readOnly: bool # A shared copy: no doc import, no saved leaderboard runs
 
 class AcPart(Model):
@@ -293,6 +311,7 @@ class SavingThrow(Model):
 class ActResult(Model):
     level: int
     damage: list[float] # Against 1, 2, 3 and 4 enemies
+    together: list[float] # The same with the party's every-fight synergies (Evaluation.synergies)
     spellDc: int | None = None # None when the build forces no saving throws
     saves: list[SavingThrow]
     ac: int
@@ -330,6 +349,7 @@ class Evaluation(Model):
     attackBonus: int
     members: list[MemberResult]
     conflicts: list[Conflict]
+    synergies: dict[str, list[str]] # Act: the synergies the party sets up every fight, counted in ActResult.together
 
 class VariantRow(Model):
     name: str
@@ -339,6 +359,22 @@ class VariantRow(Model):
     spellDc: list[int | None]
     ac: list[int]
     score: list[float]
+
+class FrontierChange(Model):
+    slot: str # A gear slot, or "elixir"
+    key: str # Item or buff key, "" for nothing
+    name: str
+
+class FrontierPoint(Model):
+    damage: float
+    ac: int
+    changes: list[FrontierChange] # From the build's own gear at the act
+    drawbacks: list[str] # Costs the damage and AC don't show
+    frontier: bool # No other point has both more damage and at least the AC, or more AC and at least the damage
+
+class Frontier(Model):
+    current: FrontierPoint
+    points: list[FrontierPoint]
 
 class KitResult(Model):
     build: Build
@@ -350,11 +386,21 @@ class GearChange(Model):
     slot: str
     before: str # Item names, '' for an empty slot
     after: str
+    gain: float = 0 # What the swap adds to the goal (damage per round, AC or score)
+
+class KeptItem(Model):
+    """ A worn item best in slot left alone: it has effects the damage doesn't count, so the numbers undersell it """
+    act: str
+    slot: str
+    item: str
+    preferred: str # What the numbers alone would have picked
+    gain: float
 
 class BestGear(Model):
     build: Build
     gear: dict[str, dict[str, str]] # Act: slot: item key, only what changed
     changes: list[GearChange]
+    kept: list[KeptItem] = []
     goal: str
 
 class Alternative(Model):

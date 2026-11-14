@@ -9,7 +9,7 @@ import { uniqueName } from './store'
 import { SERIES, colorAt, themed, withAlpha } from './theme'
 
 const build = (changes: Partial<Build>): Build => ({
-  name: 'Tav', preset: 'fighter_gwm', equipment: {}, buffs: {}, conditions: [], levels: {}, character: null, carried: [], roles: [], variants: [], advantage: false, ...changes,
+  name: 'Tav', preset: 'fighter_gwm', equipment: {}, buffs: {}, conditions: [], levels: {}, character: null, carried: [], roles: [], variants: [], advantage: false, assumptions: {}, ...changes,
 })
 
 describe('gear', () => {
@@ -35,7 +35,7 @@ describe('formatting', () => {
   })
   it('names a custom character by its classes', () => {
     const custom = build({ character: { name: 'Tav', race: 'Human', scores: {}, bonus: {}, classes: [['paladin', 'Oath of Vengeance', 7], ['warlock', 'The Hexblade', 5]],
-      feats: [], fighting_styles: [], routine: 'two_handed', cantrip: '', spell: '', toggles: {}, level_order: [], boons: {} } })
+      feats: [], fighting_styles: [], routine: 'two_handed', cantrip: '', spell: '', toggles: {}, level_order: [], boons: {}, respec: {} } })
     expect(classLine(custom, { presets: [] } as never)).toBe('Paladin 7 (Oath of Vengeance) / Warlock 5 (The Hexblade)')
   })
   it('keeps names unique', () => {

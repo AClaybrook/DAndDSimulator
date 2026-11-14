@@ -22,9 +22,9 @@ const OWN = 'Your party'
 const sourceColors = (scheme: Scheme): Record<string, string> => ({
   ...Object.fromEntries(Object.entries(SOURCE_SLOT).map(([s, i]) => [s, SERIES[scheme][i]])), [OWN]: CHART_TOKENS[scheme].text,
 })
-const VARIANT_SHORT: Record<string, string> = { planned: 'Planned', max_damage: 'Max damage', max_ac: 'Max AC', best_score: 'Best score' }
+const VARIANT_SHORT: Record<string, string> = { planned: 'Planned', max_damage: 'Max damage', max_ac: 'Max AC', best_score: 'Best score', saved: 'Saved variant' }
 
-const PLANNED = ['planned']
+const PLANNED = ['planned', 'saved']
 const ALL_SOURCES = ['Your party', 'Preset', 'Build doc', 'Reddit (approx.)']
 
 type Row = LeaderboardEntry & { overall: number; d: Record<string, number | null>; rank: Record<string, number> }
@@ -193,15 +193,15 @@ export function LeaderboardPage() {
       </SimpleGrid>
 
       <Grid mt="md" gap="md">
-        <Grid.Col span={{ base: 12, lg: 5 }}>
+        <Grid.Col span={{ base: 12, lg: 6 }}>
           <Section title="Damage vs armour class" actions={
             <SegmentedControl size="xs" value={chartAct} onChange={setChartAct} data={ACTS.map((a) => ({ value: a, label: `Act ${a}` }))} />}>
-            <Text size="xs" c="dimmed" mt={-6}>Up is more damage, right is harder to hit. Bigger marks have a higher overall score, diamonds are your party. Click one for its build.</Text>
-            <Plot figure={scatter} height={430} onClick={(p) => { const row = byKey[String(p.customdata)]; if (row) setOpen(row) }}
+            <Text size="xs" c="dimmed" mt={-6}>Bigger marks score higher overall; diamonds are your party. Click a mark for its build.</Text>
+            <Plot figure={scatter} height={560} onClick={(p) => { const row = byKey[String(p.customdata)]; if (row) setOpen(row) }}
               onHover={(p) => setHovered(p?.customdata ? String(p.customdata) : null)} />
           </Section>
         </Grid.Col>
-        <Grid.Col span={{ base: 12, lg: 7 }}>
+        <Grid.Col span={{ base: 12, lg: 6 }}>
           <Section title="Rankings">
             <SortTable title="Leaderboard" data={rows} columns={columns} initialSorting={[{ id: 'Overall', desc: true }]} dense
               hidden={['Source', 'Fingerprint', ...ACTS.flatMap((a) => [`AC ${a}`, `Score ${a}`])]}

@@ -236,8 +236,47 @@
 "type": "clothing",
 "ac": 10
 },
+"bg3:boots_of_elemental_momentum": {
+"proficiency": "medium"
+},
+"bg3:boots_of_striding": {
+"proficiency": "medium"
+},
+"bg3:dreamsome_boots": {
+"proficiency": "medium"
+},
+"bg3:metallic_boots": {
+"proficiency": "medium"
+},
+"bg3:the_speedy_lightfeet": {
+"proficiency": "medium"
+},
+"bg3:vital_conduit_boots": {
+"proficiency": "medium"
+},
+"bg3:metallic_gloves": {
+"proficiency": "medium"
+},
+"bg3:metallic_gloves_dream_guardian": {
+"proficiency": "medium"
+},
 "bg3:wondrous_gloves": {
 "bonus": 1
+},
+"bg3:dark_justiciar_helm": {
+"proficiency": "medium"
+},
+"bg3:grymskull_helm": {
+"proficiency": "heavy"
+},
+"bg3:helmet_of_smiting": {
+"proficiency": "medium"
+},
+"bg3:holy_lance_helm": {
+"proficiency": "medium"
+},
+"bg3:reinforced_helmet": {
+"proficiency": "medium"
 },
 "bg3:ring_of_protection": {
 "bonus": 1
@@ -412,11 +451,44 @@
 "type": "medium",
 "ac": 15
 },
+"bg3:dark_justiciar_boots": {
+"proficiency": "medium"
+},
 "bg3:evasive_shoes": {
 "bonus": 1
 },
 "bg3:cloak_of_protection": {
 "bonus": 1
+},
+"bg3:gauntlets_of_surging_accuracy": {
+"proficiency": "medium"
+},
+"bg3:adjustable_steel_helm": {
+"proficiency": "medium"
+},
+"bg3:cracked_helm_of_shar": {
+"proficiency": "medium"
+},
+"bg3:dark_justiciar_helmet": {
+"proficiency": "medium"
+},
+"bg3:fierce_golden_helm": {
+"proficiency": "medium"
+},
+"bg3:flawed_helldusk_helmet": {
+"proficiency": "medium"
+},
+"bg3:goldgloss_heraldic_helm": {
+"proficiency": "medium"
+},
+"bg3:justiciar_helmet": {
+"proficiency": "medium"
+},
+"bg3:regal_helm": {
+"proficiency": "medium"
+},
+"bg3:triumphal_helm": {
+"proficiency": "medium"
 },
 "bg3:absolute_s_protector": {
 "type": "shield",
@@ -608,6 +680,69 @@
 "ac": 10,
 "bonus": 1
 },
+"bg3:blackguard_s_greaves": {
+"proficiency": "medium"
+},
+"bg3:boots_of_persistence": {
+"proficiency": "medium"
+},
+"bg3:boots_of_psionic_movement": {
+"proficiency": "medium"
+},
+"bg3:unwanted_masterwork_greaves": {
+"proficiency": "medium"
+},
+"bg3:blackguard_s_gauntlets": {
+"proficiency": "medium"
+},
+"bg3:gauntlets_of_the_warmaster": {
+"proficiency": "medium"
+},
+"bg3:legacy_of_the_masters": {
+"proficiency": "medium"
+},
+"bg3:the_reviving_hands": {
+"proficiency": "medium"
+},
+"bg3:unwanted_masterwork_gauntlets": {
+"proficiency": "medium"
+},
+"bg3:blackplume_helm": {
+"proficiency": "medium"
+},
+"bg3:blaze_portyr_s_ceremonial_flaming_fist_helm": {
+"proficiency": "medium"
+},
+"bg3:flaming_fist_helmet": {
+"proficiency": "medium"
+},
+"bg3:formidable_helmet": {
+"proficiency": "medium"
+},
+"bg3:helm_of_balduran": {
+"proficiency": "medium"
+},
+"bg3:opulent_helmet": {
+"proficiency": "medium"
+},
+"bg3:sarevok_s_horned_helmet": {
+"proficiency": "medium"
+},
+"bg3:scalpspike_helm": {
+"proficiency": "medium"
+},
+"bg3:shar_headwear": {
+"proficiency": "medium"
+},
+"bg3:steelwatcher_helmet": {
+"proficiency": "medium"
+},
+"bg3:watch_s_helmet": {
+"proficiency": "medium"
+},
+"bg3:well_crated_helm": {
+"proficiency": "medium"
+},
 "bg3:abdel_s_trusted_shield": {
 "type": "shield",
 "bonus": 2
@@ -657,6 +792,15 @@
 "bg3:robe": {
 "type": "clothing",
 "ac": 10
+},
+"bg3:githyanki_boots": {
+"proficiency": "medium"
+},
+"bg3:gloves_of_succour": {
+"proficiency": "medium"
+},
+"bg3:helmet": {
+"proficiency": "medium"
 },
 "bg3:iron_banded_shield": {
 "type": "shield",

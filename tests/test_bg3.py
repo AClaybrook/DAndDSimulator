@@ -31,8 +31,23 @@ def fighter(**kwargs):
 def test_no_gear_is_the_preset_at_the_checkpoint_level():
     character = compile_build(fighter(), 1, ITEMS)
     preset = build_character("fighter_gwm", 5, "bg3")
+    # BG3 adds Great Weapon Master's bonus attack after a crit or a kill
+    bonus = [a for a in character.attacks if a.label == "Great Weapon Master"]
+    assert len(bonus) == 1 and bonus[0].action == "bonus" and 0 < bonus[0].uses_per_fight < 3
+    with_bonus = expected_damage_per_round(character, ENEMY, 3)
+    character.attacks = [a for a in character.attacks if a.label != "Great Weapon Master"]
     assert character.level == 5 and [a.damage for a in character.attacks] == [a.damage for a in preset.attacks]
     assert expected_damage_per_round(character, ENEMY) == pytest.approx(expected_damage_per_round(preset, ENEMY))
+    assert with_bonus > 1.1 * expected_damage_per_round(preset, ENEMY, 3)
+    # Without kills only crits give it; a bonus action attack made every turn (Polearm Master's butt end) is made in the other turns
+    from bg3.character import Bg3Character
+    no_kills = compile_build(fighter(assumptions={"bloodlust_kills": 0}), 1, ITEMS)
+    assert next(a for a in no_kills.attacks if a.label == "Great Weapon Master").uses_per_fight < bonus[0].uses_per_fight
+    polearm = compile_build(Bg3Build("P", "", character=Bg3Character(feats=["Great Weapon Master", "Polearm Master"], routine="polearm").to_dict()), 3)
+    assert next(a for a in polearm.attacks if a.name == "Polearm Butt End").fallback_for == "Glaive (Great Weapon Master)"
+    weapon = compile_build(Bg3Build("W", "fighter_gwm", buffs={"1": ["magic_weapon", "drakethroat"]}), 1)
+    plain = build_character("fighter_gwm", 5, "bg3")
+    assert weapon.attacks[0].bonus_attack_die_mod_list != plain.attacks[0].bonus_attack_die_mod_list and any("lightning" in str(x) for x in weapon.attacks[0].extra_damage_list)
     assert compile_build(fighter(levels={"2": 7}), 2, ITEMS).level == 7
 
 def test_weapon_and_ring_effects():
@@ -200,7 +215,7 @@ def test_elixirs():
     giant, vicious = BUFFS["elixir:elixir_of_hill_giant_strength"], BUFFS["elixir:elixir_of_viciousness"]
     # Every elixir replaces the one before (Heroism's attack bonus too, bg3.wiki); Viciousness is in trader stock from level 6 (Act 2)
     assert giant.exclusive and vicious.exclusive and BUFFS["elixir:elixir_of_heroism"].exclusive
-    assert (giant.act, vicious.act, BUFFS["elixir:elixir_of_cloud_giant_strength"].act) == (1, 2, 2)
+    assert (giant.act, vicious.act, BUFFS["elixir:elixir_of_cloud_giant_strength"].act) == (1, 2, 3)
     character = compile_build(fighter(buffs={"1": [giant.key]}), 1, ITEMS)
     assert character.strength == 21
     assert all(a.crit_on == 18 for a in compile_build(fighter(buffs={"1": [vicious.key]}), 1, ITEMS).attacks) # Champion 19, then one lower
@@ -346,3 +361,247 @@ def test_dead_shot_gontr_mael_and_one_hags_hair():
     party = (Bg3Build.from_dict(doc["1. The Godblade"]), deadeye)
     assert any("Auntie Ethel's Hair" in c.message for c in party_conflicts(party, acts=("3",)))
     assert not any("Auntie Ethel's Hair" in c.message for c in party_conflicts(party[:1], acts=("3",)))
+
+def test_best_gear_keeps_armour_and_planned_items_unless_the_gain_is_real():
+    """ Searching for damage never lowers armour class, only offers weapons the build is proficient with, and replaces an item the build
+        already wears only for a gain of 3% or more; every change says what it adds """
+    from bg3 import doc_import
+    from bg3.character import Bg3Character, is_proficient, weapon_proficiencies
+    from bg3.defence import armour_class
+    from bg3.loadout import MIN_GAIN, best_gear
+    from bg3.optimize import weapon_candidates
+    doc = {e["build"]["name"]: e["build"] for e in doc_import.load()}
+    party = [Bg3Build.from_dict(doc[n]) for n in ("1. The Godblade", "5. Arcane Deadeye")]
+    for index, build in enumerate(party):
+        gear, changes, _ = best_gear(party, index, ["2", "3"], "damage", Enemy(), 3, 1, 6, True, True)
+        for act, slots in gear.items():
+            after = replace(build, equipment={**build.equipment, act: {**build.equipment.get(act, {}), **slots}})
+            assert armour_class(after, act)[0] >= armour_class(build, act)[0]
+        assert all(c["gain"] > 0 for c in changes)
+        before = expected_damage_per_round(compile_build(build, "3"), Enemy(), 3)
+        assert all(c["gain"] >= MIN_GAIN * before * 0.9 for c in changes if c["before"] and c["act"] == "3")
+    wizard = Bg3Build.from_dict(doc["14. Death Cleric Necromancer"])
+    profs = weapon_proficiencies(Bg3Character.from_dict(wizard.character), 12)
+    _, pool = weapon_candidates(wizard, "3")
+    assert pool and all(is_proficient(i.weapon.get("base"), profs) for i in pool) and "bg3:infernal_rapier" not in {i.key for i in pool}
+
+def test_estimates_party_synergies_and_items_the_damage_cannot_judge():
+    """ A build's own estimates replace the defaults (kills with Bloodlust, reaction attacks); the planner gives damage with the party's
+        every-fight synergies next to damage alone; best in slot leaves a worn item whose effects aren't all counted, and says so """
+    from api import planner
+    from bg3 import doc_import
+    from bg3.character import Bg3Character
+    from bg3.loadout import best_gear
+    doc = {e["build"]["name"]: e["build"] for e in doc_import.load()}
+    def damage(build):
+        return expected_damage_per_round(compile_build(build, "3"), Enemy(), 3)
+    godblade = Bg3Build.from_dict(doc["1. The Godblade"])
+    thirsty = replace(godblade, buffs={"3": ["elixir:elixir_of_bloodlust"]})
+    none, usual, many = (damage(replace(thirsty, assumptions=a)) for a in ({"bloodlust_kills": 0}, {}, {"bloodlust_kills": 3}))
+    assert damage(replace(godblade, buffs={})) == pytest.approx(none) and none < usual < many
+    polearm = Bg3Build("Polearm", "", character=Bg3Character(feats=["Polearm Master", "Sentinel"], routine="polearm").to_dict())
+    quiet, normal, busy = (damage(replace(polearm, assumptions=a)) for a in ({"polearm_reactions": 0, "sentinel_reactions": 0}, {}, {"sentinel_reactions": 3}))
+    assert quiet < normal < busy
+    assert not [a for a in compile_build(replace(polearm, assumptions={"polearm_reactions": 0, "sentinel_reactions": 0}), "3").attacks if a.action == "reaction"]
+
+    # The Godblade carries the Resonance Stone and deals psychic damage: more with the party's synergies from Act 2, the same in Act 1
+    party = [Bg3Build.from_dict(doc[n]) for n in ("1. The Godblade", "5. Arcane Deadeye")]
+    result = planner.evaluate([b.to_dict() for b in party])
+    acts = result["members"][0]["acts"]
+    assert "Resonance Stone" in result["synergies"]["3"] and "Resonance Stone" not in result["synergies"]["1"]
+    assert acts["3"]["together"][0] > 1.3 * acts["3"]["damage"][0] and acts["1"]["together"] == acts["1"]["damage"]
+    assert {o["key"] for o in planner.options()["assumptions"]} == {"bloodlust_kills", "polearm_reactions", "sentinel_reactions", "advantage_share", "precast_buffs"}
+
+    items = catalog()
+    names = {i.name: i for i in items.values()}
+    for index in range(len(party)):
+        _, changes, kept = best_gear(party, index, ["3"], "damage", Enemy(), 3, 1, 6, True, True)
+        # Replaced items are fully counted, or partly counted and beaten by a wide margin
+        base = expected_damage_per_round(compile_build(party[index], "3"), Enemy(), 3)
+        assert all((names[c["before"]].effects or names[c["before"]].weapon) and c["gain"] >= 0.09 * base for c in changes if c["before"] and names[c["before"]].notes)
+        assert all(names[k["item"]].notes and k["gain"] > 0 for k in kept)
+    _, changes, kept = best_gear(party, 0, ["3"], "damage", Enemy(), 3, 1, 6, True, True, keep_uncounted=False)
+    assert not kept and any(c["before"] and names[c["before"]].notes and not names[c["before"]].effects for c in changes)
+
+def test_belm_in_the_off_hand_and_rhapsody_stacks():
+    """ Belm in the off hand turns the bonus action attack into a main hand one (Perfectly Balanced Strike); Rhapsody's Scarlet
+        Remittance is one toggle for its three effects (+3 to hit, damage and spell save DC) """
+    from api.planner import conditional_options
+    from bg3.character import Bg3Character
+    blade = Bg3Character(classes=[["wizard", "Bladesinging", 12]], routine="shadow_blade", scores={**Bg3Character().scores, "dexterity": 16}).to_dict()
+    def build(off, conditions=()):
+        return Bg3Build("Blade", "", character=blade, equipment={"3": {"melee_off": off}}, conditions=list(conditions))
+    belm = compile_build(build("bg3:belm"), "3")
+    strike = next(a for a in belm.attacks if a.label == "Perfectly Balanced Strike")
+    assert strike.action == "bonus" and not strike.offhand and strike.damage == "4d8" and not [a for a in belm.attacks if a.offhand]
+    options = conditional_options(build("bg3:rhapsody"))
+    assert len(options) == 1 and options[0]["label"].startswith("Rhapsody: Scarlet Remittance")
+    cold, hot = (expected_damage_per_round(compile_build(build("bg3:rhapsody", c), "3"), Enemy(), 3) for c in ((), (options[0]["value"],)))
+    assert cold < expected_damage_per_round(belm, Enemy(), 3) and hot > 1.15 * cold
+    assert next(a for a in compile_build(build("bg3:rhapsody", (options[0]["value"],)), "3").attacks if not a.offhand).bonus_damage_die_mod_list[-1] == "3"
+
+def test_a_hold_can_fail_and_the_resonance_stone_weakens_mental_saves():
+    """ A held enemy counts for the share of turns it fails its Wisdom save against the caster's DC; the Resonance Stone gives enemies
+        disadvantage on Intelligence, Wisdom and Charisma saves, for the hold and for save spells """
+    from bg3 import synergy
+    from bg3.character import Bg3Character
+    wizard = Bg3Character(classes=[["wizard", "Bladesinging", 12]], routine="shadow_blade", scores={**Bg3Character().scores, "intelligence": 16}).to_dict()
+    blade = Bg3Build("Blade", "", character=wizard, carried=["Resonance Stone"])
+    tough = Enemy(wisdom_save=9)
+    lands, dc, caster = synergy.hold_chance([blade], "3", tough)
+    assert caster == "Blade" and lands == pytest.approx((dc - 1 - 9) / 20)
+    stoned, active = synergy.party_enemy([blade], "3", tough, ["resonance_stone"])
+    assert stoned.save_disadvantage == ["charisma", "intelligence", "wisdom"] and active == ["resonance_stone"]
+    assert synergy.hold_chance([blade], "3", stoned)[0] == pytest.approx(1 - (1 - lands) ** 2)
+    free = synergy.party_damage([blade], "3", tough, 3, ["resonance_stone"])[0][2]
+    mixed = synergy.party_damage([blade], "3", tough, 3, ["resonance_stone", "paralysed"])[0][2]
+    characters, foe = synergy.apply([blade], "3", tough, ["resonance_stone", "paralysed"])
+    always = expected_damage_per_round(characters[0], foe, 3)
+    share = synergy.hold_chance([blade], "3", stoned)[0]
+    assert free < mixed < always and mixed == pytest.approx(share * always + (1 - share) * free)
+    assert "lands" in synergy.describe([blade], "3", tough)["paralysed"]
+    fight = synergy.simulate_party_fight([blade], "3", tough, 3, ["resonance_stone", "paralysed"], num_fights=500)
+    assert 0 < fight["median_round"]
+    # A Wisdom save cantrip against the same enemy: disadvantage makes it fail more often
+    caster = compile_build(Bg3Build("Cleric", "", character=Bg3Character(classes=[["cleric", "Life Domain", 12]], routine="cantrip", cantrip="Toll the Dead").to_dict()), "3")
+    assert expected_damage_per_round(caster, stoned) > expected_damage_per_round(caster, tough)
+
+def test_eldritch_knight_shadow_blade_gets_war_magic_and_action_surge():
+    from bg3.character import Bg3Character, compile_character
+    knight = Bg3Character(name="Knight", race="Human", scores={"strength": 8, "dexterity": 17, "constitution": 14, "intelligence": 10, "wisdom": 12, "charisma": 10},
+                          bonus={"dexterity": 2, "constitution": 1}, classes=[["fighter", "Eldritch Knight", 11], ["warlock", "The Hexblade", 1]],
+                          feats=["dexterity+2", "constitution+2"], routine="shadow_blade")
+    c, _ = compile_character(knight, 12)
+    names = [a.name for a in c.attacks]
+    assert "Shadow Blade (War Magic)" in names and not any(a.offhand for a in c.attacks) # War Magic takes the off-hand swing's bonus action
+    assert names.count("Shadow Blade (Action Surge)") == 3
+
+def test_strength_gear_sets_the_finesse_stat():
+    from bg3.character import Bg3Character
+    """ Gauntlets of Hill Giant Strength (23) beat Dexterity 20 for Shadow Blade and finesse daggers """
+    character = Bg3Character(scores={"strength": 8, "dexterity": 17, "constitution": 14, "intelligence": 16, "wisdom": 10, "charisma": 8},
+                             classes=[["paladin", "Oath of the Crown", 2], ["wizard", "Bladesinging", 10]], feats=["dexterity+2"],
+                             fighting_styles=["Two-Weapon Fighting"], routine="shadow_blade").to_dict()
+    bare = compile_build(Bg3Build("Godblade", "", character=character), "3")
+    gloved = compile_build(Bg3Build("Godblade", "", character=character, equipment={"3": {"gloves": "bg3:gauntlets_of_hill_giant_strength"}}), "3")
+    assert {a.ability_stat for a in bare.attacks if a.is_weapon} == {"dexterity"}
+    assert {a.ability_stat for a in gloved.attacks if a.is_weapon} == {"strength"}
+    assert expected_damage_per_round(gloved, Enemy(armor_class=18)) > expected_damage_per_round(bare, Enemy(armor_class=18))
+
+def test_spellmight_gloves_add_to_booming_blade_without_the_penalty():
+    from bg3.character import Bg3Character
+    character = Bg3Character(classes=[["wizard", "Bladesinging", 12]], routine="shadow_blade").to_dict()
+    gloved = compile_build(Bg3Build("Blade", "", character=character, equipment={"3": {"gloves": "bg3:spellmight_gloves"}}), "3")
+    booming = [a for a in gloved.attacks if "booming_blade" in a.tags]
+    assert booming and all("1d8 thunder" in a.extra_damage_list and "1d8" in a.bonus_damage_die_mod_list for a in booming)
+    assert all("-5" not in a.bonus_attack_die_mod_list for a in booming)
+    assert not any("1d8 thunder" in a.extra_damage_list for a in gloved.attacks if "booming_blade" not in a.tags)
+
+def test_necklace_of_elemental_augmentation_skips_booming_blade():
+    from bg3.character import Bg3Character
+    character = Bg3Character(classes=[["wizard", "Bladesinging", 12]], routine="shadow_blade").to_dict()
+    bare = compile_build(Bg3Build("Blade", "", character=character), "3")
+    worn = Bg3Build("Blade", "", character=character, equipment={"3": {"amulet": "bg3:necklace_of_elemental_augmentation"}},
+                    conditions=["bg3:necklace_of_elemental_augmentation#0"])
+    assert expected_damage_per_round(compile_build(worn, "3"), Enemy(armor_class=18)) == expected_damage_per_round(bare, Enemy(armor_class=18))
+
+def test_ring_of_regeneration_keeps_broodmothers_revenge_up():
+    from bg3.character import Bg3Character
+    character = Bg3Character(classes=[["fighter", "Battle Master", 12]], routine="dual_wield").to_dict()
+    amulet = {"amulet": "bg3:broodmother_s_revenge"}
+    alone = compile_build(Bg3Build("F", "", character=character, equipment={"3": amulet}), "3")
+    healed = compile_build(Bg3Build("F", "", character=character, equipment={"3": {**amulet, "ring_1": "bg3:ring_of_regeneration"}}), "3")
+    assert not any("1d6 poison" in a.extra_damage_list for a in alone.attacks)
+    assert all("1d6 poison" in a.extra_damage_list for a in healed.attacks if a.is_weapon)
+
+def test_wavemothers_cloak_adds_armour_class():
+    from bg3.character import Bg3Character
+    from bg3.defence import armour_class
+    character = Bg3Character(classes=[["fighter", "Battle Master", 12]], routine="dual_wield").to_dict()
+    bare = armour_class(Bg3Build("F", "", character=character), "3")[0]
+    assert armour_class(Bg3Build("F", "", character=character, equipment={"3": {"cloak": "bg3:wavemother_s_cloak"}}), "3")[0] == bare + 2
+
+def test_saved_party_variants_compile():
+    from bg3.kits import variant_builds
+    from bg3.parties import saved_parties
+    party = saved_parties()[0]
+    assert len(party["builds"]) == 4 and party["notes"]
+    godblade = party["builds"][0]
+    assert equipment_at(godblade, "3")["gloves"] == "bg3:spellmight_gloves"
+    for name, _, build in variant_builds(godblade):
+        compile_build(build, "3")
+        if name.startswith("Elixir: Cloud Giant"):
+            assert [b for b in build.buffs["3"] if b.startswith("elixir:")] == ["elixir:elixir_of_cloud_giant_strength"]
+
+def test_medium_armour_gloves_end_mage_armour_and_bladesong():
+    from bg3.defence import armour_class
+    from bg3.parties import saved_parties
+    godblade = saved_parties()[0]["builds"][0]
+    ac, parts = armour_class(godblade, "3")
+    gloved = replace(godblade, equipment={**godblade.equipment, "3": {**godblade.equipment["3"], "gloves": "bg3:legacy_of_the_masters"}})
+    ac2, parts2 = armour_class(gloved, "3")
+    assert any(s.startswith("Bladesong") for s, _ in parts) and not any(s.startswith(("Bladesong", "Mage Armour")) for s, _ in parts2)
+    assert ac2 < ac
+
+def test_frontier_is_non_dominated_and_starts_from_the_planned_gear():
+    from bg3.frontier import solve
+    from bg3.leaderboard import reference_enemy
+    from bg3.parties import saved_parties
+    godblade = saved_parties()[0]["builds"][0]
+    result = solve(godblade, "3", reference_enemy(3), 3)
+    current, frontier = result["current"], result["frontier"]
+    assert current["changes"] == [] and current["ac"] == 28
+    assert frontier and all(not (q["ac"] >= p["ac"] and q["damage"] > p["damage"]) for p in frontier for q in result["points"])
+    assert max(p["damage"] for p in frontier) >= current["damage"]
+    # Items that only pay off together are tried as a pair
+    assert any({("amulet", "bg3:broodmother_s_revenge"), ("ring_1", "bg3:ring_of_regeneration")} <= set(p["changes"]) for p in result["points"])
+
+def test_party_variants_are_leaderboard_rows():
+    from api.leaderboard import _party_entries
+    build = Bg3Build("Blade", "fighter_gwm", variants=[{"name": "Bless", "buffs": ["bless"]}])
+    rows = _party_entries([build])
+    saved = [r for r in rows if r["variant"] == "saved"]
+    assert [r["name"] for r in saved] == ["Blade: Bless"] and saved[0]["base"] == rows[0]["fingerprint"]
+
+def test_advantage_share_and_rapture():
+    from bg3.parties import saved_parties
+    godblade = saved_parties()[0]["builds"][0]
+    character = compile_build(godblade, "3")
+    weapons = [a for a in character.attacks if a.is_weapon]
+    assert all(a.advantage_chance == 0.5 for a in weapons) and all("1d6" in a.bonus_attack_die_mod_list for a in weapons)
+    plain = compile_build(replace(godblade, assumptions={}), "3")
+    assert all(a.advantage_chance == 0 for a in plain.attacks if a.is_weapon)
+
+def test_self_cast_haste_takes_a_smite_slot():
+    from bg3.parties import saved_parties
+    godblade = saved_parties()[0]["builds"][0]
+    hasted = compile_build(godblade, "3")
+    slow = compile_build(replace(godblade, buffs={**godblade.buffs, "3": [b for b in godblade.buffs["3"] if b != "haste"]}), "3")
+    assert hasted.once_per_turn_damage_type == "radiant"
+    assert round(slow.once_per_turn_uses_per_fight - hasted.once_per_turn_uses_per_fight, 2) == 1
+
+def test_variant_buffs_wait_for_their_act():
+    from bg3.kits import variant_build
+    build = Bg3Build("F", "fighter_gwm", buffs={a: ["elixir:elixir_of_bloodlust"] for a in ("1", "2", "3")})
+    out = variant_build(build, {"name": "Cloud Giant", "buffs": ["elixir:elixir_of_cloud_giant_strength"]})
+    assert out.buffs["2"] == ["elixir:elixir_of_bloodlust"] and out.buffs["3"] == ["elixir:elixir_of_cloud_giant_strength"]
+
+def test_fight_buffs_in_round_one_cost_their_action():
+    from bg3.parties import saved_parties
+    from bg3.leaderboard import reference_enemy
+    godblade = saved_parties()[0]["builds"][0]
+    before = compile_build(godblade, "3")
+    late = compile_build(replace(godblade, assumptions={**godblade.assumptions, "precast_buffs": 0}), "3")
+    assert before.setup_turns == {} and late.setup_turns == {"action": 1} # Haste, cast by the Godblade itself
+    enemy = reference_enemy(3)
+    assert expected_damage_per_round(late, enemy, 3) < expected_damage_per_round(before, enemy, 3)
+    # Haste from an ally costs a fighter nothing
+    fighter = Bg3Build("F", "fighter_gwm", buffs={"3": ["haste"]}, assumptions={"precast_buffs": 0})
+    assert compile_build(fighter, "3").setup_turns == {}
+
+def test_coatings_one_at_a_time_and_toxins_save():
+    build = Bg3Build("F", "fighter_gwm", buffs={"3": ["coat:dipped_fire", "coat:purple_worm_toxin"]})
+    character = compile_build(build, "3")
+    toxin = [a for a in character.attacks if "coating" in a.tags]
+    assert len(toxin) == 1 and toxin[0].save_dc == 19 and toxin[0].damage == "1d10"
+    assert not any("1d4 fire" in a.extra_damage_list for a in character.attacks) # The later coating replaced the dip

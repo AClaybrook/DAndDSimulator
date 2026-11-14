@@ -16,7 +16,8 @@ from bg3.abilities import point_buy_problems
 from bg3.buffs import BUFFS
 from bg3.build import Bg3Build
 from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_SPELLS, RACES, ROUTINES, SHADOW_BLADE, SUBCLASSES, Bg3Character,
-                           compile_character, feat_opportunities)
+                           class_levels, compile_character, feat_opportunities)
+from bg3.checkpoints import act_level
 from bg3.items import catalog, condition_id
 from computations.models import STATS
 from game_data import spells
@@ -215,7 +216,9 @@ def met_conditions(character, equipment, items):
     for key in dict.fromkeys(k for gear in equipment.values() for k in gear.values() if k in items):
         for ii, effect in enumerate(items[key].effects):
             condition = effect.condition or ""
-            if (condition.startswith("When Concentrating") and character.routine == "shadow_blade") or (condition.startswith("Arcane Synergy") and booming):
+            if (condition.startswith("When Concentrating") and character.routine == "shadow_blade") or (condition.startswith("Arcane Synergy") and booming) or \
+                    (condition.startswith("Scarlet Remittance") and condition_id(key, ii) not in on and
+                     not any(e.condition == condition for e in items[key].effects[:ii])):
                 on.append(condition_id(key, ii))
     return on
 
@@ -288,7 +291,8 @@ def parse_level_order(text, classes):
 
 def parse_buffs(text):
     names = {b.name.lower(): key for key, b in BUFFS.items()}
-    return [names[n.strip().lower()] for n in re.split(r"[,;]", text) if n.strip().lower() in names]
+    wanted = [re.sub(r"^(twinned|quickened|extended) ", "", n.strip().lower()) for n in re.split(r"[,;]", text)] # Metamagic keeps the spell
+    return [names[n] for n in wanted if n in names]
 
 # ---------- Builds
 
@@ -376,8 +380,22 @@ def parse_build(number, title, body, index, items):
         character.level_order = parse_level_order(field(body, "Level order"), character.classes)
         if not character.level_order:
             notes.append(f"Level order not read: {field(body, 'Level order')}")
-    if field(body, "Respec"):
-        notes.append(f"Respec not modelled (uses the final split): {field(body, 'Respec')}")
+    # 'Respec: Act 1 = 5 Bladesinging Wizard; Act 2 = ...': the split at an act's level when levelling in order doesn't give it
+    for act, split in re.findall(r"Act (\d)\s*=\s*([^;]+)", field(body, "Respec") or ""):
+        rows, level = [], act_level(act, {})
+        for cls, sub_, n in parse_classes(split):
+            same = next((r for r in rows if r[0] == cls), None)
+            if same:
+                same[2] += n
+            else:
+                rows.append([cls, sub_, n])
+        if sum(n for _, _, n in rows) != level:
+            notes.append(f"Respec not read: Act {act} = {split.strip()}")
+        elif class_levels(character, level) != {cls: n for cls, _, n in rows}:
+            character.respec[str(level)] = rows
+    # 'Permanent buffs: Act 1 Auntie Ethel's Hair DEX; ...'
+    if hair := re.search(r"(?:Auntie Ethel|Hag)'?s? Hair (STR|DEX|CON|INT|WIS|CHA)", field(body, "Permanent buffs") or ""):
+        character.boons = {STAT_NAMES[hair.group(1)]: 1}
     if field(body, "Cantrip") or field(body, "Spell"):
         # Only damage spells the builder models; utility ones (Light, Aid, Hold Monster) and Divine Smite (a class feature here) are noted
         cantrip = next((c for c in CANTRIPS if c.lower() == field(body, "Cantrip").lower()), None)
@@ -421,6 +439,8 @@ def parse_build(number, title, body, index, items):
     # A respec that takes the casting class last, so items and Arcane Synergy use its ability
     if m := re.search(r"items? scale with (INT|WIS|CHA)\b", body):
         character.toggles = {**character.toggles, "item_casting": STAT_NAMES[m.group(1)]}
+    elif m := re.search(r"locking item[^.\n]*? to (Intelligence|Wisdom|Charisma)\b", body):
+        character.toggles = {**character.toggles, "item_casting": m.group(1).lower()}
     modes = play_modes(character, body, flat)
     roles = [r for r in ROLES if re.search(rf"\b{r}", field(body, "Roles", "Assigned Companion / Role", "Role").lower())]
     buffs = {act: parse_buffs(line) for act, line in re.findall(r"^Act ([123]) Buffs:\s*(.+)$", body, re.M)}
@@ -520,7 +540,9 @@ def repair(entry):
 def import_text(text):
     text = re.sub(r"^\*\s+", "", normalise(text), flags=re.M) # Required field markers from the format example
     index, items = item_index(), catalog()
-    return [repair(parse_build(n, title, body, index, items)) for n, title, body in build_sections(text)]
+    # A build written twice (an older write-up above the structured one) is read from its last section
+    sections = {n: (n, title, body) for n, title, body in build_sections(text)}
+    return [repair(parse_build(n, title, body, index, items)) for n, title, body in sections.values()]
 
 def load():
     """ The imported builds, [] when nothing has been imported """

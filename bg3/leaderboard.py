@@ -77,6 +77,8 @@ def spec(build):
     data = build.to_dict()
     for k in ("name", "variants"):
         data.pop(k, None)
+    if not data.get("assumptions"): # Only when changed, so builds saved before the field existed keep their fingerprint
+        data.pop("assumptions", None)
     if data.get("character"):
         data["character"] = {k: v for k, v in data["character"].items() if k != "name"}
     return data

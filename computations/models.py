@@ -264,6 +264,9 @@ class Character(Creature):
     # TODO: Elemental Adept, cannot roll less than 1 on damage die, could cause many rerolls... Skipping for now
     # Racial Traits (only half orc affects damage directly)
     savage_attacks_half_orc: bool = False
+    # Turns a fight each action type ("action", "bonus") spends setting up instead of attacking, i.e. casting Haste or coating a weapon in
+    # round 1 rather than before the fight. Averaged over the fight's rounds (only with rounds_per_fight)
+    setup_turns: dict = field(default_factory=dict)
     # Class Traits
     # Fighting Style
     archery: bool = False
@@ -329,6 +332,7 @@ class Enemy(Creature):
     resistances: list[str] = field(default_factory=list)
     vulnerabilities: list[str] = field(default_factory=list)
     immunities: list[str] = field(default_factory=list)
+    save_disadvantage: list[str] = field(default_factory=list) # Abilities whose saving throws it rolls twice, keeping the lower
 
     @property
     def proficiency_bonus(self):
@@ -596,7 +600,7 @@ def calculate_attack_and_damage_context(character, enemy):
             attack_modifier = enemy.saving_throw_modifier(attack.saving_throw_stat) if isinstance(enemy, Enemy) else enemy.ability_modifier(attack.saving_throw_stat)
             attack_num_die, attack_die_sizes = [], []
             # The roll is the enemy's, so only its own disadvantage counts
-            advantage, disadvantage = False, bool(attack.save_disadvantage)
+            advantage, disadvantage = False, bool(attack.save_disadvantage) or attack.saving_throw_stat in getattr(enemy, "save_disadvantage", ())
             attack_reroll_on = 0
             save_success_multiplier = attack.saving_throw_success_multiplier
 

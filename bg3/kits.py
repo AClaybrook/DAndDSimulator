@@ -96,7 +96,18 @@ def variant_build(build, variant):
         out.character = {**out.character, **variant["character"]}
     extra = list(variant.get("buffs") or [])
     if extra:
-        out.buffs = {act: list(dict.fromkeys([*out.buffs.get(act, []), *extra])) for act in ACT_KEYS}
+        from bg3.buffs import BUFFS # pylint: disable=import-outside-toplevel
+        # A variant's elixir replaces the build's (only one elixir is active at a time)
+        def available(b, act):
+            return b not in BUFFS or int(BUFFS[b].act or 1) <= int(act)
+        # Each act gets the buffs it can have by then (Cloud Giant Strength only in Act 3)
+        added = {act: [b for b in extra if available(b, act)] for act in ACT_KEYS}
+        def kind(b):
+            """ Buffs of a kind replace each other: elixirs, coatings """
+            return "elixir" if b in BUFFS and BUFFS[b].exclusive else (BUFFS[b].group if b in BUFFS else "") or None
+        swap = {act: {kind(b) for b in added[act]} - {None} for act in ACT_KEYS}
+        kept = {act: [b for b in out.buffs.get(act, []) if kind(b) not in swap[act]] for act in ACT_KEYS}
+        out.buffs = {act: list(dict.fromkeys([*kept[act], *added[act]])) for act in ACT_KEYS}
     if variant.get("toggles"):
         if out.character:
             out.character = {**out.character, "toggles": {**out.character.get("toggles", {}), **variant["toggles"]}}

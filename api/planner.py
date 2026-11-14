@@ -3,7 +3,7 @@
 from bg3.abilities import point_buy_cost, point_buy_problems
 from bg3.analysis import item_values, shared_item_gains, slot_suggestions
 from bg3.buffs import BUFFS
-from bg3.build import ACT_KEYS, Bg3Build, compile_build, equipment_at
+from bg3.build import ACT_KEYS, ASSUMPTIONS, Bg3Build, compile_build, equipment_at, main_weapon_finesse
 from bg3.character import (CANTRIPS, CLASSES, FEATS, FIGHTING_STYLES, LEVELLED_SPELLS, RACES, ROUTINES, SUBCLASSES, TOGGLE_DEFAULTS, TOGGLES, Bg3Character,
                            class_levels, class_order, compile_character, feat_opportunities, relevant_toggles)
 from bg3.checkpoints import ACTS, act_level
@@ -11,6 +11,7 @@ from bg3.defence import armour_class, attack_bonus_for, hit_chance
 from bg3.items import SLOT_LABELS, SLOTS, catalog, condition_id
 from bg3.kits import QUICK_VARIANTS, apply_kit, kits, taken_by_others, variant_build, variant_builds
 from bg3.party import MAX_PARTY_SIZE, party_conflicts
+from bg3.parties import saved_parties
 from bg3.presets import DEFAULT_PARTY, PRESETS, examples
 from bg3.roles import CORE_ROLES, ROLE_LABELS, party_roles
 from bg3.score import WEIGHTS, score
@@ -32,6 +33,7 @@ def effect_text(effect):
             "crit_damage": f"+{effect.value} on a crit", "crit_range": f"crit range +{effect.value}", "advantage": "advantage",
             "advantage_chance": f"advantage on about {round(float(effect.value or 0) * 100)}% of attacks" if effect.kind == "advantage_chance" else "",
             "limited_haste": f"its own Haste: {effect.value} more actions a fight",
+            "main_hand_bonus_attack": "in the off hand, the bonus action attack is made with the main hand weapon",
             "spell_dc": f"+{effect.value} spell DC", "damage_reroll": f"reroll damage dice of {effect.value} or less",
             "miss_damage_ability": f"{effect.stat.title()} modifier damage on a miss", "once_per_turn_bonus": f"+{effect.value} Sneak Attack damage", "extra_action": "another action each turn", "save_disadvantage": "enemies have disadvantage on the save",
             "free_cast": f"{effect.value} more cast a fight", "channel_divinity": f"+{effect.value} Channel Divinity charge", "extra_action_on_kill": "another action after a kill", "flag": str(effect.value),
@@ -47,7 +49,7 @@ def item_summary(item):
                      (f", {', '.join(w['properties'])}" if w.get("properties") else ""))
     parts += [effect_text(e) for e in item.effects]
     if item.notes:
-        parts.append(f"Not modelled: {item.notes}")
+        parts.append(f"Not counted in the damage: {item.notes}")
     if item.location:
         parts.append(f"Found: {item.location}")
     return "\n".join(parts)
@@ -56,8 +58,9 @@ def item_label(item):
     if not item.unique:
         return f"{item.name} (common)"
     details = " · ".join(x for x in [item.rarity, f"Act {item.act}" if item.act else "Act ?"] if x)
-    # Marks items whose effects change damage in the simulator
-    marker = " ✦" if item.effects or (item.weapon and item.weapon.get("enhancement")) else ""
+    # ✦ every effect is in the damage, ◐ some are, ○ none (the item's effects are only notes)
+    counted = item.effects or (item.weapon and item.weapon.get("enhancement"))
+    marker = (" ◐" if counted else " ○") if item.notes else (" ✦" if counted else "")
     return f"{item.name}{marker} · {details}"
 
 def item_options(slot, act, include_unknown=True):
@@ -108,7 +111,11 @@ def conditional_options(build):
             if item is None or key in seen:
                 continue
             seen.add(key)
-            options += [{"label": f"{item.name}: {e.condition}", "value": condition_id(key, ii)} for ii, e in enumerate(item.effects) if e.condition]
+            first = {}
+            for ii, e in enumerate(item.effects):
+                if e.condition:
+                    first.setdefault(e.condition, ii) # Effects sharing a condition are one toggle
+            options += [{"label": f"{item.name}: {condition}", "value": condition_id(key, ii)} for condition, ii in first.items()]
     return options
 
 PART_LABELS = {"damage": "Damage", "aoe": "AoE", "defence": "Defence", "control": "Control", "support": "Support", "utility": "Utility"}
@@ -124,7 +131,8 @@ def options():
         "examples": [{"name": n, "source": "Preset" if n in PRESETS else "Build doc"} for n in examples()],
         "slots": [{"key": k, "label": label, "group": option_group(k)} for k, label, _ in SLOTS],
         "items": grouped_item_options(),
-        "buffs": [{"key": k, "name": b.name, "act": b.act, "notes": b.notes, "modelled": bool(b.effects)} for k, b in BUFFS.items()],
+        "buffs": [{"key": k, "name": b.name, "act": b.act, "notes": b.notes, "modelled": bool(b.effects), "timing": b.timing, "cost": b.cost,
+                   "group": b.group} for k, b in BUFFS.items()],
         "kits": [{"key": k, "name": k_["name"], "act": k_["act"], "theme": k_.get("theme", ""), "trigger": k_.get("trigger", ""),
                   "fits": k_.get("fits", ""), "synergy": k_.get("synergy", ""), "notes": k_.get("notes", ""),
                   "slots": {slot: [catalog()[i].name for i in options_ if i in catalog()] for slot, options_ in k_["slots"].items()}}
@@ -134,11 +142,13 @@ def options():
                     "routines": [{"value": k, "label": v} for k, v in ROUTINES.items()], "cantrips": CANTRIPS, "spells": LEVELLED_SPELLS,
                     "toggles": [{"value": k, "label": v, "on": TOGGLE_DEFAULTS.get(k, True)} for k, v in TOGGLES.items()],
                     "defaultCharacter": Bg3Character().to_dict()},
+        "assumptions": [{"key": k, "label": label, "default": default, "help": text} for k, (label, default, text) in ASSUMPTIONS.items()],
         "scoreWeights": WEIGHTS,
         "partLabels": PART_LABELS,
         "roleLabels": ROLE_LABELS,
         "coreRoles": list(CORE_ROLES),
         "defaultParty": [PRESETS[name].to_dict() for name in DEFAULT_PARTY],
+        "savedParties": [{"name": p["name"], "notes": p["notes"], "builds": [b.to_dict() for b in p["builds"]]} for p in saved_parties()],
     }
 
 def _enemy(enemy_dict):
@@ -158,7 +168,9 @@ def _builder_summary(build):
         cost = point_buy_cost(character.scores)
     except ValueError:
         cost = None
-    _, notes = compile_character(character, max(levels))
+    items = catalog()
+    last = equipment_at(build, ACT_KEYS[-1])
+    _, notes = compile_character(character, max(levels), main_weapon_finesse(character, {s: items[k] for s, k in last.items() if k in items}))
     return {"pointBuy": cost, "featLevels": [lv for lv, _ in feat_opportunities(character)],
             "split": {a: class_levels(character, lv) for a, lv in zip(ACT_KEYS, levels)}, "problems": problems, "notes": notes,
             "toggles": [{"value": k, "label": TOGGLES[k], "on": TOGGLE_DEFAULTS.get(k, True)} for k in relevant_toggles(character.classes)]}
@@ -174,11 +186,23 @@ def saving_throws(character, enemy):
     own = [line["dc"] for line in lines.values() if not line["fixed"]]
     return list(lines.values()), max(own) if own else None
 
-def _member(build, enemy, rounds, attack_bonus, flagged):
+def _party_enemies(builds, enemy, synergies=True):
+    """ {act: (the enemy with the synergies the party sets up every fight, their names)}: a Resonance Stone doubles psychic damage,
+        Reverberation lowers saves. The plain enemy when synergies is off """
+    from bg3 import synergy # pylint: disable=import-outside-toplevel
+    out = {}
+    for act in ACT_KEYS:
+        boosted, active = synergy.party_enemy(builds, act, enemy) if synergies else (enemy, [])
+        out[act] = (boosted, [synergy.SYNERGIES[k].name for k in active])
+    return out
+
+def _member(build, enemy, rounds, attack_bonus, flagged, together):
     acts = {}
     items = catalog()
     for act in ACT_KEYS:
         character = compile_build(build, act)
+        damage = [round(expected_damage_vs_enemies(character, enemy, rounds, n), 2) for n in ENEMY_COUNTS]
+        boosted, names = together[act]
         ac, ac_parts = armour_class(build, act)
         result = score(build, act, enemy, rounds, attack_bonus)
         gear = equipment_at(build, act)
@@ -187,7 +211,8 @@ def _member(build, enemy, rounds, attack_bonus, flagged):
         acts[act] = {
             "spellDc": spell_dc, "saves": saves,
             "level": act_level(act, build.levels),
-            "damage": [round(expected_damage_vs_enemies(character, enemy, rounds, n), 2) for n in ENEMY_COUNTS],
+            "damage": damage,
+            "together": [round(expected_damage_vs_enemies(character, boosted, rounds, n), 2) for n in ENEMY_COUNTS] if names else damage,
             "ac": ac, "acParts": [{"source": s, "value": v} for s, v in ac_parts], "hitChance": round(hit_chance(ac, attack_bonus), 3),
             "score": result.total, "scoreParts": result.parts, "scoreNotes": result.notes,
             "inherited": {slot: items[key].name for slot, key in before.items() if key in items and slot not in build.equipment.get(act, {})},
@@ -210,20 +235,43 @@ def evaluate(party_dicts, enemy_dict=None, rounds=3, attack_bonus=None):
         gains = shared_item_gains(builds, c, enemy, rounds) if c.kind == "shared" else {}
         out.append({"act": c.act, "kind": c.kind, "message": c.message, "members": c.members, "item": c.item,
                     "gains": {k: round(v, 2) for k, v in gains.items()}})
-    return {"attackBonus": bonus, "members": [_member(b, enemy, rounds, bonus, flagged.get(b.name, set())) for b in builds], "conflicts": out}
+    together = _party_enemies(builds, enemy)
+    return {"attackBonus": bonus, "members": [_member(b, enemy, rounds, bonus, flagged.get(b.name, set()), together) for b in builds], "conflicts": out,
+            "synergies": {act: names for act, (_, names) in together.items()}}
 
-def variants(build_dict, enemy_dict=None, rounds=3, enemies=1, attack_bonus=6):
-    """ The build and each of its variants: damage (against the chosen number of enemies, and against 1 to 4), spell save DC, AC and score by act """
+def variants(build_dict, enemy_dict=None, rounds=3, enemies=1, attack_bonus=6, party_dicts=(), synergies=False):
+    """ The build and each of its variants: damage (against the chosen number of enemies, and against 1 to 4), spell save DC, AC and score
+        by act. synergies: damage against the enemy as the party (party_dicts) leaves it """
     build = Bg3Build.from_dict(build_dict)
     enemy = _enemy(enemy_dict)
+    at = _party_enemies([Bg3Build.from_dict(b) for b in party_dicts], enemy, synergies and bool(party_dicts))
     rows = []
     for name, description, built in variant_builds(build):
         compiled = [compile_build(built, a) for a in ACT_KEYS]
-        by_enemies = [[round(expected_damage_vs_enemies(c, enemy, rounds, n), 2) for n in ENEMY_COUNTS] for c in compiled]
+        by_enemies = [[round(expected_damage_vs_enemies(c, at[a][0], rounds, n), 2) for n in ENEMY_COUNTS] for a, c in zip(ACT_KEYS, compiled)]
         rows.append({"name": name, "description": description, "damage": [values[min(max(int(enemies), 1), len(ENEMY_COUNTS)) - 1] for values in by_enemies],
                      "byEnemies": by_enemies, "spellDc": [saving_throws(c, enemy)[1] for c in compiled],
                      "ac": [armour_class(built, a)[0] for a in ACT_KEYS], "score": [score(built, a, enemy, rounds, attack_bonus).total for a in ACT_KEYS]})
     return rows
+
+def frontier(build_dict, act="3", enemy_dict=None, rounds=3, enemies=1, party_dicts=(), selected=0, skip_taken=True, synergies=False):
+    """ Gear and elixir combinations for the build at an act, damage against AC, and which are on the Pareto frontier (bg3.frontier) """
+    from bg3.buffs import BUFFS # pylint: disable=import-outside-toplevel
+    from bg3.frontier import solve # pylint: disable=import-outside-toplevel
+    build = Bg3Build.from_dict(build_dict)
+    party = [Bg3Build.from_dict(b) for b in party_dicts]
+    act = str(act)
+    at = _party_enemies(party, _enemy(enemy_dict), synergies and bool(party))
+    exclude = taken_by_others(party, selected, act) if skip_taken and party else ()
+    result = solve(build, act, at[act][0], rounds, max(int(enemies), 1), exclude)
+    items = catalog()
+    on = {id(p) for p in result["frontier"]}
+    def name(key):
+        return items[key].name if key in items else BUFFS[key].name if key in BUFFS else "Nothing"
+    def point(p):
+        return {"damage": round(p["damage"], 2), "ac": p["ac"], "drawbacks": p["drawbacks"], "frontier": id(p) in on,
+                "changes": [{"slot": s, "key": k, "name": name(k)} for s, k in p["changes"]]}
+    return {"current": point(result["current"]), "points": [point(p) for p in result["points"]]}
 
 def use_variant(build_dict, index):
     """ The build with variant index copied into its gear, buffs and toggles (the variant is removed from the list) """
@@ -239,7 +287,8 @@ def apply_kit_to(party_dicts, selected, kit_key, act, skip_taken=True, only_empt
     items = catalog()
     return {"build": member.to_dict(), "placed": [items[k].name for k in placed.values()], "blocked": [SLOT_LABELS.get(s, s) for s in blocked]}
 
-def best_gear_for(party_dicts, selected, acts, goal="damage", enemy_dict=None, rounds=3, enemies=1, attack_bonus=None, weapons=True, skip_taken=True):
+def best_gear_for(party_dicts, selected, acts, goal="damage", enemy_dict=None, rounds=3, enemies=1, attack_bonus=None, weapons=True, skip_taken=True,
+                  synergies=False, keep_uncounted=True):
     """ The best gear a member can wear at the acts (bg3.loadout): the build with it, the gear on its own (to keep as a variant) and
         what changed """
     from bg3.loadout import GOALS, best_gear # pylint: disable=import-outside-toplevel
@@ -247,11 +296,13 @@ def best_gear_for(party_dicts, selected, acts, goal="damage", enemy_dict=None, r
     enemy = _enemy(enemy_dict)
     bonus = int(attack_bonus) if attack_bonus not in (None, "") else attack_bonus_for(enemy)
     goal = goal if goal in GOALS else "damage"
-    gear, changes = best_gear(builds, selected, [a for a in ACT_KEYS if a in acts], goal, enemy, rounds, enemies, bonus, weapons, skip_taken)
+    at = _party_enemies(builds, enemy, synergies)
+    gear, changes, kept = best_gear(builds, selected, [a for a in ACT_KEYS if a in acts], goal, enemy, rounds, enemies, bonus, weapons, skip_taken,
+                                    enemy_at=lambda act: at[act][0], keep_uncounted=keep_uncounted)
     build = builds[selected]
     for act, slots in gear.items():
         build.equipment[act] = {**build.equipment.get(act, {}), **slots}
-    return {"build": build.to_dict(), "gear": gear, "changes": changes, "goal": GOALS[goal]}
+    return {"build": build.to_dict(), "gear": gear, "changes": changes, "kept": kept, "goal": GOALS[goal]}
 
 def deconflict(party_dicts, enemy_dict=None, rounds=3):
     """ The party with every shared item settled (bg3.loadout.resolve_conflicts), the swaps that did it, and how many other conflicts
@@ -282,11 +333,11 @@ def party(party_dicts, act="2", active=None, enemy_dict=None, rounds=3, hit_poin
         "fight": fight,
     }
 
-def advice(build_dict, party_dicts, act="1", slot="melee_main", enemy_dict=None, rounds=3):
+def advice(build_dict, party_dicts, act="1", slot="melee_main", enemy_dict=None, rounds=3, synergies=False):
     """ What each worn item adds at an act, and the best items for a slot """
     build = Bg3Build.from_dict(build_dict)
-    enemy = _enemy(enemy_dict)
     builds = [Bg3Build.from_dict(b) for b in party_dicts]
+    enemy = _party_enemies(builds, _enemy(enemy_dict), synergies)[str(act)][0]
     return {
         "values": [{"slot": SLOT_LABELS[s], "item": i.name, "summary": item_summary(i), "gain": round(g, 2)} for s, i, g in item_values(build, act, enemy, rounds)],
         "suggestions": [{"key": i.key, "item": i.name, "summary": item_summary(i), "gain": round(g, 2), "act": i.act, "users": users}

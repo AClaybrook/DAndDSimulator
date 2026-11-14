@@ -72,22 +72,25 @@ export const bg3 = {
   plannerOptions: () => call<T.PlannerOptions>('/planner/options'),
   evaluate: (party: Build[], enemy: Enemy | null, rounds: number, attackBonus: number | null) =>
     call<T.Evaluation>('/planner/evaluate', { party: strip(party), enemy, rounds_per_fight: rounds, attack_bonus: attackBonus }),
-  variants: (build: Build, enemy: Enemy | null, rounds: number, enemies: number, attackBonus: number) =>
-    call<T.VariantRow[]>('/planner/variants', { build: strip([build])[0], enemy, rounds_per_fight: rounds, enemies, attack_bonus: attackBonus }),
+  variants: (build: Build, enemy: Enemy | null, rounds: number, enemies: number, attackBonus: number, party: Build[] = [], synergies = false) =>
+    call<T.VariantRow[]>('/planner/variants', { build: strip([build])[0], enemy, rounds_per_fight: rounds, enemies, attack_bonus: attackBonus, party: strip(party), synergies }),
+  frontier: (build: Build, act: string, enemy: Enemy | null, rounds: number, enemies: number, party: Build[], selected: number, skipTaken: boolean, synergies: boolean) =>
+    call<T.Frontier>('/planner/frontier', { build: strip([build])[0], act, enemy, rounds_per_fight: rounds, enemies, party: strip(party), selected, skip_taken: skipTaken, synergies }),
   useVariant: (build: Build, index: number) => call<Build>('/planner/use-variant', { build: strip([build])[0], index }),
   kit: (party: Build[], selected: number, kit: string, act: string, skipTaken: boolean, onlyEmpty: boolean) =>
     call<T.KitResult>('/planner/kit', { party: strip(party), selected, kit, act, skip_taken: skipTaken, only_empty: onlyEmpty }),
   // The best gear a member can wear at the acts, from everything found by then (goal: damage, ac or score)
   bestGear: (party: Build[], selected: number, acts: string[], goal: string, enemy: Enemy | null, rounds: number, enemies: number, attackBonus: number | null,
-    weapons: boolean, skipTaken: boolean) =>
-    call<T.BestGear>('/planner/best-gear', { party: strip(party), selected, acts, goal, enemy, rounds_per_fight: rounds, enemies, attack_bonus: attackBonus, weapons, skip_taken: skipTaken }),
+    weapons: boolean, skipTaken: boolean, synergies = false, keepUncounted = true) =>
+    call<T.BestGear>('/planner/best-gear', { party: strip(party), selected, acts, goal, enemy, rounds_per_fight: rounds, enemies, attack_bonus: attackBonus, weapons, skip_taken: skipTaken,
+      synergies, keep_uncounted: keepUncounted }),
   // Settles the items several members wear: who keeps each one, and what the others wear instead
   deconflict: (party: Build[], enemy: Enemy | null, rounds: number) => call<T.Deconflict>('/planner/deconflict', { party: strip(party), enemy, rounds_per_fight: rounds }),
   example: (name: string) => call<Build>(`/planner/example?name=${encodeURIComponent(name)}`),
   party: (party: Build[], act: string, active: string[] | null, enemy: Enemy | null, rounds: number, hitPoints: number) =>
     call<T.PartyAnalysis>('/planner/party', { party: strip(party), act, active, enemy, rounds_per_fight: rounds, hit_points: hitPoints }),
-  advice: (build: Build, party: Build[], act: string, slot: string, enemy: Enemy | null, rounds: number) =>
-    call<T.Advice>('/planner/advice', { build: strip([build])[0], party: strip(party), act, slot, enemy, rounds_per_fight: rounds }),
+  advice: (build: Build, party: Build[], act: string, slot: string, enemy: Enemy | null, rounds: number, synergies = false) =>
+    call<T.Advice>('/planner/advice', { build: strip([build])[0], party: strip(party), act, slot, enemy, rounds_per_fight: rounds, synergies }),
   leaderboardOptions: () => call<T.LeaderboardOptions>('/leaderboard/options'),
   leaderboard: (party: Build[]) => call<T.LeaderboardEntry[]>('/leaderboard/entries', { party: strip(party) }),
   runs: () => call<T.Run[]>('/leaderboard/runs'),

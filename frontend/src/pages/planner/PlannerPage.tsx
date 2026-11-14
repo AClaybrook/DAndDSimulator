@@ -9,9 +9,11 @@ import { MAX_CHARACTERS, useSimulator } from '../../store'
 import { AdviceTab } from './AdviceTab'
 import { BuffsTab } from './BuffsTab'
 import { BuildTab } from './BuildTab'
+import { FrontierTab } from './FrontierTab'
 import { GearTab } from './GearTab'
 import { PartyStrip } from './PartyStrip'
 import { ResultsPanel } from './ResultsPanel'
+import { SavedParties } from './SavedParties'
 import { useEvaluation, usePlannerOptions } from './usePlanner'
 import { VariantsTab } from './VariantsTab'
 
@@ -46,8 +48,9 @@ export function PlannerPage() {
 
   return (
     <>
-      <PageHeader title="Party planner" subtitle="Up to four characters, with gear and buffs for each act checkpoint"
+      <PageHeader title="Party planner" subtitle="Damage by act for up to four characters"
         actions={<>
+          <SavedParties options={o} />
           <Select size="xs" w={260} searchable value={null} data={simOptions.data?.enemies ?? []}
             placeholder={enemy ? `${enemy.name} · AC ${enemy.armor_class}` : 'Enemy...'} title="The enemy for damage and hit chances, shared with the Simulator"
             onChange={async (v) => v && setEnemy(await api.enemy(v))} leftSection={<Text size="10px" c="dimmed">vs</Text>} />
@@ -69,12 +72,12 @@ export function PlannerPage() {
       <PartyStrip options={o} evaluation={evaluation.data} enemies={enemies} />
       {party.length > 0 && (
         <Grid mt="md" gap="md">
-          <Grid.Col span={{ base: 12, lg: 5 }}>
+          <Grid.Col span={{ base: 12, lg: 6 }}>
             <Paper p="md" withBorder style={{ position: 'sticky', top: 64 }}>
               <ResultsPanel options={o} evaluation={evaluation.data} />
             </Paper>
           </Grid.Col>
-          <Grid.Col span={{ base: 12, lg: 7 }}>
+          <Grid.Col span={{ base: 12, lg: 6 }}>
             <Paper p="md" withBorder>
               <Text className="section-label" mb={6}>{party[selected]?.name}</Text>
               <Tabs defaultValue="gear" keepMounted={false}>
@@ -84,12 +87,14 @@ export function PlannerPage() {
                   <Tabs.Tab value="buffs">Buffs</Tabs.Tab>
                   <Tabs.Tab value="variants">Variants</Tabs.Tab>
                   <Tabs.Tab value="advice">Gear advice</Tabs.Tab>
+                  <Tabs.Tab value="frontier">Frontier</Tabs.Tab>
                 </Tabs.List>
                 <Tabs.Panel value="gear"><GearTab options={o} result={member} /></Tabs.Panel>
                 <Tabs.Panel value="build"><BuildTab options={o} result={member} /></Tabs.Panel>
                 <Tabs.Panel value="buffs"><BuffsTab options={o} result={member} /></Tabs.Panel>
                 <Tabs.Panel value="variants"><VariantsTab options={o} attackBonus={evaluation.data?.attackBonus ?? 6} /></Tabs.Panel>
                 <Tabs.Panel value="advice"><AdviceTab options={o} /></Tabs.Panel>
+                <Tabs.Panel value="frontier"><FrontierTab /></Tabs.Panel>
               </Tabs>
             </Paper>
           </Grid.Col>

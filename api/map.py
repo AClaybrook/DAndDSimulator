@@ -1,11 +1,11 @@
-""" The Act 1 and Act 2 maps' data for the browser, which filters and draws it (so every filter change is instant), and the party's gear on it """
+""" The Act 1, 2 and 3 maps' data for the browser, which filters and draws it (so every filter change is instant), and the party's gear on it """
 import json
 from pathlib import Path
 
 from bg3.build import Bg3Build, equipment_at
 from bg3.items import SLOT_LABELS, catalog
 
-ACTS = [1, 2]
+ACTS = [1, 2, 3]
 
 def _load():
     """ Both acts' map files as one: maps, points and unplaced items each tagged with their act """

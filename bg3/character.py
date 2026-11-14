@@ -104,13 +104,13 @@ CANTRIPS = ["Eldritch Blast", "Fire Bolt", "Ray of Frost", "Sacred Flame", "Toll
             "Bursting Sinew"]
 # Options that need the build to set something up, all on by default
 TOGGLES = {
-    "rage": "Rage every fight", "reckless": "Reckless Attack (advantage)", "smite": "Smite with spell slots", "vow": "Oath: Vow of Enmity, "
-    "Sacred Weapon or Righteous Clarity", "curse": "Hexblade's Curse on the target", "surprise": "Enemies are surprised (Assassin)",
+    "rage": "Rage every fight", "reckless": "Reckless Attack (advantage)", "smite": "Smite with spell slots", "vow": "Oath buff (Vow of Enmity, "
+    "Sacred Weapon or Righteous Clarity)", "curse": "Hexblade's Curse on the target", "surprise": "Enemies are surprised (Assassin)",
     "manifestation": "Manifestation of Body (Open Hand)", "damaged_target": "Target is already damaged (Colossus Slayer)",
     "starry_form": "Starry Form: Archer (Circle of Stars)", "symbiotic": "Symbiotic Entity (Circle of Spores)",
     "storm_close": "Enemies within 6 m when casting (Heart of the Storm)",
     "booming_blade": "Booming Blade on the first melee attack each turn",
-    "offhand_crossbow": "Bonus action: a shot with an off-hand hand crossbow (casters with two hand crossbows in the ranged slots)",
+    "offhand_crossbow": "Off-hand hand crossbow shot (the bonus action of casters with two hand crossbows in the ranged slots)",
     "spirit_guardians": "Spirit Guardians first, then the build's own spell (Cleric 5; pick it as the levelled spell to cast nothing else)",
     "spiritual_weapon": "Spiritual Weapon every fight (Cleric 3: a summoned weapon with its own attack each round, for a level 2+ slot)",
     "bladesong": "Bladesong in fights (+2/+3/+4 AC without medium or heavy armour or a shield)",
@@ -155,6 +155,9 @@ class Bg3Character:
     toggles: dict = field(default_factory=dict) # TOGGLES (all on by default), and "ancestry" for Draconic Bloodline (default fire)
     level_order: list[str] = field(default_factory=list) # The class taken at each level when it isn't "first class first", i.e. a 1 level dip first
     boons: dict[str, int] = field(default_factory=dict) # Permanent ability bonuses from the story: Auntie Ethel's Hair (+1), Mirror of Loss (+2)
+    # Character level: [[class, subclass, levels]] the character is respecced to at that level, when the levelling order doesn't give it
+    # (i.e. a pure Wizard until the multiclass comes together at 12)
+    respec: dict[str, list] = field(default_factory=dict)
 
     def to_dict(self):
         return asdict(self)
@@ -169,6 +172,9 @@ class Bg3Character:
 
 def class_order(character, level=MAX_LEVEL):
     """ The class of each character level, i.e. ['fighter', 'fighter', 'rogue', ...] up to level """
+    split = (character.respec or {}).get(str(level))
+    if split and sum(int(n) for _, _, n in split) == level:
+        return [cls for cls, _, n in split for _ in range(int(n))]
     order = [cls for cls, _, levels in character.classes for _ in range(int(levels))]
     if character.level_order and sorted(character.level_order) == sorted(order):
         order = list(character.level_order)
@@ -181,7 +187,7 @@ def class_levels(character, level=MAX_LEVEL):
     return counts
 
 def subclass_of(character, cls, class_level):
-    for c, sub, _ in character.classes:
+    for c, sub, _ in [*character.classes, *(row for split in (character.respec or {}).values() for row in split)]:
         if c == cls and class_level >= SUBCLASS_LEVEL.get(cls, 3):
             return sub
     return ""
@@ -271,6 +277,8 @@ def compile_character(character, level=MAX_LEVEL, main_finesse=None):
     c.attacks = attacks
     if character.toggle("booming_blade") and "booming_blade" in relevant_toggles(character.classes):
         _booming_blade(c, character)
+        if levels.get("fighter", 0) >= 7 and subs.get("fighter") == "Eldritch Knight":
+            _war_magic(c)
     _class_features(character, c, levels, subs, notes, main_finesse)
     _cleric_spells(character, c, levels, subs, notes)
     c.casting_stat = item_casting_stat(character, level)
@@ -444,7 +452,8 @@ def _attacks(character, c, levels, subs, feats, notes, main_finesse=None):
 
     if routine in ("shadow_blade", "shadow_blade_shield"):
         blades = _shadow_blade_attacks(c, levels, subs, count, stat_for, notes, shield=routine == "shadow_blade_shield")
-        return blades + _reaction_attacks(character, blades[0], weapon_base(blades[0]), feats, routine)
+        surge = action_surge(levels.get("fighter", 0), "bg3", replace(blades[0])) if not blades[0].offhand else []
+        return blades + _reaction_attacks(character, blades[0], weapon_base(blades[0]), feats, routine) + surge
     name = DEFAULT_WEAPONS[routine]
     weapon_stat = "dexterity" if routine in ("ranged", "dual_wield", "dual_hand_crossbows") else "strength"
     if routine == "one_handed" and c.dexterity > c.strength:
@@ -562,6 +571,22 @@ def _booming_blade(c, character):
         c.attacks[c.attacks.index(first)] = first.variant("Booming Blade", tags=[*first.tags, "booming_blade"],
                                                           extra_damage_list=[*first.extra_damage_list, f"{1 + (c.level >= 11)}d8 thunder"])
 
+def _war_magic(c):
+    """ War Magic (Eldritch Knight 7): after casting a cantrip with the action (Booming Blade every turn), a main hand weapon attack with
+        the bonus action. It takes the bonus action from the off-hand swing (bg3.wiki) """
+    mains = [a for a in c.attacks if a.type == "weapon (melee)" and not a.offhand and a.action == "action" and not a.uses_per_fight and not a.fallback_for]
+    plain = [a for a in mains if "booming_blade" not in a.tags]
+    if not mains or not any("booming_blade" in a.tags for a in mains):
+        return
+    strike = (plain or mains)[-1]
+    off = next((a for a in c.attacks if a.offhand and a.action == "bonus" and not a.uses_per_fight), None)
+    extra = strike.variant("War Magic", action="bonus", fallback_for=off.fallback_for if off else "",
+                           extra_damage_list=[d for d in strike.extra_damage_list if "thunder" not in d or "booming_blade" not in strike.tags])
+    if off is not None:
+        c.attacks[c.attacks.index(off)] = extra
+    else:
+        c.attacks.append(extra)
+
 def _limited_rider(c, label, uses, bonus=None, extra=None, main=None, tags=()):
     """ A limited use rider on one attack each round (manoeuvres, Arcane Shots, Blade Flourish, Touch of Death), until its uses per
         fight run out: the attack (the first plain weapon attack unless main is given) gets a limited copy with the rider, made first,
@@ -638,6 +663,18 @@ def _quickened(c, quickens):
     c.attacks += [quick(a, on_spell) for a in levelled]
     if quickens - on_spell > 0.01:
         c.attacks += [quick(a, quickens - on_spell) for a in spells_cast if a.fallback_for]
+
+def _quickened_blade(c, quickens):
+    """ Quickened Booming Blade: the cantrip again with the bonus action for 3 sorcery points, a second main hand attack with its thunder
+        damage. The bonus action attack made every turn (the off hand) is made in the other turns """
+    blade = next((a for a in c.attacks if "booming_blade" in a.tags), None)
+    if blade is None or not quickens:
+        return
+    quick = blade.variant("Quickened Booming Blade", action="bonus", uses_per_fight=round(quickens, 2), tags=[*blade.tags, "quickened"])
+    usual = [a for a in c.attacks if (a.action == "bonus" or a.offhand) and a.is_weapon and not a.uses_per_fight and not a.fallback_for]
+    if usual:
+        usual[-1].fallback_for = quick.name
+    c.attacks.append(quick)
 
 def _finesse_or_ranged(attack):
     """ Shadow Blade is finesse; other weapons by their base weapon's properties """
@@ -769,6 +806,8 @@ def _class_features(character, c, levels, subs, notes, main_finesse=None):
                 a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(max(c.charisma_ability_modifier, 0))]
     if sorcerer >= 3 and character.routine == "cantrip":
         _quickened(c, per_fight(per_long_rest=sorcerer // 3))
+    elif sorcerer >= 3:
+        _quickened_blade(c, per_fight(per_long_rest=sorcerer // 3))
     c.empowered_evocation = wizard >= 10 and subs.get("wizard") == "Evocation School"
     if cleric >= 8 and subs.get("cleric") in ("War Domain", "Tempest Domain", "Death Domain", "Life Domain", "Nature Domain", "Trickery Domain") and \
             (weapon or character.toggle("offhand_crossbow")):

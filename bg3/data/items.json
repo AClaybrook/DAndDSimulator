@@ -145,13 +145,14 @@
     {
      "kind": "extra_damage",
      "value": "1d6 poison",
-     "applies_to": "all",
+     "applies_to": "weapon",
      "condition": "Whenever the wearer is healed, their weapon becomes coated in magic and deals an additional 1d6 Poison  damage"
     }
    ],
-   "notes": "",
+   "notes": "A poison coating for 3 turns whenever the wearer is healed (even at full hit points), so a Ring of Regeneration keeps it up every turn. Not on thrown weapons",
    "location": "Inner Sanctum",
-   "source": "https://bg3.wiki/wiki/Broodmother%27s_Revenge"
+   "source": "https://bg3.wiki/wiki/Broodmother%27s_Revenge",
+   "reviewed": true
   },
   {
    "key": "bg3:burnished_necklace",
@@ -11704,11 +11705,22 @@
      "value": "1d8",
      "applies_to": "spell",
      "condition": "When casting a spell that requires an Attack Roll, you can take a -5 penalty to the roll to deal an additional 1d8 damage"
+    },
+    {
+     "kind": "damage_bonus",
+     "value": "1d8",
+     "applies_to": "booming_blade"
+    },
+    {
+     "kind": "extra_damage",
+     "value": "1d8 thunder",
+     "applies_to": "booming_blade"
     }
    ],
-   "notes": "",
+   "notes": "Booming Blade rolls a weapon attack, so it takes no -5 penalty but gets +1d8 on its weapon damage and +1d8 on its thunder (seen in game, Patch 8)",
    "location": "Circus of the Last Days",
-   "source": "https://bg3.wiki/wiki/Spellmight_Gloves"
+   "source": "https://bg3.wiki/wiki/Spellmight_Gloves",
+   "reviewed": true
   },
   {
    "key": "bg3:spellseeking_gloves",
@@ -12808,10 +12820,15 @@
      "light"
     ]
    },
-   "effects": [],
-   "notes": "",
+   "effects": [
+    {
+     "kind": "main_hand_bonus_attack"
+    }
+   ],
+   "notes": "Perfectly Balanced Strike: in the off hand its bonus action attack is made with the main hand weapon (ability modifier and on-hit effects included), once a turn. Whirlwind Attack once a short rest",
    "location": "Elerrathin's Home",
-   "source": "https://bg3.wiki/wiki/Belm"
+   "source": "https://bg3.wiki/wiki/Belm",
+   "reviewed": true
   },
   {
    "key": "bg3:blackguard_s_sword",
@@ -14493,13 +14510,24 @@
    "effects": [
     {
      "kind": "attack_bonus",
-     "value": 1,
-     "applies_to": "spell"
+     "value": 3,
+     "condition": "Scarlet Remittance at +3 (three kills since the last long rest)"
+    },
+    {
+     "kind": "damage_bonus",
+     "value": 3,
+     "condition": "Scarlet Remittance at +3 (three kills since the last long rest)"
+    },
+    {
+     "kind": "spell_dc",
+     "value": 3,
+     "condition": "Scarlet Remittance at +3 (three kills since the last long rest)"
     }
    ],
-   "notes": "At 3 stacks of Scarlet Remittance:; Scarlet Feast recharge=Long Rest; Possibly inflict Bleeding when hitting a creature with this weapon while Hiding or Invisible",
+   "notes": "Scarlet Remittance: +1 to attack rolls, damage and spell save DC for every foe slain, up to +3, on everything the wielder does. Possibly inflict Bleeding when hitting with this weapon while Hiding or Invisible",
    "location": "Cazador's Dungeon",
-   "source": "https://bg3.wiki/wiki/Rhapsody"
+   "source": "https://bg3.wiki/wiki/Rhapsody",
+   "reviewed": true
   },
   {
    "key": "bg3:rusty_glaive",

@@ -185,7 +185,12 @@ def expected_by_attack(character, enemy, rounds_per_fight=None):
                     can = np.arange(len(dist)) < once_uses[p]
                     step = np.where(can, dist * (1 - p_none_yet[p]), 0)
                     triggered_rounds[p] = np.concatenate([dist - step, [0]]) + np.concatenate([[0], step])
-    return totals / num_rounds
+    totals = totals / num_rounds
+    setup = getattr(character, "setup_turns", None) or {}
+    if rounds_per_fight and setup:
+        # Turns spent setting up don't attack with that action type
+        totals = totals * np.array([max(0.0, 1 - setup.get(getattr(a, "action", "action"), 0) / rounds_per_fight) for a in character.attacks])
+    return totals
 
 def attack_breakdown(character, enemy, rounds_per_fight=None):
     """ Per attack table of to hit chance, crit chance and expected damage for a character against an enemy """

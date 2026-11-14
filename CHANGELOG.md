@@ -2,6 +2,38 @@
 
 ## 3.0.0 (in progress)
 
+- **Pre-combat buffs:** the Buffs tab groups buffs by when they go up: before each fight (Haste, Bless, Hex...), weapon coatings, until a
+  long rest, elixirs, during the fight. A "Before the fight" switch (every number for the build) puts fight buffs up before it starts, or
+  in round 1 at the cost of that turn's action (Haste the build casts itself) or bonus action (Hex, coatings).
+- **Weapon coatings:** Oil of Accuracy, Diluted Oil of Sharpness, dipping in fire, and the Simple, Serpent Fang, Wyvern and Purple Worm
+  toxins (a Constitution save at the end of the target's turn, once a turn). One at a time; a coating replaces Broodmother's Revenge's
+  poison. The gear solver tries them like elixirs.
+- **Elixir of Cloud Giant Strength** counts from Act 3 (Hill Giant Strength before), and a variant's buffs only apply from the act they
+  can be had.
+- **Haste and smites:** a Paladin multiclass that casts Haste on itself (Wizard or Sorcerer 5+) spends a slot on it every fight, one
+  Divine Smite a fight fewer.
+- **Advantage some of the time:** a "Share of attacks with advantage" assumption (Shadow Blade in dim light, Faerie Fire). **Rapture**
+  (+1d6 to attack rolls until a long rest, from the Nymph's Grotto) is a buff. The saved party's Godblade is set up as played.
+- **Gear solver and Pareto frontier:** the planner's Frontier tab searches gear and elixir combinations for a member at an act (each slot's
+  options, then a beam search and a polish pass; item pairs like Broodmother's Revenge + Ring of Regeneration tried together) and plots
+  damage against AC with the frontier marked. Use a point, or keep the frontier as variants. Costs the numbers miss are flagged (the Risky
+  Ring's disadvantage on saves).
+- **Leaderboard: saved variants.** Your party's what-ifs (Variants tab, kept frontier points) are ranked as rows of their own.
+- **Medium armour accessories:** gloves, helmets and boots that need Medium or Heavy Armour proficiency (Legacy of the Masters) end Mage
+  Armour, Unarmoured Defence, Bracers of Defence and Bladesong, as body armour does (seen in game).
+- **Saved parties:** the planner's "Saved parties" loads a party of build doc builds with gear changes, the trade-offs worked out for
+  them as variants (Variants tab) and the takeaways as notes (bg3/data/parties.json). A variant's elixir now replaces the build's.
+- **Elixir of Bloodlust:** assumes its extra action on 2.5 of a fight's 3 turns (was 1.5), for a player who aims kills to trigger it.
+- **Act 3 item map:** the map page has Act 3, its items placed by their bg3.wiki minimap coordinates on a plain grid per region (Rivington,
+  Wyrm's Crossing & Wyrm's Rock, Lower City, Undercity, Upper City, elsewhere). 208 of the 216 items on the wiki's Act 3 list are placed.
+- **Broodmother's Revenge:** its poison coats weapon attacks (not spells), and a Ring of Regeneration keeps it up every turn.
+- **Wavemother's Cloak:** +2 armour class from Water Layer Protection.
+- **Necklace of Elemental Augmentation:** no longer adds to Booming Blade, which doesn't trigger it in game.
+- **Spellmight Gloves:** Booming Blade gets +1d8 on its weapon damage and +1d8 on its thunder, with no -5 penalty (seen in game).
+- **Strength gear and finesse weapons:** Gauntlets of Hill Giant Strength and the giant strength elixirs now count for Shadow Blade
+  and finesse weapons when they beat the character's Dexterity (they were ignored).
+- **Eldritch Knight:** War Magic (Eldritch Knight 7) gives a main hand weapon attack with the bonus action on turns the action casts
+  Booming Blade, in place of the off-hand swing. Shadow Blade builds now get Action Surge, which they were missing.
 - **Best in slot gear:** the planner's Gear tab can fill a character's gear for an act (or every act) with the best of everything found
   by then, for the most damage, the highest armour class or the best overall score, the weapon included (one that fits the build's grip).
   It is searched for the build against the current enemy, not a fixed list, and can leave the rest of the party's items alone. "Compare
@@ -32,6 +64,53 @@
   B while its uses last, then C), in the analytic, exact and simulated engines.
 - **Build doc import:** a full caster holding a staff casts its cantrip instead of swinging the staff, Toll the Dead is recognised, a
   second hand crossbow goes in the off hand, and Booming Blade is only assumed when the write-up names it.
+- **Best in slot gear you can trust more:** searching for damage no longer trades armour for clothes with a small bonus (a swap may
+  not lower armour class), only offers weapons the build is proficient with, skips Wyll's Infernal Rapier, and replaces an item the
+  build already wears only when it adds 3% or more (planned items often have effects the model does not count). Each change shows
+  what it adds.
+- **Bigger charts, fewer panels:** the planner's damage chart and the leaderboard's scatter are taller and get half the page, the
+  simulator's distributions are taller, the overall score moved into its own tab, and several helper texts are shorter.
+- **A hold can fail:** "Enemy paralysed" in the Party tab now counts for the share of turns the hold lands (the target's Wisdom save
+  against the caster's spell save DC, recast when it breaks) instead of always; its line shows the chance against the chosen enemy.
+  The Resonance Stone gives enemies disadvantage on Intelligence, Wisdom and Charisma saves, for the hold and for every save spell
+  (Toll the Dead, Spirit Guardians).
+- **Belm and Rhapsody:** Belm in the off hand makes the bonus action attack with the main hand weapon (Perfectly Balanced Strike: its
+  ability modifier and on-hit effects, once a turn), so a Shadow Blade build swings the blade a third time. Rhapsody's Scarlet
+  Remittance (+1 to hit, damage and spell save DC a kill, up to +3) is a toggle, on for the doc builds that wear it; before, the
+  dagger only counted +1 to spell attacks. Effects of one item that share a condition are one toggle.
+- **Build doc re-import (32 builds):** the Metamagic Godblade (4 Draconic Sorcerer / 2 Crown Paladin / 6 Bladesinger) is new, and the
+  importer reads more of the structured format: a Respec line gives the class split at an act when levelling in order doesn't (a pure
+  Bladesinger until the multiclass comes together), Permanent buffs gives Auntie Ethel's Hair, "Twinned Haste" counts as Haste, the
+  item casting ability comes from the caveat's wording, and a build written twice is read from its last section.
+- **Quickened Booming Blade:** a melee Sorcerer (level 3) makes a second main hand Booming Blade attack with the bonus action, one
+  a long rest per 3 sorcerer levels; the off-hand attack is made in the other turns.
+- **Best in slot:** a swap that a later one makes pointless (a helmet for advantage, then a ring that gives it too) is put back.
+- **Great Weapon Master's bonus attack:** a crit or a kill with a melee weapon attack gives another one with the bonus action, now
+  counted for every build with the feat: the chance one of the turn's melee attacks crits (crit range, advantage and Haste count)
+  plus the kills a fight from the Estimates box (1.5, the same number Bloodlust uses; 0 for a boss fight). A bonus action attack
+  the build makes every turn (off hand, Polearm Master's butt end, Flick o' the Wrist) is made in the other turns, so a build
+  whose bonus action already is a full weapon attack gains nothing.
+- **Weapon buffs:** Magic Weapon (+1 to hit and damage) and the Drakethroat Glaive's elemental weapon (+1 to hit and 1d4, on any one
+  weapon until a long rest, Shadow Blade included) are in the Buffs tab and stack with Haste, Bloodlust and the Resonance Stone.
+- **Conflicts you can fix in one click:** an item worn before the act it is found in has "Move it there", Auntie Ethel's Hair on two
+  characters has "Only <name>", and a problem that repeats in every act is listed once. A gear cell holding an item from a later act
+  now shows it in red instead of looking empty.
+- **Gear advice as a chart:** what each worn item adds is a bar chart, and the best items table gets the full width (its last columns
+  were cut off). Build tab toggles are short labels with the detail on hover, and its Sneak Attack note follows the worn weapon.
+- **Leaderboard gear variants** follow the planner's best in slot rules: a real gain to replace a worn item, items the damage can't
+  judge stay, and Max damage doesn't give up armour class. Run 16.
+- **Old page warning:** the built page isn't in git, so after pulling new code it can be stale; the app now says so (in the terminal
+  and at the top of the page) with the command to rebuild.
+- **Party synergies on the damage chart:** the planner's chart and the party cards now show damage with the synergies the party sets up
+  every fight (a carried Resonance Stone doubling psychic damage, Reverberation lowering saves), with a "Party synergies" switch to see
+  each character alone. Best in slot, gear advice and variants follow the switch, so psychic items are valued against the enemy the
+  party really fights. Hovering a point shows the damage alone next to it.
+- **Your own estimates:** the Buffs tab has an Estimates box for the guesses behind a build's numbers, only the ones it uses: kills a
+  fight with the Elixir of Bloodlust (usually 1.5) and reaction attacks a fight from Polearm Master (1) and Sentinel (1.5). 0 turns one off.
+- **Best in slot leaves what it can't judge:** a worn item with effects the damage doesn't count is undersold by the numbers, so it now
+  stays when none of its effects are counted (Band of the Mystic Scoundrel, Helmet of Arcane Acuity) and needs a 10% gain when only
+  some are (Staff of Cherished Necromancy). The result lists what stayed and what the numbers alone preferred, with "Compare replacing
+  them" to see that set as a variant. Item names mark how much is counted: ✦ all, ◐ some, ○ none.
 - **Act 3 bows:** The Dead Shot adds the proficiency bonus twice to its own attack rolls (Keen Attack, which was only a note, so the
   bow was undersold). Gontr Mael's Promised Victory is advantage on about a quarter of its shots (a hit marks the target with Guiding
   Bolt for the next attack roll that turn, after a DC 15 Dexterity save) instead of a toggle that gave every shot advantage; Bolt of
