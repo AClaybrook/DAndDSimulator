@@ -1,7 +1,7 @@
 """ A gear solver: for a build at an act, the gear and elixir combinations that trade damage against armour class, and the Pareto frontier
     of them (no other combination has both more damage and at least the AC, or more AC and at least the damage).
 
-    The whole space is far too big to try (tens of options in each of eight slots, times the elixirs), so:
+    The whole space is far too big to try (tens of options in each of eight slots, times the elixirs and weapon coatings), so:
     1. Each slot's options are tried one at a time on the planned gear; only the ones not beaten on both damage and AC by another option
        of that slot are kept (equal results keep one, the worn item first), plus the best few for damage
     2. A beam search fills the slots in turn from those, keeping the frontier of what it has found (thinned evenly along it)
@@ -17,7 +17,7 @@ from bg3.optimize import candidates
 from computations.analytic import expected_damage_vs_enemies
 
 # Slot order: rings before the amulet, so a pair that sets both comes last
-ORDER = ["armour", "gloves", "helmet", "cloak", "boots", "ring_1", "ring_2", "amulet", "elixir"]
+ORDER = ["armour", "gloves", "helmet", "cloak", "boots", "ring_1", "ring_2", "amulet", "elixir", "coating"]
 # Items worth trying only together: (slot, item) pairs
 COMBOS = [(("amulet", "bg3:broodmother_s_revenge"), ("ring_1", "bg3:ring_of_regeneration"))]
 # Costs the damage and AC don't show, listed with each point that has the item
@@ -29,15 +29,21 @@ BEAM = 10
 def _elixirs(act):
     return [key for key, b in BUFFS.items() if b.exclusive and int(b.act or 1) <= int(act)]
 
+def _coatings(act):
+    return [key for key, b in BUFFS.items() if b.group == "coating" and int(b.act or 1) <= int(act)]
+
 def apply(build, act, choice):
     """ The build wearing a choice ({slot: item key, 'elixir': buff key or ''}) at the act """
     out = deepcopy(build)
     act = str(act)
-    gear = {s: k for s, k in choice.items() if s != "elixir"}
+    gear = {s: k for s, k in choice.items() if s not in ("elixir", "coating")}
     out.equipment[act] = {**out.equipment.get(act, {}), **gear}
     if "elixir" in choice:
         current = out.buffs.get(act, [])
         out.buffs[act] = [b for b in current if not (b in BUFFS and BUFFS[b].exclusive)] + ([choice["elixir"]] if choice["elixir"] else [])
+    if "coating" in choice:
+        current = out.buffs.get(act, [])
+        out.buffs[act] = [b for b in current if not (b in BUFFS and BUFFS[b].group == "coating")] + ([choice["coating"]] if choice["coating"] else [])
     return out
 
 def _pareto(points):
@@ -65,6 +71,7 @@ def solve(build, act, enemy, rounds_per_fight, enemies=1, exclude=(), elixirs=Tr
     worn_elixir = next((b.key for b in buffs_at(build, act) if b.exclusive), "")
     if elixirs:
         base["elixir"] = worn_elixir
+        base["coating"] = next((b.key for b in reversed(buffs_at(build, act)) if b.group == "coating"), "")
     seen = {}
 
     def evaluate(choice):
@@ -83,6 +90,8 @@ def solve(build, act, enemy, rounds_per_fight, enemies=1, exclude=(), elixirs=Tr
     for slot in [s for s in ORDER if s in base]:
         if slot == "elixir":
             keys = [""] + _elixirs(act)
+        elif slot == "coating":
+            keys = [""] + _coatings(act)
         else:
             keys = [""] + [i.key for i in candidates(build, act, slot, items)
                            if not (i.unique and i.key in exclude)]

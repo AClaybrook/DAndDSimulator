@@ -264,6 +264,9 @@ class Character(Creature):
     # TODO: Elemental Adept, cannot roll less than 1 on damage die, could cause many rerolls... Skipping for now
     # Racial Traits (only half orc affects damage directly)
     savage_attacks_half_orc: bool = False
+    # Turns a fight each action type ("action", "bonus") spends setting up instead of attacking, i.e. casting Haste or coating a weapon in
+    # round 1 rather than before the fight. Averaged over the fight's rounds (only with rounds_per_fight)
+    setup_turns: dict = field(default_factory=dict)
     # Class Traits
     # Fighting Style
     archery: bool = False

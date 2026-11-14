@@ -38,7 +38,7 @@ APPLIES_TO = {
     "ranged_weapon": lambda a: a.type in ("weapon (ranged)", "thrown"),
     "thrown": lambda a: a.type == "thrown",
     "unarmed": lambda a: a.type == "unarmed",
-    "spell": lambda a: a.type == "spell",
+    "spell": lambda a: a.type == "spell" and "coating" not in a.tags,
     "booming_blade": lambda a: "booming_blade" in a.tags, # The weapon attack Booming Blade makes
     "necromancy": lambda a: a.type == "spell" and "necromancy" in a.tags,
 }
@@ -55,7 +55,8 @@ class Effect:
               and keep the lower), free_cast (value more casts a fight of the limited spell it applies to), channel_divinity (value more
               Channel Divinity charges per long rest), advantage_chance (advantage on that share of the attack rolls), limited_haste
               (value more actions a fight from a Haste the item casts, unless Haste is already on), main_hand_bonus_attack (in the off hand, the
-              bonus action attack is made with the main hand weapon: Belm). An attack_bonus of 'proficiency'
+              bonus action attack is made with the main hand weapon: Belm), toxin (a coating's poison: value dice at the end of
+              the target's turn after a weapon hit, a stat save at DC max_value, once a turn). An attack_bonus of 'proficiency'
               adds the proficiency bonus again (The Dead Shot)
         applies_to: a key of APPLIES_TO, or 'self' for the attacks made with the item's own weapon
         condition: when set, the effect only counts while the condition is toggled on, i.e. 'while raging' """
@@ -182,6 +183,13 @@ def apply_effect(character, effect, own_attacks=(), honour_mode=False):
     elif kind == "extra_action_on_kill":
         # Another Attack action whenever a kill happens on your turn
         extra_action(character, "Bloodlust", honour_mode, uses=float(value))
+    elif kind == "toxin":
+        # Once a turn, after a weapon hit (with several attacks a turn, nearly every turn): its own save, at the coating's DC
+        if any(a.is_weapon for a in character.attacks):
+            dice, damage_type = str(value).split(" ", 1)
+            character.attacks.append(Attack(name="Coating toxin", type="spell", action="extra", saving_throw=True, saving_throw_stat=effect.stat or "constitution",
+                                            save_dc=int(effect.max_value), saving_throw_success_multiplier=0, damage=dice, damage_type=damage_type,
+                                            tags=["coating"], once_per_turn_eligible=False))
     elif kind == "main_hand_bonus_attack":
         pass # Belm in the off hand: the bonus action attack is made with the main hand weapon (bg3.build.compile_build)
     elif kind == "channel_divinity":

@@ -2,6 +2,12 @@
 
 ## 3.0.0 (in progress)
 
+- **Pre-combat buffs:** the Buffs tab groups buffs by when they go up: before each fight (Haste, Bless, Hex...), weapon coatings, until a
+  long rest, elixirs, during the fight. A "Before the fight" switch (every number for the build) puts fight buffs up before it starts, or
+  in round 1 at the cost of that turn's action (Haste the build casts itself) or bonus action (Hex, coatings).
+- **Weapon coatings:** Oil of Accuracy, Diluted Oil of Sharpness, dipping in fire, and the Simple, Serpent Fang, Wyvern and Purple Worm
+  toxins (a Constitution save at the end of the target's turn, once a turn). One at a time; a coating replaces Broodmother's Revenge's
+  poison. The gear solver tries them like elixirs.
 - **Elixir of Cloud Giant Strength** counts from Act 3 (Hill Giant Strength before), and a variant's buffs only apply from the act they
   can be had.
 - **Haste and smites:** a Paladin multiclass that casts Haste on itself (Wizard or Sorcerer 5+) spends a slot on it every fight, one

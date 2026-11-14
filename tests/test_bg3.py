@@ -410,7 +410,7 @@ def test_estimates_party_synergies_and_items_the_damage_cannot_judge():
     acts = result["members"][0]["acts"]
     assert "Resonance Stone" in result["synergies"]["3"] and "Resonance Stone" not in result["synergies"]["1"]
     assert acts["3"]["together"][0] > 1.3 * acts["3"]["damage"][0] and acts["1"]["together"] == acts["1"]["damage"]
-    assert {o["key"] for o in planner.options()["assumptions"]} == {"bloodlust_kills", "polearm_reactions", "sentinel_reactions", "advantage_share"}
+    assert {o["key"] for o in planner.options()["assumptions"]} == {"bloodlust_kills", "polearm_reactions", "sentinel_reactions", "advantage_share", "precast_buffs"}
 
     items = catalog()
     names = {i.name: i for i in items.values()}
@@ -585,3 +585,23 @@ def test_variant_buffs_wait_for_their_act():
     build = Bg3Build("F", "fighter_gwm", buffs={a: ["elixir:elixir_of_bloodlust"] for a in ("1", "2", "3")})
     out = variant_build(build, {"name": "Cloud Giant", "buffs": ["elixir:elixir_of_cloud_giant_strength"]})
     assert out.buffs["2"] == ["elixir:elixir_of_bloodlust"] and out.buffs["3"] == ["elixir:elixir_of_cloud_giant_strength"]
+
+def test_fight_buffs_in_round_one_cost_their_action():
+    from bg3.parties import saved_parties
+    from bg3.leaderboard import reference_enemy
+    godblade = saved_parties()[0]["builds"][0]
+    before = compile_build(godblade, "3")
+    late = compile_build(replace(godblade, assumptions={**godblade.assumptions, "precast_buffs": 0}), "3")
+    assert before.setup_turns == {} and late.setup_turns == {"action": 1} # Haste, cast by the Godblade itself
+    enemy = reference_enemy(3)
+    assert expected_damage_per_round(late, enemy, 3) < expected_damage_per_round(before, enemy, 3)
+    # Haste from an ally costs a fighter nothing
+    fighter = Bg3Build("F", "fighter_gwm", buffs={"3": ["haste"]}, assumptions={"precast_buffs": 0})
+    assert compile_build(fighter, "3").setup_turns == {}
+
+def test_coatings_one_at_a_time_and_toxins_save():
+    build = Bg3Build("F", "fighter_gwm", buffs={"3": ["coat:dipped_fire", "coat:purple_worm_toxin"]})
+    character = compile_build(build, "3")
+    toxin = [a for a in character.attacks if "coating" in a.tags]
+    assert len(toxin) == 1 and toxin[0].save_dc == 19 and toxin[0].damage == "1d10"
+    assert not any("1d4 fire" in a.extra_damage_list for a in character.attacks) # The later coating replaced the dip

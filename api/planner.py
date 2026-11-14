@@ -131,7 +131,8 @@ def options():
         "examples": [{"name": n, "source": "Preset" if n in PRESETS else "Build doc"} for n in examples()],
         "slots": [{"key": k, "label": label, "group": option_group(k)} for k, label, _ in SLOTS],
         "items": grouped_item_options(),
-        "buffs": [{"key": k, "name": b.name, "act": b.act, "notes": b.notes, "modelled": bool(b.effects)} for k, b in BUFFS.items()],
+        "buffs": [{"key": k, "name": b.name, "act": b.act, "notes": b.notes, "modelled": bool(b.effects), "timing": b.timing, "cost": b.cost,
+                   "group": b.group} for k, b in BUFFS.items()],
         "kits": [{"key": k, "name": k_["name"], "act": k_["act"], "theme": k_.get("theme", ""), "trigger": k_.get("trigger", ""),
                   "fits": k_.get("fits", ""), "synergy": k_.get("synergy", ""), "notes": k_.get("notes", ""),
                   "slots": {slot: [catalog()[i].name for i in options_ if i in catalog()] for slot, options_ in k_["slots"].items()}}

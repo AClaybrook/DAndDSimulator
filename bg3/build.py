@@ -46,6 +46,8 @@ ASSUMPTIONS = {
                         "Master's bonus attack, once a turn each. 0 for a fight against one boss"),
     "polearm_reactions": ("Polearm Master reactions a fight", POLEARM_REACTIONS, "Attacks on enemies that walk into your reach"),
     "sentinel_reactions": ("Sentinel reactions a fight", SENTINEL_REACTIONS, "Attacks on enemies next to you that hit an ally"),
+    "precast_buffs": ("Fight buffs cast before the fight", 1, "1: Haste, Hex, coatings and the other buffs that last a fight are up before it starts "
+                      "(like Sneak Attack from stealth). 0: put up in round 1, each costing that turn's action or bonus action"),
     "advantage_share": ("Share of attacks with advantage", 0.0, "Advantage some of the time: Shadow Blade in dim light or darkness, Faerie "
                         "Fire, hiding. 0.5 is half the attacks, 1 every attack (the advantage toggle)"),
 }
@@ -121,13 +123,29 @@ def _finesse(attack):
     """ Whether the attack's weapon is finesse (Shadow Blade is) """
     return attack.base == SHADOW_BLADE or "finesse" in (weapons().get(attack.base, {}).get("properties") or [])
 
-def _haste_slot(build, act, character):
-    """ A build that casts Haste on itself (Wizard or Sorcerer 5+) spends a level 3 slot on it every fight: one smite a fight fewer """
+def _casts_haste(build, act):
+    """ Whether the build casts Haste itself: Wizard or Sorcerer 5+ (a Haste from an ally costs it nothing) """
     if not build.character:
-        return
+        return False
     from bg3.character import class_levels # pylint: disable=import-outside-toplevel
     levels = class_levels(Bg3Character.from_dict(build.character), act_level(act, build.levels))
-    if max(levels.get("wizard", 0), levels.get("sorcerer", 0)) < 5:
+    return max(levels.get("wizard", 0), levels.get("sorcerer", 0)) >= 5
+
+def _setup_turns(build, act, character, active_buffs):
+    """ Fight buffs put up in round 1 instead of before the fight (precast_buffs 0): each costs that turn's action or bonus action. Haste
+        only when the build casts it itself, Hex and Divine Favour are self cast, coatings are applied by the wielder """
+    if assumption(build, "precast_buffs") >= 0.5:
+        return
+    turns = {}
+    for b in active_buffs:
+        if b.timing != "fight" or not b.cost or (b.key == "haste" and not _casts_haste(build, act)):
+            continue
+        turns[b.cost] = turns.get(b.cost, 0) + 1
+    character.setup_turns = turns
+
+def _haste_slot(build, act, character):
+    """ A build that casts Haste on itself (Wizard or Sorcerer 5+) spends a level 3 slot on it every fight: one smite a fight fewer """
+    if not _casts_haste(build, act):
         return
     if character.once_per_turn_uses_per_fight and character.once_per_turn_damage_type == "radiant": # Divine Smite
         character.once_per_turn_uses_per_fight = max(round(character.once_per_turn_uses_per_fight - 1, 2), 0.01)
@@ -202,10 +220,16 @@ def compile_build(build, act, items=None):
 
     # Ability scores first, so later effects see the final stats
     sources = [(item.key, item.effects, own_attacks.get(slot, [])) for slot, item in gear.items()]
-    sources += [(f"buff:{b.key}", b.effects, []) for b in buffs_at(build, act)]
+    active_buffs = buffs_at(build, act)
+    # One coating on a weapon at a time (the last picked); a coating also replaces Broodmother's Revenge's poison coating
+    coatings = [b for b in active_buffs if b.group == "coating"]
+    active_buffs = [b for b in active_buffs if b.group != "coating" or b is coatings[-1]]
+    if coatings:
+        sources = [s for s in sources if s[0] != "bg3:broodmother_s_revenge"]
+    sources += [(f"buff:{b.key}", b.effects, []) for b in active_buffs]
     conditions = list(build.conditions)
     keys = {item.key for item in gear.values()}
-    if "bg3:broodmother_s_revenge" in keys and "bg3:ring_of_regeneration" in keys:
+    if "bg3:broodmother_s_revenge" in keys and "bg3:ring_of_regeneration" in keys and not coatings:
         # The ring heals at the start of every turn, even at full hit points, which keeps Broodmother's Revenge's poison coating up
         conditions.append(condition_id("bg3:broodmother_s_revenge", 0))
     effects = [(e, own) for key, effects_, own in sources for e in active_effects(key, effects_, conditions)]
@@ -238,6 +262,7 @@ def compile_build(build, act, items=None):
         # A Haste the gear casts on some days (Gontr Mael's Celestial Haste): that many more actions in a typical fight
         extra_action(character, "Celestial Haste", honour_mode, uses=limited_haste)
 
+    _setup_turns(build, act, character, active_buffs)
     if build.advantage:
         character.advantage = True
     share = min(assumption(build, "advantage_share"), 1.0)

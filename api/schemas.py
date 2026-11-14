@@ -228,6 +228,9 @@ class Buff(Model):
     act: int
     notes: str
     modelled: bool
+    timing: str # "fight" (before each fight), "long_rest" (in camp), "combat" (during the fight)
+    cost: str # The action type it takes in round 1 when not put up before the fight
+    group: str # Only one of a group at a time ("coating"); elixirs are one at a time too
 
 class Kit(Model):
     key: str

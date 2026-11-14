@@ -99,6 +99,9 @@ export interface Buff {
   act: number
   notes: string
   modelled: boolean
+  timing: string
+  cost: string
+  group: string
 }
 
 /** A planner build (bg3.build.Bg3Build) */

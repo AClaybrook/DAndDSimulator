@@ -11,21 +11,25 @@ import { ACTS, useParty } from '../../party'
 import { colorAt, useColors } from '../../theme'
 import { useSharedEnemy } from './usePlanner'
 
-const SLOT_LABEL: Record<string, string> = { armour: 'Armour', gloves: 'Gloves', helmet: 'Helmet', cloak: 'Cloak', boots: 'Boots', ring_1: 'Ring', ring_2: 'Ring', amulet: 'Amulet', elixir: 'Elixir' }
+const SLOT_LABEL: Record<string, string> = { armour: 'Armour', gloves: 'Gloves', helmet: 'Helmet', cloak: 'Cloak', boots: 'Boots', ring_1: 'Ring', ring_2: 'Ring', amulet: 'Amulet', elixir: 'Elixir', coating: 'Coating' }
 const describe = (p: FrontierPoint) => p.changes.length ? p.changes.map((c) => `${SLOT_LABEL[c.slot] ?? c.slot}: ${c.name}`).join(', ') : 'Gear as planned'
 
 // The point's gear and elixir on the build at the act (an elixir replaces the one it drinks now)
 function withPoint(build: Build, act: string, p: FrontierPoint): Build {
-  const gear = Object.fromEntries(p.changes.filter((c) => c.slot !== 'elixir').map((c) => [c.slot, c.key]))
-  const elixir = p.changes.find((c) => c.slot === 'elixir')
-  const buffs = elixir ? { ...build.buffs, [act]: [...(build.buffs[act] ?? []).filter((b) => !b.startsWith('elixir:')), ...(elixir.key ? [elixir.key] : [])] } : build.buffs
+  const gear = Object.fromEntries(p.changes.filter((c) => c.slot !== 'elixir' && c.slot !== 'coating').map((c) => [c.slot, c.key]))
+  let list = build.buffs[act] ?? []
+  for (const [slot, prefix] of [['elixir', 'elixir:'], ['coating', 'coat:']] as const) {
+    const change = p.changes.find((c) => c.slot === slot)
+    if (change) list = [...list.filter((b) => !b.startsWith(prefix)), ...(change.key ? [change.key] : [])]
+  }
+  const buffs = { ...build.buffs, [act]: list }
   return { ...build, equipment: { ...build.equipment, [act]: { ...(build.equipment[act] ?? {}), ...gear } }, buffs }
 }
 
 const variantOf = (act: string, p: FrontierPoint) => ({
   name: `AC ${p.ac}: ${describe(p)}`,
-  gear: { [act]: Object.fromEntries(p.changes.filter((c) => c.slot !== 'elixir').map((c) => [c.slot, c.key])) },
-  buffs: p.changes.filter((c) => c.slot === 'elixir' && c.key).map((c) => c.key),
+  gear: { [act]: Object.fromEntries(p.changes.filter((c) => c.slot !== 'elixir' && c.slot !== 'coating').map((c) => [c.slot, c.key])) },
+  buffs: p.changes.filter((c) => (c.slot === 'elixir' || c.slot === 'coating') && c.key).map((c) => c.key),
 })
 
 // Gear solver: every gear and elixir combination it tried, damage against armour class, and the Pareto frontier (nothing else has both
