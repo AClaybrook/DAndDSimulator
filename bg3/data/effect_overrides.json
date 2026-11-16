@@ -288,6 +288,21 @@
                 }
             ],
             "notes": "A poison coating for 3 turns whenever the wearer is healed (even at full hit points), so a Ring of Regeneration keeps it up every turn. Not on thrown weapons"
+        },
+        "Dolor Amarus": {
+            "effects": [
+                {
+                    "kind": "crit_damage",
+                    "value": "7",
+                    "applies_to": "weapon"
+                },
+                {
+                    "kind": "crit_damage",
+                    "value": "7",
+                    "applies_to": "unarmed"
+                }
+            ],
+            "notes": "Dolor Amarus: +7 damage when a weapon or unarmed attack crits (any weapon attack while equipped, not spells)"
         }
     }
 }

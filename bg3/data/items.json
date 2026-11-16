@@ -13305,12 +13305,18 @@
     {
      "kind": "crit_damage",
      "value": "7",
-     "applies_to": "all"
+     "applies_to": "weapon"
+    },
+    {
+     "kind": "crit_damage",
+     "value": "7",
+     "applies_to": "unarmed"
     }
    ],
-   "notes": "",
+   "notes": "Dolor Amarus: +7 damage when a weapon or unarmed attack crits (any weapon attack while equipped, not spells)",
    "location": "Highberry's Home",
-   "source": "https://bg3.wiki/wiki/Dolor_Amarus"
+   "source": "https://bg3.wiki/wiki/Dolor_Amarus",
+   "reviewed": true
   },
   {
    "key": "bg3:dread_iron_dagger",

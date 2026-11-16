@@ -262,7 +262,8 @@
         "ring_1": "bg3:risky_ring",
         "ring_2": "bg3:callous_glow_ring",
         "cloak": "bg3:cloak_of_protection",
-        "boots": "bg3:evasive_shoes"
+        "boots": "bg3:evasive_shoes",
+        "melee_off": "bg3:knife_of_the_undermountain_king"
        }
       },
       "buffs": {

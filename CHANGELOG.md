@@ -2,6 +2,7 @@
 
 ## 3.0.0 (in progress)
 
+- **Dolor Amarus:** its +7 on a critical hit is for weapon and unarmed attacks only, not spells.
 - **Leaderboard: Best case scenario.** A whole fight with everything: Bless, Haste, Rapture, advantage, the target held with every attack
   made from within 3 m, and Perilous Stakes (vulnerable to all damage).
 - **Crit fishing:** a Paladin toggle saves Divine Smites for critical hits. **Spell Sniper** lowers spell attacks' crit range by 1 (BG3).
