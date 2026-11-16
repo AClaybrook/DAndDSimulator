@@ -50,6 +50,7 @@ SCENARIOS = {
     "bless_advantage": "Bless + advantage",
     "reliable": "Reliable buffs",
     "nova": "Max nova (round 1)",
+    "best": "Best case (everything)",
     "planned": "As planned",
 }
 SCENARIO_NOTES = {
@@ -59,10 +60,15 @@ SCENARIO_NOTES = {
     "bless_advantage": "Everyone is Blessed and attacks with advantage",
     "reliable": "Bless, the build's own planned buffs, and advantage only with a dependable source of it (hover the Act cells)",
     "nova": "Round 1, everything: Bless, Haste, Phalar Aluve's Sing, advantage, the target held (melee hits crit), every limited resource spent",
+    "best": "A whole fight with everything: the build's own buffs plus Bless, Haste and Rapture, advantage, the target held with every attack "
+            "made from within 3 m (so every hit crits, bows and spells too), and Perilous Stakes making it vulnerable to all damage (the "
+            "Resonance Stone and Bhaalist Armour add nothing on top). Bleeding's 2 a turn isn't counted",
     "planned": "The build exactly as written: its buffs and toggles",
 }
 SELF_BUFFS = {"hex", "divine_favour"} # Cast by the character on itself, kept in every scenario
 NOVA_BUFFS = ["bless", "haste", "phalar_sing"]
+BEST_BUFFS = ["bless", "haste", "rapture"]
+ALL_DAMAGE_TYPES = ["slashing", "piercing", "bludgeoning", "acid", "cold", "fire", "force", "lightning", "necrotic", "poison", "psychic", "radiant", "thunder"]
 MELEE = ("weapon (melee)", "unarmed")
 
 def reference_enemy(act):
@@ -129,6 +135,8 @@ def scenario_build(build, scenario, act="1"):
         buffs, advantage = (lambda a: list(dict.fromkeys(own[a] + ["bless"]))), bool(reliable_advantage(build, act))
     elif scenario == "nova":
         buffs, advantage = (lambda a: list(dict.fromkeys(own[a] + NOVA_BUFFS))), True
+    elif scenario == "best":
+        buffs, advantage = (lambda a: list(dict.fromkeys(own[a] + BEST_BUFFS))), True
     else:
         extra = ["bless"] if scenario.startswith("bless") else []
         buffs, advantage = (lambda a: [b for b in own[a] if b in SELF_BUFFS] + extra), "advantage" in scenario
@@ -136,7 +144,7 @@ def scenario_build(build, scenario, act="1"):
     if out.character:
         out.character = {**out.character, "toggles": {**out.character.get("toggles", {}), "advantage": advantage}}
     out.advantage = advantage
-    return out, (1 if scenario == "nova" else ROUNDS_PER_FIGHT), scenario == "nova"
+    return out, (1 if scenario == "nova" else ROUNDS_PER_FIGHT), scenario in ("nova", "best")
 
 def damage_by_count(build, scenario, act, counts=ENEMY_COUNTS):
     """ {enemies: expected damage per round} for a scenario at an act """
@@ -148,8 +156,12 @@ def damage_by_count(build, scenario, act, counts=ENEMY_COUNTS):
         for attack in character.attacks:
             if not attack.saving_throw:
                 attack.advantage = True
-                attack.hits_crit = attack.hits_crit or attack.type in MELEE
+                attack.hits_crit = attack.hits_crit or attack.type in MELEE or scenario == "best" # Best case: everything from within 3 m
         enemy.strength_save = enemy.dexterity_save = -100
+    if scenario == "best":
+        # Perilous Stakes: vulnerable to every damage type; Steeped in Bliss (the stone): disadvantage on mental saves
+        enemy.vulnerabilities = list(ALL_DAMAGE_TYPES)
+        enemy.save_disadvantage = ["intelligence", "wisdom", "charisma"]
     return {n: expected_damage_vs_enemies(character, enemy, rounds, n) for n in counts}
 
 # Area spells each class can cast in the builder (BG3 spell lists, subclass expanded lists)

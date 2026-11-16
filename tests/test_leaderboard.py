@@ -107,3 +107,11 @@ def test_party_rows_replace_identical_examples():
     mine = [r for r in rows if r["source"] == "Your party"]
     assert len(mine) == 4 and all(r["same_as"].endswith("(Preset)") for r in mine)
     assert not any(r["source"] == "Preset" and r["fingerprint"] in {m["fingerprint"] for m in mine} for r in rows)
+
+def test_best_case_scenario():
+    from bg3.leaderboard import damage, scenario_build
+    from bg3.presets import PRESETS
+    build = next(iter(PRESETS.values()))
+    best, rounds, held = scenario_build(build, "best")
+    assert {"bless", "haste", "rapture"} <= set(best.buffs["3"]) and held and rounds == 3
+    assert damage(build, "best", "3") > 2 * damage(build, "reliable", "3")
