@@ -108,6 +108,7 @@ class Attack:
     bonus_miss_die_mod_list: list[str | int] = field(default_factory=list) # Format is ['1d6', 2]
     # Extra damage on a hit with its own damage type, so resistances apply to it separately, i.e. ['1d4 fire', '2 acid'] (BG3 items)
     extra_damage_list: list[str] = field(default_factory=list)
+    ignore_resistance: list[str] = field(default_factory=list) # Damage types whose resistance it ignores (Elemental Adept)
     # Reroll damage dice at or below this, for this attack only (i.e. BG3 weapons like Twist of Fortune), like Great Weapon Fighting
     damage_reroll_on: int = 0
     # Several enemies (BG3 planner): an area spell or aura hits up to this many of them; an attack that needs a second enemy (Horde Breaker)
@@ -261,7 +262,7 @@ class Character(Creature):
     tavern_brawler: bool = False # strength modifier added to attack and damage rolls
     GWM: bool = False # -5 to hit, +10 to damage, TODO: bonus action attack on crit or kill
     sharpshooter: bool = False # -5 to hit, +10 to damage with ranged weapons
-    # TODO: Elemental Adept, cannot roll less than 1 on damage die, could cause many rerolls... Skipping for now
+    # Elemental Adept: Attack.ignore_resistance (its 1s counting as 2s, about +0.2 a die, isn't counted)
     # Racial Traits (only half orc affects damage directly)
     savage_attacks_half_orc: bool = False
     # Turns a fight each action type ("action", "bonus") spends setting up instead of attacking, i.e. casting Haste or coating a weapon in
@@ -363,7 +364,7 @@ class Enemy(Creature):
         if matches(self.immunities):
             return 0
         multiplier = 1
-        if self.resistance or matches(self.resistances):
+        if (self.resistance or matches(self.resistances)) and damage_type not in getattr(attack, "ignore_resistance", []):
             multiplier *= 0.5
         if self.vulnerability or matches(self.vulnerabilities):
             multiplier *= 2

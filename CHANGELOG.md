@@ -2,6 +2,7 @@
 
 ## 3.0.0 (in progress)
 
+- **Elemental Adept:** spells of its element (the Draconic ancestry's, fire by default) ignore resistance to it.
 - **Levelled spells are upcast** to the average of the slots they use (Scorching Ray from a level 4 slot: 5 rays). **Haste's extra action**
   casts the cantrip for a caster whose action goes to a levelled spell (it added nothing before). **Potent Robe** only adds to cantrips.
   **Hat of Fire Acuity:** its Arcane Acuity counted as about +5 to spell attacks (a toggle). A Fire Sorcerer joins the second saved party.

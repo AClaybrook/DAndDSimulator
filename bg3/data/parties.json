@@ -148,7 +148,7 @@
     "Agonising Blaster: Sorcerer 6 / Warlock 2 / Fighter 4, Charisma 24, Spell Sniper (crits on 19-20), Eldritch Blast with Haste, Action Surge and Quickened casts (sorcery points from Font of Magic), Elixir of Battlemage's Power. Potent Robe adds Charisma to each beam; Spellmight's -5 for +1d8 is worth turning on; Rhapsody (+3 to hit and damage on each beam after three kills) and the Callous Glow Ring (+2 radiant on lit targets) are its best extras",
     "Throwzerker: Giant Barbarian 12 with Tavern Brawler, throwing Nyrulna",
     "Other gear picked by the gear solver for damage, one build at a time so no unique item is shared",
-    "Fire Sorcerer: Draconic Bloodline (red) Sorcerer 12, Scorching Ray upcast with every slot (5 rays on average) and Quickened, Fire Bolt with the Haste action. Spellmight's -5 for +1d8 a ray is its biggest gear gain; Hat of Fire Acuity's Arcane Acuity is counted as about +5 to spell attacks"
+    "Fire Sorcerer: Draconic Bloodline (red) Sorcerer 12, Scorching Ray upcast with every slot (5 rays on average) and Quickened, Fire Bolt with the Haste action. Spellmight's -5 for +1d8 a ray is its biggest gear gain; Hat of Fire Acuity's Arcane Acuity is counted as about +5 to spell attacks. Feats: Charisma to 20 and Elemental Adept (fire), which ignores fire resistance: 7 a round less than Spell Sniper against a normal enemy, about 80 more against a fire-resistant one (devils and fiends)"
    ],
    "members": [
     {
@@ -499,7 +499,7 @@
        ],
        "feats": [
         "charisma+2",
-        "Spell Sniper",
+        "Elemental Adept",
         "charisma+1,constitution+1"
        ],
        "fighting_styles": [],
@@ -516,6 +516,16 @@
       "carried": [],
       "roles": [],
       "variants": [
+       {
+        "name": "Spell Sniper instead of Elemental Adept (better unless the enemy resists fire)",
+        "character": {
+         "feats": [
+          "charisma+2",
+          "Spell Sniper",
+          "charisma+1,constitution+1"
+         ]
+        }
+       },
        {
         "name": "Spellmight's -5 / +1d8 off",
         "gear": {

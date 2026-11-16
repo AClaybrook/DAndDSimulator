@@ -444,3 +444,15 @@ def test_permanent_boons_and_the_item_casting_ability():
     from computations.models import once_per_turn_pools
     swarm = compile_character(Bg3Character(classes=[["ranger", "Swarmkeeper", 12]], routine="ranged"), 12)[0]
     assert [(p["damage_type"]) for p in once_per_turn_pools(swarm)] == ["psychic"]
+
+def test_elemental_adept_ignores_resistance():
+    from computations.analytic import expected_damage_per_round
+    from computations.models import Enemy
+    def sorcerer(feats):
+        c, _ = compile_character(Bg3Character(classes=[["sorcerer", "Draconic Bloodline", 12]], routine="cantrip", cantrip="Fire Bolt",
+                                              spell="Scorching Ray", feats=feats), 12)
+        return c
+    resistant = Enemy(armor_class=15, resistances=["fire"])
+    adept, plain = sorcerer(["Elemental Adept"]), sorcerer([])
+    assert all("fire" in a.ignore_resistance for a in adept.attacks if a.type == "spell")
+    assert expected_damage_per_round(adept, resistant, 3) > 1.8 * expected_damage_per_round(plain, resistant, 3)

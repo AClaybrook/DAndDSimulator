@@ -153,7 +153,8 @@ class Bg3Character:
     routine: str = "two_handed"
     cantrip: str = "Eldritch Blast"
     spell: str = "" # A levelled damage spell cast with every slot high enough, before the cantrip (cantrip routine)
-    toggles: dict = field(default_factory=dict) # TOGGLES (all on by default), and "ancestry" for Draconic Bloodline (default fire)
+    toggles: dict = field(default_factory=dict) # TOGGLES (all on by default), "ancestry" for Draconic Bloodline and "adept_element" for
+                                               # Elemental Adept (both default fire)
     level_order: list[str] = field(default_factory=list) # The class taken at each level when it isn't "first class first", i.e. a 1 level dip first
     boons: dict[str, int] = field(default_factory=dict) # Permanent ability bonuses from the story: Auntie Ethel's Hair (+1), Mirror of Loss (+2)
     # Character level: [[class, subclass, levels]] the character is respecced to at that level, when the levelling order doesn't give it
@@ -249,7 +250,7 @@ def compile_character(character, level=MAX_LEVEL, main_finesse=None):
     for feat in feats:
         if feat in FEAT_FLAGS:
             setattr(c, FEAT_FLAGS[feat], True)
-        elif feat not in ("Dual Wielder", "Polearm Master", "Athlete", "Sentinel"):
+        elif feat not in ("Dual Wielder", "Polearm Master", "Athlete", "Sentinel", "Elemental Adept", "Spell Sniper"):
             notes.append(f"{feat}: not modelled")
     c.savage_attacker_per_die = c.savage_attacker # BG3 Savage Attacker keeps the higher of each die
     styles = [s for s in character.fighting_styles if FIGHTING_STYLES.get(s)]
@@ -269,6 +270,12 @@ def compile_character(character, level=MAX_LEVEL, main_finesse=None):
         # Action Surge: the cantrip again (the levelled spell's slots are counted with the action's casts)
         casts = [a for a in attacks if a.type == "spell" and a.action == "action" and not a.uses_per_fight]
         attacks += [a.variant("Action Surge", uses_per_fight=per_fight(per_short_rest=1), action="extra", fallback_for="") for a in casts]
+    if "Elemental Adept" in feats:
+        # Spells of the chosen element (the Draconic ancestry's, fire by default) ignore resistance to it
+        element = character.toggles.get("adept_element") or character.toggles.get("ancestry") or "fire"
+        for a in attacks:
+            if a.type == "spell":
+                a.ignore_resistance = [*a.ignore_resistance, element]
     if "Spell Sniper" in feats:
         # BG3's Spell Sniper: spell attack rolls are critical hits on one lower
         for a in attacks:
