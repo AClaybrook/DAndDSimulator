@@ -60,14 +60,15 @@ SCENARIO_NOTES = {
     "bless_advantage": "Everyone is Blessed and attacks with advantage",
     "reliable": "Bless, the build's own planned buffs, and advantage only with a dependable source of it (hover the Act cells)",
     "nova": "Round 1, everything: Bless, Haste, Phalar Aluve's Sing, advantage, the target held (melee hits crit), every limited resource spent",
-    "best": "A whole fight with everything: the build's own buffs plus Bless, Haste and Rapture, advantage, the target held with every attack "
+    "best": "A whole fight with everything: the build's own buffs plus Bless, Haste, Rapture and the Drakethroat Glaive's elemental weapon, "
+            "the better of its own elixir and Bloodlust (whose extra action needs a kill, so only against 2+ enemies), advantage, the target held with every attack "
             "made from within 3 m (so every hit crits, bows and spells too), and Perilous Stakes making it vulnerable to all damage (the "
             "Resonance Stone and Bhaalist Armour add nothing on top). Bleeding's 2 a turn isn't counted",
     "planned": "The build exactly as written: its buffs and toggles",
 }
 SELF_BUFFS = {"hex", "divine_favour"} # Cast by the character on itself, kept in every scenario
 NOVA_BUFFS = ["bless", "haste", "phalar_sing"]
-BEST_BUFFS = ["bless", "haste", "rapture"]
+BEST_BUFFS = ["bless", "haste", "rapture", "drakethroat"]
 ALL_DAMAGE_TYPES = ["slashing", "piercing", "bludgeoning", "acid", "cold", "fire", "force", "lightning", "necrotic", "poison", "psychic", "radiant", "thunder"]
 MELEE = ("weapon (melee)", "unarmed")
 
@@ -147,7 +148,17 @@ def scenario_build(build, scenario, act="1"):
     return out, (1 if scenario == "nova" else ROUNDS_PER_FIGHT), scenario in ("nova", "best")
 
 def damage_by_count(build, scenario, act, counts=ENEMY_COUNTS):
-    """ {enemies: expected damage per round} for a scenario at an act """
+    """ {enemies: expected damage per round} for a scenario at an act. Best case takes the better of the build's own elixir and Bloodlust
+        for each number of enemies (Bloodlust's extra action only comes against a group) """
+    if scenario == "best" and "elixir:elixir_of_bloodlust" not in build.buffs.get(str(act), []):
+        own = _damage_by_count(build, scenario, act, counts)
+        lust = deepcopy(build)
+        lust.buffs = {a: [b for b in lust.buffs.get(a, []) if not b.startswith("elixir:")] + ["elixir:elixir_of_bloodlust"] for a in ACT_KEYS}
+        other = _damage_by_count(lust, scenario, act, counts)
+        return {n: max(own[n], other[n]) for n in counts}
+    return _damage_by_count(build, scenario, act, counts)
+
+def _damage_by_count(build, scenario, act, counts=ENEMY_COUNTS):
     changed, rounds, held = scenario_build(build, scenario, act)
     character, enemy = compile_build(changed, act), reference_enemy(act)
     if held:

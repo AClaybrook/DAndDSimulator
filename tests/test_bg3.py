@@ -378,7 +378,8 @@ def test_best_gear_keeps_armour_and_planned_items_unless_the_gain_is_real():
             after = replace(build, equipment={**build.equipment, act: {**build.equipment.get(act, {}), **slots}})
             assert armour_class(after, act)[0] >= armour_class(build, act)[0]
         assert all(c["gain"] > 0 for c in changes)
-        before = expected_damage_per_round(compile_build(build, "3"), Enemy(), 3)
+        from computations.analytic import expected_damage_vs_enemies
+        before = expected_damage_vs_enemies(compile_build(build, "3"), Enemy(), 3, 1) # One enemy: no Bloodlust actions
         assert all(c["gain"] >= MIN_GAIN * before * 0.9 for c in changes if c["before"] and c["act"] == "3")
     wizard = Bg3Build.from_dict(doc["14. Death Cleric Necromancer"])
     profs = weapon_proficiencies(Bg3Character.from_dict(wizard.character), 12)
@@ -605,3 +606,15 @@ def test_coatings_one_at_a_time_and_toxins_save():
     toxin = [a for a in character.attacks if "coating" in a.tags]
     assert len(toxin) == 1 and toxin[0].save_dc == 19 and toxin[0].damage == "1d10"
     assert not any("1d4 fire" in a.extra_damage_list for a in character.attacks) # The later coating replaced the dip
+
+
+def test_bloodlust_needs_a_group():
+    from computations.analytic import expected_damage_vs_enemies
+    build = Bg3Build("F", "fighter_gwm", buffs={"3": ["elixir:elixir_of_bloodlust"]})
+    character = compile_build(build, "3")
+    assert any("on_kill" in a.tags for a in character.attacks)
+    plain = compile_build(Bg3Build("F", "fighter_gwm"), "3")
+    enemy = Enemy(armor_class=18)
+    # One enemy: only Great Weapon Master's kill bonus attack still differs a little
+    assert expected_damage_vs_enemies(character, enemy, 3, 1) == pytest.approx(expected_damage_vs_enemies(plain, enemy, 3, 1), rel=0.01)
+    assert expected_damage_vs_enemies(character, enemy, 3, 2) > expected_damage_vs_enemies(plain, enemy, 3, 2)

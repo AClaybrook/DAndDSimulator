@@ -2,6 +2,8 @@
 
 ## 3.0.0 (in progress)
 
+- **Bloodlust needs a group:** its extra action (a kill first) counts against 2+ enemies only, everywhere damage is given by enemy count.
+  Best case adds the Drakethroat Glaive's elemental weapon and takes the better of the build's own elixir and Bloodlust per enemy count.
 - **Dolor Amarus:** its +7 on a critical hit is for weapon and unarmed attacks only, not spells.
 - **Leaderboard: Best case scenario.** A whole fight with everything: Bless, Haste, Rapture, advantage, the target held with every attack
   made from within 3 m, and Perilous Stakes (vulnerable to all damage).

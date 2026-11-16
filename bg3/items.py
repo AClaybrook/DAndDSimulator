@@ -165,7 +165,9 @@ def extra_action(character, label, honour_mode=False, uses=0):
     if honour_mode and attacks and attacks[0].type != "spell":
         attacks = attacks[:1]
     # The extra action attacks from round 1, even when the action itself goes to casting a spell first
-    character.attacks += [a.variant(label, action="extra", uses_per_fight=uses, fallback_for="", tags=[t for t in a.tags if t != "after_cast"])
+    # Bloodlust's action needs a kill: against a single enemy the kill ends the fight, so it only counts against groups ("on_kill")
+    kill = ["on_kill"] if label == "Bloodlust" else []
+    character.attacks += [a.variant(label, action="extra", uses_per_fight=uses, fallback_for="", tags=[*(t for t in a.tags if t != "after_cast"), *kill])
                           for a in attacks]
 
 def apply_effect(character, effect, own_attacks=(), honour_mode=False):

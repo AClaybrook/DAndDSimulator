@@ -254,7 +254,8 @@ def expected_damage_vs_enemies(character, enemy, rounds_per_fight=None, enemies=
     """ Expected damage per round summed over a group of identical enemies. Single target attacks count once (the damage doesn't spill over
         to a second enemy), area spells and auras once per enemy they reach. With one enemy this is expected_damage_per_round """
     expected = expected_by_attack(character, enemy, rounds_per_fight)
-    return float(sum(e * enemies_hit(a, enemies) for a, e in zip(character.attacks, expected)))
+    # Attacks that need a kill first (Elixir of Bloodlust's action) never happen against a single enemy: its death ends the fight
+    return float(sum(e * enemies_hit(a, enemies) for a, e in zip(character.attacks, expected) if enemies > 1 or "on_kill" not in a.tags))
 
 POWER_ATTACK_FEATS = {"GWM": ("Great Weapon Master", lambda a: a.type == "weapon (melee)" and a.heavy),
                       "sharpshooter": ("Sharpshooter", lambda a: a.type == "weapon (ranged)")}

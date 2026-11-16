@@ -43,7 +43,7 @@ class Bg3Build:
 # key: (label, default, what it means). How often things happen in a fight is a guess, so each build can set its own
 ASSUMPTIONS = {
     "bloodlust_kills": ("Kills a fight", BLOODLUST_KILLS_PER_FIGHT, "A kill on your turn gives the Elixir of Bloodlust's extra action and Great Weapon "
-                        "Master's bonus attack, once a turn each. 0 for a fight against one boss"),
+                        "Master's bonus attack, once a turn each. Against a single enemy Bloodlust's action never counts (the kill ends the fight)"),
     "polearm_reactions": ("Polearm Master reactions a fight", POLEARM_REACTIONS, "Attacks on enemies that walk into your reach"),
     "sentinel_reactions": ("Sentinel reactions a fight", SENTINEL_REACTIONS, "Attacks on enemies next to you that hit an ally"),
     "precast_buffs": ("Fight buffs cast before the fight", 1, "1: Haste, Hex, coatings and the other buffs that last a fight are up before it starts "
