@@ -159,7 +159,7 @@ def replace_toggle(character, key):
 
 def test_builder_only_offers_toggles_for_its_classes():
     assert relevant_toggles([["fighter", "Champion", 12]]) == ["reactions", "honour_mode", "illithid", "advantage"]
-    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "vow", "curse", "booming_blade", "offhand_crossbow", "reactions", "honour_mode", "illithid", "advantage"]
+    assert relevant_toggles([["paladin", "Oathbreaker", 6], ["warlock", "The Hexblade", 6]]) == ["smite", "smite_crits", "vow", "curse", "booming_blade", "offhand_crossbow", "reactions", "honour_mode", "illithid", "advantage"]
     assert relevant_toggles([["warlock", "The Fiend", 12]]) == ["booming_blade", "offhand_crossbow", "reactions", "honour_mode", "illithid", "advantage"]
 
 
@@ -278,9 +278,9 @@ def test_quickened_spell_shares_slots_and_sorcery_points():
     quick = {a.name: (a.uses_per_fight, a.fallback_for) for a in c.attacks if "quickened" in a.tags}
     assert quick == {"Quickened Fireball": (0.38, ""), "Quickened Fire Bolt": (0.12, "Fireball")}
     assert sum(a.uses_per_fight for a in c.attacks if a.base == "Fireball") == pytest.approx(0.75, abs=0.02) # 3 level 3 slots over 4 fights
-    # Without a levelled spell every quicken is a cantrip
+    # Without a levelled spell every quicken is a cantrip, and the level 1 and 2 slots become sorcery points too: 12 + 4 + 6 = 22, 7 quickens
     blaster, _ = compile_character(Bg3Character(classes=[["sorcerer", "Storm Sorcery", 12]], routine="cantrip", cantrip="Fire Bolt"), 12)
-    assert [(a.name, a.uses_per_fight) for a in blaster.attacks] == [("Fire Bolt", 0), ("Quickened Fire Bolt", 1.0)]
+    assert [(a.name, a.uses_per_fight) for a in blaster.attacks] == [("Fire Bolt", 0), ("Quickened Fire Bolt", 1.75)]
 
 def test_pact_weapon_charisma_is_main_hand_melee_only():
     cha = {"strength": 8, "dexterity": 14, "constitution": 14, "intelligence": 8, "wisdom": 10, "charisma": 17}

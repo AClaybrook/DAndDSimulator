@@ -62,9 +62,9 @@ def _thin(points, n):
     picks = {round(i * (len(points) - 1) / (n - 1)) for i in range(n)}
     return [points[i] for i in sorted(picks)]
 
-def solve(build, act, enemy, rounds_per_fight, enemies=1, exclude=(), elixirs=True):
+def solve(build, act, enemy, rounds_per_fight, enemies=1, exclude=(), elixirs=True, keep=()):
     """ {"current": point, "points": [every combination tried], "frontier": [the Pareto frontier]}. A point: damage per round, AC,
-        the choice and its changes from the planned gear ([(slot, item key or '')]) """
+        the choice and its changes from the planned gear ([(slot, item key or '')]). keep: slots (or "elixir", "coating") left as planned """
     act = str(act)
     items = catalog()
     base = {s: equipment_at(build, act).get(s, "") for s in ORDER if s != "elixir"}
@@ -88,6 +88,9 @@ def solve(build, act, enemy, rounds_per_fight, enemies=1, exclude=(), elixirs=Tr
     # 1. Each slot's options on the planned gear
     options = {}
     for slot in [s for s in ORDER if s in base]:
+        if slot in keep:
+            options[slot] = [{slot: base[slot]}]
+            continue
         if slot == "elixir":
             keys = [""] + _elixirs(act)
         elif slot == "coating":

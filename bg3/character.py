@@ -104,7 +104,8 @@ CANTRIPS = ["Eldritch Blast", "Fire Bolt", "Ray of Frost", "Sacred Flame", "Toll
             "Bursting Sinew"]
 # Options that need the build to set something up, all on by default
 TOGGLES = {
-    "rage": "Rage every fight", "reckless": "Reckless Attack (advantage)", "smite": "Smite with spell slots", "vow": "Oath buff (Vow of Enmity, "
+    "rage": "Rage every fight", "reckless": "Reckless Attack (advantage)", "smite": "Smite with spell slots",
+    "smite_crits": "Save Divine Smites for critical hits (crit fishing: the dice double, but non-crit hits get none)", "vow": "Oath buff (Vow of Enmity, "
     "Sacred Weapon or Righteous Clarity)", "curse": "Hexblade's Curse on the target", "surprise": "Enemies are surprised (Assassin)",
     "manifestation": "Manifestation of Body (Open Hand)", "damaged_target": "Target is already damaged (Colossus Slayer)",
     "starry_form": "Starry Form: Archer (Circle of Stars)", "symbiotic": "Symbiotic Entity (Circle of Spores)",
@@ -124,9 +125,9 @@ TOGGLES = {
     "advantage": "Attack with advantage (Shadow Blade in darkness or dim light, hiding, Dirty Tricks, Faerie Fire, Darkness with Devil's Sight)",
 }
 # Toggles that are off unless ticked: advantage depends on the fight, so it isn't assumed
-TOGGLE_DEFAULTS = {"advantage": False, "horde_breaker": False, "honour_mode": False, "spiritual_weapon": False, "offhand_crossbow": False, "spirit_guardians": False, "illithid": False}
+TOGGLE_DEFAULTS = {"smite_crits": False, "advantage": False, "horde_breaker": False, "honour_mode": False, "spiritual_weapon": False, "offhand_crossbow": False, "spirit_guardians": False, "illithid": False}
 # The class (and subclass) each toggle is for, so the builder only offers the ones that matter
-TOGGLE_FOR = {"rage": ("barbarian", ""), "reckless": ("barbarian", ""), "smite": ("paladin", ""), "vow": ("paladin", ""),
+TOGGLE_FOR = {"rage": ("barbarian", ""), "reckless": ("barbarian", ""), "smite": ("paladin", ""), "smite_crits": ("paladin", ""), "vow": ("paladin", ""),
               "curse": ("warlock", "The Hexblade"), "surprise": ("rogue", "Assassin"), "manifestation": ("monk", "Way of the Open Hand"),
               "damaged_target": ("ranger", "Hunter"), "starry_form": ("druid", "Circle of Stars"), "symbiotic": ("druid", "Circle of Spores"),
               "storm_close": ("sorcerer", "Storm Sorcery"),
@@ -264,6 +265,15 @@ def compile_character(character, level=MAX_LEVEL, main_finesse=None):
         c.attack_reroll_on = 1 # Halfling Luck
 
     attacks = _attacks(character, c, levels, subs, feats, notes, main_finesse)
+    if character.routine == "cantrip" and levels.get("fighter", 0) >= 2:
+        # Action Surge: the cantrip again (the levelled spell's slots are counted with the action's casts)
+        casts = [a for a in attacks if a.type == "spell" and a.action == "action" and not a.uses_per_fight]
+        attacks += [a.variant("Action Surge", uses_per_fight=per_fight(per_short_rest=1), action="extra", fallback_for="") for a in casts]
+    if "Spell Sniper" in feats:
+        # BG3's Spell Sniper: spell attack rolls are critical hits on one lower
+        for a in attacks:
+            if a.type == "spell" and not a.saving_throw:
+                a.crit_on = min(a.crit_on, c.crit_on) - 1
     if character.routine == "cantrip" and character.toggle("offhand_crossbow"):
         # A caster with two hand crossbows: the action goes to spells, the bonus action to an off-hand shot
         attacks.append(weapon_attack("Hand Crossbow", ability_stat="dexterity", offhand=True))
@@ -748,6 +758,13 @@ def _class_features(character, c, levels, subs, notes, main_finesse=None):
             mean = sum(min(1 + level, 5) for level in day) / len(day)
             dice, rest = int(mean), round((mean - int(mean)) * 4.5)
             _once_per_turn(c, "Divine Smite", [f"{dice}d8", *([str(rest)] if rest else [])], round(len(day) / FIGHTS_PER_LONG_REST, 2), "radiant")
+            if character.toggle("smite_crits"):
+                # Only on a critical hit, where the smite's dice double
+                if c.once_per_turn_damage_type == "radiant" and c.once_per_turn_uses_per_fight:
+                    c.once_per_turn_crit_only = True
+                for pool in c.once_per_turn_extra:
+                    if pool.get("name") == "Divine Smite":
+                        pool["crit_only"] = True
     if paladin >= 11 and weapon:
         # Improved Divine Smite: 1d8 radiant on every melee weapon hit, typed so it takes radiant resistance or vulnerability
         for a in c.attacks:
@@ -805,7 +822,14 @@ def _class_features(character, c, levels, subs, notes, main_finesse=None):
             if a.type == "spell" and a.damage_type == ancestry:
                 a.bonus_damage_die_mod_list = [*a.bonus_damage_die_mod_list, str(max(c.charisma_ability_modifier, 0))]
     if sorcerer >= 3 and character.routine == "cantrip":
-        _quickened(c, per_fight(per_long_rest=sorcerer // 3))
+        points = sorcerer
+        if not character.spell:
+            # Font of Magic: a cantrip build with no levelled damage spell turns its level 1 and 2 slots (the higher ones go to Haste and
+            # the like) and its Warlock pact slots, back each short rest, into sorcery points: a slot's level in points
+            slots = spell_slots(caster_level(levels, subs))
+            pact, pact_level = warlock_pact_slots(levels.get("warlock", 0))
+            points += sum((lv + 1) * n for lv, n in enumerate(slots[:2])) + pact * pact_level * (SHORT_RESTS_PER_LONG_REST + 1)
+        _quickened(c, per_fight(per_long_rest=points // 3))
     elif sorcerer >= 3:
         _quickened_blade(c, per_fight(per_long_rest=sorcerer // 3))
     c.empowered_evocation = wizard >= 10 and subs.get("wizard") == "Evocation School"

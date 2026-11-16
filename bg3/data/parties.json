@@ -140,6 +140,297 @@
      ]
     }
    ]
+  },
+  {
+   "name": "Crit Smiter, Agonising Blaster, Throwzerker (Act 3)",
+   "notes": [
+    "Half-Orc Crit Smiter: Paladin 5 (Vengeance) / Warlock 5 (Hexblade) / Fighter 2, Balduran's Giantslayer with Cloud Giant Strength (27, doubled on hits), The Dead Shot in the ranged slot and Sarevok's Horned Helmet for crits on 17-20 with Hexblade's Curse, Divine Smite saved for crits",
+    "Agonising Blaster: Sorcerer 6 / Warlock 2 / Fighter 4, Charisma 24, Spell Sniper (crits on 19-20), Eldritch Blast with Haste, Action Surge and Quickened casts (sorcery points from Font of Magic), Elixir of Battlemage's Power",
+    "Throwzerker: Giant Barbarian 12 with Tavern Brawler, throwing Nyrulna",
+    "Other gear picked by the gear solver for damage, one build at a time so no unique item is shared"
+   ],
+   "members": [
+    {
+     "build": {
+      "name": "Half-Orc Crit Smiter",
+      "preset": "",
+      "equipment": {
+       "3": {
+        "melee_main": "bg3:balduran_s_giantslayer",
+        "ranged_main": "bg3:the_dead_shot",
+        "helmet": "bg3:sarevok_s_horned_helmet",
+        "armour": "bg3:helldusk_armour",
+        "gloves": "bg3:legacy_of_the_masters",
+        "cloak": "bg3:cloak_of_protection",
+        "boots": "bg3:evasive_shoes",
+        "ring_1": "bg3:ring_of_regeneration",
+        "ring_2": "bg3:caustic_band",
+        "amulet": "bg3:broodmother_s_revenge"
+       }
+      },
+      "buffs": {
+       "3": [
+        "elixir:elixir_of_cloud_giant_strength"
+       ]
+      },
+      "conditions": [],
+      "levels": {},
+      "character": {
+       "name": "Crit Smiter",
+       "race": "Half-Orc",
+       "scores": {
+        "strength": 8,
+        "dexterity": 14,
+        "constitution": 15,
+        "intelligence": 8,
+        "wisdom": 10,
+        "charisma": 15
+       },
+       "bonus": {
+        "charisma": 2,
+        "constitution": 1
+       },
+       "classes": [
+        [
+         "paladin",
+         "Oath of Vengeance",
+         5
+        ],
+        [
+         "warlock",
+         "The Hexblade",
+         5
+        ],
+        [
+         "fighter",
+         "Champion",
+         2
+        ]
+       ],
+       "feats": [
+        "Great Weapon Master",
+        "Savage Attacker"
+       ],
+       "fighting_styles": [
+        "Great Weapon Fighting",
+        "Defence"
+       ],
+       "routine": "two_handed",
+       "cantrip": "Eldritch Blast",
+       "spell": "",
+       "toggles": {
+        "smite_crits": true
+       },
+       "level_order": [],
+       "boons": {},
+       "respec": {}
+      },
+      "carried": [],
+      "roles": [],
+      "variants": [
+       {
+        "name": "With an ally's Haste and Bless",
+        "buffs": [
+         "haste",
+         "bless"
+        ]
+       },
+       {
+        "name": "Smite on any hit (not saved for crits)",
+        "toggles": {},
+        "character": {
+         "toggles": {
+          "smite_crits": false
+         }
+        }
+       }
+      ],
+      "advantage": false,
+      "assumptions": {}
+     }
+    },
+    {
+     "build": {
+      "name": "Agonising Blaster",
+      "preset": "",
+      "equipment": {
+       "3": {
+        "armour": "bg3:potent_robe",
+        "gloves": "bg3:gloves_of_dexterity",
+        "helmet": "bg3:hood_of_the_weave",
+        "cloak": "",
+        "boots": "",
+        "ring_1": "bg3:risky_ring",
+        "ring_2": "bg3:ring_of_protection",
+        "amulet": ""
+       }
+      },
+      "buffs": {
+       "3": [
+        "haste",
+        "elixir:elixir_of_battlemage_s_power"
+       ]
+      },
+      "conditions": [],
+      "levels": {},
+      "character": {
+       "name": "Blaster",
+       "race": "Human",
+       "scores": {
+        "strength": 8,
+        "dexterity": 14,
+        "constitution": 15,
+        "intelligence": 8,
+        "wisdom": 10,
+        "charisma": 15
+       },
+       "bonus": {
+        "charisma": 2,
+        "constitution": 1
+       },
+       "classes": [
+        [
+         "sorcerer",
+         "Draconic Bloodline",
+         6
+        ],
+        [
+         "warlock",
+         "The Fiend",
+         2
+        ],
+        [
+         "fighter",
+         "Battle Master",
+         4
+        ]
+       ],
+       "feats": [
+        "charisma+2",
+        "Spell Sniper"
+       ],
+       "fighting_styles": [
+        "Archery"
+       ],
+       "routine": "cantrip",
+       "cantrip": "Eldritch Blast",
+       "spell": "",
+       "toggles": {},
+       "level_order": [
+        "fighter",
+        "sorcerer",
+        "sorcerer",
+        "sorcerer",
+        "sorcerer",
+        "sorcerer",
+        "sorcerer",
+        "warlock",
+        "warlock",
+        "fighter",
+        "fighter",
+        "fighter"
+       ],
+       "boons": {
+        "charisma": 5
+       },
+       "respec": {}
+      },
+      "carried": [],
+      "roles": [],
+      "variants": [
+       {
+        "name": "With Bless",
+        "buffs": [
+         "bless"
+        ]
+       }
+      ],
+      "advantage": false,
+      "assumptions": {}
+     }
+    },
+    {
+     "build": {
+      "name": "Throwzerker (Giant, Tavern Brawler, Nyrulna)",
+      "preset": "barbarian_berserker",
+      "equipment": {
+       "1": {
+        "melee_main": "bg3:returning_pike",
+        "ring_1": "bg3:ring_of_flinging",
+        "gloves": "bg3:gloves_of_uninhibited_kushigo"
+       },
+       "3": {
+        "gloves": "bg3:helldusk_gloves",
+        "melee_main": "bg3:nyrulna",
+        "armour": "bg3:dark_justiciar_half_plate_very_rare",
+        "helmet": "",
+        "cloak": "",
+        "boots": "",
+        "ring_1": "bg3:ring_of_flinging",
+        "ring_2": "",
+        "amulet": ""
+       }
+      },
+      "buffs": {
+       "3": [
+        "elixir:elixir_of_bloodlust",
+        "coat:dipped_fire"
+       ]
+      },
+      "conditions": [],
+      "levels": {},
+      "character": {
+       "name": "Throwzerker",
+       "race": "Half-Orc",
+       "scores": {
+        "strength": 15,
+        "dexterity": 13,
+        "constitution": 15,
+        "intelligence": 8,
+        "wisdom": 12,
+        "charisma": 8
+       },
+       "bonus": {
+        "strength": 2,
+        "constitution": 1
+       },
+       "classes": [
+        [
+         "barbarian",
+         "Giant",
+         12
+        ]
+       ],
+       "feats": [
+        "Tavern Brawler",
+        "strength+2",
+        "Savage Attacker"
+       ],
+       "fighting_styles": [],
+       "routine": "thrown",
+       "cantrip": "Eldritch Blast",
+       "spell": "",
+       "toggles": {},
+       "level_order": [],
+       "boons": {},
+       "respec": {}
+      },
+      "carried": [],
+      "roles": [],
+      "variants": [
+       {
+        "name": "With an ally's Haste and Bless",
+        "buffs": [
+         "haste",
+         "bless"
+        ]
+       }
+      ],
+      "advantage": false,
+      "assumptions": {}
+     }
+    }
+   ]
   }
  ]
 }

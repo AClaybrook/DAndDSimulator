@@ -2,6 +2,9 @@
 
 ## 3.0.0 (in progress)
 
+- **Crit fishing:** a Paladin toggle saves Divine Smites for critical hits. **Spell Sniper** lowers spell attacks' crit range by 1 (BG3).
+  Cantrip builds get **Action Surge** casts, and a Sorcerer cantrip build turns its level 1-2 and pact slots into sorcery points for
+  more Quickened casts. A second saved party: Half-Orc Crit Smiter, Agonising Blaster, Throwzerker (Act 3).
 - **Pre-combat buffs:** the Buffs tab groups buffs by when they go up: before each fight (Haste, Bless, Hex...), weapon coatings, until a
   long rest, elixirs, during the fight. A "Before the fight" switch (every number for the build) puts fight buffs up before it starts, or
   in round 1 at the cost of that turn's action (Haste the build casts itself) or bonus action (Hex, coatings).

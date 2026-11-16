@@ -16,6 +16,10 @@ def saved_parties():
     for party in parties:
         builds = []
         for member in party["members"]:
+            # A build doc build by number, or a build written out in full
+            if "build" in member:
+                builds.append(Bg3Build.from_dict(deepcopy(member["build"])))
+                continue
             if member["doc"] not in docs:
                 continue
             build = deepcopy(docs[member["doc"]])
