@@ -145,7 +145,7 @@
    "name": "Crit Smiter, Agonising Blaster, Throwzerker (Act 3)",
    "notes": [
     "Half-Orc Crit Smiter: Paladin 5 (Vengeance) / Warlock 5 (Hexblade) / Fighter 2, Balduran's Giantslayer with Cloud Giant Strength (27, doubled on hits), The Dead Shot in the ranged slot and Sarevok's Horned Helmet for crits on 17-20 with Hexblade's Curse, Divine Smite saved for crits",
-    "Agonising Blaster: Sorcerer 6 / Warlock 2 / Fighter 4, Charisma 24, Spell Sniper (crits on 19-20), Eldritch Blast with Haste, Action Surge and Quickened casts (sorcery points from Font of Magic), Elixir of Battlemage's Power",
+    "Agonising Blaster: Sorcerer 6 / Warlock 2 / Fighter 4, Charisma 24, Spell Sniper (crits on 19-20), Eldritch Blast with Haste, Action Surge and Quickened casts (sorcery points from Font of Magic), Elixir of Battlemage's Power. Potent Robe adds Charisma to each beam; Spellmight's -5 for +1d8 is worth turning on; Rhapsody (+3 to hit and damage on each beam after three kills) and the Callous Glow Ring (+2 radiant on lit targets) are its best extras",
     "Throwzerker: Giant Barbarian 12 with Tavern Brawler, throwing Nyrulna",
     "Other gear picked by the gear solver for damage, one build at a time so no unique item is shared"
    ],
@@ -255,14 +255,14 @@
       "preset": "",
       "equipment": {
        "3": {
+        "gloves": "bg3:spellmight_gloves",
         "armour": "bg3:potent_robe",
-        "gloves": "bg3:gloves_of_dexterity",
-        "helmet": "bg3:hood_of_the_weave",
-        "cloak": "",
-        "boots": "",
+        "helmet": "bg3:birthright",
+        "melee_main": "bg3:rhapsody",
         "ring_1": "bg3:risky_ring",
-        "ring_2": "bg3:ring_of_protection",
-        "amulet": ""
+        "ring_2": "bg3:callous_glow_ring",
+        "cloak": "bg3:cloak_of_protection",
+        "boots": "bg3:evasive_shoes"
        }
       },
       "buffs": {
@@ -271,7 +271,11 @@
         "elixir:elixir_of_battlemage_s_power"
        ]
       },
-      "conditions": [],
+      "conditions": [
+       "bg3:spellmight_gloves#0",
+       "bg3:rhapsody#0",
+       "bg3:callous_glow_ring#0"
+      ],
       "levels": {},
       "character": {
        "name": "Blaster",
@@ -338,6 +342,14 @@
       "carried": [],
       "roles": [],
       "variants": [
+       {
+        "name": "Ring of Protection instead of the Risky Ring (no disadvantage on saves)",
+        "gear": {
+         "3": {
+          "ring_1": "bg3:ring_of_protection"
+         }
+        }
+       },
        {
         "name": "With Bless",
         "buffs": [
