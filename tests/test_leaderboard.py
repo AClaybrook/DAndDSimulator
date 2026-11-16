@@ -37,7 +37,8 @@ def test_more_enemies_use_area_options():
     assert "Spirit Guardians" in [label for label, _ in area_options(cleric)]
     row = entry(cleric.name, cleric)
     assert row["damage"][view("reliable", 3)]["1"] > 2.5 * row["damage"][view("reliable", 1)]["1"]
-    assert row["area"][view("reliable", 3)]["1"] == "Spirit Guardians"
+    # An area spell: Spirit Guardians, or Burning Hands now that levelled spells are upcast with the higher slots
+    assert row["area"][view("reliable", 3)]["1"] in ("Spirit Guardians", "Burning Hands")
     from bg3.reddit_builds import REDDIT
     hunter = REDDIT["Filthy Harold Hunter (Hunter 11 / War Cleric 1)"]
     assert [label for label, _ in area_options(hunter)] == ["Horde Breaker"] # One Cleric level can't learn Spirit Guardians

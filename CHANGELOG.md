@@ -2,6 +2,9 @@
 
 ## 3.0.0 (in progress)
 
+- **Levelled spells are upcast** to the average of the slots they use (Scorching Ray from a level 4 slot: 5 rays). **Haste's extra action**
+  casts the cantrip for a caster whose action goes to a levelled spell (it added nothing before). **Potent Robe** only adds to cantrips.
+  **Hat of Fire Acuity:** its Arcane Acuity counted as about +5 to spell attacks (a toggle). A Fire Sorcerer joins the second saved party.
 - **Bloodlust needs a group:** its extra action (a kill first) counts against 2+ enemies only, everywhere damage is given by enemy count.
   Best case adds the Drakethroat Glaive's elemental weapon and takes the better of the build's own elixir and Bloodlust per enemy count.
 - **Dolor Amarus:** its +7 on a critical hit is for weapon and unarmed attacks only, not spells.

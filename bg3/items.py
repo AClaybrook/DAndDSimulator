@@ -6,7 +6,7 @@ from functools import cache
 from pathlib import Path
 
 from computations.models import STATS, Attack
-from game_data import weapons
+from game_data import spells, weapons
 from game_data.classes import FIGHTS_PER_LONG_REST
 
 DATA = Path(__file__).parent / "data"
@@ -40,6 +40,7 @@ APPLIES_TO = {
     "unarmed": lambda a: a.type == "unarmed",
     "spell": lambda a: a.type == "spell" and "coating" not in a.tags,
     "booming_blade": lambda a: "booming_blade" in a.tags, # The weapon attack Booming Blade makes
+    "cantrip": lambda a: a.type == "spell" and "coating" not in a.tags and spells().get(a.base, {}).get("level") == 0,
     "necromancy": lambda a: a.type == "spell" and "necromancy" in a.tags,
 }
 
@@ -156,7 +157,12 @@ def _action_attacks(character):
         waits = a.fallback_for and "after_cast" not in a.tags # After a spell cast with the action (Spirit Guardians) is still a plain attack
         return a.action == "action" and not (a.offhand or a.uses_per_fight or waits or a.min_enemies > 1)
     weapons = [a for a in character.attacks if (a.is_weapon or a.type == "unarmed") and plain(a)]
-    return weapons or [a for a in character.attacks if a.type == "spell" and plain(a)]
+    spells = [a for a in character.attacks if a.type == "spell" and plain(a)]
+    # A caster whose action goes to a levelled spell while its slots last casts its cantrip with the extra action (the slots stay with the
+    # action's casts)
+    cantrip = [a for a in character.attacks if a.type == "spell" and a.action == "action" and a.fallback_for and not a.uses_per_fight
+               and a.min_enemies <= 1 and "after_cast" not in a.tags]
+    return weapons or spells or cantrip
 
 def extra_action(character, label, honour_mode=False, uses=0):
     """ Another action each turn (Haste) or after a kill (Bloodlust): outside Honour Mode a whole Attack action, Extra Attack included;

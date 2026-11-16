@@ -433,7 +433,13 @@ def _attacks(character, c, levels, subs, feats, notes, main_finesse=None):
         if not casts:
             notes.append(f"No spell slots of level {spell_level} or higher for {character.spell} yet")
             return cantrip
-        levelled = spell_attacks(character.spell, ability_stat=stat, slot_level=spell_level, ruleset="bg3")
+        # Cast with every slot of its level or higher: upcast to the average of those slots (more rays, dice or targets)
+        used = [lv for lv, n in enumerate(slots, start=1) if lv >= spell_level for _ in range(n)]
+        used += [pact_level] * (pact * (SHORT_RESTS_PER_LONG_REST + 1)) if pact_level >= spell_level else []
+        cast_level = max(spell_level, round(sum(used) / len(used))) if used and spells()[character.spell].get("recharge") != "long_rest" else spell_level
+        levelled = spell_attacks(character.spell, ability_stat=stat, slot_level=cast_level, ruleset="bg3")
+        for a in levelled: # Named as the spell, so fallbacks and items find it
+            a.name, a.label = a.name.replace(f" (Level {cast_level})", ""), ""
         for a in levelled:
             a.uses_per_fight = casts
         for a in cantrip:

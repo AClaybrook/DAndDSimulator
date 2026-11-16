@@ -142,12 +142,13 @@
    ]
   },
   {
-   "name": "Crit Smiter, Agonising Blaster, Throwzerker (Act 3)",
+   "name": "Crit Smiter, Agonising Blaster, Throwzerker, Fire Sorcerer (Act 3)",
    "notes": [
     "Half-Orc Crit Smiter: Paladin 5 (Vengeance) / Warlock 5 (Hexblade) / Fighter 2, Balduran's Giantslayer with Cloud Giant Strength (27, doubled on hits), The Dead Shot in the ranged slot and Sarevok's Horned Helmet for crits on 17-20 with Hexblade's Curse, Divine Smite saved for crits",
     "Agonising Blaster: Sorcerer 6 / Warlock 2 / Fighter 4, Charisma 24, Spell Sniper (crits on 19-20), Eldritch Blast with Haste, Action Surge and Quickened casts (sorcery points from Font of Magic), Elixir of Battlemage's Power. Potent Robe adds Charisma to each beam; Spellmight's -5 for +1d8 is worth turning on; Rhapsody (+3 to hit and damage on each beam after three kills) and the Callous Glow Ring (+2 radiant on lit targets) are its best extras",
     "Throwzerker: Giant Barbarian 12 with Tavern Brawler, throwing Nyrulna",
-    "Other gear picked by the gear solver for damage, one build at a time so no unique item is shared"
+    "Other gear picked by the gear solver for damage, one build at a time so no unique item is shared",
+    "Fire Sorcerer: Draconic Bloodline (red) Sorcerer 12, Scorching Ray upcast with every slot (5 rays on average) and Quickened, Fire Bolt with the Haste action. Spellmight's -5 for +1d8 a ray is its biggest gear gain; Hat of Fire Acuity's Arcane Acuity is counted as about +5 to spell attacks"
    ],
    "members": [
     {
@@ -437,6 +438,89 @@
          "haste",
          "bless"
         ]
+       }
+      ],
+      "advantage": false,
+      "assumptions": {}
+     }
+    },
+    {
+     "build": {
+      "name": "Fire Sorcerer (Scorching Ray)",
+      "preset": "",
+      "equipment": {
+       "3": {
+        "armour": "bg3:potent_robe",
+        "gloves": "bg3:spellmight_gloves",
+        "helmet": "bg3:hat_of_fire_acuity",
+        "cloak": "bg3:cloak_of_the_weave",
+        "boots": "bg3:evasive_shoes",
+        "ring_1": "bg3:risky_ring",
+        "ring_2": "bg3:callous_glow_ring",
+        "amulet": "",
+        "melee_main": "bg3:rhapsody",
+        "melee_off": "bg3:knife_of_the_undermountain_king"
+       }
+      },
+      "buffs": {
+       "3": [
+        "haste",
+        "elixir:elixir_of_viciousness"
+       ]
+      },
+      "conditions": [
+       "bg3:hat_of_fire_acuity#0",
+       "bg3:spellmight_gloves#0",
+       "bg3:rhapsody#0",
+       "bg3:callous_glow_ring#0"
+      ],
+      "levels": {},
+      "character": {
+       "name": "Fire Sorcerer",
+       "race": "Human",
+       "scores": {
+        "strength": 8,
+        "dexterity": 14,
+        "constitution": 15,
+        "intelligence": 8,
+        "wisdom": 10,
+        "charisma": 15
+       },
+       "bonus": {
+        "charisma": 2,
+        "constitution": 1
+       },
+       "classes": [
+        [
+         "sorcerer",
+         "Draconic Bloodline",
+         12
+        ]
+       ],
+       "feats": [
+        "charisma+2",
+        "Spell Sniper",
+        "charisma+1,constitution+1"
+       ],
+       "fighting_styles": [],
+       "routine": "cantrip",
+       "cantrip": "Fire Bolt",
+       "spell": "Scorching Ray",
+       "toggles": {
+        "ancestry": "fire"
+       },
+       "level_order": [],
+       "boons": {},
+       "respec": {}
+      },
+      "carried": [],
+      "roles": [],
+      "variants": [
+       {
+        "name": "Spellmight's -5 / +1d8 off",
+        "gear": {
+         "3": {}
+        }
        }
       ],
       "advantage": false,

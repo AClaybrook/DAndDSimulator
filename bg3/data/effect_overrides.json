@@ -303,6 +303,31 @@
                 }
             ],
             "notes": "Dolor Amarus: +7 damage when a weapon or unarmed attack crits (any weapon attack while equipped, not spells)"
+        },
+        "Hat of Fire Acuity": {
+            "effects": [
+                {
+                    "kind": "attack_bonus",
+                    "value": 5,
+                    "applies_to": "spell",
+                    "condition": "Arcane Acuity from your fire hits: +1 to spell attacks and DC per turn left, 2 turns a hit. With several rays a turn, about +5 averaged over a fight"
+                },
+                {
+                    "kind": "spell_dc",
+                    "value": 5,
+                    "condition": "Arcane Acuity from your fire hits: +1 to spell attacks and DC per turn left, 2 turns a hit. With several rays a turn, about +5 averaged over a fight"
+                }
+            ],
+            "notes": "Whenever you deal Fire damage, you gain Arcane Acuity for 2 turns (stacks its duration, up to 10; damage taken removes 2)"
+        },
+        "Potent Robe": {
+            "effects": [
+                {
+                    "kind": "damage_bonus_ability",
+                    "stat": "charisma",
+                    "applies_to": "cantrip"
+                }
+            ]
         }
     }
 }
